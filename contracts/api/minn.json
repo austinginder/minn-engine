@@ -34803,6 +34803,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
@@ -36884,7 +36885,7 @@
                 "Minn\\Front\\SingleQueries",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
-                "Minn\\Rest\\FontFaceRecord",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
@@ -43167,7 +43168,6 @@
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Ops\\Directory",
                 "Minn\\Rest\\Api",
-                "Minn\\Rest\\FontObject",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
@@ -66696,6 +66696,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -66786,6 +66787,7 @@
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\FontArgs",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
@@ -69709,6 +69711,8 @@
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -69723,6 +69727,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeEnvelope",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Rest\\SidebarsController",
@@ -70242,6 +70247,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -70998,8 +71004,9 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\ExistingPost",
-                "Minn\\Rest\\FontFaceRecord",
-                "Minn\\Rest\\FontFamilyRecord",
+                "Minn\\Rest\\FontFaceCreation",
+                "Minn\\Rest\\FontFamilyChange",
+                "Minn\\Rest\\FontFamilyCreation",
                 "Minn\\Rest\\MenuItemStatus"
             ],
             "constructor": null,
@@ -71105,8 +71112,11 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\ExistingPost",
                 "Minn\\Rest\\FontCollectionsController",
-                "Minn\\Rest\\FontFaceRecord",
-                "Minn\\Rest\\FontFamilyRecord",
+                "Minn\\Rest\\FontFaceCreation",
+                "Minn\\Rest\\FontFamilyChange",
+                "Minn\\Rest\\FontFamilyCreation",
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -71874,6 +71884,7 @@
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -72468,6 +72479,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -73673,7 +73685,7 @@
             "namespace": "Minn\\Http",
             "kind": "enum",
             "file": "public/minn/src/Minn/Http/Subject.php",
-            "lines": 46,
+            "lines": 49,
             "doc": "The record a route capture names, so a policy can have it looked up\nbefore the caller is judged: the reference answers \"no such post\" ahead\nof \"you may not\", and the 404 it sends is the record's own. A kind that\nreads its post type or taxonomy from the {base} capture says so.",
             "implements": [],
             "extends": null,
@@ -73685,6 +73697,8 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\FontWritesController",
+                "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -73757,6 +73771,16 @@
                     "name": "Comment",
                     "value": null,
                     "doc": ""
+                },
+                {
+                    "name": "FontFamily",
+                    "value": null,
+                    "doc": "A font family by id (wp_font_family), and a font face (wp_font_face): any other post is no such record."
+                },
+                {
+                    "name": "FontFace",
+                    "value": null,
+                    "doc": ""
                 }
             ],
             "constants": [],
@@ -73771,8 +73795,8 @@
                     "doc": "The reference's error code for a record that does not exist.",
                     "shapes": [],
                     "params": [],
-                    "line": 34,
-                    "end": 44
+                    "line": 37,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -73783,8 +73807,8 @@
                     "doc": "The reference's message for a record that does not exist.",
                     "shapes": [],
                     "params": [],
-                    "line": 47,
-                    "end": 57
+                    "line": 50,
+                    "end": 60
                 }
             ]
         },
@@ -77001,6 +77025,8 @@
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimePrepare",
@@ -92137,6 +92163,7 @@
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\RegisteredFields",
@@ -101206,7 +101233,8 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\ExistingPost",
                 "Minn\\Rest\\FontCollectionsController",
-                "Minn\\Rest\\FontFaceRecord",
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -101470,7 +101498,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 468,
+            "lines": 469,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -101520,6 +101548,7 @@
                 "Minn\\Rest\\EngineRoutes",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
@@ -101707,8 +101736,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 152
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -101750,8 +101779,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 173
+                    "line": 162,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -101779,8 +101808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 180
+                    "line": 177,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -101791,8 +101820,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 183,
-                    "end": 186
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -101803,8 +101832,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 189,
-                    "end": 192
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -101815,8 +101844,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 195,
-                    "end": 198
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -101827,8 +101856,8 @@
                     "doc": "The wp/v2 menu shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 205
+                    "line": 202,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -101856,8 +101885,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 213
+                    "line": 209,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -101885,8 +101914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 220
+                    "line": 217,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -101914,8 +101943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 227
+                    "line": 224,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -101950,8 +101979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 235
+                    "line": 231,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -101979,8 +102008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 241
+                    "line": 239,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -102008,8 +102037,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 245,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -102020,8 +102049,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 253
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -102032,8 +102061,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 256,
-                    "end": 259
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -102059,8 +102088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 276
+                    "line": 268,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -102079,8 +102108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 306
+                    "line": 280,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -102106,8 +102135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 350
+                    "line": 321,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -102126,8 +102155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 357
+                    "line": 354,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -102181,8 +102210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 382
+                    "line": 366,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -102208,8 +102237,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 403
+                    "line": 392,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -102237,8 +102266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 418
+                    "line": 412,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -102267,7 +102296,7 @@
                         }
                     ],
                     "line": 81,
-                    "end": 146
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -102286,8 +102315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 420,
-                    "end": 428
+                    "line": 421,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -102313,8 +102342,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 435,
-                    "end": 457
+                    "line": 436,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -102333,8 +102362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 466,
-                    "end": 473
+                    "line": 467,
+                    "end": 474
                 },
                 {
                     "routes": [],
@@ -102363,8 +102392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 498
+                    "line": 484,
+                    "end": 499
                 },
                 {
                     "routes": [],
@@ -102390,8 +102419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 504,
-                    "end": 508
+                    "line": 505,
+                    "end": 509
                 }
             ]
         },
@@ -107384,13 +107413,16 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/FontArgs.php",
-            "lines": 53,
-            "doc": "The font library's parameters as the reference's REST index lists them\n(font families, font faces, font collections), in its order, each read\nby Rest\\FontsController or Rest\\FontCollectionsController. A family's\nlist and a face's list take the posts list's ids, offset, order and\nexact-search switch, ordered by id or by include alone, and only a\nfamily's list takes slugs. Neither takes a search, a status or an\nauthor: the reference ignores them. The ids a path names are listed as\nthe reference lists them, except that the index there calls a face's\nfamily and id required; here they are optional, because the router\nlooks for a required argument in the query and the path always carries\nthem.",
+            "lines": 70,
+            "doc": "The font library's parameters as the reference's REST index lists them\n(font families, font faces, font collections), in its order, each read\nby Rest\\FontsController or Rest\\FontCollectionsController. A family's\nlist and a face's list take the posts list's ids, offset, order and\nexact-search switch, ordered by id or by include alone, and only a\nfamily's list takes slugs. Neither takes a search, a status or an\nauthor: the reference ignores them. The ids a path names are listed as\nthe reference lists them (a face's family and id required, which the\npath always carries). A write's settings and theme.json version are\njudged by Rest\\FontSettings, in the reference's order, before the\ncaller is.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http\\Args"
+            ],
             "usedBy": [
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController"
             ],
             "constructor": null,
@@ -107416,7 +107448,13 @@
                 },
                 {
                     "name": "FAMILY_ID",
-                    "value": "array (   'description' => 'The ID for the parent font family of the font face.',   'type' => 'integer',   'required' => false, )",
+                    "value": "array (   'description' => 'The ID for the parent font family of the font face.',   'type' => 'integer',   'required' => true, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "VERSION",
+                    "value": "array (   'description' => 'Version of the theme.json schema used for the typography settings.',   'type' => 'integer',   'default' => 3,   'minimum' => 2,   'maximum' => 3,   'required' => false,   'handler_validates' => true, )",
                     "doc": "",
                     "visibility": "private"
                 },
@@ -107440,14 +107478,32 @@
                 },
                 {
                     "name": "FACES",
-                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )",
+                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )",
                     "doc": "A font family's faces.",
                     "visibility": "public"
                 },
                 {
                     "name": "FACE",
-                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )",
+                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => true,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )",
                     "doc": "One font face of a family.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "FAMILY_CREATE",
+                    "value": "array (   'theme_json_version' =>    array (     'description' => 'Version of the theme.json schema used for the typography settings.',     'type' => 'integer',     'default' => 3,     'minimum' => 2,     'maximum' => 3,     'required' => false,     'handler_validates' => true,   ),   'font_family_settings' =>    array (     'description' => 'font-family declaration in theme.json format, encoded as a string.',     'type' => 'string',     'required' => true,     'handler_validates' => true,   ), )",
+                    "doc": "A font family created.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "FAMILY_UPDATE",
+                    "value": "array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ),   'theme_json_version' =>    array (     'description' => 'Version of the theme.json schema used for the typography settings.',     'type' => 'integer',     'default' => 3,     'minimum' => 2,     'maximum' => 3,     'required' => false,     'handler_validates' => true,   ),   'font_family_settings' =>    array (     'description' => 'font-family declaration in theme.json format, encoded as a string.',     'type' => 'string',     'required' => true,     'handler_validates' => true,   ), )",
+                    "doc": "A font family updated.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "FACE_CREATE",
+                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'theme_json_version' =>    array (     'description' => 'Version of the theme.json schema used for the typography settings.',     'type' => 'integer',     'default' => 3,     'minimum' => 2,     'maximum' => 3,     'required' => false,     'handler_validates' => true,   ),   'font_face_settings' =>    array (     'description' => 'font-face declaration in theme.json format, encoded as a string.',     'type' => 'string',     'required' => true,     'handler_validates' => true,   ), )",
+                    "doc": "A font face created under its family.",
                     "visibility": "public"
                 },
                 {
@@ -107464,7 +107520,7 @@
                 },
                 {
                     "name": "FACE_DELETE",
-                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => false,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )",
+                    "value": "array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => true,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )",
                     "doc": "A font face deleted.",
                     "visibility": "public"
                 },
@@ -107656,27 +107712,24 @@
             ]
         },
         {
-            "name": "Minn\\Rest\\FontFaceRecord",
-            "short": "FontFaceRecord",
+            "name": "Minn\\Rest\\FontFaceCreation",
+            "short": "FontFaceCreation",
             "namespace": "Minn\\Rest",
             "kind": "final class",
-            "file": "public/minn/src/Minn/Rest/FontFaceRecord.php",
-            "lines": 21,
-            "doc": "A font face route names a font face: refused as an invalid post id\nbefore the caller is judged, signed out or not, when the id (the\nquery's, else the path's, as the reference reads a parameter) is not a\nwp_font_face post. Its family is judged once the caller has been.",
+            "file": "public/minn/src/Minn/Rest/FontFaceCreation.php",
+            "lines": 9,
+            "doc": "A font face's create judges its settings (its sources against the files\nthe request uploads), then its theme.json version, before the caller is\njudged; its family is looked for only after, as on the reference.",
             "implements": [
                 "Minn\\Http\\Refusal"
             ],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Posts",
                 "Minn\\Http\\Refusal",
                 "Minn\\Http\\Request",
-                "Minn\\RestError",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Rest\\FontSettings"
             ],
             "usedBy": [
-                "Minn\\Rest\\FontFamilyRecord",
-                "Minn\\Rest\\FontsController"
+                "Minn\\Rest\\FontWritesController"
             ],
             "constructor": null,
             "cases": [],
@@ -107689,88 +107742,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "refuse(Minn\\Http\\Request $request): void",
-                    "doc": "Throws rest_post_invalid_id unless the face exists.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 22,
-                    "end": 25
-                },
-                {
-                    "routes": [],
-                    "name": "require",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "require(Minn\\Http\\Request $request, string $pattern, string $type): void",
-                    "doc": "Throws rest_post_invalid_id unless the id the path ends with (or the query's id) is a post of the type.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "pattern",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 28,
-                    "end": 38
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Rest\\FontFamilyRecord",
-            "short": "FontFamilyRecord",
-            "namespace": "Minn\\Rest",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Rest/FontFamilyRecord.php",
-            "lines": 8,
-            "doc": "A font family route names a font family: refused as an invalid post id\nbefore the caller is judged, signed out or not, when the id is not a\nwp_font_family post (a post of any other type, a face included).",
-            "implements": [
-                "Minn\\Http\\Refusal"
-            ],
-            "extends": null,
-            "uses": [
-                "Minn\\Http\\Refusal",
-                "Minn\\Http\\Request",
-                "Minn\\Rest\\FontFaceRecord"
-            ],
-            "usedBy": [
-                "Minn\\Rest\\FontsController"
-            ],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "refuse",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "refuse(Minn\\Http\\Request $request): void",
-                    "doc": "Throws rest_post_invalid_id unless the family exists.",
+                    "doc": "Throws the settings' or the version's refusal.",
                     "shapes": [],
                     "params": [
                         {
@@ -107782,7 +107754,101 @@
                         }
                     ],
                     "line": 18,
-                    "end": 21
+                    "end": 22
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\FontFamilyChange",
+            "short": "FontFamilyChange",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/FontFamilyChange.php",
+            "lines": 9,
+            "doc": "A font family's update judges its settings, then its theme.json version,\nbefore the family is looked for and the caller judged (the policy's\nsubject), as on the reference: a bad setting is answered even for a\nfamily that does not exist.",
+            "implements": [
+                "Minn\\Http\\Refusal"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Refusal",
+                "Minn\\Http\\Request",
+                "Minn\\Rest\\FontSettings"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\FontWritesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "refuse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refuse(Minn\\Http\\Request $request): void",
+                    "doc": "Throws the settings' or the version's refusal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 23
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\FontFamilyCreation",
+            "short": "FontFamilyCreation",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/FontFamilyCreation.php",
+            "lines": 9,
+            "doc": "A font family's create judges its settings, then its theme.json version,\nbefore the caller is judged (Rest\\FontSettings), so a caller who may not\ncreate one hears of a bad setting first, as on the reference. With\nplugins present, the refusal reaches them where a permission refusal\nwould, after rest_request_before_callbacks.",
+            "implements": [
+                "Minn\\Http\\Refusal"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Refusal",
+                "Minn\\Http\\Request",
+                "Minn\\Rest\\FontSettings"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\FontWritesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "refuse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refuse(Minn\\Http\\Request $request): void",
+                    "doc": "Throws the settings' or the version's refusal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 24
                 }
             ]
         },
@@ -107792,34 +107858,28 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/FontObject.php",
-            "lines": 87,
-            "doc": "A font family and a font face as wp/v2 shapes them (probe: the font\nlibrary routes on the reference): the id, the theme.json version (3,\nwhich nothing stores), and the settings the post holds: a family's\nname and slug from its title and slug, then its font family and preview\nfrom its JSON content; a face's font-face properties from its JSON\ncontent. A family lists its published and private faces by id, each a\nlink that embeds; a face links to its family. The\nsame fields show in every context, and the fields plugin code registers\njoin through rest_prepare_wp_font_family and rest_prepare_wp_font_face.\nOnly someone who may edit theme options sees either, and may use every\nmethod on it.",
+            "lines": 93,
+            "doc": "A font family and a font face as wp/v2 shapes them (probe: the font\nlibrary routes on the reference): the id, the theme.json version (3,\nwhich nothing stores), and the settings the post holds: a family's\nname and slug from its title and slug, then its font family and preview\nfrom its JSON content; a face's font-face properties from its JSON\ncontent. A family lists its faces by id, oldest first, each a link\nthat embeds; a face links to its family. The\nsame fields show in every context, and the fields plugin code registers\njoin through rest_prepare_wp_font_family and rest_prepare_wp_font_face.\nOnly someone who may edit theme options sees either, and may use every\nmethod on it.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
-                "Minn\\Db",
                 "Minn\\Json",
                 "Minn\\Rest\\Links",
                 "Minn\\Rest\\RestUrl",
-                "Minn\\Rest\\RuntimePrepare"
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Handoff"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Rest\\RestUrl $url)",
+                "signature": "__construct(Minn\\Rest\\RestUrl $url)",
                 "doc": "",
                 "shapes": [],
                 "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
                     {
                         "name": "url",
                         "type": "Minn\\Rest\\RestUrl",
@@ -107854,15 +107914,6 @@
                 }
             ],
             "properties": [
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
                 {
                     "name": "url",
                     "type": "Minn\\Rest\\RestUrl",
@@ -107924,7 +107975,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "faceIds(int $familyId): array",
-                    "doc": "A family's published and private faces, oldest first. @return list<int>",
+                    "doc": "A family's faces, oldest first, as the reference's query lists them\n(the first 99 by date alone, so faces of one second come as the\ndatabase gives them).",
                     "shapes": [
                         "@return list<int>"
                     ],
@@ -107937,8 +107988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 81,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -107959,8 +108010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 93
+                    "line": 94,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -107981,19 +108032,427 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 109
+                    "line": 108,
+                    "end": 115
                 }
             ]
         },
         {
-            "name": "Minn\\Rest\\FontsController",
-            "short": "FontsController",
+            "name": "Minn\\Rest\\FontSettings",
+            "short": "FontSettings",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/FontSettings.php",
+            "lines": 221,
+            "doc": "The settings a font family or face is written with, judged and cleaned as\nthe reference does (probe font-writes). A POST sends them as a JSON\nstring: one that is not a string is refused by type, one that is not\nJSON (or is null) as not \"a valid JSON string\", and what it holds is held\nto the settings' schema (required keys first, then each key in the order\nsent: its type, or that it is not a property), then each key that must\nnot be empty. A family's update names no slug and needs none of the\nrest; a face's sources must each be an address the site may fetch or a\nfile the request uploads, and every file it uploads must be one of\nthem. Only the first refusal is answered, under the settings' name, its\nown data moved under additional_data beside a 400 status. A PUT or a\nPATCH reads the settings as the object itself, which the reference\ncannot save (it fails with a fatal error); here such an update saves as\na POST would.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request",
+                "Minn\\Json",
+                "Minn\\RestError",
+                "Minn\\Rest\\SiteSchema",
+                "Minn\\Runtime\\Refusal",
+                "Minn\\Runtime\\SafeUrls",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Sanitize",
+                "Minn\\Theme\\FontNames"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\FontFaceCreation",
+                "Minn\\Rest\\FontFamilyChange",
+                "Minn\\Rest\\FontFamilyCreation",
+                "Minn\\Rest\\FontWritesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FAMILY",
+                    "value": "'font_family_settings'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FACE",
+                    "value": "'font_face_settings'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FAMILY_SCHEMA",
+                    "value": "array (   'type' => 'object',   'properties' =>    array (     'name' =>      array (       'type' => 'string',     ),     'slug' =>      array (       'type' => 'string',     ),     'fontFamily' =>      array (       'type' => 'string',     ),     'preview' =>      array (       'type' => 'string',     ),   ),   'additionalProperties' => false, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FACE_SCHEMA",
+                    "value": "array (   'type' => 'object',   'properties' =>    array (     'fontFamily' =>      array (       'type' => 'string',     ),     'fontStyle' =>      array (       'type' => 'string',     ),     'fontWeight' =>      array (       'type' =>        array (         0 => 'string',         1 => 'integer',       ),     ),     'fontDisplay' =>      array (       'type' => 'string',       'enum' =>        array (         0 => 'auto',         1 => 'block',         2 => 'fallback',         3 => 'swap',         4 => 'optional',       ),     ),     'src' =>      array (       'anyOf' =>        array (         0 =>          array (           'type' => 'string',         ),         1 =>          array (           'type' => 'array',           'items' =>            array (             'type' => 'string',           ),         ),       ),     ),     'fontStretch' =>      array (       'type' => 'string',     ),     'ascentOverride' =>      array (       'type' => 'string',     ),     'descentOverride' =>      array (       'type' => 'string',     ),     'fontVariant' =>      array (       'type' => 'string',     ),     'fontFeatureSettings' =>      array (       'type' => 'string',     ),     'fontVariationSettings' =>      array (       'type' => 'string',     ),     'lineGapOverride' =>      array (       'type' => 'string',     ),     'sizeAdjust' =>      array (       'type' => 'string',     ),     'unicodeRange' =>      array (       'type' => 'string',     ),     'preview' =>      array (       'type' => 'string',     ),   ),   'required' =>    array (     0 => 'fontFamily',     1 => 'src',   ),   'additionalProperties' => false, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "newFamily",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newFamily(Minn\\Http\\Request $request): array",
+                    "doc": "A new family's settings, judged. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "familyChanges",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "familyChanges(Minn\\Http\\Request $request): array",
+                    "doc": "An update's settings, judged: what it names replaces what is stored, and the slug cannot change. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "newFace",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newFace(Minn\\Http\\Request $request): array",
+                    "doc": "A new face's settings, judged, its sources against the files the request uploads. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "version",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "version(Minn\\Http\\Request $request): void",
+                    "doc": "The theme.json version a write names, when it names one: an integer from 2 to 3, refused as any argument is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "sources",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sources(mixed $src): array",
+                    "doc": "The sources a face names, each as text, in order. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 130
+                },
+                {
+                    "routes": [],
+                    "name": "cleanFamily",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cleanFamily(array $settings): array",
+                    "doc": "A family's settings as stored: the name as plain text, the slug as a\nslug, the font-family list quoted name by name, the preview a clean\naddress; in the order sent.",
+                    "shapes": [
+                        "@param array<string, mixed> $settings",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 152
+                },
+                {
+                    "routes": [],
+                    "name": "cleanFace",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cleanFace(array $settings): array",
+                    "doc": "A face's settings as stored, in the order sent: the font-family list\nquoted name by name, the preview a clean address, the sources left for\nthe upload to resolve, every other value as plain text (a weight given\nas a number becomes its text).",
+                    "shapes": [
+                        "@param array<string, mixed> $settings",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 163,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "decoded",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "decoded(Minn\\Http\\Request $request, string $param, array $schema): array",
+                    "doc": "The settings a write sends, decoded and held to the schema.",
+                    "shapes": [
+                        "@param array<string, mixed> $schema",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 183,
+                    "end": 202
+                },
+                {
+                    "routes": [],
+                    "name": "object",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "object(mixed $value, string $param, array $schema): array",
+                    "doc": "Settings a PUT or a PATCH sends, read as the object itself and held to\nthe schema as any argument is (none of its keys required).",
+                    "shapes": [
+                        "@param array<string, mixed> $schema",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 211,
+                    "end": 218
+                },
+                {
+                    "routes": [],
+                    "name": "filled",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filled(array $settings, string $param, array $keys, string $message): void",
+                    "doc": "Each key the settings name that must not be empty, in order.",
+                    "shapes": [
+                        "@param array<string, mixed> $settings",
+                        "@param list<string> $keys"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "keys",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 226,
+                    "end": 233
+                },
+                {
+                    "routes": [],
+                    "name": "refused",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refused(string $param, Minn\\Runtime\\Refusal $refusal): Minn\\RestError",
+                    "doc": "The settings' refusal as the reference answers it: a 400 status, any data of the refusal's own under additional_data.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refusal",
+                            "type": "Minn\\Runtime\\Refusal",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 236,
+                    "end": 240
+                },
+                {
+                    "routes": [],
+                    "name": "topLevel",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "topLevel(string $param, Minn\\Runtime\\Refusal $refusal): Minn\\RestError",
+                    "doc": "A refusal of the argument itself, as any argument is refused.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refusal",
+                            "type": "Minn\\Runtime\\Refusal",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 243,
+                    "end": 246
+                },
+                {
+                    "routes": [],
+                    "name": "values",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "values(Minn\\Http\\Request $request): array",
+                    "doc": "What a write names: its body's fields over the query's. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 249,
+                    "end": 252
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\FontWritesController",
+            "short": "FontWritesController",
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Rest/FontsController.php",
-            "lines": 162,
-            "doc": "wp/v2/font-families and their font-faces, read and deleted (probe: the\nfont library routes on the reference). Only someone who may edit theme\noptions reads or deletes either, refused as rest_cannot_read or\nrest_cannot_delete; a family or face that does not\nexist is refused before the caller is judged, a face's family only\nafter. A list is the posts list narrowed to its own parameters: the\nstatuses the caller may read (published and private), newest id first,\nthe ids, offset, slugs (families only) and pages as the posts list\nreads them, through rest_{type}_query; anything else the request\ncarries is ignored, a search included.",
+            "file": "public/minn/src/Minn/Rest/FontWritesController.php",
+            "lines": 151,
+            "doc": "wp/v2/font-families written (probe font-writes): a family created and\nupdated, a face created under its family, each saved as the reference\nsaves it. The settings are judged before the caller (Rest\\FontSettings);\nonly someone who may edit theme options writes. A family is stored as\nits name (the title), its slug and the rest of its settings as JSON\ncontent, refused when another family has the slug (an empty slug matches\nany); its update merges what it names over what is stored. A face is\nstored under its identity (Theme\\FontNames::faceSlug), refused when a\nface of any family already has it, its uploaded files moved into the fonts\nfolder in the order its sources name them (a refused file leaves the\nones before it in place) and recorded once the answer is shaped. Each\nsave fires the post's own hooks, then rest_insert_{type},\nrest_after_insert_{type} and wp_after_insert_post.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -108005,13 +108464,329 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Http\\Subject",
+                "Minn\\Json",
+                "Minn\\Objects\\Errors",
+                "Minn\\RestError",
+                "Minn\\Rest\\FontArgs",
+                "Minn\\Rest\\FontFaceCreation",
+                "Minn\\Rest\\FontFamilyChange",
+                "Minn\\Rest\\FontFamilyCreation",
+                "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\FileUpload",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostWrites",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Slashes",
+                "Minn\\Theme\\FontNames"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Rest\\FontObject $object, Minn\\Rest\\RestUrl $url)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "object",
+                        "type": "Minn\\Rest\\FontObject",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 50,
+                "end": 52
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CREATE",
+                    "value": "'Sorry, you are not allowed to create posts as this user.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EDIT",
+                    "value": "'Sorry, you are not allowed to edit this post.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FILE_META",
+                    "value": "'_wp_font_face_file'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "object",
+                    "type": "Minn\\Rest\\FontObject",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "POST /wp/v2/font-families (cap edit_theme_options)"
+                    ],
+                    "name": "createFamily",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "createFamily(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "A font family created from its settings.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 72
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options; font family {id} must exist)",
+                        "PUT /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options; font family {id} must exist)",
+                        "PATCH /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options; font family {id} must exist)"
+                    ],
+                    "name": "updateFamily",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "updateFamily(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "A font family's name, font-family list or preview changed; what the settings leave out stays.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 89
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/font-families/{font_family_id:[\\d]+}/font-faces (cap edit_theme_options)"
+                    ],
+                    "name": "createFace",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "createFace(Minn\\Http\\Request $request, string $fontFamilyId): Minn\\Http\\Response",
+                    "doc": "A font face created under its family, from remote sources or files the request uploads.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fontFamilyId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "stored",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "stored(mixed $src, Minn\\Http\\Request $request): array",
+                    "doc": "A face's sources with each file the request uploads moved into the\nfonts folder and named by its address (a remote one is cleaned), and\nthe stored files' names. A refused file ends the save; those before\nit stay where they were moved.",
+                    "shapes": [
+                        "@return array{0: string|list<string>, 1: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 131,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "saved",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "saved(array $columns, Minn\\Http\\Request $request, ?Minn\\Content\\PostRecord $before): int",
+                    "doc": "A font post saved through the post's own save, its hooks and then the\nREST insert actions; a save that fails is answered with its error.",
+                    "shapes": [
+                        "@param array<string, mixed> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "?Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 166,
+                    "end": 177
+                },
+                {
+                    "routes": [],
+                    "name": "found",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "found(array $vars): bool",
+                    "doc": "Whether a post matches the query, as the reference looks for a family's slug or a face's identity (an empty value narrows nothing). @param array<string, mixed> $vars",
+                    "shapes": [
+                        "@param array<string, mixed> $vars"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 180,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "post(int $id): Minn\\Content\\PostRecord",
+                    "doc": "The post just saved.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 193
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\FontsController",
+            "short": "FontsController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/FontsController.php",
+            "lines": 162,
+            "doc": "wp/v2/font-families and their font-faces, read and deleted (probe: the\nfont library routes on the reference). Only someone who may edit theme\noptions reads or deletes either, refused as rest_cannot_read or\nrest_cannot_delete; a family or face that does not exist (the query's\nid, else the path's) is refused before the caller is judged, a face's\nfamily only after. A list is the posts list narrowed to its own parameters: the\nstatuses the caller may read (published and private), newest id first,\nthe ids, offset, slugs (families only) and pages as the posts list\nreads them, through rest_{type}_query; anything else the request\ncarries is ignored, a search included.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Posts",
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Http\\Subject",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
                 "Minn\\RestError",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\FontArgs",
-                "Minn\\Rest\\FontFaceRecord",
-                "Minn\\Rest\\FontFamilyRecord",
                 "Minn\\Rest\\FontObject",
                 "Minn\\Rest\\PostListArgs",
                 "Minn\\Rest\\Reply",
@@ -108044,8 +108819,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 42,
-                "end": 44
+                "line": 43,
+                "end": 45
             },
             "cases": [],
             "constants": [
@@ -108120,12 +108895,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options)"
+                        "GET /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options; font family {id} must exist)"
                     ],
                     "name": "family",
                     "static": false,
@@ -108149,8 +108924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 58
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [
@@ -108178,12 +108953,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 66
+                    "line": 63,
+                    "end": 67
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/font-families/{font_family_id:[\\d]+}/font-faces/{id:[\\d]+} (cap edit_theme_options)"
+                        "GET /wp/v2/font-families/{font_family_id:[\\d]+}/font-faces/{id:[\\d]+} (cap edit_theme_options; font face {id} must exist)"
                     ],
                     "name": "face",
                     "static": false,
@@ -108214,12 +108989,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 77
+                    "line": 71,
+                    "end": 78
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options)"
+                        "DELETE /wp/v2/font-families/{id:[\\d]+} (cap edit_theme_options; font family {id} must exist)"
                     ],
                     "name": "deleteFamily",
                     "static": false,
@@ -108243,12 +109018,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 85
+                    "line": 82,
+                    "end": 86
                 },
                 {
                     "routes": [
-                        "DELETE /wp/v2/font-families/{font_family_id:[\\d]+}/font-faces/{id:[\\d]+} (cap edit_theme_options)"
+                        "DELETE /wp/v2/font-families/{font_family_id:[\\d]+}/font-faces/{id:[\\d]+} (cap edit_theme_options; font face {id} must exist)"
                     ],
                     "name": "deleteFace",
                     "static": false,
@@ -108279,8 +109054,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 96
+                    "line": 90,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -108315,8 +109090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 116
+                    "line": 107,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -108367,8 +109142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 143
+                    "line": 126,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -108397,8 +109172,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 169
+                    "line": 154,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -108417,8 +109192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 179
+                    "line": 173,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -108444,8 +109219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 189
+                    "line": 183,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -108456,8 +109231,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 191,
-                    "end": 194
+                    "line": 192,
+                    "end": 195
                 }
             ]
         },
@@ -117233,6 +118008,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontCollectionsController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
@@ -118571,6 +119347,7 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
@@ -120812,13 +121589,14 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 571,
+            "lines": 572,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Json",
@@ -120926,8 +121704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 52
+                    "line": 46,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -120946,8 +121724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 77
+                    "line": 61,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -120966,8 +121744,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 96
+                    "line": 81,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -120995,8 +121773,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 123
+                    "line": 114,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -121017,8 +121795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 147
+                    "line": 136,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -121047,8 +121825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -121067,8 +121845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 269
+                    "line": 224,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -121094,8 +121872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 285
+                    "line": 282,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -121123,8 +121901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 301
+                    "line": 294,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -121143,8 +121921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 308
+                    "line": 305,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -121179,8 +121957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 319
+                    "line": 316,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -121199,15 +121977,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 328
+                    "line": 323,
+                    "end": 329
                 },
                 {
                     "routes": [],
                     "name": "toWp",
                     "static": true,
                     "visibility": "public",
-                    "signature": "toWp(Minn\\Http\\Response $response): Minn\\Objects\\RestResponse",
+                    "signature": "toWp(Minn\\Http\\Response $response, ?Minn\\Http\\Method $method = NULL): Minn\\Objects\\RestResponse",
                     "doc": "An engine answer as plugins handle one: its data decoded (an empty\nobject stays one), its links on the response rather than in the data,\nits status and headers.",
                     "shapes": [],
                     "params": [
@@ -121217,10 +121995,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "?Minn\\Http\\Method",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 351
+                    "line": 336,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -121249,8 +122034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 371
+                    "line": 362,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -121271,8 +122056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 386
+                    "line": 381,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -121291,8 +122076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 389,
-                    "end": 399
+                    "line": 391,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -121318,8 +122103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 420,
-                    "end": 464
+                    "line": 422,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -121345,8 +122130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 471,
-                    "end": 474
+                    "line": 473,
+                    "end": 476
                 },
                 {
                     "routes": [],
@@ -121365,8 +122150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 575,
-                    "end": 579
+                    "line": 577,
+                    "end": 581
                 },
                 {
                     "routes": [],
@@ -121377,8 +122162,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 583,
-                    "end": 586
+                    "line": 585,
+                    "end": 588
                 },
                 {
                     "routes": [],
@@ -121411,8 +122196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 110
+                    "line": 105,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -121433,8 +122218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 180
+                    "line": 174,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -121464,8 +122249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 220
+                    "line": 193,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -121486,8 +122271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 411
+                    "line": 404,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -121506,8 +122291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 477,
-                    "end": 480
+                    "line": 479,
+                    "end": 482
                 },
                 {
                     "routes": [],
@@ -121533,8 +122318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 488,
-                    "end": 499
+                    "line": 490,
+                    "end": 501
                 },
                 {
                     "routes": [],
@@ -121555,8 +122340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 502,
-                    "end": 505
+                    "line": 504,
+                    "end": 507
                 },
                 {
                     "routes": [],
@@ -121589,8 +122374,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 507,
-                    "end": 511
+                    "line": 509,
+                    "end": 513
                 },
                 {
                     "routes": [],
@@ -121609,8 +122394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 514,
-                    "end": 524
+                    "line": 516,
+                    "end": 526
                 },
                 {
                     "routes": [],
@@ -121632,8 +122417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 534,
-                    "end": 557
+                    "line": 536,
+                    "end": 559
                 },
                 {
                     "routes": [],
@@ -121652,8 +122437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 559,
-                    "end": 572
+                    "line": 561,
+                    "end": 574
                 },
                 {
                     "routes": [],
@@ -121672,8 +122457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 588,
-                    "end": 596
+                    "line": 590,
+                    "end": 598
                 }
             ]
         },
@@ -124983,6 +125768,7 @@
                 "Minn\\Support\\Sanitize"
             ],
             "usedBy": [
+                "Minn\\Rest\\FontSettings",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\MetaKeys",
@@ -125351,7 +126137,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Subjects.php",
-            "lines": 53,
+            "lines": 55,
             "doc": "Whether the record a route capture names exists, for the policy gate to\nask before it judges the caller. A post kind reads its type from the\n{base} capture when the route has one, a term kind its taxonomy; the\nfixed kinds name their own. Status is not consulted: a trashed post\nexists, and what the caller may do with it is the policy's question.",
             "implements": [],
             "extends": null,
@@ -125442,7 +126228,7 @@
                         }
                     ],
                     "line": 31,
-                    "end": 46
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -125468,8 +126254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 51,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -125495,8 +126281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 58
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -125522,8 +126308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -125549,8 +126335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 68
+                    "line": 67,
+                    "end": 70
                 }
             ]
         },
@@ -143117,6 +143903,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\MediaController"
             ],
             "constructor": null,
@@ -143334,6 +144121,8 @@
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
@@ -148884,6 +149673,7 @@
                 "Minn\\Content\\Users",
                 "Minn\\Front\\CustomLogo",
                 "Minn\\Front\\FeedTags",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
@@ -155212,6 +156002,7 @@
                 "Minn\\Runtime\\TermWrites"
             ],
             "usedBy": [
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsWriteController",
@@ -160963,6 +161754,7 @@
             ],
             "usedBy": [
                 "Minn\\Cron\\Cron",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\TemplateRevisionsController",
@@ -163313,6 +164105,7 @@
                 "Minn\\Ops\\Unzip",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlockRendererController",
+                "Minn\\Rest\\FontSettings",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\ParamCheck",
                 "Minn\\Rest\\PluginsController",
@@ -166114,7 +166907,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontCollectionsController",
-                "Minn\\Rest\\FontFaceRecord",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
@@ -166235,6 +167028,7 @@
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\RewriteStructs",
+                "Minn\\Runtime\\SafeUrls",
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Runtime\\SiteInfo",
@@ -167195,6 +167989,52 @@
                     ],
                     "line": 459,
                     "end": 473
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\SafeUrls",
+            "short": "SafeUrls",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/SafeUrls.php",
+            "lines": 22,
+            "doc": "Whether an address is one the site may fetch (wp_http_validate_url): an\nhttp or https address that survives the protocol check unchanged, whose\nhost is not a private or reserved one unless it is the site's own or\nhttp_request_host_is_external lets it through, on a safe port\n(http_allowed_safe_ports). The address comes back as it was, or false.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteUrls",
+                "Minn\\Support\\KsesProtocols",
+                "Minn\\Support\\Url"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\FontSettings"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "validated",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validated(mixed $url): string|false",
+                    "doc": "The address when it may be fetched, else false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 37
                 }
             ]
         },
@@ -169398,6 +170238,7 @@
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\RequestHeaders",
+                "Minn\\Runtime\\SafeUrls",
                 "Minn\\Runtime\\SiteInfo",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermTags",
@@ -183593,6 +184434,8 @@
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Media\\CompatFields",
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentTags",
@@ -186176,6 +187019,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\KsesRules",
+                "Minn\\Runtime\\SafeUrls",
                 "Minn\\Support\\Escape"
             ],
             "constructor": null,
@@ -187123,6 +187967,7 @@
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Query\\PostOrder",
+                "Minn\\Rest\\FontSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\SiteSchema",
@@ -187150,7 +187995,8 @@
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Runtime\\UserSave",
-                "Minn\\Runtime\\UserWrites"
+                "Minn\\Runtime\\UserWrites",
+                "Minn\\Theme\\FontNames"
             ],
             "constructor": null,
             "cases": [],
@@ -188305,6 +189151,7 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Users",
                 "Minn\\Login\\LoginController",
+                "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
@@ -189025,6 +189872,7 @@
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\QueryArgs",
+                "Minn\\Runtime\\SafeUrls",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Support\\Escape"
@@ -191530,6 +192378,103 @@
                     ],
                     "line": 134,
                     "end": 137
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\FontNames",
+            "short": "FontNames",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FontNames.php",
+            "lines": 56,
+            "doc": "The font library's names (probes fonts and font-writes): a font-family\nlist as a family stores it, the identity a face is stored under (its\ntitle, which the duplicate check compares), and the font types an\nupload may carry.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Sanitize"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\FontSettings",
+                "Minn\\Rest\\FontWritesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MIME_TYPES",
+                    "value": "array (   'otf' => 'application/vnd.ms-opentype',   'ttf' => 'font/sfnt',   'woff' => 'font/woff',   'woff2' => 'font/woff2', )",
+                    "doc": "The font types an upload may carry, by extension.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "STRETCH",
+                    "value": "array (   'normal' => '100%',   'ultra-condensed' => '50%',   'extra-condensed' => '62.5%',   'condensed' => '75%',   'semi-condensed' => '87.5%',   'semi-expanded' => '112.5%',   'expanded' => '125%',   'extra-expanded' => '150%',   'ultra-expanded' => '200%', )",
+                    "doc": "Stretch keywords as percentages, replaced one after another in this\norder, as the reference replaces them: a keyword that holds one\nreplaced before it keeps the rest (\"semi-condensed\" is \"semi-75%\",\n\"ultra-expanded\" is \"ultra-125%\").",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "family",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "family(mixed $fontFamily): string",
+                    "doc": "A font-family list as text, each name trimmed of spaces and quotes,\nthen joined by \", \": a name of letters and hyphens alone as it is,\nany other (a space, a digit, an underscore) double-quoted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "fontFamily",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "quoted",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "quoted(mixed $name): string",
+                    "doc": "One name of a font-family list, double-quoted unless it is letters and hyphens alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "faceSlug",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "faceSlug(mixed $settings): string",
+                    "doc": "A face's identity: its family list (trimmed, lower case, split at\neach comma and the spaces after it, each name's quotes trimmed),\nstyle (lower case), weight (lower case, normal and bold as numbers),\nstretch (lower case, keywords as percentages) and unicode range\n(upper case), joined by \";\". A property left out takes its default\n(normal, 400, 100%, U+0-10FFFF); one given empty stays empty.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 69
                 }
             ]
         },

@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1657
+        "delegates": 1658
     },
     "functions": {
         "__": {
@@ -5615,6 +5615,10 @@
         "wp_html_split": {
             "file": "formatting.php",
             "statement": "return Minn\\Html::split((string) $input);"
+        },
+        "wp_http_validate_url": {
+            "file": "http.php",
+            "statement": "return Minn\\Runtime\\SafeUrls::validated($url);"
         },
         "wp_image_editor_supports": {
             "file": "media.php",

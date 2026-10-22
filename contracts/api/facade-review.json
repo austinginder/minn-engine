@@ -15242,12 +15242,6 @@
                 "why": "whether the transports can meet the asked capabilities (ssl by the loaded extensions)",
                 "body": "e9ea1ca22326"
             },
-            "wp_http_validate_url": {
-                "verdict": "delegate",
-                "to": "Minn\\Support\\Url::validateForHttp",
-                "why": "the engine validates the address; the protocol check before it belongs inside validateForHttp, the two filters handed in as now",
-                "body": "5fd093a7400a"
-            },
             "wp_remote_retrieve_body": {
                 "verdict": "keep",
                 "reason": "shape",

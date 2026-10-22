@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Front\PostEmbed;
 use Minn\Http\Args;
+use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Json;
@@ -332,11 +333,12 @@ final class RuntimeRoutes
      * object stays one), its links on the response rather than in the data,
      * its status and headers.
      */
-    public static function toWp(Response $response): RestResponse
+    public static function toWp(Response $response, ?Method $method = null): RestResponse
     {
         $data = self::decode($response->body);
         $links = [];
-        if (is_array($data) && isset($data['_links']) && is_array($data['_links'])) {
+        // An OPTIONS answer describes a route: its links are data, as on the reference, and gain no target hints.
+        if ($method !== Method::Options && is_array($data) && isset($data['_links']) && is_array($data['_links'])) {
             $links = self::expand($data['_links']);
             unset($data['_links']);
         }
@@ -434,7 +436,7 @@ final class RuntimeRoutes
         $embedded = is_array($data) && array_key_exists('_embedded', $data) ? $data['_embedded'] : null;
         $wpRequest = self::wpRequest($request);
         $server = self::server();
-        $result = self::toWp($response);
+        $result = self::toWp($response, $request->method);
         if ($embedded !== null) {
             $plain = $result->get_data();
             unset($plain['_embedded']);

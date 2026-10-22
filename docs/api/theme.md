@@ -16,6 +16,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 99 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
+| [`FontNames`](#fontnames) | final class | 56 | The font library's names (probes fonts and font-writes): a font-family |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 111 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
@@ -389,6 +390,43 @@ family's, unquoted), then its other properties in kebab case.
 - `@return list<list<array<string, mixed>>>`
 
 Internals: `rule()` (private, line 78), `sources()` (private, line 102), `family()` (private, line 122), `variations()` (private, line 128), `firstName()` (private, line 134)
+
+
+## FontNames
+
+`final class Minn\Theme\FontNames` · `public/minn/src/Minn/Theme/FontNames.php`
+
+The font library's names (probes fonts and font-writes): a font-family
+list as a family stores it, the identity a face is stored under (its
+title, which the duplicate check compares), and the font types an
+upload may carry.
+
+- const `MIME_TYPES` = `array (   'otf' => 'application/vnd.ms-opentype',   'ttf' => 'font/sfnt',   'woff' => 'font/woff',   'woff2' => 'font/woff2', )` — The font types an upload may carry, by extension.
+- const `STRETCH` = `array (   'normal' => '100%',   'ultra-condensed' => '50%',   'extra-condensed' => '62.5%',   'condensed' => '75%',   'semi-condensed' => '87.5%',   'semi-expanded' => '112.5%',   'expanded' => '125%',   'extra-expanded' => '150%',   'ultra-expanded' => '200%', )` — Stretch keywords as percentages, replaced one after another in this
+order, as the reference replaces them: a keyword that holds one
+replaced before it keeps the rest ("semi-condensed" is "semi-75%",
+"ultra-expanded" is "ultra-125%").
+
+Used by: `Minn\Rest\FontSettings`, `Minn\Rest\FontWritesController`
+
+### static `family(mixed $fontFamily): string`
+
+A font-family list as text, each name trimmed of spaces and quotes,
+then joined by ", ": a name of letters and hyphens alone as it is,
+any other (a space, a digit, an underscore) double-quoted.
+
+### static `quoted(mixed $name): string`
+
+One name of a font-family list, double-quoted unless it is letters and hyphens alone.
+
+### static `faceSlug(mixed $settings): string`
+
+A face's identity: its family list (trimmed, lower case, split at
+each comma and the spaces after it, each name's quotes trimmed),
+style (lower case), weight (lower case, normal and bold as numbers),
+stretch (lower case, keywords as percentages) and unicode range
+(upper case), joined by ";". A property left out takes its default
+(normal, 400, 100%, U+0-10FFFF); one given empty stays empty.
 
 
 ## FrontLifecycle

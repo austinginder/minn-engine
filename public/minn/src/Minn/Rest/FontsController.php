@@ -12,6 +12,7 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Http\Subject;
 use Minn\Objects\Post;
 use Minn\Objects\Query;
 use Minn\RestError;
@@ -23,9 +24,9 @@ use Minn\Runtime\Runtime;
  * wp/v2/font-families and their font-faces, read and deleted (probe: the
  * font library routes on the reference). Only someone who may edit theme
  * options reads or deletes either, refused as rest_cannot_read or
- * rest_cannot_delete; a family or face that does not
- * exist is refused before the caller is judged, a face's family only
- * after. A list is the posts list narrowed to its own parameters: the
+ * rest_cannot_delete; a family or face that does not exist (the query's
+ * id, else the path's) is refused before the caller is judged, a face's
+ * family only after. A list is the posts list narrowed to its own parameters: the
  * statuses the caller may read (published and private), newest id first,
  * the ids, offset, slugs (families only) and pages as the posts list
  * reads them, through rest_{type}_query; anything else the request
@@ -51,7 +52,7 @@ final readonly class FontsController
     }
 
     /** One font family. */
-    #[Route(Method::Get, '/wp/v2/font-families/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_read', signInMessage: self::FAMILY, refuse: 'rest_cannot_read', message: self::FAMILY), args: [FontArgs::FAMILY], refuse: FontFamilyRecord::class)]
+    #[Route(Method::Get, '/wp/v2/font-families/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::FontFamily, signIn: 'rest_cannot_read', signInMessage: self::FAMILY, refuse: 'rest_cannot_read', message: self::FAMILY), args: [FontArgs::FAMILY])]
     public function family(Request $request, string $id): Response
     {
         return Reply::answer($request, $this->object->family($this->found((int) $id, 'wp_font_family')));
@@ -66,7 +67,7 @@ final readonly class FontsController
     }
 
     /** One font face of a family. */
-    #[Route(Method::Get, '/wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_read', signInMessage: self::FACE, refuse: 'rest_cannot_read', message: self::FACE), args: [FontArgs::FACE], refuse: FontFaceRecord::class)]
+    #[Route(Method::Get, '/wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::FontFace, signIn: 'rest_cannot_read', signInMessage: self::FACE, refuse: 'rest_cannot_read', message: self::FACE), args: [FontArgs::FACE])]
     public function face(Request $request, string $fontFamilyId, string $id): Response
     {
         $face = $this->found((int) $id, 'wp_font_face');
@@ -77,7 +78,7 @@ final readonly class FontsController
     }
 
     /** A font family deleted for good, its faces with it; there is no trash for either. */
-    #[Route(Method::Delete, '/wp/v2/font-families/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_delete', signInMessage: self::DELETE, refuse: 'rest_cannot_delete', message: self::DELETE), args: [FontArgs::FAMILY_DELETE], refuse: FontFamilyRecord::class)]
+    #[Route(Method::Delete, '/wp/v2/font-families/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::FontFamily, signIn: 'rest_cannot_delete', signInMessage: self::DELETE, refuse: 'rest_cannot_delete', message: self::DELETE), args: [FontArgs::FAMILY_DELETE])]
     public function deleteFamily(Request $request, string $id): Response
     {
         $family = $this->found((int) $id, 'wp_font_family');
@@ -85,7 +86,7 @@ final readonly class FontsController
     }
 
     /** A font face deleted for good, its file with it. */
-    #[Route(Method::Delete, '/wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_delete', signInMessage: self::DELETE, refuse: 'rest_cannot_delete', message: self::DELETE), args: [FontArgs::FACE_DELETE], refuse: FontFaceRecord::class)]
+    #[Route(Method::Delete, '/wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::FontFace, signIn: 'rest_cannot_delete', signInMessage: self::DELETE, refuse: 'rest_cannot_delete', message: self::DELETE), args: [FontArgs::FACE_DELETE])]
     public function deleteFace(Request $request, string $fontFamilyId, string $id): Response
     {
         $face = $this->found((int) $id, 'wp_font_face');

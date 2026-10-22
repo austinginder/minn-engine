@@ -38,6 +38,8 @@ final readonly class Subjects
             Subject::Navigation => $this->post($id, 'wp_navigation'),
             Subject::MenuItem => $this->post($id, 'nav_menu_item'),
             Subject::GlobalStyles, Subject::GlobalStylesParent => $this->post($id, 'wp_global_styles'),
+            Subject::FontFamily => $this->post($id, 'wp_font_family'),
+            Subject::FontFace => $this->post($id, 'wp_font_face'),
             Subject::Term => $this->term($id, self::TAXONOMIES[$base] ?? 'category'),
             Subject::Menu => $this->term($id, 'nav_menu'),
             Subject::User => $this->db->value("SELECT ID FROM {$this->db->table('users')} WHERE ID = ?", [$id]) !== null,

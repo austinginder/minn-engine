@@ -7645,6 +7645,40 @@ face, file and collection file it makes.
     or object given a single sanitizer.
 - `wp_register_font_library_page_routes` (editor) and
   `wp_register_font_library_wp_admin_page_routes` (admin) are dead ends.
+- **Writes** (suite `font-writes`, 2026-10-22). A family is created and
+  updated, a face created, each by POST with its settings as a JSON
+  string (`font_family_settings`, `font_face_settings`) and an optional
+  `theme_json_version` (2 or 3, never stored).
+  - **Order.** A missing setting, then the settings, then the version,
+    all before the caller; an update then looks for its family (404
+    `rest_post_invalid_id`), a face's create judges the caller, then its
+    family (404 `rest_post_invalid_parent`), then duplicates, then files.
+    Only the first refusal is answered.
+  - **The settings.** Not a string, not JSON or `null`, not an object;
+    then the schema (required keys first, then each key as sent: its
+    type or `... is not a valid property of Object.`), then emptiness
+    (`font_family_settings[ name ] cannot be empty.`,
+    `font_face_setting[ src ] cannot be empty.`). A settings refusal
+    carries a 400 status, its own data under `additional_data`. An
+    update may not name a slug at all.
+  - **A family** stores its name as the title (plain text), its slug
+    (a slug; refused when a family has it, an empty one matching any),
+    and the rest as JSON content. An update merges what it names.
+  - **A face's sources** are each an address the site may fetch
+    (`wp_http_validate_url`) or the name of an uploaded file field, and
+    every uploaded file must be one of them. Its identity (title and
+    slug) is `WP_Font_Utils::get_font_face_slug`; one already held by any
+    family's face is a duplicate.
+  - **Uploads** go to the fonts folder as `wp_handle_upload` moves them,
+    with the four font types allowed for the move (`upload_mimes`); the
+    content must be of the extension's type. Files are moved in the
+    order the sources name them, and a refused one leaves the earlier
+    ones in place. Each stored file is a `_wp_font_face_file` meta row,
+    written after the answer is shaped.
+  - **Answers.** A create is 201 with a Location (a face's names the
+    route's pattern, its family id unfilled, as the reference sends it);
+    every save fires the post's own hooks, then `rest_insert_{type}`,
+    `rest_after_insert_{type}` and `wp_after_insert_post`.
 
 ## Plugin dependencies (2026-10-09)
 
@@ -18396,7 +18430,8 @@ rows that are `open` or `austin`.
 | 18300 | REST fuzzing (10-21) | WP-CLI entity scenarios the engine fails on a single site (31) | done | `Cli\Bundled`, the CLI debug mode, probe `cli-runtime-doubts` |
 | 18300 | REST fuzzing (10-21) | a password with quotes or backslashes is checked raw where WordPress checks it slashed (sign-in, reset, REST) | done | slashed at wp-login, the reset form and REST; a backslash or empty password refused in the sanitize round (`Http\Args::PASSWORD`); suite `users` |
 | 18300 | REST fuzzing (10-21) | a path's integer capture named again in the query or a write's body (`?id=abc`, `{"id": 2}`) on the item writes, deletes and the media and global-styles reads: the reference judges and answers that one, the engine kept the path's | done | `Rest\PathArgs` on 48 routes (POST_ID, COMMENT_ID, GLOBAL_STYLES_ID); a callback's plain `false` listed without details (`Rest\ParamCheck`, the URL details route); suite `rest-parity` builds the cases from the reference's index |
-| 18300 | REST fuzzing (10-21) | the font library's writes (`/wp/v2/font-families/{id}`, `.../font-faces`): the reference answers a missing parameter, the engine has no route | open | `Rest\FontFamiliesController` writes; set aside in suite `rest-parity` |
+| 18300 | REST fuzzing (10-21) | the font library's writes (`/wp/v2/font-families/{id}`, `.../font-faces`): the reference answers a missing parameter, the engine has no route | done | `Rest\FontWritesController` (a family created and updated, a face created from remote sources or uploads) with `Rest\FontSettings` judging the settings and version before the caller (`Rest\FontFamilyCreation`, `FontFamilyChange`, `FontFaceCreation`); the font routes look their record up through the policy (`Http\Subject::FontFamily`, `FontFace`), so a missing one also leaves the Allow header out; a face's family lists its faces through the reference's own query (oldest by date, the first 99). Measured on the reference by a black-box capture of 239 requests (2026-10-22) and pinned by suite `font-writes` (116 steps on both stacks: answers, Location and Allow, stored rows and meta, the font files left). Two reference behaviors are kept as observed: a face is a duplicate of any family's face of the same identity, and a created face's Location names the route's pattern with its family id unfilled. One is not: a PUT or PATCH sending the settings as an object fails there with a fatal error, and saves here as a POST would. Fixed on the way: `WP_Font_Utils::get_font_face_slug` (stretch keywords as percentages in the reference's replacing order, style lower case, unicode range upper case; now `Theme\FontNames`), `wp_http_validate_url` moved to `Runtime\SafeUrls`, an OPTIONS answer's links stay data without target hints (`RuntimeRoutes::toWp`), a path's required capture counts as present (`Rest\ArgCheck`) |
+| 18300 | Font writes (10-22) | OPTIONS on a route whose core controller the engine keeps as a dead end (the font families and faces, a template's autosaves) carries no `schema`, where the reference describes its item schema | open | the schema each publishes is observable (the capture holds the font ones); an engine route needs a way to name its own schema for `Api::withSchema` |
 | 18300 | REST fuzzing (10-21) | a route's body arguments sent in the query string (`POST /wp/v2/users?password=`) are read by the reference; the engine reads the JSON body only | done | a core route's write reads the query beneath its JSON or form body (`Request::withQueryBeneathBody` in `Rest\Api`), so the argument check and the handler see the same arguments; a raw upload body is left alone; suite `rest-parity` (a write's arguments from the query) |
 | 18300 | Facade doubts (10-21) | `auth_redirect()` on a front request let the logged-in cookie alone through and refused the admin cookie alone: `wp_validate_auth_cookie()` with no cookie answered the engine's session whatever the scheme | done | it reads the request's cookie for the scheme; `wp_validate_logged_in_cookie` judges the logged-in cookie under its own scheme (so `auth_cookie_malformed` and `auth_cookie_valid` fire as on the reference: 45 hook differences agree now); suite `rest-gate` |
 | 18300 | Hook battery (10-21) | `wp_clean_themes_cache()` left each theme's patterns cached (`WP_Theme::cache_delete` did nothing), so a changed theme's patterns stayed up to half an hour; the reference deletes the update check, then every installed theme's pattern cache | done | `WP_Theme::cache_delete` deletes the pattern cache, `wp_clean_themes_cache` asks it of every theme; probe `theme-caches` (the `template-loading` scenario had passed only while no pattern cache was warm) |

@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 468 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 469 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -27,11 +27,14 @@ the wp/v2 surface: shapes and controllers
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
-| [`FontArgs`](#fontargs) | final class | 53 | The font library's parameters as the reference's REST index lists them |
+| [`FontArgs`](#fontargs) | final class | 70 | The font library's parameters as the reference's REST index lists them |
 | [`FontCollectionsController`](#fontcollectionscontroller) | final readonly class | 78 | wp/v2/font-collections (probe: the font library routes on the |
-| [`FontFaceRecord`](#fontfacerecord) | final class | 21 | A font face route names a font face: refused as an invalid post id |
-| [`FontFamilyRecord`](#fontfamilyrecord) | final class | 8 | A font family route names a font family: refused as an invalid post id |
-| [`FontObject`](#fontobject) | final readonly class | 87 | A font family and a font face as wp/v2 shapes them (probe: the font |
+| [`FontFaceCreation`](#fontfacecreation) | final class | 9 | A font face's create judges its settings (its sources against the files |
+| [`FontFamilyChange`](#fontfamilychange) | final class | 9 | A font family's update judges its settings, then its theme.json version, |
+| [`FontFamilyCreation`](#fontfamilycreation) | final class | 9 | A font family's create judges its settings, then its theme.json version, |
+| [`FontObject`](#fontobject) | final readonly class | 93 | A font family and a font face as wp/v2 shapes them (probe: the font |
+| [`FontSettings`](#fontsettings) | final class | 221 | The settings a font family or face is written with, judged and cleaned as |
+| [`FontWritesController`](#fontwritescontroller) | final readonly class | 151 | wp/v2/font-families written (probe font-writes): a family created and |
 | [`FontsController`](#fontscontroller) | final readonly class | 162 | wp/v2/font-families and their font-faces, read and deleted (probe: the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 161 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
@@ -78,7 +81,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 571 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 572 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
@@ -91,7 +94,7 @@ the wp/v2 surface: shapes and controllers
 | [`SiteHealthController`](#sitehealthcontroller) | final readonly class | 17 | wp-site-health/v1 (probe: the site health routes on the reference): the |
 | [`SiteSchema`](#siteschema) | final class | 38 | The site's JSON-schema handler: one Schema whose email test, number |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
-| [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
+| [`Subjects`](#subjects) | final readonly class | 55 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TemplateObject`](#templateobject) | final readonly class | 105 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 197 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
@@ -266,7 +269,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 420), `withPageLinks()` (private, line 435), `options()` (private, line 466), `withSchema()` (private, line 483), `withAllow()` (private, line 504)
+Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 421), `withPageLinks()` (private, line 436), `options()` (private, line 467), `withSchema()` (private, line 484), `withAllow()` (private, line 505)
 
 
 ## ApplicationPasswordsController
@@ -1185,27 +1188,31 @@ list and a face's list take the posts list's ids, offset, order and
 exact-search switch, ordered by id or by include alone, and only a
 family's list takes slugs. Neither takes a search, a status or an
 author: the reference ignores them. The ids a path names are listed as
-the reference lists them, except that the index there calls a face's
-family and id required; here they are optional, because the router
-looks for a required argument in the query and the path always carries
-them.
+the reference lists them (a face's family and id required, which the
+path always carries). A write's settings and theme.json version are
+judged by Rest\FontSettings, in the reference's order, before the
+caller is.
 
 - const `CONTEXT` = `array (   'description' => 'Scope under which the request is made; determines fields present in response.',   'type' => 'string',   'enum' =>    array (     0 => 'view',     1 => 'embed',     2 => 'edit',   ),   'default' => 'view',   'required' => false, )`
 - const `PAGE` = `array (   'description' => 'Current page of the collection.',   'type' => 'integer',   'default' => 1,   'minimum' => 1,   'required' => false, )`
 - const `PER_PAGE` = `array (   'description' => 'Maximum number of items to be returned in result set.',   'type' => 'integer',   'default' => 10,   'minimum' => 1,   'maximum' => 100,   'required' => false, )`
-- const `FAMILY_ID` = `array (   'description' => 'The ID for the parent font family of the font face.',   'type' => 'integer',   'required' => false, )`
+- const `FAMILY_ID` = `array (   'description' => 'The ID for the parent font family of the font face.',   'type' => 'integer',   'required' => true, )`
+- const `VERSION` = `array (   'description' => 'Version of the theme.json schema used for the typography settings.',   'type' => 'integer',   'default' => 3,   'minimum' => 2,   'maximum' => 3,   'required' => false,   'handler_validates' => true, )`
 - const `POST_LIST` = `array (   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )` — A list of font families or font faces past the shared three, in the reference's order.
 - const `FAMILIES` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to posts with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )` — The font families list.
 - const `FAMILY` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font family.
-- const `FACES` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )` — A font family's faces.
-- const `FACE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font face of a family.
+- const `FACES` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )` — A font family's faces.
+- const `FACE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => true,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font face of a family.
+- const `FAMILY_CREATE` = `array (   'theme_json_version' =>    array (     'description' => 'Version of the theme.json schema used for the typography settings.',     'type' => 'integer',     'default' => 3,     'minimum' => 2,     'maximum' => 3,     'required' => false,     'handler_validates' => true,   ),   'font_family_settings' =>    array (     'description' => 'font-family declaration in theme.json format, encoded as a string.',     'type' => 'string',     'required' => true,     'handler_validates' => true,   ), )` — A font family created.
+- const `FAMILY_UPDATE` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ),   'theme_json_version' =>    array (     'description' => 'Version of the theme.json schema used for the typography settings.',     'type' => 'integer',     'default' => 3,     'minimum' => 2,     'maximum' => 3,     'required' => false,     'handler_validates' => true,   ),   'font_family_settings' =>    array (     'description' => 'font-family declaration in theme.json format, encoded as a string.',     'type' => 'string',     'required' => true,     'handler_validates' => true,   ), )` — A font family updated.
+- const `FACE_CREATE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'theme_json_version' =>    array (     'description' => 'Version of the theme.json schema used for the typography settings.',     'type' => 'integer',     'default' => 3,     'minimum' => 2,     'maximum' => 3,     'required' => false,     'handler_validates' => true,   ),   'font_face_settings' =>    array (     'description' => 'font-face declaration in theme.json format, encoded as a string.',     'type' => 'string',     'required' => true,     'handler_validates' => true,   ), )` — A font face created under its family.
 - const `FORCE` = `array (   'type' => 'boolean',   'default' => false,   'description' => 'Whether to bypass Trash and force deletion.',   'required' => false, )` — Whether a delete bypasses the trash, as a font route lists it.
 - const `FAMILY_DELETE` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )` — A font family deleted.
-- const `FACE_DELETE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => false,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )` — A font face deleted.
+- const `FACE_DELETE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => true,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => true,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )` — A font face deleted.
 - const `COLLECTIONS` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ), )` — The font collections list.
 - const `COLLECTION` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font collection.
 
-Used by: `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`
+Used by: `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontWritesController`, `Minn\Rest\FontsController`
 
 
 ## FontCollectionsController
@@ -1248,39 +1255,52 @@ One registered font collection, by its slug.
 Internals: `collections()` (private, line 84), `item()` (private, line 96)
 
 
-## FontFaceRecord
+## FontFaceCreation
 
-`final class Minn\Rest\FontFaceRecord` · `public/minn/src/Minn/Rest/FontFaceRecord.php` · implements `Minn\Http\Refusal`
+`final class Minn\Rest\FontFaceCreation` · `public/minn/src/Minn/Rest/FontFaceCreation.php` · implements `Minn\Http\Refusal`
 
-A font face route names a font face: refused as an invalid post id
-before the caller is judged, signed out or not, when the id (the
-query's, else the path's, as the reference reads a parameter) is not a
-wp_font_face post. Its family is judged once the caller has been.
+A font face's create judges its settings (its sources against the files
+the request uploads), then its theme.json version, before the caller is
+judged; its family is looked for only after, as on the reference.
 
-Used by: `Minn\Rest\FontFamilyRecord`, `Minn\Rest\FontsController`
-
-### static `refuse(Minn\Http\Request $request): void`
-
-Throws rest_post_invalid_id unless the face exists.
-
-### static `require(Minn\Http\Request $request, string $pattern, string $type): void`
-
-Throws rest_post_invalid_id unless the id the path ends with (or the query's id) is a post of the type.
-
-
-## FontFamilyRecord
-
-`final class Minn\Rest\FontFamilyRecord` · `public/minn/src/Minn/Rest/FontFamilyRecord.php` · implements `Minn\Http\Refusal`
-
-A font family route names a font family: refused as an invalid post id
-before the caller is judged, signed out or not, when the id is not a
-wp_font_family post (a post of any other type, a face included).
-
-Used by: `Minn\Rest\FontsController`
+Used by: `Minn\Rest\FontWritesController`
 
 ### static `refuse(Minn\Http\Request $request): void`
 
-Throws rest_post_invalid_id unless the family exists.
+Throws the settings' or the version's refusal.
+
+
+## FontFamilyChange
+
+`final class Minn\Rest\FontFamilyChange` · `public/minn/src/Minn/Rest/FontFamilyChange.php` · implements `Minn\Http\Refusal`
+
+A font family's update judges its settings, then its theme.json version,
+before the family is looked for and the caller judged (the policy's
+subject), as on the reference: a bad setting is answered even for a
+family that does not exist.
+
+Used by: `Minn\Rest\FontWritesController`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws the settings' or the version's refusal.
+
+
+## FontFamilyCreation
+
+`final class Minn\Rest\FontFamilyCreation` · `public/minn/src/Minn/Rest/FontFamilyCreation.php` · implements `Minn\Http\Refusal`
+
+A font family's create judges its settings, then its theme.json version,
+before the caller is judged (Rest\FontSettings), so a caller who may not
+create one hears of a bad setting first, as on the reference. With
+plugins present, the refusal reaches them where a permission refusal
+would, after rest_request_before_callbacks.
+
+Used by: `Minn\Rest\FontWritesController`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws the settings' or the version's refusal.
 
 
 ## FontObject
@@ -1292,8 +1312,8 @@ library routes on the reference): the id, the theme.json version (3,
 which nothing stores), and the settings the post holds: a family's
 name and slug from its title and slug, then its font family and preview
 from its JSON content; a face's font-face properties from its JSON
-content. A family lists its published and private faces by id, each a
-link that embeds; a face links to its family. The
+content. A family lists its faces by id, oldest first, each a link
+that embeds; a face links to its family. The
 same fields show in every context, and the fields plugin code registers
 join through rest_prepare_wp_font_family and rest_prepare_wp_font_face.
 Only someone who may edit theme options sees either, and may use every
@@ -1303,10 +1323,10 @@ method on it.
 - const `FACE_METHODS` = `array (   0 => 'GET',   1 => 'DELETE', )`
 - const `FACE_PROPERTIES` = `array (   0 => 'fontFamily',   1 => 'fontStyle',   2 => 'fontWeight',   3 => 'fontDisplay',   4 => 'src',   5 => 'fontStretch',   6 => 'ascentOverride',   7 => 'descentOverride',   8 => 'fontVariant',   9 => 'fontFeatureSettings',   10 => 'fontVariationSettings',   11 => 'lineGapOverride',   12 => 'sizeAdjust',   13 => 'unicodeRange',   14 => 'preview', )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\FontsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\FontWritesController`, `Minn\Rest\FontsController`
 
 ```php
-__construct(Minn\Db $db, Minn\Rest\RestUrl $url)
+__construct(Minn\Rest\RestUrl $url)
 ```
 
 
@@ -1322,7 +1342,137 @@ A font face as wp/v2 shapes it, through rest_prepare_wp_font_face. @return array
 
 - `@return array<string, mixed>`
 
-Internals: `faceIds()` (private, line 75), `familySettings()` (private, line 88), `faceSettings()` (private, line 102)
+Internals: `faceIds()` (private, line 81), `familySettings()` (private, line 94), `faceSettings()` (private, line 108)
+
+
+## FontSettings
+
+`final class Minn\Rest\FontSettings` · `public/minn/src/Minn/Rest/FontSettings.php`
+
+The settings a font family or face is written with, judged and cleaned as
+the reference does (probe font-writes). A POST sends them as a JSON
+string: one that is not a string is refused by type, one that is not
+JSON (or is null) as not "a valid JSON string", and what it holds is held
+to the settings' schema (required keys first, then each key in the order
+sent: its type, or that it is not a property), then each key that must
+not be empty. A family's update names no slug and needs none of the
+rest; a face's sources must each be an address the site may fetch or a
+file the request uploads, and every file it uploads must be one of
+them. Only the first refusal is answered, under the settings' name, its
+own data moved under additional_data beside a 400 status. A PUT or a
+PATCH reads the settings as the object itself, which the reference
+cannot save (it fails with a fatal error); here such an update saves as
+a POST would.
+
+- const `FAMILY` = `'font_family_settings'`
+- const `FACE` = `'font_face_settings'`
+- const `FAMILY_SCHEMA` = `array (   'type' => 'object',   'properties' =>    array (     'name' =>      array (       'type' => 'string',     ),     'slug' =>      array (       'type' => 'string',     ),     'fontFamily' =>      array (       'type' => 'string',     ),     'preview' =>      array (       'type' => 'string',     ),   ),   'additionalProperties' => false, )`
+- const `FACE_SCHEMA` = `array (   'type' => 'object',   'properties' =>    array (     'fontFamily' =>      array (       'type' => 'string',     ),     'fontStyle' =>      array (       'type' => 'string',     ),     'fontWeight' =>      array (       'type' =>        array (         0 => 'string',         1 => 'integer',       ),     ),     'fontDisplay' =>      array (       'type' => 'string',       'enum' =>        array (         0 => 'auto',         1 => 'block',         2 => 'fallback',         3 => 'swap',         4 => 'optional',       ),     ),     'src' =>      array (       'anyOf' =>        array (         0 =>          array (           'type' => 'string',         ),         1 =>          array (           'type' => 'array',           'items' =>            array (             'type' => 'string',           ),         ),       ),     ),     'fontStretch' =>      array (       'type' => 'string',     ),     'ascentOverride' =>      array (       'type' => 'string',     ),     'descentOverride' =>      array (       'type' => 'string',     ),     'fontVariant' =>      array (       'type' => 'string',     ),     'fontFeatureSettings' =>      array (       'type' => 'string',     ),     'fontVariationSettings' =>      array (       'type' => 'string',     ),     'lineGapOverride' =>      array (       'type' => 'string',     ),     'sizeAdjust' =>      array (       'type' => 'string',     ),     'unicodeRange' =>      array (       'type' => 'string',     ),     'preview' =>      array (       'type' => 'string',     ),   ),   'required' =>    array (     0 => 'fontFamily',     1 => 'src',   ),   'additionalProperties' => false, )`
+
+Used by: `Minn\Rest\FontFaceCreation`, `Minn\Rest\FontFamilyChange`, `Minn\Rest\FontFamilyCreation`, `Minn\Rest\FontWritesController`
+
+### static `newFamily(Minn\Http\Request $request): array`
+
+A new family's settings, judged. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `familyChanges(Minn\Http\Request $request): array`
+
+An update's settings, judged: what it names replaces what is stored, and the slug cannot change. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `newFace(Minn\Http\Request $request): array`
+
+A new face's settings, judged, its sources against the files the request uploads. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `version(Minn\Http\Request $request): void`
+
+The theme.json version a write names, when it names one: an integer from 2 to 3, refused as any argument is.
+
+### static `sources(mixed $src): array`
+
+The sources a face names, each as text, in order. @return list<string>
+
+- `@return list<string>`
+
+### static `cleanFamily(array $settings): array`
+
+A family's settings as stored: the name as plain text, the slug as a
+slug, the font-family list quoted name by name, the preview a clean
+address; in the order sent.
+
+- `@param array<string, mixed> $settings`
+- `@return array<string, mixed>`
+
+### static `cleanFace(array $settings): array`
+
+A face's settings as stored, in the order sent: the font-family list
+quoted name by name, the preview a clean address, the sources left for
+the upload to resolve, every other value as plain text (a weight given
+as a number becomes its text).
+
+- `@param array<string, mixed> $settings`
+- `@return array<string, mixed>`
+
+Internals: `decoded()` (private, line 183), `object()` (private, line 211), `filled()` (private, line 226), `refused()` (private, line 236), `topLevel()` (private, line 243), `values()` (private, line 249)
+
+
+## FontWritesController
+
+`final readonly class Minn\Rest\FontWritesController` · `public/minn/src/Minn/Rest/FontWritesController.php`
+
+wp/v2/font-families written (probe font-writes): a family created and
+updated, a face created under its family, each saved as the reference
+saves it. The settings are judged before the caller (Rest\FontSettings);
+only someone who may edit theme options writes. A family is stored as
+its name (the title), its slug and the rest of its settings as JSON
+content, refused when another family has the slug (an empty slug matches
+any); its update merges what it names over what is stored. A face is
+stored under its identity (Theme\FontNames::faceSlug), refused when a
+face of any family already has it, its uploaded files moved into the fonts
+folder in the order its sources name them (a refused file leaves the
+ones before it in place) and recorded once the answer is shaped. Each
+save fires the post's own hooks, then rest_insert_{type},
+rest_after_insert_{type} and wp_after_insert_post.
+
+- const `CREATE` = `'Sorry, you are not allowed to create posts as this user.'`
+- const `EDIT` = `'Sorry, you are not allowed to edit this post.'`
+- const `FILE_META` = `'_wp_font_face_file'`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Content\Posts $posts, Minn\Rest\FontObject $object, Minn\Rest\RestUrl $url)
+```
+
+
+### `createFamily(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /wp/v2/font-families (cap edit_theme_options)`
+
+A font family created from its settings.
+
+### `updateFamily(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options; font family {id} must exist)`
+
+Route: `PUT /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options; font family {id} must exist)`
+
+Route: `PATCH /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options; font family {id} must exist)`
+
+A font family's name, font-family list or preview changed; what the settings leave out stays.
+
+### `createFace(Minn\Http\Request $request, string $fontFamilyId): Minn\Http\Response`
+
+Route: `POST /wp/v2/font-families/{font_family_id:[\d]+}/font-faces (cap edit_theme_options)`
+
+A font face created under its family, from remote sources or files the request uploads.
+
+Internals: `stored()` (private, line 131), `saved()` (private, line 166), `found()` (private, line 180), `post()` (private, line 186)
 
 
 ## FontsController
@@ -1332,9 +1482,9 @@ Internals: `faceIds()` (private, line 75), `familySettings()` (private, line 88)
 wp/v2/font-families and their font-faces, read and deleted (probe: the
 font library routes on the reference). Only someone who may edit theme
 options reads or deletes either, refused as rest_cannot_read or
-rest_cannot_delete; a family or face that does not
-exist is refused before the caller is judged, a face's family only
-after. A list is the posts list narrowed to its own parameters: the
+rest_cannot_delete; a family or face that does not exist (the query's
+id, else the path's) is refused before the caller is judged, a face's
+family only after. A list is the posts list narrowed to its own parameters: the
 statuses the caller may read (published and private), newest id first,
 the ids, offset, slugs (families only) and pages as the posts list
 reads them, through rest_{type}_query; anything else the request
@@ -1361,7 +1511,7 @@ The font families.
 
 ### `family(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options)`
+Route: `GET /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options; font family {id} must exist)`
 
 One font family.
 
@@ -1373,23 +1523,23 @@ A font family's faces.
 
 ### `face(Minn\Http\Request $request, string $fontFamilyId, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+} (cap edit_theme_options)`
+Route: `GET /wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+} (cap edit_theme_options; font face {id} must exist)`
 
 One font face of a family.
 
 ### `deleteFamily(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options)`
+Route: `DELETE /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options; font family {id} must exist)`
 
 A font family deleted for good, its faces with it; there is no trash for either.
 
 ### `deleteFace(Minn\Http\Request $request, string $fontFamilyId, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+} (cap edit_theme_options)`
+Route: `DELETE /wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+} (cap edit_theme_options; font face {id} must exist)`
 
 A font face deleted for good, its file with it.
 
-Internals: `delete()` (private, line 106), `list()` (private, line 125), `totals()` (private, line 153), `parent()` (private, line 172), `found()` (private, line 182), `invalidParent()` (private, line 191)
+Internals: `delete()` (private, line 107), `list()` (private, line 126), `totals()` (private, line 154), `parent()` (private, line 173), `found()` (private, line 183), `invalidParent()` (private, line 192)
 
 
 ## GlobalStylesController
@@ -2745,7 +2895,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontWritesController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -2942,7 +3092,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\FontWritesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -3394,7 +3544,7 @@ Keeps the route and handler a request matched, for the response plugins see at s
 
 An engine refusal as plugins handle one.
 
-### static `toWp(Minn\Http\Response $response): Minn\Objects\RestResponse`
+### static `toWp(Minn\Http\Response $response, ?Minn\Http\Method $method = NULL): Minn\Objects\RestResponse`
 
 An engine answer as plugins handle one: its data decoded (an empty
 object stays one), its links on the response rather than in the data,
@@ -3441,7 +3591,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 104), `describing()` (private, line 173), `filled()` (private, line 192), `dispatchDone()` (private, line 402), `asksForXml()` (private, line 477), `oembedXml()` (private, line 488), `look()` (private, line 502), `remember()` (private, line 507), `decode()` (private, line 514), `expand()` (private, line 534), `newWpRequest()` (private, line 559), `toResponse()` (private, line 588)
+Internals: `allow()` (private, line 105), `describing()` (private, line 174), `filled()` (private, line 193), `dispatchDone()` (private, line 404), `asksForXml()` (private, line 479), `oembedXml()` (private, line 490), `look()` (private, line 504), `remember()` (private, line 509), `decode()` (private, line 516), `expand()` (private, line 536), `newWpRequest()` (private, line 561), `toResponse()` (private, line 590)
 
 
 ## Schema
@@ -4116,7 +4266,7 @@ formatter and string-format sanitizers carry the filters plugins hook
 (is_email, number_format_i18n, the sanitizers), and the answers the REST
 helpers give with it (true or a list of errors).
 
-Used by: `Minn\Rest\RestMeta`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\ThemeSupports`
+Used by: `Minn\Rest\FontSettings`, `Minn\Rest\RestMeta`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\ThemeSupports`
 
 
 ### static `get(): Minn\Rest\Schema`
@@ -4207,7 +4357,7 @@ Whether a post of the type exists.
 
 Whether a term of the taxonomy exists.
 
-Internals: `post()` (private, line 60), `term()` (private, line 65)
+Internals: `post()` (private, line 62), `term()` (private, line 67)
 
 
 ## Taxonomies

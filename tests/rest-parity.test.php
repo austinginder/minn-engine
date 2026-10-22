@@ -138,13 +138,11 @@ link_parity( 'a refusal', '/wp-json/wp/v2/settings' );
 // A path's integer capture sent again in the query is the argument the route reads, on every
 // method: signed out, ?id=abc is refused as an invalid parameter before the caller is judged.
 // The cases come from the reference's index, so a route added later is held to it too.
-// Set aside: the font library's writes, which the engine does not serve (register row 18300).
-$aside = array( '/wp/v2/font-families/(?P<id>[\d]+)', '/wp/v2/font-families/(?P<font_family_id>[\d]+)/font-faces' );
 [ , $index ] = minn_test_fetch( "$REF/?rest_route=/" );
 $same  = 0;
 $cases = 0;
 foreach ( ( json_decode( (string) $index, true )['routes'] ?? array() ) as $route => $info ) {
-	if ( in_array( $route, $aside, true ) || ! preg_match_all( '/\(\?P<(\w+)>/', $route, $names ) ) {
+	if ( ! preg_match_all( '/\(\?P<(\w+)>/', $route, $names ) ) {
 		continue;
 	}
 	$path = preg_replace( '/\(\?P<\w+>(?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)/', '1', $route );

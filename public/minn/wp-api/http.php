@@ -2,7 +2,6 @@
 /** The HTTP API over WP_Http, and the Requests library (wp-api/requests/) plugins call directly. */
 
 use Minn\Runtime\Runtime;
-use Minn\Support\Url;
 
 // The Requests classes load the first time anything names them; the
 // pre-namespace Requests_* names become aliases, with the one deprecation
@@ -187,21 +186,7 @@ function wp_http_supports($capabilities = [], $url = null)
 
 function wp_http_validate_url($url)
 {
-    if (!is_string($url) || $url === '') {
-        return false;
-    }
-    $checked = wp_kses_bad_protocol($url, ['http', 'https']);
-    if ($checked === '' || strtolower($checked) !== strtolower($url)) {
-        return false;
-    }
-    $home = parse_url(home_url());
-    return Url::validateForHttp(
-        $checked,
-        (string) ($home['host'] ?? ''),
-        (int) ($home['port'] ?? 0),
-        static fn (string $host, string $url): bool => (bool) apply_filters('http_request_host_is_external', false, $host, $url),
-        static fn (array $ports, string $host, string $url): array => (array) apply_filters('http_allowed_safe_ports', $ports, $host, $url),
-    ) ?? false;
+    return Minn\Runtime\SafeUrls::validated($url);
 }
 
 /** The parse_url() key a PHP_URL_* constant names, looked up as an array key (so "1" and true name the host), or false. */

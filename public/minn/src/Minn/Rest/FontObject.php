@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\PostRecord;
-use Minn\Db;
 use Minn\Json;
+use Minn\Runtime\Handoff;
 
 /**
  * A font family and a font face as wp/v2 shapes them (probe: the font
@@ -14,8 +14,8 @@ use Minn\Json;
  * which nothing stores), and the settings the post holds: a family's
  * name and slug from its title and slug, then its font family and preview
  * from its JSON content; a face's font-face properties from its JSON
- * content. A family lists its published and private faces by id, each a
- * link that embeds; a face links to its family. The
+ * content. A family lists its faces by id, oldest first, each a link
+ * that embeds; a face links to its family. The
  * same fields show in every context, and the fields plugin code registers
  * join through rest_prepare_wp_font_family and rest_prepare_wp_font_face.
  * Only someone who may edit theme options sees either, and may use every
@@ -27,7 +27,7 @@ final readonly class FontObject
     private const FACE_METHODS = ['GET', 'DELETE'];
     private const FACE_PROPERTIES = ['fontFamily', 'fontStyle', 'fontWeight', 'fontDisplay', 'src', 'fontStretch', 'ascentOverride', 'descentOverride', 'fontVariant', 'fontFeatureSettings', 'fontVariationSettings', 'lineGapOverride', 'sizeAdjust', 'unicodeRange', 'preview'];
 
-    public function __construct(private Db $db, private RestUrl $url)
+    public function __construct(private RestUrl $url)
     {
     }
 
@@ -71,11 +71,17 @@ final readonly class FontObject
         return RuntimePrepare::postItem('rest_prepare_wp_font_face', $item, $post->id, 'wp_font_face');
     }
 
-    /** A family's published and private faces, oldest first. @return list<int> */
+    /**
+     * A family's faces, oldest first, as the reference's query lists them
+     * (the first 99 by date alone, so faces of one second come as the
+     * database gives them).
+     *
+     * @return list<int>
+     */
     private function faceIds(int $familyId): array
     {
-        $rows = $this->db->rows("SELECT ID FROM {$this->db->table('posts')} WHERE post_type = 'wp_font_face' AND post_parent = ? AND post_status IN ('publish', 'private') ORDER BY ID ASC", [$familyId]);
-        return array_map(static fn (array $row): int => (int) $row['ID'], $rows);
+        $ids = Handoff::newQuery()->query(['post_parent' => $familyId, 'post_type' => 'wp_font_face', 'fields' => 'ids', 'posts_per_page' => 99, 'orderby' => 'date', 'order' => 'ASC']);
+        return array_map('intval', (array) $ids);
     }
 
     /**

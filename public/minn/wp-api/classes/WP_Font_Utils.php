@@ -2,35 +2,24 @@
 
 /**
  * The font library's helpers (probe fonts): a family list sanitized (names
- * of more than one word quoted), the slug that identifies a face, data
+ * of more than letters and hyphens quoted), the slug that identifies a face, data
  * kept to a schema of sanitizers, and the font types an upload may carry.
  */
 class WP_Font_Utils
 {
     private static function maybe_add_quotes($item)
     {
-        $item = trim((string) $item, " \t\n\r\0\x0B\"'");
-        // Only a name of letters and hyphens goes unquoted: a digit or an underscore is quoted too (probe font-writes).
-        return preg_match('/^[a-zA-Z-]+$/', $item) === 1 ? $item : '"' . $item . '"';
+        return Minn\Theme\FontNames::quoted($item);
     }
 
     public static function sanitize_font_family($font_family)
     {
-        $font_family = sanitize_text_field((string) $font_family);
-        if ($font_family === '') {
-            return '';
-        }
-        $names = array_filter(array_map(static fn ($name) => trim((string) $name, " \t\n\r\0\x0B\"'"), explode(',', $font_family)), static fn ($name) => $name !== '');
-        return implode(', ', array_map([self::class, 'maybe_add_quotes'], $names));
+        return Minn\Theme\FontNames::family($font_family);
     }
 
-    /** family list (lower case, unquoted); style; weight (keywords as numbers); stretch; unicode range. */
     public static function get_font_face_slug($settings)
     {
-        $settings = wp_parse_args((array) $settings, ['fontFamily' => '', 'fontStyle' => 'normal', 'fontWeight' => '400', 'fontStretch' => '100%', 'unicodeRange' => 'U+0-10FFFF']);
-        $families = array_map(static fn ($name) => strtolower(trim((string) $name, " \t\n\r\0\x0B\"'")), explode(',', (string) $settings['fontFamily']));
-        $weight = str_replace(['normal', 'bold'], ['400', '700'], (string) $settings['fontWeight']);
-        return implode(';', [implode(',', $families), (string) $settings['fontStyle'], $weight, (string) $settings['fontStretch'], (string) $settings['unicodeRange']]);
+        return Minn\Theme\FontNames::faceSlug($settings);
     }
 
     /** Only the keys the schema names, each through its sanitizer; lists of objects take the schema's first entry. */
@@ -67,6 +56,6 @@ class WP_Font_Utils
 
     public static function get_allowed_font_mime_types()
     {
-        return ['otf' => 'application/vnd.ms-opentype', 'ttf' => 'font/sfnt', 'woff' => 'font/woff', 'woff2' => 'font/woff2'];
+        return Minn\Theme\FontNames::MIME_TYPES;
     }
 }

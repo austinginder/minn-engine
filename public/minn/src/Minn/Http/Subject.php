@@ -29,12 +29,15 @@ enum Subject
     /** A user by id, or "me" for the caller, who must then be signed in. */
     case User;
     case Comment;
+    /** A font family by id (wp_font_family), and a font face (wp_font_face): any other post is no such record. */
+    case FontFamily;
+    case FontFace;
 
     /** The reference's error code for a record that does not exist. */
     public function missingCode(): string
     {
         return match ($this) {
-            self::Post, self::Attachment, self::Block, self::Navigation, self::MenuItem => 'rest_post_invalid_id',
+            self::Post, self::Attachment, self::Block, self::Navigation, self::MenuItem, self::FontFamily, self::FontFace => 'rest_post_invalid_id',
             self::PostParent, self::GlobalStylesParent => 'rest_post_invalid_parent',
             self::GlobalStyles => 'rest_global_styles_not_found',
             self::Term, self::Menu => 'rest_term_invalid',
@@ -47,7 +50,7 @@ enum Subject
     public function missingMessage(): string
     {
         return match ($this) {
-            self::Post, self::Attachment, self::Block, self::Navigation, self::MenuItem => 'Invalid post ID.',
+            self::Post, self::Attachment, self::Block, self::Navigation, self::MenuItem, self::FontFamily, self::FontFace => 'Invalid post ID.',
             self::PostParent, self::GlobalStylesParent => 'Invalid post parent ID.',
             self::GlobalStyles => 'No global styles config exists with that ID.',
             self::Term, self::Menu => 'Term does not exist.',

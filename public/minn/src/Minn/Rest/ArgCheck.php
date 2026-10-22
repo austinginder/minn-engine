@@ -55,10 +55,10 @@ final readonly class ArgCheck
         if ($body !== []) {
             $sources[] = [$body, $request->json()];
         }
-        // Every required argument that did not arrive is answered before any value is judged.
+        // Every required argument that did not arrive is answered before any value is judged; one the path names has.
         $this->missing($shared, $request->query);
         foreach ($sources as [$args, $values]) {
-            $this->missing($args, $values);
+            $this->missing($args, $values + $captures);
         }
         $this->round([[$shared, $request->query]]);
         $this->round($sources);

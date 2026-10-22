@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Args;
+
 /**
  * The font library's parameters as the reference's REST index lists them
  * (font families, font faces, font collections), in its order, each read
@@ -12,17 +14,18 @@ namespace Minn\Rest;
  * exact-search switch, ordered by id or by include alone, and only a
  * family's list takes slugs. Neither takes a search, a status or an
  * author: the reference ignores them. The ids a path names are listed as
- * the reference lists them, except that the index there calls a face's
- * family and id required; here they are optional, because the router
- * looks for a required argument in the query and the path always carries
- * them.
+ * the reference lists them (a face's family and id required, which the
+ * path always carries). A write's settings and theme.json version are
+ * judged by Rest\FontSettings, in the reference's order, before the
+ * caller is.
  */
 final class FontArgs
 {
     private const CONTEXT = ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'enum' => ['view', 'embed', 'edit'], 'default' => 'view', 'required' => false];
     private const PAGE = ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false];
     private const PER_PAGE = ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false];
-    private const FAMILY_ID = ['description' => 'The ID for the parent font family of the font face.', 'type' => 'integer', 'required' => false];
+    private const FAMILY_ID = ['description' => 'The ID for the parent font family of the font face.', 'type' => 'integer', 'required' => true];
+    private const VERSION = ['description' => 'Version of the theme.json schema used for the typography settings.', 'type' => 'integer', 'default' => 3, 'minimum' => 2, 'maximum' => 3, 'required' => false, Args::HANDLER_VALIDATES => true];
 
     /** A list of font families or font faces past the shared three, in the reference's order. */
     private const POST_LIST = [
@@ -51,8 +54,24 @@ final class FontArgs
     /** One font face of a family. */
     public const FACE = [
         'font_family_id' => self::FAMILY_ID,
-        'id' => ['description' => 'Unique identifier for the font face.', 'type' => 'integer', 'required' => false],
+        'id' => ['description' => 'Unique identifier for the font face.', 'type' => 'integer', 'required' => true],
         'context' => self::CONTEXT,
+    ];
+
+    /** A font family created. */
+    public const FAMILY_CREATE = [
+        'theme_json_version' => self::VERSION,
+        'font_family_settings' => ['description' => 'font-family declaration in theme.json format, encoded as a string.', 'type' => 'string', 'required' => true, Args::HANDLER_VALIDATES => true],
+    ];
+
+    /** A font family updated. */
+    public const FAMILY_UPDATE = ['id' => self::FAMILY['id']] + self::FAMILY_CREATE;
+
+    /** A font face created under its family. */
+    public const FACE_CREATE = [
+        'font_family_id' => self::FAMILY_ID,
+        'theme_json_version' => self::VERSION,
+        'font_face_settings' => ['description' => 'font-face declaration in theme.json format, encoded as a string.', 'type' => 'string', 'required' => true, Args::HANDLER_VALIDATES => true],
     ];
 
     /** Whether a delete bypasses the trash, as a font route lists it. */

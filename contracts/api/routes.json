@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 284,
-    "withPolicy": 278,
+    "routes": 289,
+    "withPolicy": 283,
     "entries": [
         {
             "method": "GET",
@@ -3899,6 +3899,229 @@
             "index": true
         },
         {
+            "method": "POST",
+            "pattern": "/wp/v2/font-families",
+            "name": "Minn\\Rest\\FontWritesController::createFamily",
+            "handler": "Minn\\Rest\\FontWritesController::createFamily",
+            "summary": "A font family created from its settings.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_create",
+                    "message": "Sorry, you are not allowed to create posts as this user."
+                },
+                "refuse": {
+                    "code": "rest_cannot_create",
+                    "message": "Sorry, you are not allowed to create posts as this user."
+                }
+            },
+            "args": {
+                "theme_json_version": {
+                    "description": "Version of the theme.json schema used for the typography settings.",
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 2,
+                    "maximum": 3,
+                    "required": false
+                },
+                "font_family_settings": {
+                    "description": "font-family declaration in theme.json format, encoded as a string.",
+                    "type": "string",
+                    "required": true
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/font-families/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontWritesController::updateFamily",
+            "handler": "Minn\\Rest\\FontWritesController::updateFamily",
+            "summary": "A font family's name, font-family list or preview changed; what the settings leave out stays.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options; font family {id} must exist",
+                "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFamily",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
+                "signIn": {
+                    "code": "rest_cannot_edit",
+                    "message": "Sorry, you are not allowed to edit this post."
+                },
+                "refuse": {
+                    "code": "rest_cannot_edit",
+                    "message": "Sorry, you are not allowed to edit this post."
+                }
+            },
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "theme_json_version": {
+                    "description": "Version of the theme.json schema used for the typography settings.",
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 2,
+                    "maximum": 3,
+                    "required": false
+                },
+                "font_family_settings": {
+                    "description": "font-family declaration in theme.json format, encoded as a string.",
+                    "type": "string",
+                    "required": true
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "PUT",
+            "pattern": "/wp/v2/font-families/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontWritesController::updateFamily",
+            "handler": "Minn\\Rest\\FontWritesController::updateFamily",
+            "summary": "A font family's name, font-family list or preview changed; what the settings leave out stays.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options; font family {id} must exist",
+                "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFamily",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
+                "signIn": {
+                    "code": "rest_cannot_edit",
+                    "message": "Sorry, you are not allowed to edit this post."
+                },
+                "refuse": {
+                    "code": "rest_cannot_edit",
+                    "message": "Sorry, you are not allowed to edit this post."
+                }
+            },
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "theme_json_version": {
+                    "description": "Version of the theme.json schema used for the typography settings.",
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 2,
+                    "maximum": 3,
+                    "required": false
+                },
+                "font_family_settings": {
+                    "description": "font-family declaration in theme.json format, encoded as a string.",
+                    "type": "string",
+                    "required": true
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "PATCH",
+            "pattern": "/wp/v2/font-families/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontWritesController::updateFamily",
+            "handler": "Minn\\Rest\\FontWritesController::updateFamily",
+            "summary": "A font family's name, font-family list or preview changed; what the settings leave out stays.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options; font family {id} must exist",
+                "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFamily",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
+                "signIn": {
+                    "code": "rest_cannot_edit",
+                    "message": "Sorry, you are not allowed to edit this post."
+                },
+                "refuse": {
+                    "code": "rest_cannot_edit",
+                    "message": "Sorry, you are not allowed to edit this post."
+                }
+            },
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "theme_json_version": {
+                    "description": "Version of the theme.json schema used for the typography settings.",
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 2,
+                    "maximum": 3,
+                    "required": false
+                },
+                "font_family_settings": {
+                    "description": "font-family declaration in theme.json format, encoded as a string.",
+                    "type": "string",
+                    "required": true
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/font-families/{font_family_id:[\\d]+}/font-faces",
+            "name": "Minn\\Rest\\FontWritesController::createFace",
+            "handler": "Minn\\Rest\\FontWritesController::createFace",
+            "summary": "A font face created under its family, from remote sources or files the request uploads.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_create",
+                    "message": "Sorry, you are not allowed to create posts as this user."
+                },
+                "refuse": {
+                    "code": "rest_cannot_create",
+                    "message": "Sorry, you are not allowed to create posts as this user."
+                }
+            },
+            "args": {
+                "font_family_id": {
+                    "description": "The ID for the parent font family of the font face.",
+                    "type": "integer",
+                    "required": true
+                },
+                "theme_json_version": {
+                    "description": "Version of the theme.json schema used for the typography settings.",
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 2,
+                    "maximum": 3,
+                    "required": false
+                },
+                "font_face_settings": {
+                    "description": "font-face declaration in theme.json format, encoded as a string.",
+                    "type": "string",
+                    "required": true
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
             "method": "GET",
             "pattern": "/wp/v2/font-families",
             "name": "Minn\\Rest\\FontsController::families",
@@ -4015,8 +4238,14 @@
             "summary": "One font family.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_theme_options",
+                "describe": "cap edit_theme_options; font family {id} must exist",
                 "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFamily",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
                 "signIn": {
                     "code": "rest_cannot_read",
                     "message": "Sorry, you are not allowed to access this font family."
@@ -4070,7 +4299,7 @@
                 "font_family_id": {
                     "description": "The ID for the parent font family of the font face.",
                     "type": "integer",
-                    "required": false
+                    "required": true
                 },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
@@ -4161,8 +4390,14 @@
             "summary": "One font face of a family.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_theme_options",
+                "describe": "cap edit_theme_options; font face {id} must exist",
                 "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFace",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
                 "signIn": {
                     "code": "rest_cannot_read",
                     "message": "Sorry, you are not allowed to access this font face."
@@ -4176,12 +4411,12 @@
                 "font_family_id": {
                     "description": "The ID for the parent font family of the font face.",
                     "type": "integer",
-                    "required": false
+                    "required": true
                 },
                 "id": {
                     "description": "Unique identifier for the font face.",
                     "type": "integer",
-                    "required": false
+                    "required": true
                 },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
@@ -4206,8 +4441,14 @@
             "summary": "A font family deleted for good, its faces with it; there is no trash for either.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_theme_options",
+                "describe": "cap edit_theme_options; font family {id} must exist",
                 "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFamily",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
                 "signIn": {
                     "code": "rest_cannot_delete",
                     "message": "Sorry, you are not allowed to delete this post."
@@ -4241,8 +4482,14 @@
             "summary": "A font face deleted for good, its file with it.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_theme_options",
+                "describe": "cap edit_theme_options; font face {id} must exist",
                 "cap": "edit_theme_options",
+                "param": "id",
+                "subject": "FontFace",
+                "missing": {
+                    "code": "rest_post_invalid_id",
+                    "message": "Invalid post ID."
+                },
                 "signIn": {
                     "code": "rest_cannot_delete",
                     "message": "Sorry, you are not allowed to delete this post."
@@ -4256,12 +4503,12 @@
                 "font_family_id": {
                     "description": "The ID for the parent font family of the font face.",
                     "type": "integer",
-                    "required": false
+                    "required": true
                 },
                 "id": {
                     "description": "Unique identifier for the font face.",
                     "type": "integer",
-                    "required": false
+                    "required": true
                 },
                 "force": {
                     "type": "boolean",
