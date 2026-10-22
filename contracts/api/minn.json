@@ -172738,7 +172738,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/TemplateFiles.php",
-            "lines": 253,
+            "lines": 254,
             "doc": "The theme templates WordPress's template functions name: the index and\nembed templates found through the hierarchy, the slugs a block template\nstands for, the template types and part areas core knows, and a block\ntemplate made from the theme's file or from a saved post, as the\nreference makes one (probe template-part-lookup): the theme's names and\nfolders read on the way, the area a theme declares checked against the\nareas core knows, and the markup passed through the block hooks.",
             "implements": [],
             "extends": null,
@@ -172958,7 +172958,7 @@
                         }
                     ],
                     "line": 168,
-                    "end": 190
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -172991,8 +172991,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 202
+                    "line": 198,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -173018,8 +173018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 220
+                    "line": 211,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -173038,8 +173038,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 259
+                    "line": 231,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -173074,8 +173074,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 276
+                    "line": 270,
+                    "end": 277
                 }
             ]
         },
@@ -198147,7 +198147,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 358,
+            "lines": 359,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
@@ -198351,8 +198351,8 @@
                     "doc": "The theme's own name, and the parent's, for body classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 74
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -198363,8 +198363,8 @@
                     "doc": "The theme.json with the parent's merged in; with plugins loaded, through wp_theme_json_data_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 77,
-                    "end": 80
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -198377,8 +198377,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 125,
-                    "end": 132
+                    "line": 126,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -198404,8 +198404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 163
+                    "line": 155,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -198424,8 +198424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 176
+                    "line": 173,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -198444,8 +198444,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 186
+                    "line": 180,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -198464,8 +198464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 193
+                    "line": 190,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -198484,8 +198484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 203
+                    "line": 197,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -198496,8 +198496,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 210,
-                    "end": 219
+                    "line": 211,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -198518,8 +198518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 240
+                    "line": 230,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -198538,8 +198538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 263
+                    "line": 256,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -198558,8 +198558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 274
+                    "line": 267,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -198578,8 +198578,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 285
+                    "line": 278,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -198598,8 +198598,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 296
+                    "line": 289,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -198618,8 +198618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 306
+                    "line": 300,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -198640,8 +198640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 328
+                    "line": 315,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -198662,8 +198662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 357
+                    "line": 338,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -198674,8 +198674,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 360,
-                    "end": 363
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -198716,7 +198716,7 @@
                         }
                     ],
                     "line": 62,
-                    "end": 68
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -198727,8 +198727,8 @@
                     "doc": "The theme.json as written, the parent's merged in.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 91
+                    "line": 84,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -198747,8 +198747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 117
+                    "line": 100,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -198769,8 +198769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 148
+                    "line": 136,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -198789,8 +198789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -198811,8 +198811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 252
+                    "line": 244,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -198825,8 +198825,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 366,
-                    "end": 378
+                    "line": 367,
+                    "end": 379
                 }
             ]
         },

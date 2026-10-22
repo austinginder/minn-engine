@@ -59020,11 +59020,16 @@
         },
         "resolve_block_template": {
             "file": "blocks.php",
-            "lines": 8,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_block_templates"
+                "_get_block_template_file",
+                "_strip_template_file_suffix",
+                "get_block_templates",
+                "get_stylesheet_directory",
+                "get_template_directory",
+                "is_child_theme"
             ]
         },
         "resolve_pattern_blocks": {

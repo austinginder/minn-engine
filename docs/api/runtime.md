@@ -147,7 +147,7 @@ the WordPress runtime plugins load against
 | [`Symbols`](#symbols) | final class | 524 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 152 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxTerms`](#taxterms) | final class | 97 | The terms a taxonomy query's clause names, found as the reference finds |
-| [`TemplateFiles`](#templatefiles) | final class | 253 | The theme templates WordPress's template functions name: the index and |
+| [`TemplateFiles`](#templatefiles) | final class | 254 | The theme templates WordPress's template functions name: the index and |
 | [`TermEvents`](#termevents) | final readonly class | 112 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
 | [`TermLookup`](#termlookup) | final class | 438 | Terms looked up as WordPress's taxonomy functions find them: a list by |
@@ -8537,7 +8537,7 @@ Its origin and suggestion meta and whether the theme has the file are
 read as the reference reads them; its markup goes through the block
 hooks, a part's with the hooked blocks its post says to leave out.
 
-Internals: `hookedPart()` (private, line 269)
+Internals: `hookedPart()` (private, line 270)
 
 
 ## TermEvents

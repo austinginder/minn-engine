@@ -170,10 +170,11 @@ final class TemplateFiles
         $file = (array) $file;
         $types = (array) self::defaultTypes();
         $known = $type === 'wp_template' ? ($types[$file['slug']] ?? null) : null;
-        Themes::stylesheet();
+        // A theme's file is the active theme's template, whichever theme (a child's parent) the file sits in.
+        $theme = (string) Themes::stylesheet();
         $template = Handoff::newBlockTemplate();
-        $template->id = $file['theme'] . '//' . $file['slug'];
-        $template->theme = $file['theme'];
+        $template->id = $theme . '//' . $file['slug'];
+        $template->theme = $theme;
         $template->slug = $file['slug'];
         $template->source = 'theme';
         $template->type = $type;

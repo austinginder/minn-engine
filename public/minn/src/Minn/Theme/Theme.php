@@ -61,7 +61,8 @@ final class Theme
 
     private static function at(string $slug, string $themesDir, Permalinks $permalinks, ?Theme $parent = null): ?self
     {
-        if ($slug === '' || !is_file("{$themesDir}/{$slug}/theme.json")) {
+        // A child theme may leave theme.json to its parent, whose own it then reads (as on the reference).
+        if ($slug === '' || !is_dir("{$themesDir}/{$slug}") || !is_file("{$themesDir}/{$slug}/theme.json") && $parent === null) {
             return null;
         }
         return new self($slug, "{$themesDir}/{$slug}", $permalinks->url('/wp-content/themes/' . $slug), $parent);

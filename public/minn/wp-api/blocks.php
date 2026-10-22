@@ -1548,6 +1548,14 @@ function resolve_block_template($template_type, $template_hierarchy, $fallback_t
     $templates = array_values(get_block_templates(['slug__in' => $slugs]));
     $priority = array_flip($slugs);
     usort($templates, static fn ($a, $b) => $priority[$a->slug] <=> $priority[$b->slug]);
+    // A child theme's PHP template outranks its parent's block template of the same slug: that one is passed over.
+    $child = is_string($fallback_template) && $fallback_template !== '' && is_child_theme() && str_starts_with($fallback_template, get_stylesheet_directory() . '/');
+    if ($child) {
+        $slug = _strip_template_file_suffix(basename($fallback_template));
+        $file = _get_block_template_file('wp_template', $slug);
+        $fromParent = is_array($file) && str_starts_with((string) $file['path'], get_template_directory() . '/');
+        $templates = array_values(array_filter($templates, static fn ($template) => !($fromParent && $template->slug === $slug && $template->source === 'theme')));
+    }
     return $templates[0] ?? null;
 }
 

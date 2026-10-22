@@ -41,7 +41,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 125 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 251 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Theme`](#theme) | final class | 359 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -1564,7 +1564,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStylePartials()` (private, line 99), `partialFiles()` (private, line 135), `safe()` (private, line 166), `htmlFiles()` (private, line 243), `patternIndex()` (private, line 366)
+Internals: `at()` (private, line 62), `rawJson()` (private, line 84), `withStylePartials()` (private, line 100), `partialFiles()` (private, line 136), `safe()` (private, line 167), `htmlFiles()` (private, line 244), `patternIndex()` (private, line 367)
 
 
 ## ThemeHeaders

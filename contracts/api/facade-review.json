@@ -1677,9 +1677,8 @@
             "resolve_block_template": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "Strips the suffixes, asks get_block_templates by name for the hierarchy's slugs so its filters apply, and sorts by hierarchy order.",
-                "doubt": "$fallback_template is ignored: WP lets a child theme's PHP template win over a parent theme's block template of the same slug.",
-                "body": "b5859050383b"
+                "why": "Strips the suffixes, asks get_block_templates by name for the hierarchy's slugs so its filters apply, and sorts by hierarchy order; a child theme's PHP fallback passes over its parent's block template of the same slug. Doubt fixed (2026-10-22, suite child-theme).",
+                "body": "9caa9cf8f698"
             },
             "serialize_block": {
                 "verdict": "delegate",
