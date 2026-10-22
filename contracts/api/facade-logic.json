@@ -9476,55 +9476,55 @@
         },
         "WP_REST_Widget_Types_Controller::check_read_permission": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 76,
+            "line": 77,
             "statements": 2,
             "lines": 4
         },
         "WP_REST_Widget_Types_Controller::encode_form_data": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 160,
+            "line": 161,
             "statements": 16,
             "lines": 25
         },
         "WP_REST_Widget_Types_Controller::get_item": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 121,
+            "line": 122,
             "statements": 2,
             "lines": 2
         },
         "WP_REST_Widget_Types_Controller::get_item_permissions_check": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 66,
+            "line": 67,
             "statements": 4,
             "lines": 6
         },
         "WP_REST_Widget_Types_Controller::get_item_schema": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 153,
+            "line": 154,
             "statements": 2,
             "lines": 2
         },
         "WP_REST_Widget_Types_Controller::get_items": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 56,
+            "line": 57,
             "statements": 3,
             "lines": 5
         },
         "WP_REST_Widget_Types_Controller::get_widgets": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 96,
+            "line": 97,
             "statements": 5,
             "lines": 21
         },
         "WP_REST_Widget_Types_Controller::minn_instance": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 217,
+            "line": 218,
             "statements": 5,
             "lines": 9
         },
         "WP_REST_Widget_Types_Controller::prepare_item_for_response": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 128,
+            "line": 129,
             "statements": 7,
             "lines": 13
         },
@@ -9536,7 +9536,7 @@
         },
         "WP_REST_Widget_Types_Controller::render": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "line": 194,
+            "line": 195,
             "statements": 11,
             "lines": 13
         },

@@ -40,11 +40,12 @@ class WP_REST_Widget_Types_Controller extends WP_REST_Controller
             return $array;
         }]];
         register_rest_route($this->namespace, '/' . $this->rest_base . '/(?P<id>[a-zA-Z0-9_-]+)/encode', [
-            'args' => $id + $settings + ['number' => ['description' => __('Number of the widget instance.'), 'type' => 'integer']],
+            // The encoder and the renderer require the type's id, as the reference's index lists them.
+            'args' => ['id' => ['required' => true] + $id['id']] + $settings,
             ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$this, 'get_item_permissions_check'], 'callback' => [$this, 'encode_form_data']],
         ]);
         register_rest_route($this->namespace, '/' . $this->rest_base . '/(?P<id>[a-zA-Z0-9_-]+)/render', [
-            ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$this, 'get_item_permissions_check'], 'callback' => [$this, 'render'], 'args' => $id + ['instance' => $settings['instance']]],
+            ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$this, 'get_item_permissions_check'], 'callback' => [$this, 'render'], 'args' => ['id' => ['required' => true] + $id['id'], 'instance' => $settings['instance']]],
         ]);
     }
 

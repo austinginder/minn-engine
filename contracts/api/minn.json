@@ -72795,7 +72795,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/RouteRow.php",
-            "lines": 82,
+            "lines": 87,
             "doc": "One line of the route table: what a route is, who it is for, and what it\ntakes, read from the attribute and the handler method alone, so the table\ncan be built from the classes without a request, a database, or a site.\nThis is the row the REST index, the docs, and contracts/api/routes.json\nare written from.",
             "implements": [],
             "extends": null,
@@ -73050,7 +73050,7 @@
                         }
                     ],
                     "line": 63,
-                    "end": 71
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -73063,8 +73063,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 74,
-                    "end": 87
+                    "line": 79,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -73083,8 +73083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 96
+                    "line": 95,
+                    "end": 101
                 }
             ]
         },

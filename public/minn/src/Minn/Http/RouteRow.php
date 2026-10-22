@@ -66,8 +66,13 @@ final readonly class RouteRow
         if ($this->params !== null && preg_match($this->regex, $route, $captures) === 1) {
             $args = ($this->params)::for(array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY));
         }
-        // The index says of every parameter whether it is required, last where the route leaves it unsaid.
-        return array_map(static fn (array $arg): array => Args::published($arg) + ['required' => false], $args);
+        // A body's parameters are the route's too; the index says last of each whether it is required.
+        return array_map(static function (array $arg): array {
+            $published = Args::published($arg);
+            $required = !empty($published['required']);
+            unset($published['required']);
+            return $published + ['required' => $required];
+        }, $args + $this->body);
     }
 
     /** The row as data, for the JSON catalogue. @return array<string, mixed> */

@@ -25369,7 +25369,7 @@
         },
         "WP_REST_Widget_Types_Controller::register_routes": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
-            "lines": 22,
+            "lines": 23,
             "kind": "composes",
             "minn": [],
             "composes": [

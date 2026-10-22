@@ -8629,8 +8629,8 @@
             "WP_REST_Widget_Types_Controller::register_routes": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "the list, item, encode and render routes pointing at $this callbacks, form data parsed by wp_parse_str",
-                "body": "336f785694ed"
+                "why": "the list, item, encode and render routes pointing at $this callbacks, the encoder and renderer requiring the type's id as the reference's index lists them, form data parsed by wp_parse_str",
+                "body": "dd24bc04339c"
             },
             "WP_REST_Widget_Types_Controller::render": {
                 "verdict": "keep",
@@ -18724,8 +18724,8 @@
             "create_initial_rest_routes": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "registers the routes of the API's controller classes plugins extend, and plugin types' own controllers",
-                "body": "7b6739e79ce5"
+                "why": "registers the routes of the API's controller classes plugins extend, plugin types' own controllers, and the legacy widget preview requiring the type's id",
+                "body": "c2ff6e640e2e"
             },
             "register_rest_field": {
                 "verdict": "keep",

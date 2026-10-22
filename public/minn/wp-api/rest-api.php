@@ -790,7 +790,7 @@ function create_initial_rest_routes()
     // A legacy widget's preview page is the controller class's; the other widget-types routes are the engine's own (Rest\SidebarsController).
     $widgets = new WP_REST_Widget_Types_Controller();
     register_rest_route('wp/v2', '/widget-types/(?P<id>[a-zA-Z0-9_-]+)/render', [
-        ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$widgets, 'get_item_permissions_check'], 'callback' => [$widgets, 'render'], 'args' => ['id' => ['description' => __('The widget type id.'), 'type' => 'string'], 'instance' => ['description' => __('Current instance settings of the widget.'), 'type' => 'object']]],
+        ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$widgets, 'get_item_permissions_check'], 'callback' => [$widgets, 'render'], 'args' => ['id' => ['description' => __('The widget type id.'), 'type' => 'string', 'required' => true], 'instance' => ['description' => __('Current instance settings of the widget.'), 'type' => 'object']]],
     ]);
 }
 
