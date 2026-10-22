@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 286,
-    "withPolicy": 280,
+    "routes": 284,
+    "withPolicy": 278,
     "entries": [
         {
             "method": "GET",
@@ -161,56 +161,6 @@
             "name": "Minn\\Admin\\EditorController::unlock",
             "handler": "Minn\\Admin\\EditorController::unlock",
             "summary": "Releases the edit lock on a post.",
-            "policy": {
-                "access": "Floor",
-                "describe": "floor edit_posts",
-                "signIn": {
-                    "code": "rest_not_logged_in",
-                    "message": "You are not currently logged in."
-                },
-                "refuse": {
-                    "code": "rest_forbidden",
-                    "message": "Sorry, you are not allowed to do that."
-                }
-            },
-            "args": [],
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/minn-admin/v1/templates",
-            "name": "Minn\\Admin\\EditorController::templates",
-            "handler": "Minn\\Admin\\EditorController::templates",
-            "summary": "No theme, no page templates, for any post type asked for: an honest empty set.",
-            "policy": {
-                "access": "Floor",
-                "describe": "floor edit_posts",
-                "signIn": {
-                    "code": "rest_not_logged_in",
-                    "message": "You are not currently logged in."
-                },
-                "refuse": {
-                    "code": "rest_forbidden",
-                    "message": "Sorry, you are not allowed to do that."
-                }
-            },
-            "args": {
-                "type": {
-                    "type": "string",
-                    "default": "page",
-                    "required": false
-                }
-            },
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/minn-admin/v1/patterns",
-            "name": "Minn\\Admin\\EditorController::patterns",
-            "handler": "Minn\\Admin\\EditorController::patterns",
-            "summary": "Theme patterns are GPL theme content the engine does not carry.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",

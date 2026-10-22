@@ -6,7 +6,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 |---|---|---|---|
 | [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
-| [`AdminArgs`](#adminargs) | final class | 34 | The arguments Minn Admin's own routes register, as the reference lists |
+| [`AdminArgs`](#adminargs) | final class | 29 | The arguments Minn Admin's own routes register, as the reference lists |
 | [`AdminMenu`](#adminmenu) | final class | 75 | The admin menu's arithmetic, as plugins' menu calls see it on the |
 | [`AdminNotice`](#adminnotice) | final class | 25 | An admin notice's markup, as wp_get_admin_notice builds it on the |
 | [`AdminPlugin`](#adminplugin) | final class | 135 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
@@ -18,7 +18,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`CodeEditor`](#codeeditor) | final class | 96 | The code editor's settings as wp_get_code_editor_settings gives them |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
-| [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
+| [`EditorController`](#editorcontroller) | final readonly class | 31 | The editor's edit lock in minn-admin/v1. Its template and pattern lists |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`IframeMarkup`](#iframemarkup) | final class | 41 | The fixed markup of the two bare admin documents plugins print into, as |
@@ -138,12 +138,11 @@ for someone signed out. Each set names the handler that reads it.
 
 - const `OVERVIEW` = `array (   'days' =>    array (     'type' => 'integer',     'default' => 30,     'minimum' => 7,     'maximum' => 90,     'required' => false,   ), )` — Read by OverviewController::overview(): the window the charts cover, in days.
 - const `ACTIVITY` = `array (   'from' =>    array (     'type' => 'string',     'pattern' => '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$',     'required' => true,   ),   'to' =>    array (     'type' => 'string',     'pattern' => '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$',     'required' => true,   ), )` — Read by OverviewController::overviewActivity(): the bounds of one chart bar.
-- const `TEMPLATES` = `array (   'type' =>    array (     'type' => 'string',     'default' => 'page',     'required' => false,   ), )` — Read by EditorController::templates(): the post type whose page templates are asked for.
 - const `THEME_SEARCH` = `array (   'q' =>    array (     'type' => 'string',     'required' => true,   ), )` — Read by PackagesController::searchThemes(): the words searched for.
 - const `PLUGIN_SEARCH` = `array (   'q' =>    array (     'type' => 'string',     'required' => true,   ),   'page' =>    array (     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ), )` — Read by PackagesController::searchPlugins(): the words searched for and the page of results.
 - const `PLUGIN_INFO` = `array (   'slug' =>    array (     'type' => 'string',     'required' => true,   ), )` — Read by PackagesController::pluginInfo(): the directory slug.
 
-Used by: `Minn\Admin\EditorController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`
+Used by: `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`
 
 
 ## AdminMenu
@@ -593,10 +592,11 @@ Internals: `postsCard()` (private, line 68), `pagesCard()` (private, line 85), `
 
 `final readonly class Minn\Admin\EditorController` · `public/minn/src/Minn/Admin/EditorController.php`
 
-The editor's helpers in minn-admin/v1: the edit lock, and the template
-and pattern lists (honestly empty: the engine carries no theme content).
+The editor's edit lock in minn-admin/v1. Its template and pattern lists
+are Minn Admin's own routes, answered by the plugin from the theme and
+the pattern registry.
 
-Used by: `Minn\Admin\AdminArgs`, `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Content\PostWriter $writer, Minn\Rest\Caller $caller)
@@ -614,18 +614,6 @@ Takes the edit lock on a post.
 Route: `POST /minn-admin/v1/posts/{id:\d+}/unlock (floor edit_posts)`
 
 Releases the edit lock on a post.
-
-### `templates(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /minn-admin/v1/templates (floor edit_posts)`
-
-No theme, no page templates, for any post type asked for: an honest empty set.
-
-### `patterns(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /minn-admin/v1/patterns (floor edit_posts)`
-
-Theme patterns are GPL theme content the engine does not carry.
 
 
 ## Format

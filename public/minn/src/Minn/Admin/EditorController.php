@@ -16,8 +16,9 @@ use Minn\Rest\Reply;
 use Minn\RestError;
 
 /**
- * The editor's helpers in minn-admin/v1: the edit lock, and the template
- * and pattern lists (honestly empty: the engine carries no theme content).
+ * The editor's edit lock in minn-admin/v1. Its template and pattern lists
+ * are Minn Admin's own routes, answered by the plugin from the theme and
+ * the pattern registry.
  */
 final readonly class EditorController
 {
@@ -48,19 +49,5 @@ final readonly class EditorController
         }
         $this->writer->deleteMeta((int) $id, '_edit_lock');
         return Reply::answer($request, ['unlocked' => true]);
-    }
-
-    /** No theme, no page templates, for any post type asked for: an honest empty set. */
-    #[Route(Method::Get, '/minn-admin/v1/templates', policy: new Policy(Access::Floor), args: [AdminArgs::TEMPLATES])]
-    public function templates(Request $request): Response
-    {
-        return Reply::answer($request, ['templates' => []]);
-    }
-
-    /** Theme patterns are GPL theme content the engine does not carry. */
-    #[Route(Method::Get, '/minn-admin/v1/patterns', policy: new Policy(Access::Floor))]
-    public function patterns(Request $request): Response
-    {
-        return Reply::answer($request, ['patterns' => []]);
     }
 }

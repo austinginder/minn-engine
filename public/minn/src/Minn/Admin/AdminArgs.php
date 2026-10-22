@@ -23,11 +23,6 @@ final class AdminArgs
         'to' => ['type' => 'string', 'pattern' => '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$', 'required' => true],
     ];
 
-    /** Read by EditorController::templates(): the post type whose page templates are asked for. */
-    public const TEMPLATES = [
-        'type' => ['type' => 'string', 'default' => 'page', 'required' => false],
-    ];
-
     /** Read by PackagesController::searchThemes(): the words searched for. */
     public const THEME_SEARCH = [
         'q' => ['type' => 'string', 'required' => true],

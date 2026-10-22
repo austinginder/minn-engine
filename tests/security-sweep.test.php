@@ -82,8 +82,9 @@ $plugins = "{$PUBLIC}/wp-content/plugins/minn-test-sweep-fails";
 copy(__DIR__ . '/fixtures/sweep/minn-test-sweep-fails.php', "{$plugins}/minn-test-sweep-fails.php");
 register_shutdown_function(static function () use ($wp, $plugins): void {
     $wp('minn recovery resume minn-test-sweep-fails/minn-test-sweep-fails.php');
-    $wp('option delete minn_test_sweep_fail_always');
-    $wp('plugin deactivate minn-test-sweep-fails');
+    // The fixture throws on init while the option is set, and WP-CLI loads plugins: these run without them.
+    $wp('option delete minn_test_sweep_fail_always --skip-plugins');
+    $wp('plugin deactivate minn-test-sweep-fails --skip-plugins');
     @unlink("{$plugins}/minn-test-sweep-fails.php");
     @rmdir($plugins);
 });

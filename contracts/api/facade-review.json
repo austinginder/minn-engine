@@ -17959,8 +17959,8 @@
             "create_initial_post_types": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Registry",
-                "why": "re-registers the captured built-in types and statuses from the registry's own rows; turning supports back into arguments is registry knowledge",
-                "body": "84799c4580ef"
+                "why": "re-registers the captured built-in types and statuses from the registry's own rows, each type keeping the features and labels it was captured with (a feature's one argument handed back unwrapped, what registering adds and the capture lacks taken off, no single-item template name where the capture has none); turning supports back into arguments is registry knowledge",
+                "body": "a0ba86a16f73"
             },
             "generate_postdata": {
                 "verdict": "keep",

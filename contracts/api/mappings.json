@@ -44327,14 +44327,16 @@
         },
         "create_initial_post_types": {
             "file": "post.php",
-            "lines": 16,
+            "lines": 26,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
+                "get_all_post_type_supports",
                 "register_post_status",
-                "register_post_type"
+                "register_post_type",
+                "remove_post_type_support"
             ]
         },
         "create_initial_rest_routes": {

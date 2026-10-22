@@ -2097,10 +2097,20 @@ function create_initial_post_types()
     foreach (Runtime::registry()->postTypes() as $name => $row) {
         if (!empty($row['_builtin'])) {
             $supports = [];
-            foreach (Runtime::registry()->supports($name) as $feature => $args) {
-                $args === true ? $supports[] = $feature : $supports[$feature] = $args;
+            // A feature's arguments are kept as the list add_post_type_support was given; registering hands it the one argument again.
+            $kept = Runtime::registry()->supports($name);
+            foreach ($kept as $feature => $args) {
+                $args === true ? $supports[] = $feature : $supports[$feature] = is_array($args) && array_is_list($args) && count($args) === 1 ? $args[0] : $args;
             }
-            register_post_type($name, ['capabilities' => (array) ($row['cap'] ?? []), 'supports' => $supports === [] ? false : $supports] + $row);
+            $object = register_post_type($name, ['capabilities' => (array) ($row['cap'] ?? []), 'supports' => $supports === [] ? false : $supports] + $row);
+            // Posts and pages take their labels from the defaults, not from labels of their own, so they name no single-item template.
+            if (!isset($row['labels']['template_name']) && $object instanceof WP_Post_Type) {
+                unset($object->labels->template_name);
+            }
+            // What registering adds that the type does not keep (global styles' autosave) is taken off again.
+            foreach (array_keys(array_diff_key(get_all_post_type_supports($name), $kept)) as $feature) {
+                remove_post_type_support($name, $feature);
+            }
         }
     }
     foreach (Runtime::registry()->statuses() as $name => $row) {
