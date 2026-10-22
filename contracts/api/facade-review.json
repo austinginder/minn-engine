@@ -7850,8 +7850,8 @@
             "WP_REST_Sidebars_Controller::register_routes": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "the collection and sidebar routes pointing at $this callbacks",
-                "body": "ec6bea8c4b7e"
+                "why": "the collection and sidebar routes pointing at $this callbacks, the sidebar's id a parameter of its read alone, as the reference's index lists it",
+                "body": "2abbf116fa02"
             },
             "WP_REST_Sidebars_Controller::retrieve_widgets": {
                 "verdict": "keep",

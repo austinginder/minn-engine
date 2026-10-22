@@ -7,7 +7,7 @@ namespace Minn\Rest;
 /** The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. */
 final class RouteIndex
 {
-    private const SCHEMA_KEYWORDS = ['default', 'enum', 'description', 'type', 'items', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'minLength', 'maxLength', 'pattern', 'format', 'properties', 'additionalProperties', 'oneOf', 'anyOf', 'minItems', 'maxItems', 'uniqueItems'];
+    private const SCHEMA_KEYWORDS = ['title', 'default', 'enum', 'description', 'type', 'items', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'minLength', 'maxLength', 'pattern', 'format', 'properties', 'additionalProperties', 'oneOf', 'anyOf', 'minItems', 'maxItems', 'uniqueItems'];
 
     /**
      * One route's endpoints as a route table describes them in the index

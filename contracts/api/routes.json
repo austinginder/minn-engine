@@ -2507,8 +2507,8 @@
                     "required": false
                 },
                 "namespace": {
-                    "type": "string",
                     "description": "Block namespace.",
+                    "type": "string",
                     "required": false
                 }
             },
@@ -4588,15 +4588,15 @@
             },
             "args": {
                 "status": {
+                    "description": "Limit result set to themes assigned one or more statuses.",
                     "type": "array",
                     "items": {
-                        "type": "string",
                         "enum": [
                             "active",
                             "inactive"
-                        ]
+                        ],
+                        "type": "string"
                     },
-                    "description": "Limit result set to themes assigned one or more statuses.",
                     "required": false
                 }
             },

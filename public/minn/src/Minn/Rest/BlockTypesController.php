@@ -28,7 +28,7 @@ use Minn\Runtime\Runtime;
  */
 final readonly class BlockTypesController
 {
-    private const NAMESPACE = ['namespace' => ['type' => 'string', 'description' => 'Block namespace.', 'required' => false]];
+    private const NAMESPACE = ['namespace' => ['description' => 'Block namespace.', 'type' => 'string', 'required' => false]];
 
     public function __construct(private RestUrl $url, private Caller $caller)
     {

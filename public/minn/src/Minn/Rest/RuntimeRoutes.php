@@ -160,20 +160,44 @@ final class RuntimeRoutes
      */
     public static function described(string $route, array $entry): array
     {
-        $theirs = self::server()->engine_described_endpoints($route);
-        foreach ((array) ($entry['endpoints'] ?? []) as $i => $endpoint) {
-            foreach ($theirs as $other) {
-                if (($other['methods'] ?? null) !== ($endpoint['methods'] ?? null)) {
-                    continue;
-                }
+        return self::filled($entry, self::server()->engine_described_endpoints($route));
+    }
+
+    /**
+     * An engine route's description with what another description of it
+     * says of the same endpoints, by described()'s rule; an engine endpoint
+     * the other lists as several (settings' read and its update) is listed
+     * as those.
+     *
+     * @param array<string, mixed> $entry
+     * @param list<array<string, mixed>> $theirs
+     * @return array<string, mixed>
+     */
+    private static function filled(array $entry, array $theirs): array
+    {
+        $endpoints = [];
+        foreach ((array) ($entry['endpoints'] ?? []) as $endpoint) {
+            $methods = (array) ($endpoint['methods'] ?? []);
+            $same = array_values(array_filter($theirs, static fn (array $other): bool => ($other['methods'] ?? null) === $methods));
+            // One engine handler for what the other description lists apart (settings' read and its update): its pieces.
+            $pieces = array_values(array_filter($theirs, static fn (array $other): bool => array_diff((array) ($other['methods'] ?? []), $methods) === []));
+            $covered = array_merge(...array_map(static fn (array $other): array => (array) $other['methods'], $pieces));
+            $parts = $same !== [] ? [$same[0]] : (count($pieces) > 1 && $covered === $methods ? $pieces : []);
+            if ($parts === []) {
+                $endpoints[] = $endpoint;
+                continue;
+            }
+            foreach ($parts as $other) {
                 $args = (array) ($endpoint['args'] ?? []);
                 $published = (array) ($other['args'] ?? []);
-                if (($endpoint['methods'] !== ['GET'] || $args === []) && array_diff_key($args, $published) === []) {
+                if (($other['methods'] !== ['GET'] || $args === []) && array_diff_key($args, $published) === []) {
                     $args = $published;
                 }
-                $entry['endpoints'][$i] = ['methods' => $endpoint['methods']] + (isset($other['allow_batch']) ? ['allow_batch' => $other['allow_batch']] : []) + ['args' => $args];
-                break;
+                $endpoints[] = ['methods' => $other['methods']] + (isset($other['allow_batch']) ? ['allow_batch' => $other['allow_batch']] : []) + ['args' => $args];
             }
+        }
+        if (isset($entry['endpoints'])) {
+            $entry['endpoints'] = $endpoints;
         }
         return $entry;
     }
@@ -209,6 +233,8 @@ final class RuntimeRoutes
                 $data['routes'][$route] = $description;
                 continue;
             }
+            // A plugin's route the engine answers (Minn Admin's own): its endpoints are described as the plugin registers them.
+            $data['routes'][$route] = self::filled((array) $data['routes'][$route], (array) ($description['endpoints'] ?? []));
             // A route the engine answers in part (Minn Admin's post-types GET) and a plugin in
             // the rest (its POST): the plugin's endpoints for the other methods are listed after the engine's.
             $covered = array_merge(...array_map(static fn (array $endpoint): array => (array) ($endpoint['methods'] ?? []), (array) ($data['routes'][$route]['endpoints'] ?? [])));

@@ -38,7 +38,7 @@ request, response, routing, and the outgoing client
 | [`Route`](#route) | final readonly class | 75 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`RouteParams`](#routeparams) | interface | 10 | The parameters a route takes when they depend on what its captures name |
-| [`RouteRow`](#routerow) | final readonly class | 81 | One line of the route table: what a route is, who it is for, and what it |
+| [`RouteRow`](#routerow) | final readonly class | 82 | One line of the route table: what a route is, who it is for, and what it |
 | [`Router`](#router) | final class | 291 | Matches a request to a #[Route] on one of the registered handler |
 | [`StatusText`](#statustext) | final class | 16 | The reason phrase a status line carries for each code, as the reference's |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
@@ -1337,7 +1337,7 @@ The row as data, for the JSON catalogue. @return array<string, mixed>
 
 - `@return array<string, mixed>`
 
-Internals: `summary()` (private, line 89)
+Internals: `summary()` (private, line 90)
 
 
 ## Router

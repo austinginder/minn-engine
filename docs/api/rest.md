@@ -77,7 +77,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 528 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 554 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
@@ -538,7 +538,7 @@ with its styles (its own, then those registered for it) and its
 variations as built when asked; a dynamic block links to its renderer.
 Served with plugins loaded, since a plugin's blocks come from its code.
 
-- const `NAMESPACE` = `array (   'namespace' =>    array (     'type' => 'string',     'description' => 'Block namespace.',     'required' => false,   ), )`
+- const `NAMESPACE` = `array (   'namespace' =>    array (     'description' => 'Block namespace.',     'type' => 'string',     'required' => false,   ), )`
 
 Used by: `Minn\Rest\Api`
 
@@ -1535,7 +1535,7 @@ a type shown in REST may read the active theme; listing the others takes
 switch_themes. Each theme goes through rest_prepare_theme. Served with
 plugins loaded, since a theme's supports come from its own code.
 
-- const `STATUS` = `array (   'status' =>    array (     'type' => 'array',     'items' =>      array (       'type' => 'string',       'enum' =>        array (         0 => 'active',         1 => 'inactive',       ),     ),     'description' => 'Limit result set to themes assigned one or more statuses.',     'required' => false,   ), )`
+- const `STATUS` = `array (   'status' =>    array (     'description' => 'Limit result set to themes assigned one or more statuses.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'active',         1 => 'inactive',       ),       'type' => 'string',     ),     'required' => false,   ), )`
 
 Used by: `Minn\Rest\Api`
 
@@ -3116,7 +3116,7 @@ Internals: `endpoints()` (private, line 74), `rank()` (private, line 107)
 
 The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link.
 
-- const `SCHEMA_KEYWORDS` = `array (   0 => 'default',   1 => 'enum',   2 => 'description',   3 => 'type',   4 => 'items',   5 => 'minimum',   6 => 'maximum',   7 => 'exclusiveMinimum',   8 => 'exclusiveMaximum',   9 => 'minLength',   10 => 'maxLength',   11 => 'pattern',   12 => 'format',   13 => 'properties',   14 => 'additionalProperties',   15 => 'oneOf',   16 => 'anyOf',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems', )`
+- const `SCHEMA_KEYWORDS` = `array (   0 => 'title',   1 => 'default',   2 => 'enum',   3 => 'description',   4 => 'type',   5 => 'items',   6 => 'minimum',   7 => 'maximum',   8 => 'exclusiveMinimum',   9 => 'exclusiveMaximum',   10 => 'minLength',   11 => 'maxLength',   12 => 'pattern',   13 => 'format',   14 => 'properties',   15 => 'additionalProperties',   16 => 'oneOf',   17 => 'anyOf',   18 => 'minItems',   19 => 'maxItems',   20 => 'uniqueItems', )`
 
 ### static `endpointsIn(string $route, array $table, callable $restUrl): array`
 
@@ -3410,7 +3410,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 359), `asksForXml()` (private, line 434), `oembedXml()` (private, line 445), `look()` (private, line 459), `remember()` (private, line 464), `decode()` (private, line 471), `expand()` (private, line 491), `newWpRequest()` (private, line 516), `toResponse()` (private, line 545)
+Internals: `allow()` (private, line 104), `filled()` (private, line 176), `dispatchDone()` (private, line 385), `asksForXml()` (private, line 460), `oembedXml()` (private, line 471), `look()` (private, line 485), `remember()` (private, line 490), `decode()` (private, line 497), `expand()` (private, line 517), `newWpRequest()` (private, line 542), `toResponse()` (private, line 571)
 
 
 ## Schema

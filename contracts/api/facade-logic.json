@@ -6,7 +6,7 @@
         "delegates": 3556,
         "logicFunctions": 1778,
         "logicMethods": 1973,
-        "logicLines": 29287,
+        "logicLines": 29286,
         "kept": 0
     },
     "byFile": {
@@ -330,12 +330,12 @@
             "logic": 23,
             "lines": 100
         },
-        "classes/WP_REST_Sidebars_Controller.php": {
-            "logic": 11,
-            "lines": 97
-        },
         "classes/WP_REST_Controller.php": {
             "logic": 10,
+            "lines": 96
+        },
+        "classes/WP_REST_Sidebars_Controller.php": {
+            "logic": 11,
             "lines": 96
         },
         "classes/WP_Duotone.php": {
@@ -8804,43 +8804,43 @@
         },
         "WP_REST_Sidebars_Controller::do_permissions_check": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 121,
+            "line": 120,
             "statements": 2,
             "lines": 4
         },
         "WP_REST_Sidebars_Controller::get_item": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 82,
+            "line": 81,
             "statements": 3,
             "lines": 3
         },
         "WP_REST_Sidebars_Controller::get_item_permissions_check": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 69,
+            "line": 68,
             "statements": 3,
             "lines": 3
         },
         "WP_REST_Sidebars_Controller::get_item_schema": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 191,
+            "line": 190,
             "statements": 2,
             "lines": 2
         },
         "WP_REST_Sidebars_Controller::get_items": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 54,
+            "line": 53,
             "statements": 5,
             "lines": 11
         },
         "WP_REST_Sidebars_Controller::get_items_permissions_check": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 42,
+            "line": 41,
             "statements": 3,
             "lines": 8
         },
         "WP_REST_Sidebars_Controller::prepare_item_for_response": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 149,
+            "line": 148,
             "statements": 12,
             "lines": 29
         },
@@ -8848,17 +8848,17 @@
             "file": "classes/WP_REST_Sidebars_Controller.php",
             "line": 27,
             "statements": 2,
-            "lines": 10
+            "lines": 9
         },
         "WP_REST_Sidebars_Controller::retrieve_widgets": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 135,
+            "line": 134,
             "statements": 1,
             "lines": 4
         },
         "WP_REST_Sidebars_Controller::update_item": {
             "file": "classes/WP_REST_Sidebars_Controller.php",
-            "line": 95,
+            "line": 94,
             "statements": 5,
             "lines": 21
         },

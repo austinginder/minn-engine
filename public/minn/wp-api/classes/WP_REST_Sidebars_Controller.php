@@ -31,8 +31,7 @@ class WP_REST_Sidebars_Controller extends WP_REST_Controller
             'schema' => [$this, 'get_public_item_schema'],
         ]);
         register_rest_route($this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)', [
-            'args' => ['id' => ['description' => __('The id of a registered sidebar'), 'type' => 'string']],
-            ['methods' => WP_REST_Server::READABLE, 'callback' => [$this, 'get_item'], 'permission_callback' => [$this, 'get_item_permissions_check'], 'args' => ['context' => $this->get_context_param(['default' => 'view'])]],
+            ['methods' => WP_REST_Server::READABLE, 'callback' => [$this, 'get_item'], 'permission_callback' => [$this, 'get_item_permissions_check'], 'args' => ['id' => ['description' => __('The id of a registered sidebar'), 'type' => 'string'], 'context' => $this->get_context_param(['default' => 'view'])]],
             ['methods' => WP_REST_Server::EDITABLE, 'callback' => [$this, 'update_item'], 'permission_callback' => [$this, 'update_item_permissions_check'], 'args' => $this->get_endpoint_args_for_item_schema(WP_REST_Server::EDITABLE)],
             'schema' => [$this, 'get_public_item_schema'],
         ]);

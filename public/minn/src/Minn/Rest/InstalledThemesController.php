@@ -35,7 +35,7 @@ use Minn\Support\Lists;
  */
 final readonly class InstalledThemesController
 {
-    private const STATUS = ['status' => ['type' => 'array', 'items' => ['type' => 'string', 'enum' => ['active', 'inactive']], 'description' => 'Limit result set to themes assigned one or more statuses.', 'required' => false]];
+    private const STATUS = ['status' => ['description' => 'Limit result set to themes assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => ['active', 'inactive'], 'type' => 'string'], 'required' => false]];
 
     public function __construct(private RestUrl $url, private Caller $caller)
     {
