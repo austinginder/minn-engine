@@ -28,6 +28,7 @@ use Minn\Auth\PasswordReset;
 use Minn\Auth\PortableHash;
 use Minn\Runtime\SiteUrls;
 use Minn\Runtime\Translations;
+use Minn\I18n\Gettext;
 use Minn\Support\Slashes;
 
 /**
@@ -452,11 +453,16 @@ final readonly class LoginController
         if ($request->path !== '/wp-login.php' || $request->query === [] && $request->method === Method::Get) {
             return $response;
         }
+        return new Response($response->status, $response->headers, $response->body, [...self::testCookies($request), ...$response->cookies], $response->afterSend);
+    }
+
+    /** The test cookie as the login page sets it: for the session, on the cookie path and the site path when that differs. @return list<array{0: string, 1: string, 2: array<string, mixed>}> */
+    private static function testCookies(Request $request): array
+    {
         $name = defined('TEST_COOKIE') ? (string) constant('TEST_COOKIE') : 'wordpress_test_cookie';
         $options = ['domain' => defined('COOKIE_DOMAIN') ? (string) constant('COOKIE_DOMAIN') : '', 'secure' => $request->secure, 'httponly' => true];
         $paths = array_unique([defined('COOKIEPATH') ? (string) constant('COOKIEPATH') : '/', defined('SITECOOKIEPATH') ? (string) constant('SITECOOKIEPATH') : '/']);
-        $first = array_map(static fn (string $path): array => [$name, 'WP Cookie check', ['path' => $path] + $options], array_values($paths));
-        return new Response($response->status, $response->headers, $response->body, [...$first, ...$response->cookies], $response->afterSend);
+        return array_map(static fn (string $path): array => [$name, 'WP Cookie check', ['path' => $path] + $options], array_values($paths));
     }
 
     /**
@@ -487,13 +493,15 @@ final readonly class LoginController
     private function logout(Request $request): Response
     {
         $session = $this->authenticator->session($request->cookies);
-        $signedOut = Response::redirect($this->permalinks->url($this->base($request) . '?loggedout=true'), 302);
-        if (!$session instanceof Authenticated) {
-            return $this->signIn->clear($signedOut);
-        }
+        $signedIn = $session instanceof Authenticated;
+        // Signed out, the nonce is the one a visitor gets (user 0, no session), as on the reference.
+        [$userId, $token] = $signedIn ? [$session->id(), $session->token] : [0, ''];
         $nonce = (string) ($request->query('_wpnonce') ?? $request->form['_wpnonce'] ?? '');
-        if (!Nonce::verify($nonce, $session->id(), $session->token, 'log-out')) {
-            $link = $this->actionUrl($request, 'logout', '_wpnonce=' . Nonce::create($session->id(), $session->token, 'log-out'));
+        if (!Nonce::verify($nonce, $userId, $token, 'log-out')) {
+            $link = $this->actionUrl($request, 'logout', '_wpnonce=' . Nonce::create($userId, $token, 'log-out'));
+            if ($request->path === '/wp-login.php') {
+                $this->confirmLogOut($request, $link);
+            }
             return Response::html(
                 '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Log Out</title></head><body>'
                 . '<p>You are attempting to log out of ' . Html::esc($this->site->option('blogname') === null ? 'this site' : $this->siteName()) . '.</p>'
@@ -503,11 +511,27 @@ final readonly class LoginController
         $hooks = new LoginHooks($this->users);
         $requested = (string) ($request->query('redirect_to') ?? '');
         // The signed-out page is shown in the language of the user who left (wp_lang), as on the reference.
-        $default = $requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?loggedout=true&wp_lang=' . rawurlencode(Translations::userLocale($session->id())));
-        $to = $hooks->leaving($default, $requested, $session->id());
-        $response = $this->signIn->end(Response::redirect($to === $default ? $default : $this->safeRedirect($to), 302), $session);
-        $hooks->signedOut($session->id());
+        $default = $requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?loggedout=true&wp_lang=' . rawurlencode(Translations::userLocale($userId)));
+        $to = $hooks->leaving($default, $requested, $userId);
+        $redirect = Response::redirect($to === $default ? $default : $this->safeRedirect($to), 302);
+        $response = $signedIn ? $this->signIn->end($redirect, $session) : $this->signIn->clear($redirect);
+        $hooks->signedOut($userId);
         return $response;
+    }
+
+    /**
+     * The reference's confirmation for a log out that brings no valid nonce
+     * (wp_nonce_ays): its die page, a 403, asking again with a link that
+     * carries one; the request ends here.
+     */
+    private function confirmLogOut(Request $request, string $link): void
+    {
+        // The die page ends the request, so the test cookie the login page sets first goes out now.
+        foreach (self::testCookies($request) as [$name, $value, $options]) {
+            setcookie($name, $value, $options);
+        }
+        $asked = sprintf(Gettext::text('You are attempting to log out of %s'), $this->siteName());
+        Handoff::stop($asked . '</p><p>' . sprintf(Gettext::text('Do you really want to <a href="%s">log out</a>?'), Html::esc($link)), $asked, ['response' => 403]);
     }
 
     /**

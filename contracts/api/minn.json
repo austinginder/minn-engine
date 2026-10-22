@@ -74445,6 +74445,7 @@
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\I18n\\LocalDates",
+                "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Media\\MediaModal",
                 "Minn\\Media\\Player",
@@ -77299,7 +77300,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 534,
+            "lines": 557,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -77322,6 +77323,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\I18n\\Gettext",
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Login\\LoginNotices",
@@ -77385,8 +77387,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 47,
-                "end": 55
+                "line": 48,
+                "end": 56
             },
             "cases": [],
             "constants": [
@@ -77487,8 +77489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 65,
+                    "end": 68
                 },
                 {
                     "routes": [
@@ -77511,8 +77513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 373
+                    "line": 371,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -77531,8 +77533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 129
+                    "line": 71,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -77558,8 +77560,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 136
+                    "line": 133,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -77580,8 +77582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 143
+                    "line": 140,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -77600,8 +77602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 154
+                    "line": 147,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -77627,8 +77629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 160
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -77647,8 +77649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 186
+                    "line": 164,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -77681,8 +77683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 207
+                    "line": 195,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -77701,8 +77703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 228
+                    "line": 215,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -77723,8 +77725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 244
+                    "line": 232,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -77743,8 +77745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 272
+                    "line": 247,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -77770,8 +77772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 300
+                    "line": 282,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -77797,8 +77799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 314
+                    "line": 307,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -77847,8 +77849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 325
+                    "line": 322,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -77867,8 +77869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 364
+                    "line": 334,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -77887,8 +77889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 417
+                    "line": 377,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -77914,8 +77916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 425,
-                    "end": 441
+                    "line": 426,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -77941,8 +77943,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 460
+                    "line": 451,
+                    "end": 457
+                },
+                {
+                    "routes": [],
+                    "name": "testCookies",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "testCookies(Minn\\Http\\Request $request): array",
+                    "doc": "The test cookie as the login page sets it: for the session, on the cookie path and the site path when that differs. @return list<array{0: string, 1: string, 2: array<string, mixed>}>",
+                    "shapes": [
+                        "@return list<array{0: string, 1: string, 2: array<string, mixed>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 460,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -77961,8 +77985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 466,
-                    "end": 480
+                    "line": 472,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -77981,8 +78005,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 487,
-                    "end": 511
+                    "line": 493,
+                    "end": 520
+                },
+                {
+                    "routes": [],
+                    "name": "confirmLogOut",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "confirmLogOut(Minn\\Http\\Request $request, string $link): void",
+                    "doc": "The reference's confirmation for a log out that brings no valid nonce\n(wp_nonce_ays): its die page, a 403, asking again with a link that\ncarries one; the request ends here.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "link",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 527,
+                    "end": 535
                 },
                 {
                     "routes": [],
@@ -78001,8 +78052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 518,
-                    "end": 527
+                    "line": 542,
+                    "end": 551
                 },
                 {
                     "routes": [],
@@ -78035,8 +78086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 530,
-                    "end": 537
+                    "line": 554,
+                    "end": 561
                 },
                 {
                     "routes": [],
@@ -78047,8 +78098,8 @@
                     "doc": "The site's name, as the sign-in pages head themselves (\"Site\" when it has none).",
                     "shapes": [],
                     "params": [],
-                    "line": 540,
-                    "end": 543
+                    "line": 564,
+                    "end": 567
                 },
                 {
                     "routes": [],
@@ -78067,8 +78118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 546,
-                    "end": 549
+                    "line": 570,
+                    "end": 573
                 },
                 {
                     "routes": [],
@@ -78094,8 +78145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 552,
-                    "end": 557
+                    "line": 576,
+                    "end": 581
                 },
                 {
                     "routes": [],
@@ -78128,8 +78179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 560,
-                    "end": 573
+                    "line": 584,
+                    "end": 597
                 }
             ]
         },

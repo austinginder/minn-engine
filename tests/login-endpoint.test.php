@@ -154,19 +154,20 @@ check( 200 === $es && 1 === ( $me['id'] ?? 0 ), 'the login session authenticates
 $rme = json_decode( $rbody, true );
 check( 200 === $rs && 1 === ( $rme['id'] ?? 0 ), 'the login session authenticates on WordPress too', "status $rs" );
 
-// 6. Logout clears the cookies and redirects.
-[ $os, $oh ] = http( 'GET', "$ENGINE/wp-login.php?action=logout" );
-check( 302 === $os, 'logout redirects (302)', "status $os" );
-$cleared = false;
-foreach ( $oh['set-cookie'] as $sc ) {
-	if ( str_starts_with( $sc, 'wordpress_logged_in_' . $hash ) && ( str_contains( $sc, 'Max-Age=0' ) || str_contains( $sc, '1970' ) || str_contains( $sc, 'Aug 2026 02:' ) ) ) {
-		$cleared = true;
+// 6. A log out without a valid nonce is asked again (the reference's 403 die page, a link carrying a
+// nonce), signed out too; signed out with the visitor's own nonce (user 0) it clears the cookies and
+// goes to the signed-out page. Both stacks, nonces read as N, a plugin's own cookie and dates left out.
+$visitor = trim( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " eval 'wp_set_current_user(0); echo wp_create_nonce(\"log-out\");' 2>/dev/null" ) );
+$plain   = static fn ( array $headers ): array => array_values( array_filter( array_map( static fn ( string $c ): string => (string) preg_replace( '/;\s*(expires|Max-Age)=[^;]*/i', '', $c ), $headers['set-cookie'] ), static fn ( string $c ): bool => ! str_starts_with( $c, 'minn_net_purge=' ) ) );
+foreach ( array( 'signed out, no nonce' => '', 'signed out, the visitor\'s nonce' => "&_wpnonce=$visitor" ) as $label => $query ) {
+	$seen = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		[ $ls, $lh, $lb ] = http( 'GET', "$base/wp-login.php?action=logout$query" );
+		$seen[] = array( $ls, $lh['location'], $plain( $lh ), preg_replace( '/_wpnonce=[0-9a-f]+/', '_wpnonce=N', $lb ) );
 	}
+	$d = minn_test_diff( $seen[0], $seen[1] );
+	check( null === $d && in_array( $seen[0][0], array( 302, 403 ), true ), "log out, $label, as the reference answers it ({$seen[0][0]})", (string) $d );
 }
-// Robuster check: the logged_in cookie is set to an empty/expiring value.
-$lo_val = cookie_value( $oh['set-cookie'], 'wordpress_logged_in_' . $hash );
-check( '' === trim( (string) $lo_val ) || $cleared, 'logout clears the logged_in cookie' );
-check( str_contains( (string) $oh['location'], 'loggedout=true' ), 'logout redirects to the loggedout page', (string) $oh['location'] );
 
 // 7. A signed-in log out on both stacks (a throwaway subscriber, a session each): the test cookie
 // first, then every cookie wp_clear_auth_cookie expires, in the reference's order, and the
@@ -174,13 +175,20 @@ check( str_contains( (string) $oh['location'], 'loggedout=true' ), 'logout redir
 $wp  = static fn ( string $command ): string => trim( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " $command 2>/dev/null" ) );
 $uid = (int) $wp( 'user create zzlogout' . getmypid() . ' zzlogout' . getmypid() . '@example.invalid --role=subscriber --porcelain' );
 if ( $uid > 1 ) {
-	$seen = array();
+	$seen  = array();
+	$asked = array();
 	foreach ( array( 'reference' => $REF, 'engine' => $ENGINE ) as $who => $base ) {
 		$mint = (array) json_decode( $wp( 'eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-logout.php" ) . " $uid" ), true );
 		[ $ls, $lh ] = http( 'GET', "$base/wp-login.php?action=logout&_wpnonce=" . ( $mint['nonce'] ?? '' ), array( 'Cookie: ' . implode( '=', (array) ( $mint['logged_in'] ?? array() ) ) . '; ' . implode( '=', (array) ( $mint['secure'] ?? array() ) ) ) );
 		$cookies = array_values( array_filter( array_map( static fn ( string $c ): string => (string) preg_replace( '/;\s*(expires|Max-Age)=[^;]*/i', '', $c ), $lh['set-cookie'] ), static fn ( string $c ): bool => ! str_starts_with( $c, 'minn_net_purge=' ) ) );
 		$seen[ $who ] = array( $ls, $lh['location'], $cookies );
+		// The same user with a fresh session and no nonce is asked again.
+		$mint = (array) json_decode( $wp( 'eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-logout.php" ) . " $uid" ), true );
+		[ $as, $ah, $ab ] = http( 'GET', "$base/wp-login.php?action=logout", array( 'Cookie: ' . implode( '=', (array) ( $mint['logged_in'] ?? array() ) ) ) );
+		$asked[ $who ] = array( $as, preg_replace( '/_wpnonce=[0-9a-f]+/', '_wpnonce=N', $ab ) );
+		$wp( "eval 'WP_Session_Tokens::get_instance($uid)->destroy_all();'" );
 	}
+	check( null === minn_test_diff( $asked['reference'], $asked['engine'] ) && 403 === $asked['reference'][0], 'a signed-in log out without a nonce is asked again, as the reference asks', (string) minn_test_diff( $asked['reference'], $asked['engine'] ) );
 	$d = minn_test_diff( $seen['reference'], $seen['engine'] );
 	check( null === $d && count( $seen['reference'][2] ) >= 17, 'a signed-in log out expires the reference\'s cookies, in its order, and names the language', (string) $d );
 	$wp( "user delete $uid --yes" );

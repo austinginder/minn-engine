@@ -239,7 +239,7 @@ preg_match('/wordpress_logged_in_[0-9a-f]+=([^;]+)/', $login['headers']['set-coo
 $cookie = 'wordpress_logged_in_' . md5($ENGINE) . '=' . ($m[1] ?? '');
 check(!str_contains($login['headers']['set-cookie'] ?? '', 'expires='), 'without Remember Me the cookies are session cookies');
 $confirm = page("$ENGINE/wp-login.php?action=logout", '', ["Cookie: $cookie"]);
-check($confirm['status'] === '200' && str_contains($confirm['body'], 'Do you really want to') && preg_match('/_wpnonce=([0-9a-f]{10})/', $confirm['body'], $n) === 1, 'logout without a nonce asks first');
+check($confirm['status'] === '403' && str_contains($confirm['body'], 'Do you really want to') && preg_match('/_wpnonce=([0-9a-f]{10})/', $confirm['body'], $n) === 1, 'logout without a nonce asks first');
 $out = page("$ENGINE/wp-login.php?action=logout&_wpnonce=" . ($n[1] ?? ''), '', ["Cookie: $cookie"]);
 check($out['status'] === '302' && str_contains($out['headers']['location'] ?? '', 'loggedout=true'), 'logout with the nonce signs out');
 $me = page("$ENGINE/?rest_route=" . rawurlencode('/wp/v2/users/me'), '', ["Cookie: $cookie"]);
