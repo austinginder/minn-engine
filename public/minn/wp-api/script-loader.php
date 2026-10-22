@@ -551,8 +551,9 @@ function _minn_script_module_url(string $src, string|false|null $version): strin
     if ($version === false) {
         $version = (string) $GLOBALS['wp_version'];
     }
+    // A module's version goes on through add_query_arg (wp_parse_str heard), unlike a script's or a style's.
     if ($version !== null && $version !== '') {
-        $src = Minn\Runtime\QueryArgs::versioned((string) $src, (string) $version);
+        $src = add_query_arg('ver', (string) $version, $src);
     }
     return esc_url($src);
 }

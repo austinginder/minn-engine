@@ -18994,8 +18994,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "a module's address with its version argument (the version added as the dependency printers add it, without wp_parse_str's filter: QueryArgs::versioned)",
-                "body": "7825747d3228"
+                "why": "a module's address with its version argument, through add_query_arg (wp_parse_str heard once per address, as on the reference, unlike a script's or a style's)",
+                "body": "e46098257342"
             },
             "_minn_script_translations_block": {
                 "verdict": "move",
