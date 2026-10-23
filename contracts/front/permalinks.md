@@ -179,6 +179,21 @@ showed (see "Under the site's own host" below).
   - **`?p=` / `?page_id=` with a listing or comment page** move to the
     front, not the post: `?p=1&paged=N` to `/`, `?page_id=2&paged=3` to
     `/page/3/` (`paged=1` to `/`), `?p=1&cpage=2&x=1` to `/?cpage=2&x=1`.
+  - **A page of listing asked as `?paged=`** moves to its pretty page, the
+    other arguments along: `/2026/?paged=2` to `/2026/page/2/`,
+    `/sample-page/?paged=2` to `/sample-page/page/2/`, `?paged=1` to the bare
+    listing, the query's number over the path's (`/page/3/?paged=1` to `/`).
+    The number is read whole (`02`, `-2`, `2x` and ` 2` are 2; `0`, `abc`
+    and `paged[]` ask for none). At the root a term's form goes to that page
+    of the term (`?cat=1&paged=2` to `/category/uncategorized/page/2/`) and
+    any other, a date's or an author's too, to that page of the root, their
+    arguments left behind (`?m=2026&paged=2` to `/page/2/`,
+    `?author=1&paged=1` to `/`). A search keeps it; a feed drops a first page
+    and keeps a later one (`?feed=rss2&paged=2` to `/feed/?paged=2`). Nothing
+    moves when the page as typed is a 404: past the last page, or of a term
+    the site lacks (`?tag=nope&paged=2`). An empty page past a feed's first
+    is a 404 too (`/feed/?paged=99`), printed as the posts' feed of nothing
+    under "Page not found"; any other feed of nothing stays a 200.
 
 **Body-class tokens** (the contract; the surrounding markup is engine-defined),
 read from the main query (`Theme\QueryClasses`), so flags combine as the query's
@@ -210,10 +225,8 @@ front and a plain taxonomy have none). A single's page counts (`/multi/2/` is
   `/category/x/?s=y` (a search on the reference, which picks the search
   template) renders the category's; its classes and title are right.
 - Not made yet: `?product=x&s=y` (the reference moves it to the product
-  with the arguments along); paged query-form moves
-  (`?post_type=product&paged=2` to `/page/2/?post_type=product`); with
-  `?product_cat=` and `?taxonomy=&term=` together the reference names the
-  second's term.
+  with the arguments along); with `?product_cat=` and `?taxonomy=&term=`
+  together the reference names the second's term.
 
 ## Front-page settings (`tests/front-page.test.php`, live against the oracle)
 

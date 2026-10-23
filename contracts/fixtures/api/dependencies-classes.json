@@ -116,6 +116,76 @@
         ]
     ],
     [
+        "the footer group as add()'s argument",
+        [
+            [
+                true,
+                [
+                    "zz-arg"
+                ],
+                {
+                    "zz-arg": 1
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-arg"
+                ],
+                {
+                    "zz-arg": 0
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-arg",
+                    "zz-head"
+                ],
+                {
+                    "zz-head": 0,
+                    "zz-arg": 0
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-arg"
+                ],
+                {
+                    "zz-arg": 0
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-arg"
+                ],
+                {
+                    "zz-arg": 1
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-arg"
+                ],
+                {
+                    "zz-arg": 1
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-arg"
+                ],
+                {
+                    "zz-arg": 0
+                }
+            ]
+        ]
+    ],
+    [
         "groups",
         [
             true,

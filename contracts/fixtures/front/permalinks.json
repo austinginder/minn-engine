@@ -1042,6 +1042,121 @@
         "location": "/",
         "classes": []
     },
+    "/?paged=1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/?paged=1&x=1": {
+        "status": 301,
+        "location": "/?x=1",
+        "classes": []
+    },
+    "/?paged=0": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/?paged=abc": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/?paged=-1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/page/3/?paged=1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/category/uncategorized/?paged=1": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/2026/?paged=1": {
+        "status": 301,
+        "location": "/2026/",
+        "classes": []
+    },
+    "/sample-page/?paged=1": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/?cat=1&paged=1": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/?m=2026&paged=1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/?author=1&paged=1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/?tag=nope&paged=2": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/category/uncategorized/?paged=2": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/feed/?paged=1": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/?feed=rss2&paged=1": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/feed/?paged=99": {
+        "status": 404,
+        "location": null,
+        "classes": []
+    },
+    "/comments/feed/?paged=2": {
+        "status": 404,
+        "location": null,
+        "classes": []
+    },
+    "/category/uncategorized/feed/?paged=99": {
+        "status": 404,
+        "location": null,
+        "classes": []
+    },
+    "/hello-world/feed/?paged=99": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/search/hello/feed/rss2/?paged=9": {
+        "status": 404,
+        "location": null,
+        "classes": []
+    },
     "/battery-image/": {
         "status": 301,
         "location": "/wp-content/uploads/2026/08/minn-battery.png",

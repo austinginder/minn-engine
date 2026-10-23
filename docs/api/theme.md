@@ -17,7 +17,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Folder`](#folder) | final readonly class | 99 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FontNames`](#fontnames) | final class | 56 | The font library's names (probes fonts and font-writes): a font-family |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 111 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 113 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
 | [`Hierarchy`](#hierarchy) | final class | 150 | The classic template hierarchy: the candidate file names each template |
@@ -466,8 +466,9 @@ site does not have is a 404, as is an empty page past the first of
 any listing and an empty date archive that names nothing else (an
 existing term, author or type with no posts, a date inside one of
 those or inside a search, an empty search, the front: a 200); the
-status and no-cache headers follow. A feed is never a 404: one of
-nothing is an empty feed.
+status and no-cache headers follow. A feed is a 404 only as an empty
+page past its first (/feed/?paged=99, then printed as the posts' feed
+of nothing); one of nothing else is an empty feed.
 
 ### static `sendHeaders(Minn\Objects\Environment $wp): void`
 

@@ -57,6 +57,13 @@ $cases = [
     '/?feed=rss2&author=1', '/?feed=rss2&m=2026', '/?feed=bogus',
     '/hello-world/?feed=rss2', '/category/uncategorized/?feed=atom', '/feed/?feed=atom', '/2026/?feed=rss2', '/?name=hello-world&feed=rss2',
     '/search/hello/?feed=rss2', '/nonexistent/rss2/', '/category/nope/rss2/', '/?page_id=2&cpage=2', '/?page_id=2&paged=1',
+    // A listing's page asked as ?paged=: the first moves to the bare listing (a date's or author's query form to the root),
+    // the query's number over the path's; one past the end, or of something the site lacks, stays a 404; a feed drops a
+    // first page and 404s an empty later one (the later pages that exist: the live block below).
+    '/?paged=1', '/?paged=1&x=1', '/?paged=0', '/?paged=abc', '/?paged=-1', '/page/3/?paged=1', '/category/uncategorized/?paged=1',
+    '/2026/?paged=1', '/sample-page/?paged=1', '/?cat=1&paged=1', '/?m=2026&paged=1', '/?author=1&paged=1', '/?tag=nope&paged=2',
+    '/category/uncategorized/?paged=2', '/feed/?paged=1', '/?feed=rss2&paged=1', '/feed/?paged=99', '/comments/feed/?paged=2',
+    '/category/uncategorized/feed/?paged=99', '/hello-world/feed/?paged=99', '/search/hello/feed/rss2/?paged=9',
     // Attachment pages are off on the test site: every address of one goes to its file.
     '/battery-image/', '/battery-image/?x=1', '/battery-image/embed/', '/battery-image/feed/', '/hello-world/battery-image/',
     '/?attachment_id=607', '/?attachment_id=607&x=1', '/?attachment_id=607&embed=true', '/?attachment=battery-image', '/?p=607',
@@ -147,6 +154,34 @@ foreach ($expected as $path => $want) {
         }
         $fail++;
         echo "  FAIL {$label} {$path}: " . implode('; ', $diff) . "\n";
+    }
+}
+// Live only: at two posts a page (the shared database's posts_per_page and posts_per_rss, restored on shutdown), the later
+// pages asked as ?paged= that exist move to their pretty address on both stacks.
+if ($live) {
+    require_once __DIR__ . '/lib.php';
+    $wp = static fn (string $command): string => trim((string) shell_exec('/opt/homebrew/bin/wp --skip-plugins --skip-themes --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference') . " {$command} 2>/dev/null"));
+    $perPage = [$wp('option get posts_per_page'), $wp('option get posts_per_rss')];
+    register_shutdown_function(static function () use ($wp, $perPage): void {
+        $wp('option update posts_per_page ' . escapeshellarg($perPage[0]));
+        $wp('option update posts_per_rss ' . escapeshellarg($perPage[1]));
+        $wp('cache flush');
+    });
+    $wp('option update posts_per_page 2');
+    $wp('option update posts_per_rss 2');
+    $wp('cache flush');
+    foreach (['/?paged=2', '/?paged=02', '/?paged=-2', '/?paged=2x', '/?paged=%202', '/?paged=2&x=1', '/?x=1&paged=2', '/?paged=2&paged=3', '/page/2/?paged=3',
+        '/category/uncategorized/?paged=2', '/category/uncategorized/page/2/?paged=2', '/2026/?paged=2', '/2026/08/28/?paged=2', '/sample-page/?paged=2',
+        '/?cat=1&paged=2&x=1', '/?category_name=uncategorized&paged=2', '/?m=2026&paged=2&x=1', '/?year=2026&monthnum=8&paged=2', '/?post_type=post&paged=2',
+        '/?author=1&paged=2', '/?cat=99&paged=2', '/?s=a&paged=2', '/?paged[]=2', '/feed/?paged=2', '/?feed=rss2&paged=2', '/feed/?paged=99'] as $path) {
+        $engine = permalink_fetch($ENGINE, $path);
+        $reference = permalink_fetch($REF, $path);
+        if ($engine === $reference) {
+            $pass++;
+            continue;
+        }
+        $fail++;
+        echo "  FAIL two a page {$path}: " . json_encode($engine) . ' vs ' . json_encode($reference) . "\n";
     }
 }
 echo "\n{$pass} passed, {$fail} failed\n";

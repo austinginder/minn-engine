@@ -18475,6 +18475,36 @@ enqueued, which brings the router into the import map, and the region, once proc
 bar and its animation styles. A loop holding a block with no interactivity support (a Custom HTML
 block) still navigates, on the reference as here. Suite `query-navigation`.
 
+## The theme-compat templates, and a listing's page asked as ?paged= (2026-10-23)
+
+A classic theme that calls `get_header()`, `get_sidebar()` or `get_footer()` without the file
+gets the reference's deprecated theme-compat one, and now the engine's own
+(`wp-api/theme-compat/header.php`, `sidebar.php`, `footer.php`, written from the reference's
+output, never its source). Each first notes itself through `_deprecated_file` ("Theme without
+header.php", 3.0.0, the advice to include one), as `deprecated_file_included` hears on both stacks.
+The header prints the profile link, the content type, the document title, the theme's stylesheet
+and the pingback address before `wp_head`, then the page and a banner of the site's name and
+tagline; a singular view queues `comment-reply`. The sidebar prints the first sidebar's widgets when
+it has any, otherwise a search form, a note on what is browsed (a category, a day, month or year, a
+search, a later page of the archives asked as `?paged=`; empty on an error page or another later
+page), the pages, the monthly archives, the categories with counts, and on the posts page or a page
+the bookmarks and a Meta box (Register or Site Admin, Log in or Log out, `wp_meta`). The footer
+prints the "proudly powered by" line and `wp_footer`. Measured over sixteen page types and switches
+(registration, widgets, a marked-up name, two posts a page) and signed in; suite `theme-compat`.
+
+On the way: the reference registers `comment-reply` in the footer group as `add()`'s fifth
+argument, so queued before `wp_head` it still prints at `wp_footer`. `WP_Scripts::set_group` now
+reads that argument when the script has no group data, the integer 1 only (`'1'` and 2 leave it in
+the head), and a head script that needs it still pulls it up (probe dependencies-classes).
+
+A listing's page asked as `?paged=` now moves to its pretty page as the reference's canonical
+redirect moves it (`contracts/front/permalinks.md`, the rule and its cases): `Front\Resolver`'s
+paged move takes the query's number over the path's, and `QueryMoves::paged` makes the root's,
+asked only once the page as typed is something the site has, so a page past the last or a missing
+term stays the 404 it is. An empty page past a feed's first is a 404 too (`FrontLifecycle::handle404`;
+before, a feed was never one), printed as the posts' feed of nothing. Suite `permalinks` (fixture
+cases, and a live block at two posts a page).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18658,4 +18688,6 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | done | the boot makes the server variables whole as the reference's does; "The server variables at boot (2026-10-23)" |
 | 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | done | core's query loop with enhancedPagination, now as on the reference; "A query loop that navigates on the client (2026-10-23)", suite `query-navigation` |
 | 18310 | The 0.1.0 field test (10-23) | Minn Admin's `wp minn install` does not flush page caches after the swap | open | Minn Admin's switch command, as install.sh does |
-| 18407 | Child theme PHP templates (10-23) | the theme-compat header.php, footer.php and sidebar.php a theme without them gets | open | the reference's deprecated layout, captured from its output before it is written |
+| 18407 | Child theme PHP templates (10-23) | the theme-compat header.php, footer.php and sidebar.php a theme without them gets | done | written from the reference's output; "The theme-compat templates, and a listing's page asked as ?paged= (2026-10-23)", suite `theme-compat` |
+| 18407 | Child theme PHP templates (10-23) | `comment-reply` registered without the footer group, so queued early it printed in the head | done | `WP_Scripts::set_group` reads `add()`'s group argument; probe dependencies-classes |
+| 18407 | Child theme PHP templates (10-23) | a listing's page asked as `?paged=` served as asked, and an empty later feed page a 200 | done | the reference's moves and its 404; `contracts/front/permalinks.md`, suite `permalinks` |

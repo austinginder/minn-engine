@@ -19062,8 +19062,8 @@
             "wp_default_scripts": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Assets",
-                "why": "the engine's default scripts (jQuery, the wp packages, comment-reply, wp-embed, the media player through Media\\Player::register, its data at once except on the page's own registry, which takes it on first use; the script pack) are engine data; probes default-scripts, media-player",
-                "body": "6b23bca25b87"
+                "why": "the engine's default scripts (jQuery, the wp packages, comment-reply in the footer group as the reference registers it, wp-embed, the media player through Media\\Player::register, its data at once except on the page's own registry, which takes it on first use; the script pack) are engine data; probes default-scripts, media-player, dependencies-classes; suite theme-compat",
+                "body": "6a1c27e14c8a"
             },
             "wp_dequeue_script": {
                 "verdict": "delegate",

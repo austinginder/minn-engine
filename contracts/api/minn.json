@@ -53373,8 +53373,8 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/QueryMoves.php",
-            "lines": 119,
-            "doc": "Where the root's archive query forms move under pretty permalinks, as\nthe reference's canonical redirect answers them (suite permalinks): a\nfeed (?feed=) first, then a date (?m=, ?year=), then an author by id, then a term when the\nquery names exactly one taxonomy (?cat= or ?category_name=, ?tag=,\n?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=\ncounts as one but never moves itself), each to its pretty address with\nthe other arguments along. Nothing moves while a search is asked for\n(?s=, even empty), past the first page, or to something the site does\nnot have. The singles' forms are SingleQueries'.",
+            "lines": 154,
+            "doc": "Where the root's archive query forms move under pretty permalinks, as\nthe reference's canonical redirect answers them (suite permalinks): a\nfeed (?feed=) first, then a date (?m=, ?year=), then an author by id, then a term when the\nquery names exactly one taxonomy (?cat= or ?category_name=, ?tag=,\n?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=\ncounts as one but never moves itself), each to its pretty address with\nthe other arguments along. A page of listing asked as ?paged= (a\nfeed's first page aside) moves to the pretty page instead: a term's to\nthat page of the term, anything else, a date or an author too, to that\npage of the root with the date's and author's arguments left behind\n(/?m=2026&paged=2 to /page/2/, /?paged=1 to /). Nothing moves while a\nsearch is asked for (?s=, even empty), or to something the site does not\nhave. The singles' forms are SingleQueries'.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -53418,8 +53418,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 32
+                "line": 31,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -53470,8 +53470,48 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 44
+                    "line": 39,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "paged",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "paged(Minn\\Http\\Request $request): ?Minn\\Front\\Resolution",
+                    "doc": "The move a root request asking for a page of listing as ?paged= makes\n(the caller asks only when the page as typed is one the site has): a\nterm's to that page of the term, anything else to that page of the\nroot, a date's and an author's arguments left behind. Null when it asks\nfor none, or for a search.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "askedPage",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "askedPage(Minn\\Http\\Request $request): int",
+                    "doc": "The page of listing a query string asks for as ?paged=, as a whole\nnumber read the way the reference reads it (02, -2 and 2x are 2); 0\nwhen it asks for none (absent, 0, not a number, not one value).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -53490,8 +53530,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 58
+                    "line": 83,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -53510,8 +53550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 68
+                    "line": 97,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -53519,7 +53559,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "feed(Minn\\Http\\Request $request): ?Minn\\Front\\Resolution",
-                    "doc": "?feed=: the feed at its pretty address: a comments feed under\n/comments/, one taxonomy's term's under the term, any other the\nsite's, an author or date asked with it left behind. An unknown kind\nof feed moves nowhere.",
+                    "doc": "?feed=: the feed at its pretty address: a comments feed under\n/comments/, one taxonomy's term's under the term, any other the\nsite's, an author or date asked with it left behind. A feed's later\npage stays asked for (?paged=2), its first is dropped. An unknown kind\nof feed moves nowhere.",
                     "shapes": [],
                     "params": [
                         {
@@ -53530,8 +53570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 90
+                    "line": 114,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -53550,8 +53590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 97
+                    "line": 132,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -53572,8 +53612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 136
+                    "line": 145,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -53592,8 +53632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 142
+                    "line": 177,
+                    "end": 181
                 }
             ]
         },
@@ -54616,7 +54656,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 325,
+            "lines": 332,
             "doc": "Turns a public URL into a Resolution the way the reference's request\nparse does: the root by its query string, any other path by the first\nof the site's rewrite rules it fits (Front\\RuleTable), whose query vars\nname what it is (Front\\RuleRoutes). What is left here are the\nreference's canonical answers around that (redirect_canonical,\nwp_old_slug_redirect):\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept), as do an embed's and an endpoint's\naddresses; paged views, search, and 404s do not.\n- Query-var forms redirect to the pretty form when the target is\npublic: a single's (?p=, ?page_id=, ?name=, ?pagename=; SingleQueries)\nand an archive's (?m=, ?year=, ?author=, one taxonomy's term;\nQueryMoves), unless a search is asked for.\n- A single asked for under a category it is not in (where the\nstructure names one), or with an old-style page number, moves to its\nown address; a trackback address goes to the post; the front page\nanswers only at the root.\n- A name the site no longer has: the post that used to have it, else the\nclosest published page or post whose name starts with it, pages before\nposts, newest first. Archives never guess.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -54850,8 +54890,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 245,
-                    "end": 255
+                    "line": 252,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -54919,7 +54959,7 @@
                         }
                     ],
                     "line": 132,
-                    "end": 187
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -54927,7 +54967,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "pagedMove(Minn\\Front\\Resolution $resolution, Minn\\Http\\Request $request, string $path): ?Minn\\Front\\Resolution",
-                    "doc": "A listing page that is not one: a post (not a page) asked for with a\npage of listing (/hello-world/page/2/, ?paged=2) moves to the post, the\nrest of the query along but that; the first page of any listing or page\ndrops its /page/1/. Null when neither applies.",
+                    "doc": "A listing page that is not one: a post (not a page) asked for with a\npage of listing (/hello-world/page/2/, ?paged=2) moves to the post, the\nrest of the query along but that; a page of listing or of a page asked\nas ?paged= moves to its pretty page, the query's number over the\npath's (/2026/?paged=2 to /2026/page/2/, /page/3/?paged=1 to /); the\nfirst page of any listing or page drops its /page/1/. Null when none\napplies.",
                     "shapes": [],
                     "params": [
                         {
@@ -54952,8 +54992,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 206
+                    "line": 200,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -54981,8 +55021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 237
+                    "line": 222,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -55003,8 +55043,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 267
+                    "line": 265,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -55025,8 +55065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -55052,8 +55092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 296
+                    "line": 288,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -55074,8 +55114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 330
+                    "line": 313,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -55086,8 +55126,8 @@
                     "doc": "The archives a request may stand for.",
                     "shapes": [],
                     "params": [],
-                    "line": 333,
-                    "end": 336
+                    "line": 340,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -55098,8 +55138,8 @@
                     "doc": "The addresses an attachment's page answers to.",
                     "shapes": [],
                     "params": [],
-                    "line": 339,
-                    "end": 342
+                    "line": 346,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -55110,8 +55150,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 345,
-                    "end": 348
+                    "line": 352,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -55130,8 +55170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 365
+                    "line": 357,
+                    "end": 372
                 }
             ]
         },
@@ -193937,7 +193977,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 111,
+            "lines": 113,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -194024,7 +194064,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "handle404(Minn\\Objects\\Query $query, bool $notFound): void",
-                    "doc": "The 404 decision, the one place it is made: a plugin's\npre_handle_404 may make it; otherwise a request for something the\nsite does not have is a 404, as is an empty page past the first of\nany listing and an empty date archive that names nothing else (an\nexisting term, author or type with no posts, a date inside one of\nthose or inside a search, an empty search, the front: a 200); the\nstatus and no-cache headers follow. A feed is never a 404: one of\nnothing is an empty feed.",
+                    "doc": "The 404 decision, the one place it is made: a plugin's\npre_handle_404 may make it; otherwise a request for something the\nsite does not have is a 404, as is an empty page past the first of\nany listing and an empty date archive that names nothing else (an\nexisting term, author or type with no posts, a date inside one of\nthose or inside a search, an empty search, the front: a 200); the\nstatus and no-cache headers follow. A feed is a 404 only as an empty\npage past its first (/feed/?paged=99, then printed as the posts' feed\nof nothing); one of nothing else is an empty feed.",
                     "shapes": [],
                     "params": [
                         {
@@ -194042,8 +194082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 97
+                    "line": 77,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -194062,8 +194102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 141
+                    "line": 107,
+                    "end": 143
                 }
             ]
         },

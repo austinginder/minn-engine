@@ -9818,25 +9818,25 @@
         },
         "WP_Scripts::add_data": {
             "file": "classes/WP_Scripts.php",
-            "line": 187,
+            "line": 190,
             "statements": 3,
             "lines": 6
         },
         "WP_Scripts::all_deps": {
             "file": "classes/WP_Scripts.php",
-            "line": 152,
+            "line": 155,
             "statements": 3,
             "lines": 5
         },
         "WP_Scripts::do_footer_items": {
             "file": "classes/WP_Scripts.php",
-            "line": 167,
+            "line": 170,
             "statements": 2,
             "lines": 2
         },
         "WP_Scripts::do_head_items": {
             "file": "classes/WP_Scripts.php",
-            "line": 161,
+            "line": 164,
             "statements": 2,
             "lines": 2
         },
@@ -9860,7 +9860,7 @@
         },
         "WP_Scripts::in_default_dir": {
             "file": "classes/WP_Scripts.php",
-            "line": 173,
+            "line": 176,
             "statements": 3,
             "lines": 9
         },
@@ -9872,7 +9872,7 @@
         },
         "WP_Scripts::markup": {
             "file": "classes/WP_Scripts.php",
-            "line": 214,
+            "line": 217,
             "statements": 8,
             "lines": 11
         },
@@ -9896,31 +9896,31 @@
         },
         "WP_Scripts::print_translations": {
             "file": "classes/WP_Scripts.php",
-            "line": 140,
+            "line": 143,
             "statements": 4,
             "lines": 8
         },
         "WP_Scripts::reset": {
             "file": "classes/WP_Scripts.php",
-            "line": 197,
+            "line": 200,
             "statements": 7,
             "lines": 7
         },
         "WP_Scripts::set_group": {
             "file": "classes/WP_Scripts.php",
-            "line": 128,
+            "line": 131,
             "statements": 2,
             "lines": 2
         },
         "WP_Scripts::source": {
             "file": "classes/WP_Scripts.php",
-            "line": 230,
+            "line": 233,
             "statements": 5,
             "lines": 11
         },
         "WP_Scripts::tag_attributes": {
             "file": "classes/WP_Scripts.php",
-            "line": 246,
+            "line": 249,
             "statements": 7,
             "lines": 10
         },
@@ -13598,7 +13598,7 @@
         },
         "_minn_concat_chunks": {
             "file": "script-loader.php",
-            "line": 779,
+            "line": 780,
             "statements": 3,
             "lines": 5
         },
@@ -13652,7 +13652,7 @@
         },
         "_minn_default_dependencies": {
             "file": "script-loader.php",
-            "line": 457,
+            "line": 458,
             "statements": 2,
             "lines": 7
         },
@@ -13676,7 +13676,7 @@
         },
         "_minn_enqueue_block_style_handle": {
             "file": "script-loader.php",
-            "line": 871,
+            "line": 872,
             "statements": 2,
             "lines": 10
         },
@@ -13826,7 +13826,7 @@
         },
         "_minn_inline_style_sources": {
             "file": "script-loader.php",
-            "line": 623,
+            "line": 624,
             "statements": 2,
             "lines": 2
         },
@@ -14186,7 +14186,7 @@
         },
         "_minn_script_module_url": {
             "file": "script-loader.php",
-            "line": 549,
+            "line": 550,
             "statements": 3,
             "lines": 7
         },
@@ -14582,13 +14582,13 @@
         },
         "_print_scripts": {
             "file": "script-loader.php",
-            "line": 789,
+            "line": 790,
             "statements": 4,
             "lines": 10
         },
         "_print_styles": {
             "file": "script-loader.php",
-            "line": 804,
+            "line": 805,
             "statements": 4,
             "lines": 10
         },
@@ -15050,7 +15050,7 @@
         },
         "_wp_normalize_relative_css_links": {
             "file": "script-loader.php",
-            "line": 726,
+            "line": 727,
             "statements": 2,
             "lines": 8
         },
@@ -16190,7 +16190,7 @@
         },
         "enqueue_block_styles_assets": {
             "file": "script-loader.php",
-            "line": 855,
+            "line": 856,
             "statements": 1,
             "lines": 11
         },
@@ -19172,7 +19172,7 @@
         },
         "script_concat_settings": {
             "file": "script-loader.php",
-            "line": 692,
+            "line": 693,
             "statements": 5,
             "lines": 5
         },
@@ -19916,7 +19916,7 @@
         },
         "wp_add_global_styles_for_blocks": {
             "file": "script-loader.php",
-            "line": 524,
+            "line": 525,
             "statements": 4,
             "lines": 14
         },
@@ -20390,7 +20390,7 @@
         },
         "wp_default_script_modules": {
             "file": "script-loader.php",
-            "line": 600,
+            "line": 601,
             "statements": 10,
             "lines": 12
         },
@@ -20552,7 +20552,7 @@
         },
         "wp_enqueue_block_style": {
             "file": "script-loader.php",
-            "line": 485,
+            "line": 486,
             "statements": 5,
             "lines": 17
         },
@@ -20588,7 +20588,7 @@
         },
         "wp_enqueue_global_styles_css_custom_properties": {
             "file": "script-loader.php",
-            "line": 511,
+            "line": 512,
             "statements": 3,
             "lines": 3
         },
@@ -20606,7 +20606,7 @@
         },
         "wp_enqueue_registered_block_scripts_and_styles": {
             "file": "script-loader.php",
-            "line": 886,
+            "line": 887,
             "statements": 2,
             "lines": 7
         },
@@ -20618,7 +20618,7 @@
         },
         "wp_enqueue_stored_styles": {
             "file": "script-loader.php",
-            "line": 834,
+            "line": 835,
             "statements": 2,
             "lines": 11
         },
@@ -21218,7 +21218,7 @@
         },
         "wp_get_script_polyfill": {
             "file": "script-loader.php",
-            "line": 750,
+            "line": 751,
             "statements": 3,
             "lines": 11
         },
@@ -21410,7 +21410,7 @@
         },
         "wp_html_custom_data_attribute_name": {
             "file": "script-loader.php",
-            "line": 713,
+            "line": 714,
             "statements": 2,
             "lines": 4
         },
@@ -21632,7 +21632,7 @@
         },
         "wp_js_dataset_name": {
             "file": "script-loader.php",
-            "line": 704,
+            "line": 705,
             "statements": 2,
             "lines": 4
         },
@@ -21650,7 +21650,7 @@
         },
         "wp_just_in_time_script_localization": {
             "file": "script-loader.php",
-            "line": 819,
+            "line": 820,
             "statements": 4,
             "lines": 4
         },
@@ -21782,7 +21782,7 @@
         },
         "wp_localize_jquery_ui_datepicker": {
             "file": "script-loader.php",
-            "line": 680,
+            "line": 681,
             "statements": 5,
             "lines": 7
         },
@@ -21902,7 +21902,7 @@
         },
         "wp_maybe_inline_styles": {
             "file": "script-loader.php",
-            "line": 629,
+            "line": 630,
             "statements": 5,
             "lines": 18
         },
@@ -22220,7 +22220,7 @@
         },
         "wp_prototype_before_jquery": {
             "file": "script-loader.php",
-            "line": 766,
+            "line": 767,
             "statements": 6,
             "lines": 8
         },
@@ -22490,7 +22490,7 @@
         },
         "wp_remove_surrounding_empty_script_tags": {
             "file": "script-loader.php",
-            "line": 653,
+            "line": 654,
             "statements": 5,
             "lines": 7
         },
@@ -22784,7 +22784,7 @@
         },
         "wp_scripts": {
             "file": "script-loader.php",
-            "line": 411,
+            "line": 412,
             "statements": 3,
             "lines": 10
         },
@@ -23090,13 +23090,13 @@
         },
         "wp_style_loader_src": {
             "file": "script-loader.php",
-            "line": 665,
+            "line": 666,
             "statements": 2,
             "lines": 4
         },
         "wp_styles": {
             "file": "script-loader.php",
-            "line": 447,
+            "line": 448,
             "statements": 2,
             "lines": 5
         },

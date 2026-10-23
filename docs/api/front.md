@@ -32,12 +32,12 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 42 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 72 | The surface monitors, crawlers, and hosting checks hit that is not a |
-| [`QueryMoves`](#querymoves) | final readonly class | 119 | Where the root's archive query forms move under pretty permalinks, as |
+| [`QueryMoves`](#querymoves) | final readonly class | 154 | Where the root's archive query forms move under pretty permalinks, as |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 90 | The interim public theme: one clean template until the block-theme |
 | [`RequestParse`](#requestparse) | final class | 68 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 325 | Turns a public URL into a Resolution the way the reference's request |
+| [`Resolver`](#resolver) | final readonly class | 332 | Turns a public URL into a Resolution the way the reference's request |
 | [`ResourceHints`](#resourcehints) | final class | 56 | The resource hint links wp_head prints (wp_resource_hints): each relation |
 | [`RuleRoutes`](#ruleroutes) | final readonly class | 156 | What a matched rewrite rule's query vars name, as the reference's main |
 | [`RuleTable`](#ruletable) | final class | 100 | An address read as WordPress's request parse reads it (suites |
@@ -1077,9 +1077,13 @@ feed (?feed=) first, then a date (?m=, ?year=), then an author by id, then a ter
 query names exactly one taxonomy (?cat= or ?category_name=, ?tag=,
 ?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=
 counts as one but never moves itself), each to its pretty address with
-the other arguments along. Nothing moves while a search is asked for
-(?s=, even empty), past the first page, or to something the site does
-not have. The singles' forms are SingleQueries'.
+the other arguments along. A page of listing asked as ?paged= (a
+feed's first page aside) moves to the pretty page instead: a term's to
+that page of the term, anything else, a date or an author too, to that
+page of the root with the date's and author's arguments left behind
+(/?m=2026&paged=2 to /page/2/, /?paged=1 to /). Nothing moves while a
+search is asked for (?s=, even empty), or to something the site does not
+have. The singles' forms are SingleQueries'.
 
 Used by: `Minn\Front\Resolver`
 
@@ -1092,7 +1096,21 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Front\Permalinks $perma
 
 The move a root request's query string makes; null when it makes none.
 
-Internals: `date()` (private, line 46), `author()` (private, line 60), `feed()` (private, line 76), `term()` (private, line 93), `oneTerm()` (private, line 106), `lastSlug()` (private, line 138)
+### `paged(Minn\Http\Request $request): ?Minn\Front\Resolution`
+
+The move a root request asking for a page of listing as ?paged= makes
+(the caller asks only when the page as typed is one the site has): a
+term's to that page of the term, anything else to that page of the
+root, a date's and an author's arguments left behind. Null when it asks
+for none, or for a search.
+
+### static `askedPage(Minn\Http\Request $request): int`
+
+The page of listing a query string asks for as ?paged=, as a whole
+number read the way the reference reads it (02, -2 and 2x are 2); 0
+when it asks for none (absent, 0, not a number, not one value).
+
+Internals: `date()` (private, line 83), `author()` (private, line 97), `feed()` (private, line 114), `term()` (private, line 132), `oneTerm()` (private, line 145), `lastSlug()` (private, line 177)
 
 
 ## Redirects
@@ -1338,7 +1356,7 @@ searches include.
 
 - `@return list<string>`
 
-Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `pagedMove()` (private, line 195), `missing()` (private, line 215), `endpointIn()` (private, line 258), `segments()` (private, line 270), `resolveQueryVars()` (private, line 281), `rootVars()` (private, line 306), `archives()` (private, line 333), `attachments()` (private, line 339), `elsewhere()` (private, line 345), `readable()` (private, line 350)
+Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `pagedMove()` (private, line 200), `missing()` (private, line 222), `endpointIn()` (private, line 265), `segments()` (private, line 277), `resolveQueryVars()` (private, line 288), `rootVars()` (private, line 313), `archives()` (private, line 340), `attachments()` (private, line 346), `elsewhere()` (private, line 352), `readable()` (private, line 357)
 
 
 ## ResourceHints

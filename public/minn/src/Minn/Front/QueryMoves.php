@@ -18,9 +18,13 @@ use Minn\Runtime\Runtime;
  * query names exactly one taxonomy (?cat= or ?category_name=, ?tag=,
  * ?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=
  * counts as one but never moves itself), each to its pretty address with
- * the other arguments along. Nothing moves while a search is asked for
- * (?s=, even empty), past the first page, or to something the site does
- * not have. The singles' forms are SingleQueries'.
+ * the other arguments along. A page of listing asked as ?paged= (a
+ * feed's first page aside) moves to the pretty page instead: a term's to
+ * that page of the term, anything else, a date or an author too, to that
+ * page of the root with the date's and author's arguments left behind
+ * (/?m=2026&paged=2 to /page/2/, /?paged=1 to /). Nothing moves while a
+ * search is asked for (?s=, even empty), or to something the site does not
+ * have. The singles' forms are SingleQueries'.
  */
 final readonly class QueryMoves
 {
@@ -34,13 +38,46 @@ final readonly class QueryMoves
     /** The move a root request's query string makes; null when it makes none. */
     public function for(Request $request): ?Resolution
     {
-        if ($request->has('s') || (int) $request->query('paged', '1') > 1) {
+        if ($request->has('s')) {
             return null;
         }
         if ($request->has('feed')) {
             return $this->feed($request);
         }
+        if (self::askedPage($request) > 0) {
+            return null;
+        }
         return $this->date($request) ?? $this->author($request) ?? $this->term($request);
+    }
+
+    /**
+     * The move a root request asking for a page of listing as ?paged= makes
+     * (the caller asks only when the page as typed is one the site has): a
+     * term's to that page of the term, anything else to that page of the
+     * root, a date's and an author's arguments left behind. Null when it asks
+     * for none, or for a search.
+     */
+    public function paged(Request $request): ?Resolution
+    {
+        $paged = self::askedPage($request);
+        if ($paged === 0 || $request->has('s') || $request->has('feed')) {
+            return null;
+        }
+        $term = $this->oneTerm($request);
+        return $term === null
+            ? Resolution::redirect($this->permalinks->forPaged($this->permalinks->url('/'), $paged) . $request->queryStringWithout('paged', 'm', 'year', 'monthnum', 'day', 'author'))
+            : Resolution::redirect($this->permalinks->forPaged($this->permalinks->forTerm($term[0]), $paged) . $request->queryStringWithout('paged', ...$term[1]));
+    }
+
+    /**
+     * The page of listing a query string asks for as ?paged=, as a whole
+     * number read the way the reference reads it (02, -2 and 2x are 2); 0
+     * when it asks for none (absent, 0, not a number, not one value).
+     */
+    public static function askedPage(Request $request): int
+    {
+        $paged = $request->query['paged'] ?? null;
+        return is_scalar($paged) ? abs((int) $paged) : 0;
     }
 
     private function date(Request $request): ?Resolution
@@ -70,7 +107,8 @@ final readonly class QueryMoves
     /**
      * ?feed=: the feed at its pretty address: a comments feed under
      * /comments/, one taxonomy's term's under the term, any other the
-     * site's, an author or date asked with it left behind. An unknown kind
+     * site's, an author or date asked with it left behind. A feed's later
+     * page stays asked for (?paged=2), its first is dropped. An unknown kind
      * of feed moves nowhere.
      */
     private function feed(Request $request): ?Resolution
@@ -79,14 +117,15 @@ final readonly class QueryMoves
         if (!in_array(preg_replace('/^comments-/', '', $type), ['feed', 'rss2', 'rss', 'atom', 'rdf'], true)) {
             return null;
         }
+        $consumed = self::askedPage($request) === 1 ? ['feed', 'paged'] : ['feed'];
         if (str_starts_with($type, 'comments-')) {
-            return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/comments/', $type)) . $request->queryStringWithout('feed'));
+            return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/comments/', $type)) . $request->queryStringWithout(...$consumed));
         }
         $term = $this->oneTerm($request);
         if ($term !== null) {
-            return Resolution::redirect(Permalinks::feedPath($this->permalinks->forTerm($term[0]), $type) . $request->queryStringWithout('feed', ...$term[1]));
+            return Resolution::redirect(Permalinks::feedPath($this->permalinks->forTerm($term[0]), $type) . $request->queryStringWithout(...$consumed, ...$term[1]));
         }
-        return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/', $type)) . $request->queryStringWithout('feed', 'author', 'm', 'year', 'monthnum', 'day'));
+        return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/', $type)) . $request->queryStringWithout(...$consumed, ...['author', 'm', 'year', 'monthnum', 'day']));
     }
 
     /** The one taxonomy's term the query names, at its pretty address. */

@@ -124,10 +124,13 @@ class WP_Scripts extends WP_Dependencies
         return $this->assets->localize((string) $handle, (string) $object_name, (array) $l10n);
     }
 
-    /** A script's group: its own (the footer is 1), or the group of what depends on it when that is lower. */
+    /**
+     * A script's group: its own (the footer is 1, set as data or else as the integer 1 given to add()), or the group of
+     * what depends on it when that is lower.
+     */
     public function set_group($handle, $recursion, $group = false)
     {
-        $own = (int) $this->get_data($handle, 'group');
+        $own = (int) ($this->get_data($handle, 'group') ?: (($this->registered[$handle]->args ?? null) === 1 ? 1 : 0));
         return parent::set_group($handle, $recursion, $group !== false && $own > (int) $group ? (int) $group : $own);
     }
 

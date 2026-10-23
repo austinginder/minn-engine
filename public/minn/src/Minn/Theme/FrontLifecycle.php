@@ -70,8 +70,9 @@ final class FrontLifecycle
      * any listing and an empty date archive that names nothing else (an
      * existing term, author or type with no posts, a date inside one of
      * those or inside a search, an empty search, the front: a 200); the
-     * status and no-cache headers follow. A feed is never a 404: one of
-     * nothing is an empty feed.
+     * status and no-cache headers follow. A feed is a 404 only as an empty
+     * page past its first (/feed/?paged=99, then printed as the posts' feed
+     * of nothing); one of nothing else is an empty feed.
      */
     public static function handle404(Query $query, bool $notFound): void
     {
@@ -87,7 +88,8 @@ final class FrontLifecycle
         $notFound = $notFound || (!$decided && $empty && $named && $query->get_queried_object() === null);
         // A sitemap request is the sitemaps server's to judge at template_redirect, since 7.1.3 (suite sitemap-hooks).
         $sitemap = (string) $query->get('sitemap') !== '';
-        if (!$sitemap && !$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {
+        $missing = $query->is_feed() ? $empty && $query->is_paged() : $notFound || ($empty && ($query->is_paged() || $bareDate));
+        if (!$sitemap && $missing) {
             $query->set_404();
             RequestHeaders::status(404);
             RequestHeaders::noCache();

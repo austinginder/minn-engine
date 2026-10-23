@@ -146,8 +146,10 @@ final readonly class Resolver
         $pathFeed = (string) ($vars['feed'] ?? '');
         if ($pathFeed !== '' || ($asked !== '' && $resolution->kind !== Kind::NotFound)) {
             $feed = Permalinks::feedPath((string) preg_replace('#(?:/feed)?/(?:feed|rdf|rss|rss2|atom)/?$#', '/', $path), $asked !== '' ? $asked : $pathFeed);
-            if ($follows && $resolution->kind !== Kind::Search && ($feed !== $path || $asked !== '')) {
-                return Resolution::redirect($this->permalinks->url($feed) . $request->queryStringWithout('feed'));
+            // A feed's first page asked as ?paged=1 drops it; a later page stays asked for.
+            $pageOne = QueryMoves::askedPage($request) === 1;
+            if ($follows && $resolution->kind !== Kind::Search && ($feed !== $path || $asked !== '' || $pageOne)) {
+                return Resolution::redirect($this->permalinks->url($feed) . $request->queryStringWithout(...($pageOne ? ['feed', 'paged'] : ['feed'])));
             }
             if ($pathFeed !== '') {
                 return $follows && !$slashed ? $slash() : $resolution;
@@ -189,8 +191,11 @@ final readonly class Resolver
     /**
      * A listing page that is not one: a post (not a page) asked for with a
      * page of listing (/hello-world/page/2/, ?paged=2) moves to the post, the
-     * rest of the query along but that; the first page of any listing or page
-     * drops its /page/1/. Null when neither applies.
+     * rest of the query along but that; a page of listing or of a page asked
+     * as ?paged= moves to its pretty page, the query's number over the
+     * path's (/2026/?paged=2 to /2026/page/2/, /page/3/?paged=1 to /); the
+     * first page of any listing or page drops its /page/1/. Null when none
+     * applies.
      */
     private function pagedMove(Resolution $resolution, Request $request, string $path): ?Resolution
     {
@@ -199,8 +204,10 @@ final readonly class Resolver
         if ($record !== null && $resolution->kind === Kind::Single && ($paged !== null || $request->has('paged'))) {
             return Resolution::redirect($this->permalinks->forPost($record) . $request->queryStringWithout('paged'));
         }
-        if ($paged !== null && (int) $paged === 1) {
-            return Resolution::redirect($this->permalinks->url((string) preg_replace('#/page/1/?$#', '/', $path)) . $request->queryStringWithout());
+        $asked = isset($resolution->vars['embed']) ? 0 : QueryMoves::askedPage($request);
+        if ($asked > 0 || ($paged !== null && (int) $paged === 1)) {
+            $base = $this->permalinks->url((string) preg_replace('#/page/\d+/?$#', '/', $path));
+            return Resolution::redirect($this->permalinks->forPaged($base, max(1, $asked)) . $request->queryStringWithout('paged'));
         }
         return null;
     }
@@ -284,15 +291,15 @@ final readonly class Resolver
         if ($single !== null) {
             return $single;
         }
-        $move = $redirects->follows() && $this->permalinks->isPretty() ? (new QueryMoves($this->db, $this->terms, $this->permalinks))->for($request) : null;
+        $moves = $redirects->follows() && $this->permalinks->isPretty() ? new QueryMoves($this->db, $this->terms, $this->permalinks) : null;
+        $move = $moves?->for($request);
         if ($move !== null) {
             return $move;
         }
         $vars = $this->rootVars($request);
-        if ($vars === null) {
-            return Resolution::notFound();
-        }
-        return (new RuleRoutes($this->posts, $this->archives(), $this->permalinks->frontPageId, $this->permalinks->postsPageId, $this->readable(...)))->resolve($vars);
+        $typed = $vars === null ? Resolution::notFound() : (new RuleRoutes($this->posts, $this->archives(), $this->permalinks->frontPageId, $this->permalinks->postsPageId, $this->readable(...)))->resolve($vars);
+        // A page of listing asked as ?paged= moves to its pretty page, unless what was typed names nothing the site has.
+        return ($typed->kind === Kind::NotFound ? null : $moves?->paged($request)) ?? $typed;
     }
 
     /**

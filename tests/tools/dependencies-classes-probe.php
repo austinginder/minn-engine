@@ -98,6 +98,28 @@ $say('dependencies resolved', [
 $scripts->to_do = [];
 $scripts->groups = [];
 
+// The footer group given as add()'s fifth argument rather than as data (comment-reply is registered so), alone, under a head
+// script that needs it, as a string, and beside group data of its own.
+$grouped = static function (array $adds, array $handles, $group) use ($ours): array {
+    $registry = new WP_Scripts();
+    foreach ($adds as [$handle, $deps, $args, $data]) {
+        $registry->add($handle, "https://cdn.example/{$handle}.js", $deps, '1', $args);
+        if ($data !== null) {
+            $registry->add_data($handle, 'group', $data);
+        }
+    }
+    return [$registry->all_deps($handles, false, $group), $ours($registry->to_do), $registry->groups];
+};
+$say('the footer group as add()\'s argument', [
+    $grouped([['zz-arg', [], 1, null]], ['zz-arg'], false),
+    $grouped([['zz-arg', [], 1, null]], ['zz-arg'], 0),
+    $grouped([['zz-arg', [], 1, null], ['zz-head', ['zz-arg'], null, null]], ['zz-head'], false),
+    $grouped([['zz-arg', [], '1', null]], ['zz-arg'], false),
+    $grouped([['zz-arg', [], 1, 0]], ['zz-arg'], false),
+    $grouped([['zz-arg', [], 0, 1]], ['zz-arg'], false),
+    $grouped([['zz-arg', [], 2, null]], ['zz-arg'], false),
+]);
+
 $say('groups', [
     $scripts->set_group('zz-a', false, 0), $scripts->groups,
     $scripts->set_group('zz-a', false, 1), $scripts->groups,
