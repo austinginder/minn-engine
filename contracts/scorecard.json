@@ -1,11 +1,15 @@
 {
     "wordpress": "7.1.3",
+    "audit": {
+        "date": "2026-10-22",
+        "file": "docs/audit-2026-10-22.md"
+    },
     "security": {
-        "found": 81,
-        "fixed": 81
+        "found": 91,
+        "fixed": 91
     },
     "sql": {
-        "measured": "2026-10-21",
+        "measured": "2026-10-22",
         "pages": {
             "/": [
                 26,
@@ -31,16 +35,16 @@
         "atOrUnder": 5
     },
     "hooks": {
-        "total": 2543,
-        "proven": 1717,
-        "fired": 1821,
-        "deadend": 722,
+        "total": 2542,
+        "proven": 1741,
+        "fired": 1844,
+        "deadend": 698,
         "different": 0,
         "missing": 0,
-        "outside": 148,
+        "outside": 149,
         "accounted": 100,
-        "provenOfLive": 94.2,
-        "provenWeighted": 96.2
+        "provenOfLive": 94.4,
+        "provenWeighted": 97
     },
     "wordpressNames": {
         "functionCalls": 0,
@@ -51,15 +55,15 @@
         "files": 0
     },
     "coverage": {
-        "measured": "2026-10-13",
-        "percent": 87.6,
-        "lines": 31689,
-        "covered": 27782,
+        "measured": "2026-10-23",
+        "percent": 88.4,
+        "lines": 40780,
+        "covered": 36068,
         "parts": [
-            "suites",
             "unit",
             "probes",
-            "http"
+            "http",
+            "suites"
         ]
     },
     "leanness": {
@@ -262,19 +266,16 @@
     },
     "open": {
         "done": 122,
-        "accepted": 27,
-        "open": 5,
+        "accepted": 28,
+        "open": 8,
         "austin": 0
     },
     "run": {
         "measured": "2026-10-22",
         "suites": 96,
-        "green": 94,
-        "checks": 30734,
-        "red": [
-            "templates",
-            "cli"
-        ],
+        "green": 96,
+        "checks": 30815,
+        "red": [],
         "engineWarnings": 0,
         "warningKinds": []
     },
@@ -304,10 +305,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 191811
+            "of": 191885
         },
         "engine": {
-            "of": 115721,
+            "of": 115780,
             "php": {
                 "strict": {
                     "window": 40,
@@ -334,7 +335,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76090,
+            "of": 76105,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -343,25 +344,25 @@
     "facadeLogic": {
         "functions": 3496,
         "methods": 3814,
-        "delegates": 3562,
-        "logicFunctions": 1777,
+        "delegates": 3561,
+        "logicFunctions": 1778,
         "logicMethods": 1971,
-        "logicLines": 29283,
+        "logicLines": 29294,
         "kept": 0,
         "review": {
             "doubts": 4,
-            "reviewed": 3131,
+            "reviewed": 3132,
             "stale": 0,
             "verdicts": {
                 "delegate": 148,
                 "move": 1473,
-                "keep": 1496,
+                "keep": 1497,
                 "remove": 14
             },
             "keep": {
                 "scope": 115,
                 "shape": 289,
-                "compose": 604,
+                "compose": 605,
                 "contract": 477,
                 "library": 11
             },
