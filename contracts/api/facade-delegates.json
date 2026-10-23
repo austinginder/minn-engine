@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1661
+        "delegates": 1663
     },
     "functions": {
         "__": {
@@ -5268,6 +5268,10 @@
             "file": "widgets.php",
             "statement": "return WidgetAreas::find((string) $widget_id);"
         },
+        "wp_fix_server_vars": {
+            "file": "load.php",
+            "statement": "return \\Minn\\Http\\Request::fixServerVars();"
+        },
         "wp_footer": {
             "file": "template.php",
             "statement": "do_action('wp_footer');"
@@ -6011,6 +6015,10 @@
         "wp_plupload_default_settings": {
             "file": "media.php",
             "statement": "Minn\\Media\\MediaModal::uploadSettings(_minn_assets('script'));"
+        },
+        "wp_populate_basic_auth_from_authorization_header": {
+            "file": "load.php",
+            "statement": "return \\Minn\\Http\\Request::basicAuthFromHeader();"
         },
         "wp_post_mime_type_where": {
             "file": "post.php",

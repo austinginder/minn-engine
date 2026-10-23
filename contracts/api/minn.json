@@ -71423,7 +71423,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Request.php",
-            "lines": 221,
+            "lines": 279,
             "doc": "An immutable picture of the incoming request. Built once from the PHP\nglobals at the edge; handlers only ever see this object.",
             "implements": [],
             "extends": null,
@@ -72096,6 +72096,42 @@
                     ],
                     "line": 228,
                     "end": 232
+                },
+                {
+                    "routes": [],
+                    "name": "fixServerVars",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fixServerVars(): void",
+                    "doc": "The server variables some hosts leave out or get wrong, set as the\nreference's boot sets them (wp_fix_server_vars) before anything loads:\nan empty software name and request URI first, the request URI built\nfrom IIS's headers or the script and path info, a php.cgi script file\nand path info corrected, PHP_SELF from the request URI (and the global\nof that name), and Basic credentials from the Authorization header.\nUnder WP-CLI that leaves REQUEST_URI an empty string, which plugins\nread without checking it is set.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 244,
+                    "end": 261
+                },
+                {
+                    "routes": [],
+                    "name": "basicAuthFromHeader",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "basicAuthFromHeader(): void",
+                    "doc": "Basic credentials from an Authorization header into PHP_AUTH_USER and PHP_AUTH_PW, when PHP did not set them (wp_populate_basic_auth_from_authorization_header).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 264,
+                    "end": 277
+                },
+                {
+                    "routes": [],
+                    "name": "uriFromParts",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "uriFromParts(): string",
+                    "doc": "A request URI from the script name, the path info (or its original) and the query string.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 280,
+                    "end": 290
                 }
             ]
         },
@@ -168018,7 +168054,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 488,
+            "lines": 490,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -168716,7 +168752,7 @@
                         }
                     ],
                     "line": 132,
-                    "end": 170
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -168727,8 +168763,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 173,
-                    "end": 179
+                    "line": 175,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -168739,8 +168775,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -168751,8 +168787,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -168763,8 +168799,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -168783,8 +168819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 211
+                    "line": 207,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -168795,8 +168831,8 @@
                     "doc": "Whether this request is installing (wp_installing()); false before a runtime boots.",
                     "shapes": [],
                     "params": [],
-                    "line": 214,
-                    "end": 217
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -168815,8 +168851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 227
+                    "line": 222,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -168835,8 +168871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 233
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -168862,8 +168898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 261
+                    "line": 246,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -168882,8 +168918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 296
+                    "line": 291,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -168911,8 +168947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 320
+                    "line": 311,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -168931,8 +168967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 326
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -168943,8 +168979,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 329,
-                    "end": 332
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -168955,8 +168991,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 335,
-                    "end": 338
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -168967,8 +169003,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 341,
-                    "end": 344
+                    "line": 343,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -168979,8 +169015,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 347,
-                    "end": 350
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -168991,8 +169027,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 353,
-                    "end": 356
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -169003,8 +169039,8 @@
                     "doc": "A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing).",
                     "shapes": [],
                     "params": [],
-                    "line": 359,
-                    "end": 365
+                    "line": 361,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -169015,8 +169051,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 368,
-                    "end": 371
+                    "line": 370,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -169027,8 +169063,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 374,
-                    "end": 377
+                    "line": 376,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -169039,8 +169075,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 380,
-                    "end": 383
+                    "line": 382,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -169051,8 +169087,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 386,
-                    "end": 389
+                    "line": 388,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -169078,8 +169114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 395
+                    "line": 394,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -169105,8 +169141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 401
+                    "line": 400,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -169132,8 +169168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 407
+                    "line": 406,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -169144,8 +169180,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 410,
-                    "end": 413
+                    "line": 412,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -169156,8 +169192,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 416,
-                    "end": 419
+                    "line": 418,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -169168,8 +169204,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 422,
-                    "end": 425
+                    "line": 424,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -169188,8 +169224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 455
+                    "line": 430,
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -169200,8 +169236,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 487,
-                    "end": 490
+                    "line": 489,
+                    "end": 492
                 },
                 {
                     "routes": [],
@@ -169212,8 +169248,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 493,
-                    "end": 510
+                    "line": 495,
+                    "end": 512
                 },
                 {
                     "routes": [],
@@ -169232,8 +169268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 465,
-                    "end": 479
+                    "line": 467,
+                    "end": 481
                 }
             ]
         },

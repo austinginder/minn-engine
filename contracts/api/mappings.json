@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 707,
-        "composes": 2060,
-        "leaf": 958,
-        "noop": 3268,
+        "composes": 2059,
+        "leaf": 956,
+        "noop": 3270,
         "placeholder": 0,
         "deadend": 1766,
-        "functions": 8681,
-        "minnMethods": 1561,
+        "functions": 8680,
+        "minnMethods": 1563,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -38173,13 +38173,6 @@
             ],
             "composes": []
         },
-        "_minn_request_uri_from_parts": {
-            "file": "load.php",
-            "lines": 8,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
-        },
         "_minn_require_wp_db": {
             "file": "load.php",
             "lines": 8,
@@ -67864,13 +67857,12 @@
         },
         "wp_fix_server_vars": {
             "file": "load.php",
-            "lines": 15,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_request_uri_from_parts",
-                "wp_populate_basic_auth_from_authorization_header"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Http\\Request::fixServerVars"
+            ],
+            "composes": []
         },
         "wp_font_dir": {
             "file": "fonts.php",
@@ -72841,9 +72833,11 @@
         },
         "wp_populate_basic_auth_from_authorization_header": {
             "file": "load.php",
-            "lines": 11,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Http\\Request::basicAuthFromHeader"
+            ],
             "composes": []
         },
         "wp_post_mime_type_where": {

@@ -133,7 +133,7 @@ the WordPress runtime plugins load against
 | [`RequestHeaders`](#requestheaders) | final class | 106 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 390 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`RewriteStructs`](#rewritestructs) | final class | 113 | The rewrite object's state and the structures it builds links and rules |
-| [`Runtime`](#runtime) | final class | 488 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 490 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`SafeUrls`](#safeurls) | final class | 22 | Whether an address is one the site may fetch (wp_http_validate_url): an |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 393 | The script modules registry: registrations with typed dependencies, the |
@@ -7646,7 +7646,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 465)
+Internals: `loadObjectCacheDropin()` (private, line 467)
 
 
 ## SafeUrls

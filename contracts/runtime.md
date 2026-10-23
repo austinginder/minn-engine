@@ -18430,6 +18430,19 @@ Left open.
   and meta, each with a `_deprecated_file` notice); the engine carries only the embed and comments
   compat templates, so such a call prints nothing.
 
+## The server variables at boot (2026-10-23)
+
+The reference makes the request's server variables whole before anything loads
+(`wp_fix_server_vars`): an empty software name and request URI where none was given, the request
+URI rebuilt from IIS's headers or the script and path info, PHP_SELF from it and the global of that
+name, Basic credentials from the Authorization header. The engine had the function in its facade
+and never called it, so under WP-CLI `$_SERVER['REQUEST_URI']` was unset where the reference has
+`''`, and a plugin reading it in a `determine_current_user` filter (JWT Authentication for WP REST
+API) warned on every command. `Http\Request::fixServerVars()` holds the rules (with
+`basicAuthFromHeader()`), `Runtime::boot` calls it once the script globals are named, on the web and
+the command line, and `wp_fix_server_vars` and `wp_populate_basic_auth_from_authorization_header`
+are delegates. Suite `cli` compares the three variables on both stacks.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18610,7 +18623,7 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host |
 | 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | austin | carry a POP3 client, or leave post by email out (the engine refuses as unconfigured) |
 | 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | open | hook-parity snapshot names the six hooks |
-| 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | open | the engine's CLI boot runs a filter the reference's does not |
+| 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | done | the boot makes the server variables whole as the reference's does; "The server variables at boot (2026-10-23)" |
 | 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | open | seen on the SandyWP sandbox |
 | 18310 | The 0.1.0 field test (10-23) | Minn Admin's `wp minn install` does not flush page caches after the swap | open | Minn Admin's switch command, as install.sh does |
 | 18407 | Child theme PHP templates (10-23) | the theme-compat header.php, footer.php and sidebar.php a theme without them gets | open | the reference's deprecated layout, captured from its output before it is written |

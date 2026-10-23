@@ -15853,12 +15853,6 @@
                 "why": "asks the global $current_screen plugins set, else the admin constant",
                 "body": "b1d91a10ad21"
             },
-            "_minn_request_uri_from_parts": {
-                "verdict": "keep",
-                "reason": "scope",
-                "why": "rebuilds the request URI from PATH_INFO and the query string in $_SERVER",
-                "body": "dbac020c5dcc"
-            },
             "_minn_require_wp_db": {
                 "verdict": "keep",
                 "reason": "scope",
@@ -15964,12 +15958,6 @@
                 "why": "prints whether the edited file left a fatal error, between the scrape markers",
                 "body": "c847f87c6a28"
             },
-            "wp_fix_server_vars": {
-                "verdict": "keep",
-                "reason": "scope",
-                "why": "normalises the $_SERVER variables plugins read (request URI, script, PHP_SELF, basic auth)",
-                "body": "60648642c42e"
-            },
             "wp_get_active_and_valid_themes": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -16065,12 +16053,6 @@
                 "reason": "shape",
                 "why": "hands out the API's one paused-themes storage object",
                 "body": "58aa33cacf2a"
-            },
-            "wp_populate_basic_auth_from_authorization_header": {
-                "verdict": "keep",
-                "reason": "scope",
-                "why": "fills PHP_AUTH_USER and PHP_AUTH_PW in $_SERVER from a basic Authorization header",
-                "body": "c417794663ff"
             },
             "wp_raise_memory_limit": {
                 "verdict": "move",

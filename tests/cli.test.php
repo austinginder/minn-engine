@@ -415,6 +415,8 @@ foreach ([
     'taxonomy list --format=json --fields=name,public',
     'menu list --format=json --fields=term_id,name,slug',
     "eval 'echo get_option(\"home\"), \" \", wp_count_posts()->publish;'",
+    // The boot makes the server variables whole (wp_fix_server_vars): a plugin reading REQUEST_URI under WP-CLI finds it.
+    "eval 'echo json_encode([\$_SERVER[\"REQUEST_URI\"] ?? null, \$_SERVER[\"SERVER_SOFTWARE\"] ?? null, isset(\$GLOBALS[\"PHP_SELF\"])]);'",
 ] as $command) {
     $same("wp {$command} runs on the engine's runtime", $command);
 }

@@ -147,6 +147,8 @@ final class Runtime
         if ($runtime->request !== null) {
             \_minn_script_globals($runtime->request->path);
         }
+        // The server variables made whole as the reference's boot makes them, before any plugin reads one.
+        \Minn\Http\Request::fixServerVars();
         \_minn_browser_globals();
         _minn_main_query();
         _minn_rewrite();

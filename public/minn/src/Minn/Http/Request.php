@@ -230,4 +230,62 @@ final readonly class Request
         $kept = array_diff_key($this->query, array_flip($keys));
         return $kept === [] ? '' : '?' . http_build_query($kept);
     }
+
+    /**
+     * The server variables some hosts leave out or get wrong, set as the
+     * reference's boot sets them (wp_fix_server_vars) before anything loads:
+     * an empty software name and request URI first, the request URI built
+     * from IIS's headers or the script and path info, a php.cgi script file
+     * and path info corrected, PHP_SELF from the request URI (and the global
+     * of that name), and Basic credentials from the Authorization header.
+     * Under WP-CLI that leaves REQUEST_URI an empty string, which plugins
+     * read without checking it is set.
+     */
+    public static function fixServerVars(): void
+    {
+        $_SERVER = array_merge(['SERVER_SOFTWARE' => '', 'REQUEST_URI' => ''], $_SERVER);
+        if (empty($_SERVER['REQUEST_URI']) || (PHP_SAPI !== 'cgi-fcgi' && preg_match('/^Microsoft-IIS\//', (string) $_SERVER['SERVER_SOFTWARE']))) {
+            $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_URL'] ?? $_SERVER['HTTP_X_REWRITE_URL'] ?? self::uriFromParts();
+        }
+        if (isset($_SERVER['SCRIPT_FILENAME']) && str_ends_with((string) $_SERVER['SCRIPT_FILENAME'], 'php.cgi')) {
+            $_SERVER['SCRIPT_FILENAME'] = $_SERVER['PATH_TRANSLATED'] ?? $_SERVER['SCRIPT_FILENAME'];
+        }
+        if (isset($_SERVER['SCRIPT_NAME']) && str_contains((string) $_SERVER['SCRIPT_NAME'], 'php.cgi')) {
+            unset($_SERVER['PATH_INFO']);
+        }
+        if (empty($_SERVER['PHP_SELF'])) {
+            $_SERVER['PHP_SELF'] = preg_replace('/(\?.*)?$/', '', (string) $_SERVER['REQUEST_URI']);
+        }
+        $GLOBALS['PHP_SELF'] = $_SERVER['PHP_SELF'];
+        self::basicAuthFromHeader();
+    }
+
+    /** Basic credentials from an Authorization header into PHP_AUTH_USER and PHP_AUTH_PW, when PHP did not set them (wp_populate_basic_auth_from_authorization_header). */
+    public static function basicAuthFromHeader(): void
+    {
+        if (isset($_SERVER['PHP_AUTH_USER']) || isset($_SERVER['PHP_AUTH_PW'])) {
+            return;
+        }
+        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        if (!is_string($header) || !str_starts_with(strtolower($header), 'basic ')) {
+            return;
+        }
+        $decoded = base64_decode(substr($header, 6), true);
+        if (is_string($decoded) && str_contains($decoded, ':')) {
+            [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']] = explode(':', $decoded, 2);
+        }
+    }
+
+    /** A request URI from the script name, the path info (or its original) and the query string. */
+    private static function uriFromParts(): string
+    {
+        if (!isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO'])) {
+            $_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+        }
+        $uri = '';
+        if (isset($_SERVER['PATH_INFO'])) {
+            $uri = $_SERVER['PATH_INFO'] === ($_SERVER['SCRIPT_NAME'] ?? null) ? (string) $_SERVER['PATH_INFO'] : ($_SERVER['SCRIPT_NAME'] ?? '') . $_SERVER['PATH_INFO'];
+        }
+        return $uri . (empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING']);
+    }
 }

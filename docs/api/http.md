@@ -30,7 +30,7 @@ request, response, routing, and the outgoing client
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 105 | An HTTP response as text, the way the Requests library hands it from |
 | [`Refusal`](#refusal) | interface | 5 | A refusal a route judges after its arguments and before its policy: the |
-| [`Request`](#request) | final readonly class | 221 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Request`](#request) | final readonly class | 279 | An immutable picture of the incoming request. Built once from the PHP |
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 161 | What a handler returns. Nothing is written to the client until the |
@@ -1055,6 +1055,23 @@ The path split into non-empty segments: "/a/b/" becomes ["a", "b"].
 ### `queryStringWithout(string ...$keys): string`
 
 The query string with the given keys removed, ready to append to a redirect.
+
+### static `fixServerVars(): void`
+
+The server variables some hosts leave out or get wrong, set as the
+reference's boot sets them (wp_fix_server_vars) before anything loads:
+an empty software name and request URI first, the request URI built
+from IIS's headers or the script and path info, a php.cgi script file
+and path info corrected, PHP_SELF from the request URI (and the global
+of that name), and Basic credentials from the Authorization header.
+Under WP-CLI that leaves REQUEST_URI an empty string, which plugins
+read without checking it is set.
+
+### static `basicAuthFromHeader(): void`
+
+Basic credentials from an Authorization header into PHP_AUTH_USER and PHP_AUTH_PW, when PHP did not set them (wp_populate_basic_auth_from_authorization_header).
+
+Internals: `uriFromParts()` (private, line 280)
 
 
 ## RequestFailed
