@@ -179,13 +179,34 @@ final readonly class EngineUpdate
         }
     }
 
-    /** A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down). */
+    /**
+     * A link, or a folder inside a git working copy at any depth (the engine's
+     * own repository keeps it two levels down). Folders open_basedir keeps
+     * PHP out of are not looked in: asking there only warns, on every request
+     * (a host such as Kinsta allows the webroot and not the site folder above it).
+     */
     public static function isCheckout(string $dir): bool
     {
         $checkout = is_link($dir);
-        for (; !$checkout && dirname($dir) !== $dir; $dir = dirname($dir)) {
+        for (; !$checkout && dirname($dir) !== $dir && self::reachable($dir); $dir = dirname($dir)) {
             $checkout = file_exists("{$dir}/.git");
         }
         return $checkout;
+    }
+
+    /** Whether open_basedir lets PHP look inside a folder: when it is set, the folder must lie within one of its paths. */
+    private static function reachable(string $dir): bool
+    {
+        $allowed = (string) ini_get('open_basedir');
+        if ($allowed === '') {
+            return true;
+        }
+        foreach (explode(PATH_SEPARATOR, $allowed) as $root) {
+            $root = rtrim($root, '/');
+            if ($root !== '' && ($dir === $root || str_starts_with($dir . '/', $root . '/'))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
