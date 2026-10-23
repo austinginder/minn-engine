@@ -1,5 +1,5 @@
 {
-    "method": "tests/tools/side-effects.php sets these differences aside: each rule's match is a regular expression over a row's name (made rows as table#n), with the reason it is settled.",
+    "method": "tests/tools/side-effects.php sets these differences aside: each rule's match is a regular expression over a row's name (made rows as table#n), with the reason it is settled; a rule with a \"probe\" holds for that probe alone.",
     "rules": [
         {
             "match": "^options:_site_transient(_timeout)?_theme_roots$",
@@ -28,6 +28,11 @@
         {
             "match": "^options:_transient(_timeout)?_wp_styles_for_blocks$",
             "reason": "the reference caches the block styles it builds from theme.json in a transient; the engine builds them each request and no plugin reads the cache (contracts/runtime.md register, row 17998, accepted)"
+        },
+        {
+            "probe": "rest-widgets-class-probe.php",
+            "match": "^options:sidebars_widgets$",
+            "reason": "the probe calls WP_REST_Widgets_Controller::create_item itself with no sidebar, which a REST request never sends (the schema's default is wp_inactive_widgets): there the reference passes through a state with the new widget first among the inactive ones; through a REST request both stacks add it last (measured 2026-10-23, register row 17998, accepted)"
         }
     ]
 }

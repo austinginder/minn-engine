@@ -410,9 +410,5 @@
         "wp-user-query-sql-probe.php",
         "wpdb-probe.php"
     ],
-    "differences": {
-        "rest-widgets-class-probe.php": {
-            "options:sidebars_widgets": "states"
-        }
-    }
+    "differences": []
 }

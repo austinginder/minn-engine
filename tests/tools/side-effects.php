@@ -609,6 +609,10 @@ $compare = static function (string $probe, array $baseline) use ($db, $root, $si
     $set = 0;
     foreach (array_keys($differences) as $identity) {
         foreach ($accepted as $rule) {
+            // A rule may hold for one probe only (its "probe" key).
+            if (isset($rule['probe']) && $rule['probe'] !== $probe) {
+                continue;
+            }
             if (preg_match('/' . str_replace('/', '\\/', (string) $rule['match']) . '/', fx_named($identity)) === 1) {
                 unset($differences[$identity]);
                 $set++;
@@ -687,6 +691,9 @@ foreach ($report['probes'] as $probe => ['differences' => $differences]) {
         $name = fx_named($identity);
         // A report read again (--from) is held to the accepted list as it is now.
         foreach ($accepted as $rule) {
+            if (isset($rule['probe']) && $rule['probe'] !== $probe) {
+                continue;
+            }
             if (preg_match('/' . str_replace('/', '\\/', (string) $rule['match']) . '/', $name) === 1) {
                 continue 2;
             }
