@@ -20,7 +20,7 @@ Measured against WordPress 7.1.3 on the same database:
 - **Never contacts wordpress.org.** Update checks, directory search, translations and downloads go to updates.minn.run, Minn's update service.
 - **Signed updates.** The installer and the engine's own updater install only a release carrying an Ed25519 signature from a key built into the engine.
 - **Reversible.** `minn eject` gives WordPress back its files byte for byte. A round-trip suite gives WordPress and Minn the same day of work on copies of real sites and compares every row each leaves behind (`contracts/round-trip.md`).
-- **About a third of the size.** The engine (`src/Minn`, about 116,000 lines) and the WordPress-shaped facade plugins call (`wp-api`, about 76,000) come to about 192,000 lines of PHP, against about 618,000 in WordPress 7.1.3 with its admin and bundled libraries.
+- **About a third of the size.** The engine (`src/Minn`, about 116,000 lines) and the WordPress-shaped facade plugins call (`wp-api`, about 87,000) come to about 203,000 lines of PHP, against about 618,000 in WordPress 7.1.3 with its admin and bundled libraries.
 
 ### Who it is for today
 
