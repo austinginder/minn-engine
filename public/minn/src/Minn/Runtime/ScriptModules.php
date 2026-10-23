@@ -28,6 +28,9 @@ final class ScriptModules
     /** @var array<string, true> the queued modules whose missing dependencies were told */
     private array $told = [];
 
+    /** @var array<string, list<string>> the modules that import each one, as first asked (dependentsOf) */
+    private array $dependents = [];
+
     /**
      * @param Closure(string, string|false|null): string $url turns a src and version into the printed URL
      * @param Closure(string, array<string, mixed>): array<string, mixed> $data applies the module data filter
@@ -210,7 +213,9 @@ final class ScriptModules
 
     /**
      * The modulepreload links: the queued modules' static dependencies not
-     * queued themselves, each after its own (depth first, in queue order).
+     * queued themselves, each after its own (depth first, in queue order),
+     * fetched at the priority priorities() gives, its own named beside it
+     * when that differs.
      */
     public function printPreloads(): string
     {
@@ -220,8 +225,11 @@ final class ScriptModules
             if (in_array($id, $this->queue, true)) {
                 continue;
             }
-            $priority = $this->registered[$id]['fetchpriority'];
-            $out .= '<link rel="modulepreload" href="' . $this->attr($this->urlOf($id)) . '" id="' . $this->attr($id . '-js-modulepreload') . '"' . ($priority === 'auto' ? '' : ' fetchpriority="' . $priority . '"') . '>' . "\n";
+            $attributes = '';
+            foreach ($this->priorityAttributes($id) as $name => $value) {
+                $attributes .= ' ' . $name . '="' . $value . '"';
+            }
+            $out .= '<link rel="modulepreload" href="' . $this->attr($this->urlOf($id)) . '" id="' . $this->attr($id . '-js-modulepreload') . '"' . $attributes . '>' . "\n";
         }
         return $out;
     }
@@ -268,7 +276,7 @@ final class ScriptModules
     {
         $this->tellMissing();
         $out = '';
-        foreach ($this->marked() as $id) {
+        foreach ($this->queuedInOrder() as $id) {
             if (in_array($id, $this->done, true)) {
                 continue;
             }
@@ -281,11 +289,98 @@ final class ScriptModules
                 $this->a11yAvailable = true;
             }
             $attributes = ['type' => 'module', 'src' => $this->urlOf($id), 'id' => $id . '-js-module']
-                + ($item['fetchpriority'] !== 'auto' ? ['fetchpriority' => $item['fetchpriority']] : [])
+                + $this->priorityAttributes($id)
                 + $item['attributes'];
             $out .= AssetQueue::tag($attributes);
         }
         return $out;
+    }
+
+    /**
+     * The queued modules in the order they print: each after the queued
+     * modules it imports, statically or dynamically, through any that are
+     * not queued (depth first, in queue order), as the reference prints them
+     * (probe script-modules-printing).
+     *
+     * @return list<string>
+     */
+    private function queuedInOrder(): array
+    {
+        $marked = $this->marked();
+        $order = [];
+        foreach ($marked as $id) {
+            foreach ([...$this->dependenciesFirst([$id], ['static', 'dynamic']), $id] as $each) {
+                if (in_array($each, $marked, true) && !in_array($each, $order, true)) {
+                    $order[] = $each;
+                }
+            }
+        }
+        return $order;
+    }
+
+    /**
+     * The priority a module is fetched at (probe script-modules-printing):
+     * the highest (high, then auto, then low; none named is auto) of the
+     * queued modules among it and those that import it, statically or
+     * dynamically, directly or through others; its own when none is queued.
+     * Who imports a module is remembered from the first time it is asked
+     * (dependentsOf), as the reference remembers it.
+     */
+    private function priorityOf(string $id): string
+    {
+        $rank = ['low' => 0, 'auto' => 1, 'high' => 2];
+        $marked = $this->marked();
+        $best = null;
+        $seen = [];
+        $walk = [$id];
+        while ($walk !== []) {
+            $each = array_shift($walk);
+            if (isset($seen[$each])) {
+                continue;
+            }
+            $seen[$each] = true;
+            if (in_array($each, $marked, true)) {
+                $priority = (string) $this->registered[$each]['fetchpriority'];
+                $best = $best === null || ($rank[$priority] ?? 1) > ($rank[$best] ?? 1) ? $priority : $best;
+            }
+            array_push($walk, ...$this->dependentsOf($each));
+        }
+        return $best ?? (string) $this->registered[$id]['fetchpriority'];
+    }
+
+    /**
+     * The registered modules that import one, statically or dynamically:
+     * worked out the first time it is asked and kept for the rest of the
+     * request, so a module registered after that is not among them, as on
+     * the reference.
+     *
+     * @return list<string>
+     */
+    private function dependentsOf(string $id): array
+    {
+        if (!isset($this->dependents[$id])) {
+            $this->dependents[$id] = [];
+            foreach ($this->registered as $other => $item) {
+                if (in_array($id, array_column($item['dependencies'], 'id'), true)) {
+                    $this->dependents[$id][] = (string) $other;
+                }
+            }
+        }
+        return $this->dependents[$id];
+    }
+
+    /**
+     * A module tag's priority attributes: fetchpriority unless it is fetched
+     * at auto, and data-wp-fetchpriority naming its own when that differs
+     * and is not auto.
+     *
+     * @return array<string, string>
+     */
+    private function priorityAttributes(string $id): array
+    {
+        $own = (string) $this->registered[$id]['fetchpriority'];
+        $fetched = $this->priorityOf($id);
+        return ($fetched === 'auto' ? [] : ['fetchpriority' => $fetched]) + ($own !== $fetched && $own !== 'auto' ? ['data-wp-fetchpriority' => $own] : []);
     }
 
     /**
@@ -308,19 +403,21 @@ final class ScriptModules
     }
 
     /**
-     * The modules' registered static dependencies, each after its own: depth
-     * first, in the order the modules and their dependencies are given.
+     * The modules' registered dependencies of the import types given (static
+     * unless asked), each after its own: depth first, in the order the
+     * modules and their dependencies are given.
      *
      * @param list<string> $ids
+     * @param list<string> $types
      * @return list<string>
      */
-    private function dependenciesFirst(array $ids): array
+    private function dependenciesFirst(array $ids, array $types = ['static']): array
     {
         $order = [];
         $seen = [];
-        $visit = function (string $id) use (&$visit, &$order, &$seen): void {
+        $visit = function (string $id) use (&$visit, &$order, &$seen, $types): void {
             foreach ($this->registered[$id]['dependencies'] ?? [] as $dep) {
-                if ($dep['import'] !== 'static' || !isset($this->registered[$dep['id']]) || isset($seen[$dep['id']])) {
+                if (!in_array($dep['import'], $types, true) || !isset($this->registered[$dep['id']]) || isset($seen[$dep['id']])) {
                     continue;
                 }
                 $seen[$dep['id']] = true;

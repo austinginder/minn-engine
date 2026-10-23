@@ -6,8 +6,14 @@
  * notice for a module whose dependency is missing comes (counted after each
  * step: registering, queueing, and each of the printing calls, twice; which
  * call tells it first; once per module); and the preloads' order for
- * dependencies queued modules share, a chain of them included. The page's
- * own registry is never touched. Same protocol as api-probe.php.
+ * dependencies queued modules share, a chain of them included; and the
+ * priority each preload and queued module is fetched at, worked out again
+ * as the queue grows and shrinks (the highest of the queued modules that
+ * need it, through static or dynamic imports), its own named beside it when
+ * that differs; who imports a module remembered from the first print that
+ * asks, so a module registered after it does not count; and the queued
+ * modules printed after the queued ones they import. The page's own
+ * registry is never touched. Same protocol as api-probe.php.
  */
 
 $log = [];
@@ -97,5 +103,80 @@ foreach (['zz-first', 'zz-second', 'zz-third'] as $id) {
     $chain->enqueue($id);
 }
 $say('preloads', ['preloads' => $printed($chain, 'print_script_module_preloads'), 'import map' => $printed($chain, 'print_import_map')]);
+
+// The priority a module is fetched at, printed after each change to the queue.
+$ranked = static function (): WP_Script_Modules {
+    $modules = new WP_Script_Modules();
+    $modules->register('zz-plain', '/zz/plain.js');
+    $modules->register('zz-low-dep', '/zz/low-dep.js', [], false, ['fetchpriority' => 'low']);
+    $modules->register('zz-high-dep', '/zz/high-dep.js', [], false, ['fetchpriority' => 'high']);
+    $modules->register('zz-auto', '/zz/auto.js', ['zz-plain', 'zz-low-dep', 'zz-high-dep']);
+    $modules->register('zz-low', '/zz/low.js', ['zz-auto'], false, ['fetchpriority' => 'low']);
+    $modules->register('zz-high', '/zz/high.js', ['zz-low', ['id' => 'zz-dynamic', 'import' => 'dynamic']], false, ['fetchpriority' => 'high']);
+    $modules->register('zz-dynamic', '/zz/dynamic.js', ['zz-low-dep'], false, ['fetchpriority' => 'low']);
+    $modules->register('zz-asks', '/zz/asks.js', [['id' => 'zz-dynamic', 'import' => 'dynamic']], false, ['fetchpriority' => 'high']);
+    return $modules;
+};
+$both = static fn (WP_Script_Modules $modules): array => [$printed($modules, 'print_script_module_preloads'), $printed($modules, 'print_enqueued_script_modules')];
+$modules = $ranked();
+$modules->enqueue('zz-low');
+$steps = ['low queued' => $both($modules)];
+$modules->enqueue('zz-high');
+$steps['then high'] = $both($modules);
+$modules->dequeue('zz-high');
+$steps['high dequeued'] = $both($modules);
+$say('priorities as the queue changes', $steps);
+$modules = $ranked();
+$modules->enqueue('zz-auto');
+$modules->enqueue('zz-low');
+$say('an auto module and a low one that needs it, queued', $both($modules));
+$modules = $ranked();
+$modules->enqueue('zz-dynamic');
+$modules->enqueue('zz-asks');
+$say('a low module a high one imports dynamically, queued', $both($modules));
+
+// Who imports a module is remembered from the first print that asks: a module registered after that does not count,
+// nor does one registered again after its removal.
+$modules = new WP_Script_Modules();
+$modules->register('zz-base', '/zz/base.js', [], false, ['fetchpriority' => 'low']);
+$modules->register('zz-middle', '/zz/middle.js', ['zz-base'], false, ['fetchpriority' => 'low']);
+$modules->enqueue('zz-middle');
+$remembered = ['first' => $both($modules)];
+$modules->register('zz-later', '/zz/later.js', ['zz-middle'], false, ['fetchpriority' => 'high']);
+$modules->enqueue('zz-later');
+$remembered['a high module registered after'] = $both($modules);
+$say('who imports a module, remembered', $remembered);
+$modules = new WP_Script_Modules();
+$modules->register('zz-base', '/zz/base.js', [], false, ['fetchpriority' => 'low']);
+$modules->register('zz-high', '/zz/high.js', ['zz-base'], false, ['fetchpriority' => 'high']);
+$modules->enqueue('zz-high');
+$again = ['first' => $printed($modules, 'print_script_module_preloads')];
+$modules->dequeue('zz-high');
+$modules->deregister('zz-high');
+$modules->register('zz-high', '/zz/high-two.js', ['zz-base'], false, ['fetchpriority' => 'high']);
+$modules->register('zz-plain', '/zz/plain.js', ['zz-base']);
+$modules->enqueue('zz-plain');
+$modules->enqueue('zz-base');
+$again['removed, registered again, and a new one'] = $printed($modules, 'print_enqueued_script_modules');
+$say('who imports a module, kept through removal', $again);
+
+// The queued modules print after the queued ones they import, through others and dynamic imports.
+$orders = [];
+foreach ([['zz-a', 'zz-l'], ['zz-x', 'zz-a', 'zz-l'], ['zz-a', 'zz-x', 'zz-l'], ['zz-c', 'zz-l', 'zz-a'], ['zz-d', 'zz-l', 'zz-x'], ['zz-e', 'zz-l'], ['zz-f', 'zz-a', 'zz-l']] as $queue) {
+    $modules = new WP_Script_Modules();
+    $modules->register('zz-l', '/zz/l.js');
+    $modules->register('zz-x', '/zz/x.js');
+    $modules->register('zz-a', '/zz/a.js', ['zz-l']);
+    $modules->register('zz-c', '/zz/c.js', ['zz-a', 'zz-x']);
+    $modules->register('zz-d', '/zz/d.js', [['id' => 'zz-l', 'import' => 'dynamic']]);
+    $modules->register('zz-e', '/zz/e.js', ['zz-mid']);
+    $modules->register('zz-mid', '/zz/mid.js', ['zz-l']);
+    $modules->register('zz-f', '/zz/f.js', ['zz-l', 'zz-a']);
+    foreach ($queue as $id) {
+        $modules->enqueue($id);
+    }
+    $orders[implode(',', $queue)] = preg_match_all('#id="(zz-[a-z]+)-js-module"#', $printed($modules, 'print_enqueued_script_modules'), $found) ? $found[1] : [];
+}
+$say('the order queued modules print in', $orders);
 
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

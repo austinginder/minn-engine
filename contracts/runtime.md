@@ -18535,6 +18535,25 @@ What still differs on `http:activate`: the reference also refreshes its core blo
 (`wp_core_block_css_files`), a transient the engine has no use for, since it keeps no such list
 (its read already differs on every request; snapshotted).
 
+## The priority a script module is fetched at, and the order queued modules print in (2026-10-23)
+
+Row 16832's open half, measured on registries of their own (probe script-modules-printing). A
+module, preloaded or queued, is fetched at the highest priority (high, then auto, then low; none
+named is auto) among the queued modules that are it or import it, statically or dynamically,
+directly or through others; its own priority counts only when it is queued, and when none of them
+is queued it keeps its own. Where its own differs from that and is not auto, it is printed beside
+as `data-wp-fetchpriority`. The answer is worked out again at each print from the queue as it
+stands. What the 10-22 note took for a raised priority kept for the rest of the request is the
+reference remembering who imports a module: the first print that asks keeps each module's
+importers, and a module registered after (or registered again after its removal) is not among
+them, so the script-modules probe's default router, whose importers were first asked before the
+probe's own router module was registered, stays at its own low. `Runtime\ScriptModules` walks the
+importers per printed module (`priorityOf`) and keeps them as the reference does (`dependentsOf`).
+
+On the way: the queued modules print after the queued modules they import (through ones that are
+not queued, dynamic imports included), depth first in queue order, where the engine printed them in
+queue order (`queuedInOrder`).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18598,7 +18617,8 @@ rows that are `open` or `austin`.
 | 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | done | 2026-10-12: routes, list and writes (probe `namespaced-type`) |
 | 15221 | Security fixes (10-12) | the audit's Lows | done | each verified and fixed or accepted with its reason ("The audit's Lows, route schemas, namespaced types and the block head") |
 | 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | done | 2026-10-18: "Script modules printed, and registries of their own" (probe `script-modules-printing`) |
-| 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | order done 2026-10-18. Measured 10-22 on fresh ids (16 cases): a preload is fetched at the highest priority (high, then auto, then low; a module that names none counts as auto) of the queued modules that need it, directly or through others, whatever its own; its own is printed as `data-wp-fetchpriority` where it differs and is not auto. Built and reverted the same day: the reference keeps a raised priority for the rest of the request (once interactivity rose to auto, a later high dependent left it auto, and the script-modules probe's default import map shows it unraised), which needs measuring before the rule is written. A module's own address takes its version through `add_query_arg` (wp_parse_str heard), unlike a script's or a style's (done) |
+| 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | done | order done 2026-10-18. Measured 10-22 on fresh ids (16 cases): a preload is fetched at the highest priority (high, then auto, then low; a module that names none counts as auto) of the queued modules that need it, directly or through others, whatever its own; its own is printed as `data-wp-fetchpriority` where it differs and is not auto. Built and reverted the same day: the reference keeps a raised priority for the rest of the request (once interactivity rose to auto, a later high dependent left it auto, and the script-modules probe's default import map shows it unraised), which needs measuring before the rule is written. A module's own address takes its version through `add_query_arg` (wp_parse_str heard), unlike a script's or a style's (done). Settled 10-23: the reference remembers who imports a module from the first print that asks; "The priority a script module is fetched at, and the order queued modules print in (2026-10-23)", probe script-modules-printing |
+| 16832 | Query Monitor's reflection (10-15) | queued script modules printed in queue order, where the reference prints each after the queued modules it imports | done | `ScriptModules::queuedInOrder`; probe script-modules-printing |
 | 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | done | 2026-10-18: each new one keeps its own (probe `script-modules-printing`) |
 | 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | done | 2026-10-19: "A template part found as the reference finds it" (probes `template-part-lookup`, `tax-terms`); the lookup and its theme term are answered from what the engine has read, no SELECT more |
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | done | "The front's template chosen through get_block_templates (2026-10-16)"; the template-part lookup is still the row above |

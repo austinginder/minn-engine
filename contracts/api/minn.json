@@ -169727,7 +169727,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ScriptModules.php",
-            "lines": 393,
+            "lines": 490,
             "doc": "The script modules registry: registrations with typed dependencies, the\nqueue, and the four things a page prints from it (the import map, module\npreloads, the module tags split head/footer, and per-module JSON data).\nBehaviour pinned by the script-modules probe fixture.",
             "implements": [],
             "extends": null,
@@ -169763,8 +169763,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 37
+                "line": 38,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -169823,6 +169823,15 @@
                 },
                 {
                     "name": "told",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "dependents",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -169897,8 +169906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 71
+                    "line": 47,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -169945,8 +169954,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 82
+                    "line": 77,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -169965,8 +169974,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -169985,8 +169994,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 95
+                    "line": 94,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -170012,8 +170021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 109
+                    "line": 101,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -170032,8 +170041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 115
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -170052,8 +170061,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -170066,8 +170075,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -170088,8 +170097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 155
+                    "line": 150,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -170102,8 +170111,8 @@
                         "@return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>"
                     ],
                     "params": [],
-                    "line": 164,
-                    "end": 173
+                    "line": 167,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -170133,8 +170142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 190
+                    "line": 186,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -170153,8 +170162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 196
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -170165,8 +170174,8 @@
                     "doc": "The import map script tag.",
                     "shapes": [],
                     "params": [],
-                    "line": 199,
-                    "end": 209
+                    "line": 202,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -170174,11 +170183,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "printPreloads(): string",
-                    "doc": "The modulepreload links: the queued modules' static dependencies not\nqueued themselves, each after its own (depth first, in queue order).",
+                    "doc": "The modulepreload links: the queued modules' static dependencies not\nqueued themselves, each after its own (depth first, in queue order),\nfetched at the priority priorities() gives, its own named beside it\nwhen that differs.",
                     "shapes": [],
                     "params": [],
-                    "line": 215,
-                    "end": 227
+                    "line": 220,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -170189,8 +170198,8 @@
                     "doc": "The head's module tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 230,
-                    "end": 233
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -170201,8 +170210,8 @@
                     "doc": "The footer's module tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 236,
-                    "end": 239
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -170213,8 +170222,8 @@
                     "doc": "The script-module-data tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 255
+                    "line": 250,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -170225,8 +170234,8 @@
                     "doc": "The a11y module's tag, once.",
                     "shapes": [],
                     "params": [],
-                    "line": 258,
-                    "end": 265
+                    "line": 266,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -170252,8 +170261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 130
+                    "line": 126,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -170272,8 +170281,86 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 289
+                    "line": 275,
+                    "end": 297
+                },
+                {
+                    "routes": [],
+                    "name": "queuedInOrder",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "queuedInOrder(): array",
+                    "doc": "The queued modules in the order they print: each after the queued\nmodules it imports, statically or dynamically, through any that are\nnot queued (depth first, in queue order), as the reference prints them\n(probe script-modules-printing).",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 307,
+                    "end": 319
+                },
+                {
+                    "routes": [],
+                    "name": "priorityOf",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "priorityOf(string $id): string",
+                    "doc": "The priority a module is fetched at (probe script-modules-printing):\nthe highest (high, then auto, then low; none named is auto) of the\nqueued modules among it and those that import it, statically or\ndynamically, directly or through others; its own when none is queued.\nWho imports a module is remembered from the first time it is asked\n(dependentsOf), as the reference remembers it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 329,
+                    "end": 349
+                },
+                {
+                    "routes": [],
+                    "name": "dependentsOf",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "dependentsOf(string $id): array",
+                    "doc": "The registered modules that import one, statically or dynamically:\nworked out the first time it is asked and kept for the rest of the\nrequest, so a module registered after that is not among them, as on\nthe reference.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 359,
+                    "end": 370
+                },
+                {
+                    "routes": [],
+                    "name": "priorityAttributes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "priorityAttributes(string $id): array",
+                    "doc": "A module tag's priority attributes: fetchpriority unless it is fetched\nat auto, and data-wp-fetchpriority naming its own when that differs\nand is not auto.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 379,
+                    "end": 384
                 },
                 {
                     "routes": [],
@@ -170284,18 +170371,19 @@
                     "doc": "A queued module whose dependencies are not all registered is told\nonce, as the page first prints its module tags or preloads, not as it\nregisters (a dependency may be registered later).",
                     "shapes": [],
                     "params": [],
-                    "line": 296,
-                    "end": 308
+                    "line": 391,
+                    "end": 403
                 },
                 {
                     "routes": [],
                     "name": "dependenciesFirst",
                     "static": false,
                     "visibility": "private",
-                    "signature": "dependenciesFirst(array $ids): array",
-                    "doc": "The modules' registered static dependencies, each after its own: depth\nfirst, in the order the modules and their dependencies are given.",
+                    "signature": "dependenciesFirst(array $ids, array $types = array (   0 => 'static', )): array",
+                    "doc": "The modules' registered dependencies of the import types given (static\nunless asked), each after its own: depth first, in the order the\nmodules and their dependencies are given.",
                     "shapes": [
                         "@param list<string> $ids",
+                        "@param list<string> $types",
                         "@return list<string>"
                     ],
                     "params": [
@@ -170305,10 +170393,17 @@
                             "shape": "list<string>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "array (   0 => 'static', )",
+                            "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 335
+                    "line": 414,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -170319,8 +170414,8 @@
                     "doc": "Queued modules that are registered with every dependency registered, in queue order.",
                     "shapes": [],
                     "params": [],
-                    "line": 338,
-                    "end": 347
+                    "line": 435,
+                    "end": 444
                 },
                 {
                     "routes": [],
@@ -170348,8 +170443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 362
+                    "line": 447,
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -170379,8 +170474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 391
+                    "line": 470,
+                    "end": 488
                 },
                 {
                     "routes": [],
@@ -170399,8 +170494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 394,
-                    "end": 397
+                    "line": 491,
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -170419,8 +170514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 402
+                    "line": 496,
+                    "end": 499
                 },
                 {
                     "routes": [],
@@ -170453,8 +170548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 407
+                    "line": 501,
+                    "end": 504
                 }
             ]
         },

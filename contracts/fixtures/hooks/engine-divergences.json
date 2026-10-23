@@ -17927,7 +17927,6 @@
             "probe:rewrite-generate": "not fired",
             "probe:script-loader-helpers": "not fired",
             "probe:script-modules": "not fired",
-            "probe:script-modules-printing": "not fired",
             "probe:script-modules-private": "not fired",
             "probe:script-printing": "not fired",
             "probe:sweep-1018": "not fired",

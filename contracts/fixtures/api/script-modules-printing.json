@@ -76,5 +76,94 @@
             "preloads": "<link rel=\"modulepreload\" href=\"/zz/leaf.js?ver={v}\" id=\"zz-leaf-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/middle.js?ver={v}\" id=\"zz-middle-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/shared.js?ver={v}\" id=\"zz-shared-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/other.js?ver={v}\" id=\"zz-other-dep-js-modulepreload\">\n",
             "import map": "<script id=\"wp-importmap\" type=\"importmap\">\n{\"imports\":{\"zz-shared\":\"/zz/shared.js?ver={v}\",\"zz-other-dep\":\"/zz/other.js?ver={v}\",\"zz-dynamic-only\":\"/zz/dynamic.js?ver={v}\",\"zz-middle\":\"/zz/middle.js?ver={v}\",\"zz-leaf\":\"/zz/leaf.js?ver={v}\"}}\n</script>\n"
         }
+    ],
+    [
+        "priorities as the queue changes",
+        {
+            "low queued": [
+                "<link rel=\"modulepreload\" href=\"/zz/plain.js?ver={v}\" id=\"zz-plain-js-modulepreload\" fetchpriority=\"low\">\n<link rel=\"modulepreload\" href=\"/zz/low-dep.js?ver={v}\" id=\"zz-low-dep-js-modulepreload\" fetchpriority=\"low\">\n<link rel=\"modulepreload\" href=\"/zz/high-dep.js?ver={v}\" id=\"zz-high-dep-js-modulepreload\" fetchpriority=\"low\" data-wp-fetchpriority=\"high\">\n<link rel=\"modulepreload\" href=\"/zz/auto.js?ver={v}\" id=\"zz-auto-js-modulepreload\" fetchpriority=\"low\">\n",
+                "<script fetchpriority=\"low\" id=\"zz-low-js-module\" src=\"/zz/low.js?ver={v}\" type=\"module\"></script>\n"
+            ],
+            "then high": [
+                "<link rel=\"modulepreload\" href=\"/zz/plain.js?ver={v}\" id=\"zz-plain-js-modulepreload\" fetchpriority=\"high\">\n<link rel=\"modulepreload\" href=\"/zz/low-dep.js?ver={v}\" id=\"zz-low-dep-js-modulepreload\" fetchpriority=\"high\" data-wp-fetchpriority=\"low\">\n<link rel=\"modulepreload\" href=\"/zz/high-dep.js?ver={v}\" id=\"zz-high-dep-js-modulepreload\" fetchpriority=\"high\">\n<link rel=\"modulepreload\" href=\"/zz/auto.js?ver={v}\" id=\"zz-auto-js-modulepreload\" fetchpriority=\"high\">\n",
+                "<script fetchpriority=\"high\" id=\"zz-high-js-module\" src=\"/zz/high.js?ver={v}\" type=\"module\"></script>\n"
+            ],
+            "high dequeued": [
+                "<link rel=\"modulepreload\" href=\"/zz/plain.js?ver={v}\" id=\"zz-plain-js-modulepreload\" fetchpriority=\"low\">\n<link rel=\"modulepreload\" href=\"/zz/low-dep.js?ver={v}\" id=\"zz-low-dep-js-modulepreload\" fetchpriority=\"low\">\n<link rel=\"modulepreload\" href=\"/zz/high-dep.js?ver={v}\" id=\"zz-high-dep-js-modulepreload\" fetchpriority=\"low\" data-wp-fetchpriority=\"high\">\n<link rel=\"modulepreload\" href=\"/zz/auto.js?ver={v}\" id=\"zz-auto-js-modulepreload\" fetchpriority=\"low\">\n",
+                ""
+            ]
+        }
+    ],
+    [
+        "an auto module and a low one that needs it, queued",
+        [
+            "<link rel=\"modulepreload\" href=\"/zz/plain.js?ver={v}\" id=\"zz-plain-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/low-dep.js?ver={v}\" id=\"zz-low-dep-js-modulepreload\" data-wp-fetchpriority=\"low\">\n<link rel=\"modulepreload\" href=\"/zz/high-dep.js?ver={v}\" id=\"zz-high-dep-js-modulepreload\" data-wp-fetchpriority=\"high\">\n",
+            "<script id=\"zz-auto-js-module\" src=\"/zz/auto.js?ver={v}\" type=\"module\"></script>\n<script fetchpriority=\"low\" id=\"zz-low-js-module\" src=\"/zz/low.js?ver={v}\" type=\"module\"></script>\n"
+        ]
+    ],
+    [
+        "a low module a high one imports dynamically, queued",
+        [
+            "<link rel=\"modulepreload\" href=\"/zz/low-dep.js?ver={v}\" id=\"zz-low-dep-js-modulepreload\" fetchpriority=\"high\" data-wp-fetchpriority=\"low\">\n",
+            "<script data-wp-fetchpriority=\"low\" fetchpriority=\"high\" id=\"zz-dynamic-js-module\" src=\"/zz/dynamic.js?ver={v}\" type=\"module\"></script>\n<script fetchpriority=\"high\" id=\"zz-asks-js-module\" src=\"/zz/asks.js?ver={v}\" type=\"module\"></script>\n"
+        ]
+    ],
+    [
+        "who imports a module, remembered",
+        {
+            "first": [
+                "<link rel=\"modulepreload\" href=\"/zz/base.js?ver={v}\" id=\"zz-base-js-modulepreload\" fetchpriority=\"low\">\n",
+                "<script fetchpriority=\"low\" id=\"zz-middle-js-module\" src=\"/zz/middle.js?ver={v}\" type=\"module\"></script>\n"
+            ],
+            "a high module registered after": [
+                "<link rel=\"modulepreload\" href=\"/zz/base.js?ver={v}\" id=\"zz-base-js-modulepreload\" fetchpriority=\"low\">\n",
+                "<script fetchpriority=\"high\" id=\"zz-later-js-module\" src=\"/zz/later.js?ver={v}\" type=\"module\"></script>\n"
+            ]
+        }
+    ],
+    [
+        "who imports a module, kept through removal",
+        {
+            "first": "<link rel=\"modulepreload\" href=\"/zz/base.js?ver={v}\" id=\"zz-base-js-modulepreload\" fetchpriority=\"high\" data-wp-fetchpriority=\"low\">\n",
+            "removed, registered again, and a new one": "<script fetchpriority=\"low\" id=\"zz-base-js-module\" src=\"/zz/base.js?ver={v}\" type=\"module\"></script>\n<script id=\"zz-plain-js-module\" src=\"/zz/plain.js?ver={v}\" type=\"module\"></script>\n"
+        }
+    ],
+    [
+        "the order queued modules print in",
+        {
+            "zz-a,zz-l": [
+                "zz-l",
+                "zz-a"
+            ],
+            "zz-x,zz-a,zz-l": [
+                "zz-x",
+                "zz-l",
+                "zz-a"
+            ],
+            "zz-a,zz-x,zz-l": [
+                "zz-l",
+                "zz-a",
+                "zz-x"
+            ],
+            "zz-c,zz-l,zz-a": [
+                "zz-l",
+                "zz-a",
+                "zz-c"
+            ],
+            "zz-d,zz-l,zz-x": [
+                "zz-l",
+                "zz-d",
+                "zz-x"
+            ],
+            "zz-e,zz-l": [
+                "zz-l",
+                "zz-e"
+            ],
+            "zz-f,zz-a,zz-l": [
+                "zz-l",
+                "zz-a",
+                "zz-f"
+            ]
+        }
     ]
 ]
