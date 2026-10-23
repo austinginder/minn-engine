@@ -19,6 +19,32 @@ return [
         $s->leave('part:header');
         return $first && !$again && $s->enter('part:header');
     },
+    'one outermost render opens at most MAX_SOURCES sources, the rest render as nothing, and the next render starts over' => static function () {
+        $s = new RenderState();
+        $opened = $s->enter('template');
+        for ($i = 1; $i < RenderState::MAX_SOURCES; $i++) {
+            $opened = $opened && $s->enter("block:{$i}");
+        }
+        $spent = $s->enter('block:one-too-many');
+        $content = $s->postContent(7, static fn (): string => 'content');
+        for ($i = 1; $i < RenderState::MAX_SOURCES; $i++) {
+            $s->leave("block:{$i}");
+        }
+        $s->leave('template');
+        return $opened && !$spent && $content === '' && $s->enter('template') && $s->postContent(7, static fn (): string => 'content') === 'content' ?: json_encode([$opened, $spent, $content]);
+    },
+    'sources opened and closed in turn count toward the same render' => static function () {
+        $s = new RenderState();
+        $s->enter('template');
+        $allowed = 0;
+        for ($i = 0; $i < RenderState::MAX_SOURCES + 5; $i++) {
+            if ($s->enter('pattern:p')) {
+                $allowed++;
+                $s->leave('pattern:p');
+            }
+        }
+        return $allowed === RenderState::MAX_SOURCES - 1 ?: (string) $allowed;
+    },
     'with no request behind it, the state adopted last is the one current() answers with' => static function () {
         $s = new RenderState();
         $s->adopt();

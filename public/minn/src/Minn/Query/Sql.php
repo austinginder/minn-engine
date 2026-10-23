@@ -10,15 +10,32 @@ namespace Minn\Query;
  */
 final class Sql
 {
+    /** The open connection's own escaping, once there is one. */
+    private static ?\Closure $connection = null;
+
+    /**
+     * Escapes through the site's connection from now on, so the quoting
+     * follows the character set it speaks (wpdb sets DB_CHARSET on it; gbk,
+     * big5, sjis, cp932 and gb18030 have lead bytes the fixed table would
+     * let close a quote). Under utf8mb4 the two agree byte for byte.
+     */
+    public static function through(\Closure $escape): void
+    {
+        self::$connection = $escape;
+    }
+
     /** A quoted string literal. */
     public static function quote(string $value): string
     {
         return "'" . self::escape($value) . "'";
     }
 
-    /** The reference's escaping: backslash, quotes, NUL, newlines, and the substitute character. */
+    /** The reference's escaping: the connection's once one is open, else backslash, quotes, NUL, newlines, and the substitute character. */
     public static function escape(string $value): string
     {
+        if (self::$connection !== null) {
+            return (string) (self::$connection)($value);
+        }
         return strtr($value, ["\\" => "\\\\", "'" => "\\'", '"' => '\\"', "\0" => "\\0", "\n" => "\\n", "\r" => "\\r", "\x1a" => "\\Z"]);
     }
 

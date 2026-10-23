@@ -4,12 +4,12 @@
     "summary": {
         "minn": 707,
         "composes": 2060,
-        "leaf": 959,
-        "noop": 3267,
+        "leaf": 958,
+        "noop": 3268,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8681,
-        "minnMethods": 1560,
+        "minnMethods": 1561,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -2396,9 +2396,11 @@
         },
         "PHPMailer::addOrEnqueueAnAddress": {
             "file": "classes/PHPMailer.php",
-            "lines": 15,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 16,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Mail\\AddressRules::adding"
+            ],
             "composes": []
         },
         "PHPMailer::addReplyTo": {
@@ -3100,8 +3102,8 @@
         },
         "PHPMailer::parseAddresses": {
             "file": "classes/PHPMailer.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Mail\\AddressRules::parseList"
             ],

@@ -12,7 +12,7 @@ shared SQL fragments
 | [`NetworkSql`](#networksql) | final class | 257 | The SQL WP_Site_Query and WP_Network_Query build from their variables |
 | [`PostOrder`](#postorder) | final class | 122 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
-| [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
+| [`Sql`](#sql) | final class | 59 | Literal quoting for the SQL fragments the query classes hand to plugins, |
 | [`TaxSql`](#taxsql) | final class | 200 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## AuthorPostsSql
@@ -504,7 +504,15 @@ one term, its title match.
 Literal quoting for the SQL fragments the query classes hand to plugins,
 which embed them verbatim in their own statements.
 
-Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserQueryRunner`
+Used by: `Minn\Db`, `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserQueryRunner`
+
+
+### static `through(Closure $escape): void`
+
+Escapes through the site's connection from now on, so the quoting
+follows the character set it speaks (wpdb sets DB_CHARSET on it; gbk,
+big5, sjis, cp932 and gb18030 have lead bytes the fixed table would
+let close a quote). Under utf8mb4 the two agree byte for byte.
 
 ### static `quote(string $value): string`
 
@@ -512,7 +520,7 @@ A quoted string literal.
 
 ### static `escape(string $value): string`
 
-The reference's escaping: backslash, quotes, NUL, newlines, and the substitute character.
+The reference's escaping: the connection's once one is open, else backslash, quotes, NUL, newlines, and the substitute character.
 
 ### static `like(string $value): string`
 

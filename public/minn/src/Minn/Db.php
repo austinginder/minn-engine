@@ -81,6 +81,7 @@ final class Db
         if (self::$shared === null) {
             $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
             $connection->set_charset('utf8mb4');
+            \Minn\Query\Sql::through(static fn (string $value): string => $connection->real_escape_string($value));
             self::$shared = new self($connection, $GLOBALS['table_prefix'] ?? 'wp_');
             self::$shared->setModes(self::sessionModes((string) self::$shared->value('SELECT @@SESSION.sql_mode', [])));
         }

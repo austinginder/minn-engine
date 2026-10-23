@@ -47,7 +47,11 @@ final class WpdbSetup
         }
         $dbh->set_charset((string) $charset);
         $names = (string) $db->prepare('SET NAMES %s', $charset) . ($collate ? (string) $db->prepare(' COLLATE %s', $collate) : '');
-        $dbh->query($db->remove_placeholder_escape($names));
+        try {
+            $dbh->query($db->remove_placeholder_escape($names));
+        } catch (\mysqli_sql_exception) {
+            // A collation the charset does not have (the site's utf8mb4 one under gbk) leaves the names as they were, as on the reference.
+        }
     }
 
     /**

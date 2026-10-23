@@ -1,0 +1,544 @@
+[
+    [
+        "fresh default and eai: \"plain@example.com\"",
+        [
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "fresh default and eai: \"josé@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"ß@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"a..b@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \".a@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"x@y\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@localhost\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@exämple.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"\\\"quoted\\\"@example.com\"",
+        [
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@[127.0.0.1]\"",
+        [
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@[IPv6:::1]\"",
+        [
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "fresh default and eai: \"üaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"😀@example.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"é@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"١٢@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"a‍b@example.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"Ⅻ@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"²@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"αβγ@δε.gr\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"ü!#$%&'*+\\/=?^_`{|}~-@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@exa١mple.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@ü-.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@-ü.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@üüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüü.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@üüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüü.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@ex_ample.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"us er@example.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@exämple.c\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"ü@a\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@example.com.\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"　@example.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"ʰ@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"ǅ@example.com\"",
+        [
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"bad�@example.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"a\\tb@example.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"user@exämple.com \"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "fresh default and eai: \"a@b@c.com\"",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "addAddress josé from php",
+        [
+            true,
+            "eai"
+        ]
+    ],
+    [
+        "addAddress josé from html5",
+        [
+            false,
+            "html5"
+        ]
+    ],
+    [
+        "addAddress josé from pcre8",
+        [
+            false,
+            "pcre8"
+        ]
+    ],
+    [
+        "addAddress josé from noregex",
+        [
+            false,
+            "noregex"
+        ]
+    ],
+    [
+        "addAddress josé from callable",
+        [
+            true,
+            "callable"
+        ]
+    ],
+    [
+        "addCC josé from php",
+        [
+            true,
+            "eai"
+        ]
+    ],
+    [
+        "addCC josé from html5",
+        [
+            false,
+            "html5"
+        ]
+    ],
+    [
+        "addCC josé from pcre8",
+        [
+            false,
+            "pcre8"
+        ]
+    ],
+    [
+        "addCC josé from noregex",
+        [
+            false,
+            "noregex"
+        ]
+    ],
+    [
+        "addCC josé from callable",
+        [
+            true,
+            "callable"
+        ]
+    ],
+    [
+        "addBCC josé from php",
+        [
+            true,
+            "eai"
+        ]
+    ],
+    [
+        "addBCC josé from html5",
+        [
+            false,
+            "html5"
+        ]
+    ],
+    [
+        "addBCC josé from pcre8",
+        [
+            false,
+            "pcre8"
+        ]
+    ],
+    [
+        "addBCC josé from noregex",
+        [
+            false,
+            "noregex"
+        ]
+    ],
+    [
+        "addBCC josé from callable",
+        [
+            true,
+            "callable"
+        ]
+    ],
+    [
+        "addReplyTo josé from php",
+        [
+            true,
+            "eai"
+        ]
+    ],
+    [
+        "addReplyTo josé from html5",
+        [
+            false,
+            "html5"
+        ]
+    ],
+    [
+        "addReplyTo josé from pcre8",
+        [
+            false,
+            "pcre8"
+        ]
+    ],
+    [
+        "addReplyTo josé from noregex",
+        [
+            false,
+            "noregex"
+        ]
+    ],
+    [
+        "addReplyTo josé from callable",
+        [
+            true,
+            "callable"
+        ]
+    ],
+    [
+        "setFrom josé from php",
+        [
+            false,
+            "php"
+        ]
+    ],
+    [
+        "setFrom josé from html5",
+        [
+            false,
+            "html5"
+        ]
+    ],
+    [
+        "setFrom josé from pcre8",
+        [
+            false,
+            "pcre8"
+        ]
+    ],
+    [
+        "setFrom josé from noregex",
+        [
+            false,
+            "noregex"
+        ]
+    ],
+    [
+        "setFrom josé from callable",
+        [
+            true,
+            "callable"
+        ]
+    ],
+    [
+        "addAddress [\"user@exämple.com\",\"\"] from php",
+        [
+            true,
+            "php"
+        ]
+    ],
+    [
+        "addAddress [\"plain@example.com\",\"José\"] from php",
+        [
+            true,
+            "php"
+        ]
+    ],
+    [
+        "addAddress [\"jo sé@example.com\",\"\"] from php",
+        [
+            false,
+            "eai"
+        ]
+    ],
+    [
+        "addAddress [\"nobody\",\"\"] from php",
+        [
+            false,
+            "php"
+        ]
+    ],
+    [
+        "addAddress [\"jösé\",\"\"] from php",
+        [
+            false,
+            "php"
+        ]
+    ],
+    [
+        "after the switch: \"a..b@example.com\"",
+        [
+            true,
+            false,
+            true,
+            ""
+        ]
+    ],
+    [
+        "after the switch: \"\\\"quoted\\\"@example.com\"",
+        [
+            false,
+            true,
+            false,
+            "Invalid address:  (to): \"quoted\"@example.com"
+        ]
+    ],
+    [
+        "after the switch: \"user@[127.0.0.1]\"",
+        [
+            false,
+            true,
+            false,
+            "Invalid address:  (to): user@[127.0.0.1]"
+        ]
+    ],
+    [
+        "after the switch: \"ñ@ñ.es\"",
+        [
+            true,
+            false,
+            true,
+            ""
+        ]
+    ]
+]

@@ -190,5 +190,24 @@ foreach (['the placeholder' => 'put your unique phrase here', 'AUTH_KEY again' =
 [$hadKey, $hadSalt] = json_decode($hadOptions, true) ?: [true, true];
 $refWp(($hadKey ? '' : 'delete_option("auth_key");') . ($hadSalt ? '' : 'delete_option("auth_salt");'));
 
+// 2026-10-23: the engine's own quoting goes through the connection, so a multibyte DB_CHARSET (gbk) whose lead
+// byte would swallow a backslash cannot close a quote: the input comes back whole as one literal, as the reference's does.
+$multibyte = static function (string $side) use ($ROOT, $SITE): string {
+    $code = '[$side, $site] = [$argv[1], $argv[2]];
+        if ($side === "reference") { define("WP_USE_THEMES", false); $_SERVER["HTTP_HOST"] = parse_url(getenv("MINN_SALT_HOST"), PHP_URL_HOST); chdir("{$site}/wp-reference"); require "wp-load.php"; } else { require getenv("MINN_SALT_ROOT") . "/tests/tools/engine-runtime.php"; }
+        global $wpdb;
+        $evil = "\xbf\x27 OR 1=1 -- ";
+        $wpdb->set_charset($wpdb->dbh, "gbk");
+        $quoted = $side === "reference" ? $wpdb->prepare("%s", $evil) : Minn\Query\Sql::quote($evil);
+        // Straight to the connection: wpdb on the reference refuses the query as invalid text before it runs.
+        $result = $wpdb->dbh->query("SELECT " . $quoted);
+        $wpdb->set_charset($wpdb->dbh, "utf8mb4");
+        echo bin2hex($quoted), " ", $result instanceof mysqli_result ? bin2hex((string) $result->fetch_row()[0]) : "error";';
+    return trim((string) shell_exec('MINN_SALT_ROOT=' . escapeshellarg($ROOT) . ' MINN_SALT_HOST=' . escapeshellarg(minn_test_url()) . ' php -d display_errors=0 -r ' . escapeshellarg($code) . ' ' . escapeshellarg($side) . ' ' . escapeshellarg($SITE) . ' 2>/dev/null'));
+};
+$engine = $multibyte('engine');
+$reference = $multibyte('reference');
+$check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

@@ -14,7 +14,28 @@ final class AddressRules
 {
     private const HTML5 = '/^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/sD';
 
-    /** Whether the address passes the named check ("php", "pcre", "pcre8", "html5", "noregex"). */
+    /**
+     * The html5 check with letters, marks and numbers of any script beside
+     * ASCII's (email address internationalization): what the validator
+     * becomes once an address with such a local part is added. A domain
+     * label is at most 63 characters, counted as characters.
+     */
+    private const EAI = '/^[\p{L}\p{M}\p{N}.!#$%&\'*+\/=?^_`{|}~-]+@[\p{L}\p{M}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?(?:\.[\p{L}\p{M}\p{N}](?:[\p{L}\p{M}\p{N}-]{0,61}[\p{L}\p{M}\p{N}])?)*$/uD';
+
+    /**
+     * The validator once an address is added as a recipient or reply-to:
+     * the default ("php") becomes "eai" for good when the address's local
+     * part has 8-bit characters, whether or not the address then passes;
+     * any other validator, a domain alone with 8-bit characters, and the
+     * From address leave it as it is (measured on the reference).
+     */
+    public static function adding(mixed $validator, string $address): mixed
+    {
+        $at = strrpos($address, '@');
+        return $validator === 'php' && $at !== false && preg_match('/[\x80-\xFF]/', substr($address, 0, $at)) === 1 ? 'eai' : $validator;
+    }
+
+    /** Whether the address passes the named check ("php", "pcre", "pcre8", "html5", "eai", "noregex"). */
     public static function valid(string $address, string $pattern): bool
     {
         if (str_contains($address, "\n") || str_contains($address, "\r")) {
@@ -23,6 +44,7 @@ final class AddressRules
         return match ($pattern) {
             'pcre', 'pcre8' => self::rfc5322($address),
             'html5' => (bool) preg_match(self::HTML5, $address),
+            'eai' => (bool) preg_match(self::EAI, $address),
             default => filter_var($address, FILTER_VALIDATE_EMAIL) !== false,
         };
     }
@@ -31,12 +53,15 @@ final class AddressRules
      * The addresses in a comma-separated list, as the reference's simple
      * parser reads one: split at every comma, quoted or not, each entry
      * with its display name (encoded words decoded into $charset); entries
-     * that are not valid addresses are left out.
+     * that are not valid addresses are left out. Each call raises the
+     * reference's notice that the simple parser is in use.
      *
      * @return list<array{name: string, address: string}>
      */
     public static function parseList(string $list, string $charset): array
     {
+        // The reference's simple parser says it is the simple one, each time it is asked.
+        trigger_error('Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing.', E_USER_NOTICE);
         $out = [];
         foreach (explode(',', $list) as $entry) {
             $entry = trim($entry);

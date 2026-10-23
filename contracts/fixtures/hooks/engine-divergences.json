@@ -480,7 +480,8 @@
         "http:post-by-email",
         "http:signup",
         "http:activate",
-        "http:trackback-direct"
+        "http:trackback-direct",
+        "probe:mail-eai"
     ],
     "hooks": {
         "_get_page_link": {
@@ -768,6 +769,7 @@
             "probe:l10n": "not fired",
             "probe:locale-names": "not fired",
             "probe:mail-addresses": "not fired",
+            "probe:mail-eai": "not fired",
             "probe:media-meta": "not fired",
             "probe:meta-caps": "not fired",
             "probe:module-tags": "not fired",
@@ -6609,6 +6611,7 @@
             "probe:l10n": "not fired",
             "probe:locale-names": "not fired",
             "probe:mail-addresses": "not fired",
+            "probe:mail-eai": "not fired",
             "probe:media-meta": "not fired",
             "probe:meta-caps": "not fired",
             "probe:module-tags": "not fired",
@@ -11820,6 +11823,7 @@
             "probe:l10n": "not fired",
             "probe:locale-names": "not fired",
             "probe:mail-addresses": "not fired",
+            "probe:mail-eai": "not fired",
             "probe:media-meta": "not fired",
             "probe:meta-caps": "not fired",
             "probe:module-tags": "not fired",
@@ -11893,6 +11897,7 @@
             "probe:l10n": "not fired",
             "probe:locale-names": "not fired",
             "probe:mail-addresses": "not fired",
+            "probe:mail-eai": "not fired",
             "probe:media-meta": "not fired",
             "probe:meta-caps": "not fired",
             "probe:module-tags": "not fired",
@@ -12364,6 +12369,7 @@
             "probe:l10n": "not fired",
             "probe:locale-names": "not fired",
             "probe:mail-addresses": "not fired",
+            "probe:mail-eai": "not fired",
             "probe:media-meta": "not fired",
             "probe:meta-caps": "not fired",
             "probe:module-tags": "not fired",

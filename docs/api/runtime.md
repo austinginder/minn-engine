@@ -185,7 +185,7 @@ the WordPress runtime plugins load against
 | [`WidgetAreas`](#widgetareas) | final class | 331 | The widgets helper functions as the reference answers them (probe |
 | [`WpdbFields`](#wpdbfields) | final class | 404 | The database object's writers and the charset work behind them (probe |
 | [`WpdbReads`](#wpdbreads) | final class | 221 | What the database object plugins hold as $wpdb does when it runs and reads |
-| [`WpdbSetup`](#wpdbsetup) | final class | 135 | How the database object plugins hold as $wpdb is set up (probe |
+| [`WpdbSetup`](#wpdbsetup) | final class | 139 | How the database object plugins hold as $wpdb is set up (probe |
 
 ## Abilities
 
@@ -10660,5 +10660,5 @@ Sets the session's SQL modes (wpdb::set_sql_mode): the given ones, or the
 session's own read from the connection, less the modes
 incompatible_sql_modes names.
 
-Internals: `name()` (private, line 148)
+Internals: `name()` (private, line 152)
 

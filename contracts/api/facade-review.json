@@ -1989,8 +1989,8 @@
             "PHPMailer::addOrEnqueueAnAddress": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "trims the address, strips breaks from the name, queues an address with an 8-bit domain for punycode at send time and adds the rest through addAnAddress; the recipient lists and queues are protected state subclasses read, the address rules already AddressRules'",
-                "body": "ddbafcbdabfb"
+                "why": "trims the address, strips breaks from the name, lets AddressRules::adding switch the default validator to eai for an 8-bit local part, queues an address with an 8-bit domain for punycode at send time and adds the rest through addAnAddress; the recipient lists, queues and static validator are state subclasses and callers read",
+                "body": "ae61bdb5ff20"
             },
             "PHPMailer::addStringAttachment": {
                 "verdict": "keep",
@@ -2287,16 +2287,6 @@
                 "reason": "contract",
                 "why": "whether From, Sender or any recipient address has 8-bit characters; a query over the object's addresses",
                 "body": "d284ab90032c"
-            },
-            "PHPMailer::parseAddresses": {
-                "verdict": "delegate",
-                "to": "Minn\\Mail\\AddressRules::parseList",
-                "gates": [
-                    "subclass"
-                ],
-                "why": "raises the reference's simple-parser notice and returns AddressRules::parseList, which already splits, decodes and validates the list",
-                "doubt": "ignores $useimap and always takes the simple parser with its notice; the reference uses imap_rfc822_parse_adrlist when the IMAP extension is loaded",
-                "body": "65e36328ee29"
             },
             "PHPMailer::postSend": {
                 "verdict": "keep",

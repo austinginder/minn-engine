@@ -4,7 +4,7 @@ sending mail and the notices the engine sends
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AddressRules`](#addressrules) | final class | 91 | Email addresses: the checks a mailer can apply (PHP's filter, the |
+| [`AddressRules`](#addressrules) | final class | 116 | Email addresses: the checks a mailer can apply (PHP's filter, the |
 | [`ChangeNotices`](#changenotices) | final class | 30 | The notices the reference mails a user when their password or email |
 | [`Composer`](#composer) | final class | 253 | A message as the reference's mailer writes it: the header block (Date, |
 | [`CustomHeaders`](#customheaders) | final class | 28 | A mailer's custom headers changed in place (PHPMailer::replaceCustomHeader, |
@@ -41,19 +41,32 @@ the HTML5 form rule), parsing an address list, and the domain of an
 address in ASCII.
 
 - const `HTML5` = `'/^[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/sD'`
+- const `EAI` = `'/^[\\p{L}\\p{M}\\p{N}.!#$%&\'*+\\/=?^_`{|}~-]+@[\\p{L}\\p{M}\\p{N}](?:[\\p{L}\\p{M}\\p{N}-]{0,61}[\\p{L}\\p{M}\\p{N}])?(?:\\.[\\p{L}\\p{M}\\p{N}](?:[\\p{L}\\p{M}\\p{N}-]{0,61}[\\p{L}\\p{M}\\p{N}])?)*$/uD'` — The html5 check with letters, marks and numbers of any script beside
+ASCII's (email address internationalization): what the validator
+becomes once an address with such a local part is added. A domain
+label is at most 63 characters, counted as characters.
 
 Used by: `Minn\Mail\Composer`
 
+### static `adding(mixed $validator, string $address): mixed`
+
+The validator once an address is added as a recipient or reply-to:
+the default ("php") becomes "eai" for good when the address's local
+part has 8-bit characters, whether or not the address then passes;
+any other validator, a domain alone with 8-bit characters, and the
+From address leave it as it is (measured on the reference).
+
 ### static `valid(string $address, string $pattern): bool`
 
-Whether the address passes the named check ("php", "pcre", "pcre8", "html5", "noregex").
+Whether the address passes the named check ("php", "pcre", "pcre8", "html5", "eai", "noregex").
 
 ### static `parseList(string $list, string $charset): array`
 
 The addresses in a comma-separated list, as the reference's simple
 parser reads one: split at every comma, quoted or not, each entry
 with its display name (encoded words decoded into $charset); entries
-that are not valid addresses are left out.
+that are not valid addresses are left out. Each call raises the
+reference's notice that the simple parser is in use.
 
 - `@return list<array{name: string, address: string}>`
 
@@ -65,7 +78,7 @@ The address with its domain in ASCII (IDNA), the domain read from $charset first
 
 The text as an RFC 822 quoted string when it holds a character that needs one.
 
-Internals: `rfc5322()` (private, line 82)
+Internals: `rfc5322()` (private, line 107)
 
 
 ## ChangeNotices

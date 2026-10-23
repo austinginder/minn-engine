@@ -54,6 +54,7 @@ const SEQUENCES = [
     'public/minn/src/Minn/Rest/CommentListArgs.php' => ['MAPPINGS' => 'the order of the query arguments plugins receive'],
     'public/minn/src/Minn/Rest/PostListArgs.php' => ['MAPPINGS' => 'the order of the query arguments plugins receive'],
     'public/minn/src/Minn/Rest/MenusController.php' => ['NEW_ITEM' => 'the order of the item arguments the save hooks receive'],
+    'public/minn/src/Minn/Runtime/Bookmarks.php' => ['DEFAULTS' => 'the order of the arguments the get_bookmarks filter hands plugins'],
     'public/minn/src/Minn/Runtime/MenuEvents.php' => ['ITEM_DEFAULTS' => 'the order of the item arguments the save hooks receive'],
     'public/minn/src/Minn/Rest/Schema.php' => ['ENDPOINT_KEYWORDS' => 'the order of the keywords in every route argument'],
     'public/minn/src/Minn/Runtime/BlockMetadata.php' => ['PROPERTIES' => 'the order of the block type arguments register_block_type_args receives'],

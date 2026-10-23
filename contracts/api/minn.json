@@ -21354,7 +21354,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 445,
+            "lines": 465,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
@@ -21387,6 +21387,12 @@
                     "name": "MAX_DEPTH",
                     "value": "64",
                     "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MAX_SOURCES",
+                    "value": "10000",
+                    "doc": "How many sources (parts, patterns, synced blocks, menus, posts' content)\none outermost render may open: distinct sources nest combinatorially\nunder the depth cap, and an author's content is rendered for every\nview. The reference has no such budget; a page past it renders the\nrest as a cycle renders, as nothing.",
                     "visibility": "public"
                 }
             ],
@@ -21465,6 +21471,15 @@
                 },
                 {
                     "name": "navigation",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "sources",
                     "type": "int",
                     "readonly": false,
                     "static": false,
@@ -21591,8 +21606,8 @@
                     "doc": "The state of the request being rendered, which its runtime holds, so\na request cannot count on from the one before it. Rendering with no\nruntime (the command line, the unit suite) shares one off-request\nstate instead, since the counters have to survive between calls.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -21603,8 +21618,8 @@
                     "doc": "Makes this the state current() answers with, for the renderer that brought its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 78
+                    "line": 80,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -21615,8 +21630,8 @@
                     "doc": "Whether the theme puts root padding in custom properties, which decides the constrained layout's classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 84
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -21635,8 +21650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 96,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -21647,8 +21662,8 @@
                     "doc": "Whether the theme writes block gaps, which decides whether a layout's gap makes CSS.",
                     "shapes": [],
                     "params": [],
-                    "line": 93,
-                    "end": 96
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -21667,8 +21682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 102
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -21679,8 +21694,8 @@
                     "doc": "The next per-request counter value.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 108
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -21699,8 +21714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -21711,8 +21726,8 @@
                     "doc": "Content images seen so far in this page, for the loading rules.",
                     "shapes": [],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -21738,8 +21753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 132
+                    "line": 135,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -21760,8 +21775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 151
+                    "line": 152,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -21787,8 +21802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 168
+                    "line": 167,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -21796,7 +21811,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "postContent(int $id, Closure $render): string",
-                    "doc": "A post's content as a post-content block renders it, or '' while that\npost's content is already being rendered further out: the reference\nprints nothing there, so a post that shows its own content (directly,\nor through an inheriting query loop) renders it once.",
+                    "doc": "A post's content as a post-content block renders it, or '' while that\npost's content is already being rendered further out: the reference\nprints nothing there, so a post that shows its own content (directly,\nor through an inheriting query loop) renders it once. Also '' once the\nrender's source budget is spent (MAX_SOURCES).",
                     "shapes": [
                         "@param \\Closure(): string $render"
                     ],
@@ -21816,8 +21831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 189
+                    "line": 188,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -21843,8 +21858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 204
+                    "line": 206,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -21855,8 +21870,8 @@
                     "doc": "The context content is rendered in now (within), or null outside any.",
                     "shapes": [],
                     "params": [],
-                    "line": 207,
-                    "end": 210
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -21884,8 +21899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 231
+                    "line": 232,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -21904,8 +21919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 244
+                    "line": 248,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -21924,8 +21939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 251
+                    "line": 257,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -21936,8 +21951,8 @@
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 254,
-                    "end": 260
+                    "line": 264,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -21948,8 +21963,8 @@
                     "doc": "Whether no element has taken high fetch priority yet on this page.",
                     "shapes": [],
                     "params": [],
-                    "line": 263,
-                    "end": 266
+                    "line": 273,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -21960,8 +21975,8 @@
                     "doc": "Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this.",
                     "shapes": [],
                     "params": [],
-                    "line": 269,
-                    "end": 272
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -21972,8 +21987,8 @@
                     "doc": "Puts high fetch priority back on offer, so the next large enough image takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 275,
-                    "end": 278
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -21992,8 +22007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 284
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -22006,8 +22021,8 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 291,
-                    "end": 294
+                    "line": 301,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -22018,8 +22033,8 @@
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 297,
-                    "end": 300
+                    "line": 307,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -22038,8 +22053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 307
+                    "line": 313,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -22058,8 +22073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 314
+                    "line": 320,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -22070,8 +22085,8 @@
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 321,
-                    "end": 324
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -22082,8 +22097,8 @@
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 327,
-                    "end": 330
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -22102,8 +22117,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 342
+                    "line": 346,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -22114,8 +22129,8 @@
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 345,
-                    "end": 348
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -22123,7 +22138,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "enter(string $key): bool",
-                    "doc": "Marks a nested source as being rendered; false when it is already open (a cycle).",
+                    "doc": "Marks a nested source as being rendered; false when it is already open (a cycle) or the render's budget is spent.",
                     "shapes": [],
                     "params": [
                         {
@@ -22134,8 +22149,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 358
+                    "line": 361,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -22154,8 +22169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 364
+                    "line": 380,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -22174,8 +22189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 370
+                    "line": 386,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -22186,8 +22201,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 373,
-                    "end": 380
+                    "line": 392,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -22198,8 +22213,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 383,
-                    "end": 386
+                    "line": 402,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -22210,8 +22225,8 @@
                     "doc": "How deep the block tree is right now; zero outside any block render.",
                     "shapes": [],
                     "params": [],
-                    "line": 389,
-                    "end": 392
+                    "line": 408,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -22230,8 +22245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 400
+                    "line": 414,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -22242,8 +22257,8 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 403,
-                    "end": 409
+                    "line": 422,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -22262,8 +22277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 412,
-                    "end": 417
+                    "line": 431,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -22274,8 +22289,8 @@
                     "doc": "The numbered style variation class the dynamic block being rendered claimed, once: its wrapper takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 420,
-                    "end": 425
+                    "line": 439,
+                    "end": 444
                 },
                 {
                     "routes": [],
@@ -22294,8 +22309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 432
+                    "line": 448,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -22308,8 +22323,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 439,
-                    "end": 442
+                    "line": 458,
+                    "end": 461
                 },
                 {
                     "routes": [],
@@ -22320,8 +22335,20 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 445,
-                    "end": 459
+                    "line": 464,
+                    "end": 479
+                },
+                {
+                    "routes": [],
+                    "name": "spend",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "spend(): bool",
+                    "doc": "Counts one more source opened, starting over at an outermost render; false past MAX_SOURCES.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 371,
+                    "end": 377
                 }
             ]
         },
@@ -43149,11 +43176,12 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 427,
+            "lines": 428,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Query\\Sql",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -43384,7 +43412,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 79,
-                    "end": 88
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -43403,8 +43431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 99
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -43432,8 +43460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 110
+                    "line": 107,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -43452,8 +43480,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -43464,8 +43492,8 @@
                     "doc": "The underlying mysqli handle, for the facade's wpdb.",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 127
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -43484,8 +43512,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 133
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -43496,8 +43524,8 @@
                     "doc": "The table prefix from wp-config.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -43516,8 +43544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -43545,8 +43573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -43574,8 +43602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -43601,8 +43629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 175
+                    "line": 169,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -43628,8 +43656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 187
+                    "line": 179,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -43657,8 +43685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 205
+                    "line": 198,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -43677,8 +43705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 211
+                    "line": 209,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -43699,8 +43727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 227
+                    "line": 220,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -43726,8 +43754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -43746,8 +43774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 255
+                    "line": 244,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -43776,8 +43804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 291
+                    "line": 267,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -43798,8 +43826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 369
+                    "line": 347,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -43810,8 +43838,8 @@
                     "doc": "The id the last INSERT produced.",
                     "shapes": [],
                     "params": [],
-                    "line": 372,
-                    "end": 376
+                    "line": 373,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -43822,8 +43850,8 @@
                     "doc": "Whether the last write was refused for its text (invalidText): nothing was sent.",
                     "shapes": [],
                     "params": [],
-                    "line": 379,
-                    "end": 382
+                    "line": 380,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -43842,8 +43870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 396
+                    "line": 394,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -43862,8 +43890,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 402
+                    "line": 400,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -43882,8 +43910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 413
+                    "line": 410,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -43902,8 +43930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 423
+                    "line": 417,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -43924,8 +43952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 330
+                    "line": 300,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -43951,8 +43979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 425,
-                    "end": 442
+                    "line": 426,
+                    "end": 443
                 }
             ]
         },
@@ -79787,7 +79815,7 @@
             "namespace": "Minn\\Mail",
             "kind": "final class",
             "file": "public/minn/src/Minn/Mail/AddressRules.php",
-            "lines": 91,
+            "lines": 116,
             "doc": "Email addresses: the checks a mailer can apply (PHP's filter, the\nRFC 5322 grammar with comments, quoted local parts and domain literals,\nthe HTML5 form rule), parsing an address list, and the domain of an\naddress in ASCII.",
             "implements": [],
             "extends": null,
@@ -79805,17 +79833,50 @@
                     "value": "'/^[a-zA-Z0-9.!#$%&\\'*+\\\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/sD'",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "EAI",
+                    "value": "'/^[\\\\p{L}\\\\p{M}\\\\p{N}.!#$%&\\'*+\\\\/=?^_`{|}~-]+@[\\\\p{L}\\\\p{M}\\\\p{N}](?:[\\\\p{L}\\\\p{M}\\\\p{N}-]{0,61}[\\\\p{L}\\\\p{M}\\\\p{N}])?(?:\\\\.[\\\\p{L}\\\\p{M}\\\\p{N}](?:[\\\\p{L}\\\\p{M}\\\\p{N}-]{0,61}[\\\\p{L}\\\\p{M}\\\\p{N}])?)*$/uD'",
+                    "doc": "The html5 check with letters, marks and numbers of any script beside\nASCII's (email address internationalization): what the validator\nbecomes once an address with such a local part is added. A domain\nlabel is at most 63 characters, counted as characters.",
+                    "visibility": "private"
                 }
             ],
             "properties": [],
             "methods": [
                 {
                     "routes": [],
+                    "name": "adding",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "adding(mixed $validator, string $address): mixed",
+                    "doc": "The validator once an address is added as a recipient or reply-to:\nthe default (\"php\") becomes \"eai\" for good when the address's local\npart has 8-bit characters, whether or not the address then passes;\nany other validator, a domain alone with 8-bit characters, and the\nFrom address leave it as it is (measured on the reference).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "validator",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 36
+                },
+                {
+                    "routes": [],
                     "name": "valid",
                     "static": true,
                     "visibility": "public",
                     "signature": "valid(string $address, string $pattern): bool",
-                    "doc": "Whether the address passes the named check (\"php\", \"pcre\", \"pcre8\", \"html5\", \"noregex\").",
+                    "doc": "Whether the address passes the named check (\"php\", \"pcre\", \"pcre8\", \"html5\", \"eai\", \"noregex\").",
                     "shapes": [],
                     "params": [
                         {
@@ -79833,8 +79894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 18,
-                    "end": 28
+                    "line": 39,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -79842,7 +79903,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "parseList(string $list, string $charset): array",
-                    "doc": "The addresses in a comma-separated list, as the reference's simple\nparser reads one: split at every comma, quoted or not, each entry\nwith its display name (encoded words decoded into $charset); entries\nthat are not valid addresses are left out.",
+                    "doc": "The addresses in a comma-separated list, as the reference's simple\nparser reads one: split at every comma, quoted or not, each entry\nwith its display name (encoded words decoded into $charset); entries\nthat are not valid addresses are left out. Each call raises the\nreference's notice that the simple parser is in use.",
                     "shapes": [
                         "@return list<array{name: string, address: string}>"
                     ],
@@ -79862,8 +79923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 57
+                    "line": 61,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -79889,8 +79950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 73
+                    "line": 85,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -79909,8 +79970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 79
+                    "line": 101,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -79929,8 +79990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 102
+                    "line": 107,
+                    "end": 127
                 }
             ]
         },
@@ -101488,12 +101549,13 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/Sql.php",
-            "lines": 42,
+            "lines": 59,
             "doc": "Literal quoting for the SQL fragments the query classes hand to plugins,\nwhich embed them verbatim in their own statements.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Db",
                 "Minn\\Query\\DateSql",
                 "Minn\\Query\\MetaSql",
                 "Minn\\Query\\PostSearch",
@@ -101507,8 +101569,38 @@
             "constructor": null,
             "cases": [],
             "constants": [],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "connection",
+                    "type": "?Closure",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "The open connection's own escaping, once there is one.",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "through",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "through(Closure $escape): void",
+                    "doc": "Escapes through the site's connection from now on, so the quoting\nfollows the character set it speaks (wpdb sets DB_CHARSET on it; gbk,\nbig5, sjis, cp932 and gb18030 have lead bytes the fixed table would\nlet close a quote). Under utf8mb4 the two agree byte for byte.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "escape",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 25
+                },
                 {
                     "routes": [],
                     "name": "quote",
@@ -101526,8 +101618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 14,
-                    "end": 17
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -101535,7 +101627,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "escape(string $value): string",
-                    "doc": "The reference's escaping: backslash, quotes, NUL, newlines, and the substitute character.",
+                    "doc": "The reference's escaping: the connection's once one is open, else backslash, quotes, NUL, newlines, and the substitute character.",
                     "shapes": [],
                     "params": [
                         {
@@ -101546,8 +101638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 23
+                    "line": 34,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -101566,8 +101658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 29
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -101586,8 +101678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -101622,8 +101714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 51
+                    "line": 61,
+                    "end": 68
                 }
             ]
         },
@@ -184725,7 +184817,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/WpdbSetup.php",
-            "lines": 135,
+            "lines": 139,
             "doc": "How the database object plugins hold as $wpdb is set up (probe\ndb-mail-rewrite-doubts): it connects through its own db_connect, which\nsets the connection's names with prepare; set_prefix answers with the\nprefix it had, names the old tables too, and with set_table_names off\nchanges only the base prefix; set_blog_id names one site's tables from\nthe base prefix; CUSTOM_USER_TABLE and CUSTOM_USER_META_TABLE name the\nuser tables; set_sql_mode reads the session's modes without a query of\nits own; a database that cannot be selected leaves the object not ready.\nOne site only: the engine is never a network.",
             "implements": [],
             "extends": null,
@@ -184848,7 +184940,7 @@
                         }
                     ],
                     "line": 41,
-                    "end": 51
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -184881,8 +184973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 71
+                    "line": 62,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -184915,8 +185007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 85
+                    "line": 78,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -184949,8 +185041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 115
+                    "line": 96,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -184983,8 +185075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 129
+                    "line": 122,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -185010,8 +185102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 145
+                    "line": 140,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -185039,8 +185131,8 @@
                             "doc": "names each table property"
                         }
                     ],
-                    "line": 148,
-                    "end": 153
+                    "line": 152,
+                    "end": 157
                 }
             ]
         },

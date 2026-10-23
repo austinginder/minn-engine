@@ -18,7 +18,7 @@ the block parser and renderer
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
 | [`Parser`](#parser) | final class | 147 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 445 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 465 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 553 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 69 | Parsed blocks back to markup. A core block is written by its short name; |
@@ -716,6 +716,11 @@ counting from post to post), so the counter lives here, not on any block.
 Leaf helpers with no renderer in hand reach it through current().
 
 - const `MAX_DEPTH` = `64`
+- const `MAX_SOURCES` = `10000` — How many sources (parts, patterns, synced blocks, menus, posts' content)
+one outermost render may open: distinct sources nest combinatorially
+under the depth cap, and an author's content is rendered for every
+view. The reference has no such budget; a page past it renders the
+rest as a cycle renders, as nothing.
 
 Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Runtime`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
 
@@ -783,7 +788,8 @@ other callbacks add is fitted (fittedImage()).
 A post's content as a post-content block renders it, or '' while that
 post's content is already being rendered further out: the reference
 prints nothing there, so a post that shows its own content (directly,
-or through an inheriting query loop) renders it once.
+or through an inheriting query loop) renders it once. Also '' once the
+render's source budget is spent (MAX_SOURCES).
 
 - `@param \Closure(): string $render`
 
@@ -877,7 +883,7 @@ Whether rendering is inside a navigation block.
 
 ### `enter(string $key): bool`
 
-Marks a nested source as being rendered; false when it is already open (a cycle).
+Marks a nested source as being rendered; false when it is already open (a cycle) or the render's budget is spent.
 
 ### `leave(string $key): void`
 
@@ -928,6 +934,8 @@ The gallery instances rendering met.
 ### `reset(): void`
 
 Clears every per-request counter.
+
+Internals: `spend()` (private, line 371)
 
 
 ## Renderer

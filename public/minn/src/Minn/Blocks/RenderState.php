@@ -28,6 +28,15 @@ final class RenderState
     private int $depth = 0;
     private int $navigation = 0;
     public const MAX_DEPTH = 64;
+    /**
+     * How many sources (parts, patterns, synced blocks, menus, posts' content)
+     * one outermost render may open: distinct sources nest combinatorially
+     * under the depth cap, and an author's content is rendered for every
+     * view. The reference has no such budget; a page past it renders the
+     * rest as a cycle renders, as nothing.
+     */
+    public const MAX_SOURCES = 10000;
+    private int $sources = 0;
     /** Whether the theme's layout puts root padding in custom properties; render configuration, so reset() leaves it. */
     private bool $rootPaddingAware = true;
     /** Whether the theme writes block gaps (settings.spacing.blockGap); render configuration too. */
@@ -171,13 +180,14 @@ final class RenderState
      * A post's content as a post-content block renders it, or '' while that
      * post's content is already being rendered further out: the reference
      * prints nothing there, so a post that shows its own content (directly,
-     * or through an inheriting query loop) renders it once.
+     * or through an inheriting query loop) renders it once. Also '' once the
+     * render's source budget is spent (MAX_SOURCES).
      *
      * @param \Closure(): string $render
      */
     public function postContent(int $id, \Closure $render): string
     {
-        if (isset($this->contentPosts[$id])) {
+        if (isset($this->contentPosts[$id]) || !$this->spend()) {
             return '';
         }
         $this->contentPosts[$id] = true;
@@ -347,14 +357,23 @@ final class RenderState
         return $this->navigation > 0;
     }
 
-    /** Marks a nested source as being rendered; false when it is already open (a cycle). */
+    /** Marks a nested source as being rendered; false when it is already open (a cycle) or the render's budget is spent. */
     public function enter(string $key): bool
     {
-        if (isset($this->active[$key])) {
+        if (isset($this->active[$key]) || !$this->spend()) {
             return false;
         }
         $this->active[$key] = true;
         return true;
+    }
+
+    /** Counts one more source opened, starting over at an outermost render; false past MAX_SOURCES. */
+    private function spend(): bool
+    {
+        if ($this->active === [] && $this->contentPosts === []) {
+            $this->sources = 0;
+        }
+        return ++$this->sources <= self::MAX_SOURCES;
     }
 
     /** Leaves a cycle-guarded key. */
@@ -451,6 +470,7 @@ final class RenderState
         $this->galleries = [];
         $this->elements = 0;
         $this->active = [];
+        $this->sources = 0;
         $this->depth = 0;
         $this->navigation = 0;
         $this->pendingElements = null;

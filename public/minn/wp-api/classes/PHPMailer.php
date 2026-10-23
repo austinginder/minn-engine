@@ -426,6 +426,7 @@ class PHPMailer
     {
         $address = trim((string) $address);
         $name = trim((string) preg_replace('/[\r\n]+/', '', (string) $name));
+        static::$validator = AddressRules::adding(static::$validator, $address);
         $at = strrpos($address, '@');
         if ($at === false) {
             return $this->minnRefuse($this->lang('invalid_address') . " ({$kind}): {$address}");
@@ -478,7 +479,6 @@ class PHPMailer
     /** An address list read by the simple parser, which says so (probe mail-addresses): the engine has no IMAP one. */
     public static function parseAddresses($addrstr, $useimap = null, $charset = self::CHARSET_ISO88591)
     {
-        trigger_error('Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing.', E_USER_NOTICE);
         return AddressRules::parseList((string) $addrstr, (string) $charset);
     }
 

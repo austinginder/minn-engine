@@ -166,6 +166,8 @@ $findings = [
     'A query block with nothing that lists posts queried anyway, the block renderer included' => ['tests/tools/sweep-1022-probe.php', 'the block renderer asked for a query block'],
     'NAT64, site-local and multicast IPv6 passed the engine client\'s private-address check' => ['tests/unit/http.php', 'a name resolving only to NAT64'],
     'Minn Admin installed languages with file changes off' => ['public/minn/src/Minn/Admin/LanguageController.php', "can('install_languages')"],
+    'The engine\'s own quoting ignored a multibyte connection charset (gbk), and set_charset fataled on a collation the charset lacks' => ['tests/security-sweep.test.php', 'a gbk connection'],
+    'Distinct synced patterns and post-content loops nested combinatorially with no budget' => ['tests/unit/render-state.php', 'one outermost render opens at most MAX_SOURCES sources'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 
