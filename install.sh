@@ -18,12 +18,15 @@
 #                    its signature is read from URL.sig
 #   --park=DIR       where WordPress's own files go (default: beside the
 #                    webroot, in wp-parked)
+#   --no-cache-flush skip the closing `wp cache flush` (page caches keep
+#                    WordPress's pages until purged)
 # ====================================================
 set -euo pipefail
 
 FORCE=false
 ENGINE_URL="https://github.com/austinginder/minn-engine/releases/latest/download/minn.zip"
 PARK=""
+CACHE_FLUSH=true
 
 # The release keys a Minn engine trusts (Ops\EngineUpdate::KEYS: the working
 # key, then the offline recovery key). The install suite keeps them in step.
@@ -37,8 +40,9 @@ for arg in "$@"; do
         --force) FORCE=true ;;
         --engine-url=*) ENGINE_URL="${arg#*=}" ;;
         --park=*) PARK="${arg#*=}" ;;
+        --no-cache-flush) CACHE_FLUSH=false ;;
         --help|-h)
-            echo "Usage: install [--force] [--engine-url=URL] [--park=DIR]"
+            echo "Usage: install [--force] [--engine-url=URL] [--park=DIR] [--no-cache-flush]"
             echo "Run from a WordPress webroot (the directory with wp-config.php)."
             exit 0
             ;;
@@ -185,9 +189,51 @@ if ! "$PHP" "$ENGINE_SRC/bin/minn" "${INSTALL_ARGS[@]}"; then
     echo_error "Minn is not installed; the reason is above."
 fi
 
+# A page cache (the host's, Varnish, a caching plugin) keeps serving WordPress's
+# pages until it is purged, and the opcode cache can keep running the old
+# index.php for half a minute (Kinsta revalidates every 30 s), long enough for
+# visitors to cache WordPress's pages again. So wait until the site answers as
+# Minn, then flush through WP-CLI, which runs the host's purge hooks (Kinsta's
+# mu-plugin purges its page cache and CDN on `wp cache flush`).
+flush_caches() {
+    if ! command -v wp >/dev/null 2>&1; then
+        echo_warn "WP-CLI is not on PATH, so no cache was flushed. If the host caches pages, purge its cache now."
+        return 0
+    fi
+    local url headers seen="" misses=0
+    url="$(cd "$WEBROOT" && wp eval 'echo home_url("/");' 2>/dev/null || true)"
+    if [ -n "$url" ]; then
+        echo_info "Waiting for $url to answer as Minn"
+        for _ in $(seq 1 30); do
+            # A logged-in cookie name and a fresh query string step past page caches; the value signs nobody in.
+            headers="$(curl -s -o /dev/null -D - --max-time 15 -b 'wordpress_logged_in_minn_install=1' "${url}?minn-install=${RANDOM}" 2>/dev/null || true)"
+            if printf '%s' "$headers" | grep -qi '^x-powered-by: Minn'; then
+                seen=yes
+                break
+            fi
+            if [ -z "$headers" ]; then
+                misses=$((misses + 1))
+                [ "$misses" -ge 3 ] && break
+            fi
+            sleep 3
+        done
+    fi
+    if [ -z "$seen" ]; then
+        echo_warn "The site did not answer as Minn yet; flushing anyway. If it still shows WordPress in a minute, run: wp cache flush"
+    fi
+    if (cd "$WEBROOT" && wp cache flush); then
+        echo_info "Caches flushed (wp cache flush)."
+    else
+        echo_warn "wp cache flush failed. If the host caches pages, purge its cache now."
+    fi
+}
+if [ "$CACHE_FLUSH" = true ]; then
+    flush_caches
+fi
+
 echo "--------------------------------------------------"
 echo_success "Minn is installed."
 echo_info "Admin: the site's /minn-admin/  (Minn Admin ships inside the engine zip)"
 echo_info "Status: php minn/bin/minn status $WEBROOT"
 echo_info "Leave:  php minn/bin/minn eject  $WEBROOT"
-echo_warn "A PHP opcode cache may serve the old index.php for a few seconds. The first request can 500; it heals itself, or clear the cache if the host offers it."
+echo_warn "A PHP opcode cache may serve the old index.php for up to a minute (opcache.revalidate_freq). It heals itself, or clear the cache if the host offers it."

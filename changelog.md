@@ -1,5 +1,17 @@
 # Changelog
 
+## **v0.2.0** - Unreleased
+
+### Fixed
+
+* **Sites on nginx reach every WordPress entry point.** Hosts such as Kinsta run a request for a `.php` file only when the file exists, so after an install `wp-cron.php` (the host's own cron), `wp-comments-post.php`, `wp-admin/admin-ajax.php`, `wp-admin/admin-post.php` and the rest answered 404 before Minn saw them. The install now lays a small file under each of those names that hands the request to Minn, an update lays any that are missing, and eject removes them before WordPress's own come back.
+
+* **Hosts that disable `getmyuid()` no longer take the site down.** Kinsta turns that PHP function off; Minn's check of how the site writes its own files called it, so a plugin that asks (Code Snippets) made every request fail. Minn now reads the owner from the running script, and answers `direct` there as WordPress does.
+
+* **The curl installer purges page caches.** It waits until the site answers as Minn (an opcode cache can keep running the old `index.php` for half a minute), then runs `wp cache flush`, which runs the host's purge hooks, so visitors stop getting WordPress's cached pages. `--no-cache-flush` skips it.
+
+* **Eject says so when it cannot remove an empty park** instead of printing a PHP warning.
+
 ## **v0.1.0** - 2026-10-22
 
 The first release of Minn, a from-scratch, MIT-licensed engine for an existing WordPress site. One command swaps it into the webroot beside the site's untouched `wp-config.php`, `wp-content/` and database, and one command swaps WordPress back. Visitors read the site through its theme, Minn Admin runs on top as the whole admin, plugins written for WordPress load through Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working because the files, tables, cookies and REST answers are the shapes they expect. Every surface is checked against a real WordPress on the same database, request by request.

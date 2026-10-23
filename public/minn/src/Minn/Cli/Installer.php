@@ -207,6 +207,7 @@ final class Installer
         }
         $laid = ShapeFiles::lay($this->engineDir, $root);
         $this->say('Wrote ' . implode(', ', ShapeFiles::LAYOUT));
+        $this->say("Wrote {$laid['entries']} entry points (wp-cron.php, wp-admin/admin-ajax.php, ...) so hosts that run only files on disk reach the engine");
         $this->say("Wrote {$laid['placeholders']} require placeholders");
         file_put_contents("{$root}/" . self::RECORD, self::RECORD_HEAD . Json::encode([
             'root' => realpath($root) ?: $root,
@@ -218,7 +219,8 @@ final class Installer
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
         $this->say('Installed. wp-config.php and wp-content were not touched; `minn eject` reverses this.');
         $this->say('The first request puts Minn Admin in wp-content/plugins/minn-admin and activates it (an older copy there is replaced, a newer one kept).');
-        $this->say('Note: a PHP opcode cache may serve the old index.php or wp-settings.php for a few seconds (opcache.revalidate_freq); clear it if the host offers a way.');
+        $this->say('Note: a PHP opcode cache may serve the old index.php or wp-settings.php for up to a minute (opcache.revalidate_freq); clear it if the host offers a way.');
+        $this->say('Note: a page cache keeps serving WordPress\'s pages until purged; once the site answers as Minn, `wp cache flush` runs the host\'s purge hooks (the curl installer does this itself).');
         return 0;
     }
 
@@ -254,6 +256,9 @@ final class Installer
             }
             @unlink("{$root}/{$file}");
         }
+        foreach (ShapeFiles::laidEntries($this->engineDir, $root) as $file) {
+            unlink("{$root}/{$file}");
+        }
         foreach (self::WRITTEN_TREES as $tree) {
             Files::deleteTree("{$root}/{$tree}");
         }
@@ -276,8 +281,8 @@ final class Installer
             }
         }
         @unlink("{$park}/" . self::PARK_MARK);
-        if (count(scandir($park) ?: []) <= 2) {
-            rmdir($park);
+        if (count(scandir($park) ?: []) <= 2 && !@rmdir($park)) {
+            $this->say("Left the empty {$park}: this user cannot remove it.");
         }
         @unlink("{$root}/" . self::RECORD);
         $this->say("Ejected. Restored {$restored} entries; the engine and its shape files are gone; wp-config.php and wp-content were not touched.");

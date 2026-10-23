@@ -197,7 +197,36 @@ return [
             $clean($root);
         }
     },
-    'an archive signed by a key the engine does not trust, or not signed, changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean, $sign) {
+    'an update lays the entry points an older engine never laid: missing ones written, the site\'s own kept, the old wp-admin index replaced, and eject finds only its own' => static function () use ($webroot, $archive, $clean, $public, $sign) {
+        $root = $webroot('0.1.0');
+        try {
+            $boot = "<?php\nrequire_once __DIR__ . '/minn/bootstrap.php';\n";
+            $oldAdmin = "<?php\n// the old wp-admin index\n";
+            @mkdir("{$root}/minn/layout/wp-admin", 0755, true);
+            @mkdir("{$root}/wp-admin", 0755, true);
+            foreach (['wp-settings.php' => $boot, 'wp-admin/index.php' => $oldAdmin] as $file => $contents) {
+                file_put_contents("{$root}/minn/layout/{$file}", $contents);
+                file_put_contents("{$root}/{$file}", $contents);
+            }
+            file_put_contents("{$root}/xmlrpc.php", "<?php // the site's own\n");
+            $entry = "<?php\n// entry\n";
+            $admin = "<?php\n// the new wp-admin index\n";
+            $zip = $archive('0.2.0', true, [
+                'layout/wp-settings.php' => $boot,
+                'layout/wp-admin/index.php' => $admin,
+                'layout/entry.php' => $entry,
+                'data/entry-files.json' => json_encode(['wp-cron.php', 'xmlrpc.php', 'wp-admin/admin-ajax.php']),
+            ]);
+            (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), '0.2.0');
+            $read = static fn (string $file): string => (string) @file_get_contents("{$root}/{$file}");
+            $after = array_map($read, ['wp-cron.php', 'xmlrpc.php', 'wp-admin/admin-ajax.php', 'wp-admin/index.php']);
+            $laid = Minn\Ops\ShapeFiles::laidEntries("{$root}/minn", $root);
+            return $after === [$entry, "<?php // the site's own\n", $admin, $admin] && $laid === ['wp-cron.php'] ?: json_encode([$after, $laid]);
+        } finally {
+            $clean($root);
+        }
+    },
+    'an archive signed by a key the engine does not trust, or not signed, changes nothing' =>static function () use ($webroot, $archive, $leftovers, $clean, $sign) {
         $root = $webroot('0.1.0');
         try {
             $zip = $archive('0.2.0');

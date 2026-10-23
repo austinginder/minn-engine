@@ -142,7 +142,14 @@ $check('install refuses a site whose wp-config.php moves the content folder, and
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
 $check('install succeeds', $code === 0 && str_contains($out, 'Installed.'), $out);
 $check('core files are parked', is_file("$PARK/wp-load.php") && is_dir("$PARK/wp-admin") && is_file("$PARK/wp-includes/js/wp.js") && is_file("$PARK/index.php"));
-$check('the webroot has no WordPress entry points', !file_exists("$WEBROOT/wp-load.php") && !file_exists("$WEBROOT/xmlrpc.php") && !file_exists("$WEBROOT/wp-admin/about.php") && !file_exists("$WEBROOT/wp-admin/css"));
+$check('the webroot has no WordPress code: no loaders, no wp-admin assets', !file_exists("$WEBROOT/wp-load.php") && !file_exists("$WEBROOT/wp-blog-header.php") && !file_exists("$WEBROOT/wp-admin/css"));
+// nginx runs a .php request only when the file exists, so each entry point is a shape file that boots the engine.
+$entries = json_decode((string) file_get_contents("$ENGINE_DIR/data/entry-files.json"), true) ?: [];
+$entryTemplate = (string) file_get_contents("$ENGINE_DIR/layout/entry.php");
+$adminTemplate = (string) file_get_contents("$ENGINE_DIR/layout/wp-admin/index.php");
+$wrong = array_filter($entries, static fn (string $f): bool => @file_get_contents("$WEBROOT/$f") !== (str_starts_with($f, 'wp-admin/') ? $adminTemplate : $entryTemplate));
+$check('every entry point is laid from its template (the parked xmlrpc.php and wp-cron.php, and the ones the site lacked)', count($entries) > 90 && $wrong === [] && in_array('wp-comments-post.php', $entries, true) && in_array('wp-admin/admin-ajax.php', $entries, true), json_encode(array_values($wrong)));
+$check('the entry list leaves out the loaders and the files laid by their own name', array_intersect($entries, ['wp-load.php', 'wp-blog-header.php', 'index.php', 'wp-login.php', 'wp-settings.php', 'wp-admin/index.php', 'wp-config.php']) === []);
 $check('the shape files match the layout templates', md5_file("$WEBROOT/index.php") === md5_file("$ENGINE_DIR/layout/index.php") && md5_file("$WEBROOT/wp-settings.php") === md5_file("$ENGINE_DIR/layout/wp-settings.php") && md5_file("$WEBROOT/wp-cli.yml") === md5_file("$ENGINE_DIR/layout/wp-cli.yml") && md5_file("$WEBROOT/wp-includes/version.php") === md5_file("$ENGINE_DIR/layout/wp-includes/version.php") && md5_file("$WEBROOT/wp-admin/index.php") === md5_file("$ENGINE_DIR/layout/wp-admin/index.php"));
 $check('require placeholders exist so plugins can include wp-admin files', is_file("$WEBROOT/wp-admin/includes/plugin.php") && is_file("$WEBROOT/wp-includes/class-phpmailer.php"));
 $check('the engine is a real copy with its sources', is_file("$WEBROOT/minn/bootstrap.php") && is_file("$WEBROOT/minn/src/Minn/Engine.php") && !is_link("$WEBROOT/minn") && is_file("$WEBROOT/minn/data/social-icons.json"));
@@ -287,7 +294,7 @@ $check('the curl installer trusts exactly the release keys the engine trusts', $
 $shRoot = "$SCRATCH/sh/public";
 $shBefore = $tree($shRoot);
 $curlInstall = static function (string $zip, string $extra = '') use ($ROOT, $shRoot): array {
-    exec('cd ' . escapeshellarg($shRoot) . ' && bash ' . escapeshellarg("$ROOT/install.sh") . ' --engine-url=' . escapeshellarg('file://' . $zip) . " {$extra} 2>&1", $out, $code);
+    exec('cd ' . escapeshellarg($shRoot) . ' && bash ' . escapeshellarg("$ROOT/install.sh") . ' --no-cache-flush --engine-url=' . escapeshellarg('file://' . $zip) . " {$extra} 2>&1", $out, $code);
     return [implode("\n", $out), $code];
 };
 $fake = "$SCRATCH/fake-release";

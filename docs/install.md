@@ -20,7 +20,15 @@ them in step). Then it hands off to `php minn/bin/minn install`, which runs
 preflight first. Flags: `--force`, `--engine-url=URL` (its signature is read
 from `URL.sig`), `--park=DIR` (WordPress's own files go beside the webroot in
 `wp-parked` unless named; a folder the user cannot create is refused with this
-hint).
+hint), `--no-cache-flush` (below).
+
+Once installed, the script waits until the site answers as Minn (it asks the
+home page with a fresh query string and a logged-in cookie name, which page
+caches step past; the opcode cache can keep the old `index.php` running for a
+while, see below) and then runs `wp cache flush`. That flushes the object cache
+and runs the host's purge hooks: Kinsta's mu-plugin purges its page cache and
+CDN on it, so visitors stop getting WordPress's cached pages. Without WP-CLI
+on the PATH it says to purge the host's cache by hand.
 The installer lives at the repo root as `install.sh` and is served from
 https://minn.run/install.
 
@@ -108,6 +116,22 @@ the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
    `wp-admin/index.php` has to exist on disk: hosts such as Kinsta 403 a
    directory without an index, and `/wp-admin/` must keep 302ing to
    `/minn-admin/`.
+   Then a shape file under each of WordPress's request entry points
+   (`data/entry-files.json`, from `tests/tools/entry-files.php` over a
+   reference copy): `layout/entry.php` as `wp-cron.php`,
+   `wp-comments-post.php`, `xmlrpc.php`, `wp-signup.php`, `wp-activate.php`,
+   `wp-mail.php`, `wp-links-opml.php`, `wp-trackback.php`, and
+   `layout/wp-admin/index.php` as every other `wp-admin/*.php`
+   (`admin-ajax.php`, `admin-post.php`, `async-upload.php`, `post.php`, ...).
+   nginx runs a request for a `.php` file only when the file exists, so
+   without them those paths 404 before the engine sees them (found on Kinsta,
+   where the host's cron curls `wp-cron.php`). Requested, each boots like
+   `index.php` and the router answers the path; required mid-request, it does
+   nothing. They are laid whether or not the site had the file: the engine
+   answers the same paths anyway on servers that send missing files to
+   `index.php`, and it serves no XML-RPC (`contracts/front/probes.md`), so a
+   site that had deleted `xmlrpc.php` gets nothing new. `wp-load.php` and
+   `wp-blog-header.php` are loaders, not entry points, and stay absent.
 4. Writes empty PHP placeholders for every `wp-includes/*.php` and
    `wp-admin/includes/*.php` the reference has (`data/reference-files.json`),
    so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'` resolves.
@@ -149,11 +173,15 @@ contents, so a PHP opcode cache can serve the previous version until it revalida
 in either direction can be a 500 on such a server. Clear the cache where the host
 offers it (Kinsta's cache tools, `php -r 'opcache_reset();'` through the web SAPI, a
 PHP-FPM reload); with the default settings it heals itself within seconds. Seen and
-reproduced on FrankenPHP during the round trip below.
+reproduced on FrankenPHP during the round trip below. Kinsta revalidates every 30
+seconds, and there the old `index.php` keeps serving WordPress (not a 500) for up
+to that long after an install, which is why the curl installer waits for the site
+to answer as Minn before it flushes the page cache.
 
 ## Eject
 
-Removes the shape files, any leftover copies from an earlier installer
+Removes the shape files (the root entry points only while they are still the
+file the engine lays), any leftover copies from an earlier installer
 (`minn-admin-asset/`, `minn-engine/`, `wp-includes/js/jquery/`), the engine's
 `wp-includes/` and `wp-admin/` (shape files plus require placeholders), and
 `minn/` (a symlink is unlinked, a copy deleted), moves every parked entry

@@ -26140,7 +26140,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 365,
+            "lines": 370,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -26391,7 +26391,7 @@
                         }
                     ],
                     "line": 171,
-                    "end": 223
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -26419,8 +26419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 287
+                    "line": 236,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -26439,8 +26439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 299
+                    "line": 295,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -26461,8 +26461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 319
+                    "line": 314,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -26493,8 +26493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 333
+                    "line": 332,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -26520,8 +26520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 357
+                    "line": 341,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -26547,8 +26547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 376
+                    "line": 364,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -26559,8 +26559,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 378,
-                    "end": 381
+                    "line": 383,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -26579,8 +26579,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 386
+                    "line": 388,
+                    "end": 391
                 }
             ]
         },
@@ -97123,8 +97123,8 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/ShapeFiles.php",
-            "lines": 104,
-            "doc": "The files an install lays at the webroot for tooling to find: the shape\nfiles from layout/ (index.php, wp-settings.php, version.php and the rest)\nand one file for each of the reference's wp-includes and wp-admin/includes\nfiles, an empty placeholder or, where layout/ ships one, the engine's\nloader. An engine update lays them again from the new engine: a file still\nas the replaced engine wrote it is replaced, a missing one is written, and\none the site changed is left alone.",
+            "lines": 152,
+            "doc": "The files an install lays at the webroot for tooling to find: the shape\nfiles from layout/ (index.php, wp-settings.php, version.php and the rest),\na shape file under each of WordPress's request entry points\n(data/entry-files.json: wp-cron.php, wp-admin/admin-ajax.php, ...), so a\nhost that runs only PHP files present on disk (nginx) still reaches the\nengine, and one file for each of the reference's wp-includes and\nwp-admin/includes files, an empty placeholder or, where layout/ ships one,\nthe engine's loader. An engine update lays them again from the new engine:\na file still as the replaced engine wrote it is replaced, a missing one is\nwritten, and one the site changed is left alone.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -97152,9 +97152,9 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "lay(string $engineDir, string $root): array",
-                    "doc": "An install: every layout file copied, and each of the reference's\nfiles the site lacks written (an empty placeholder found there becomes\nthe loader layout/ ships for it).",
+                    "doc": "An install: every layout file copied, and each entry point and each of\nthe reference's files the site lacks written (an empty placeholder found\nthere becomes the loader layout/ ships for it).",
                     "shapes": [
-                        "@return array{layout: int, placeholders: int} how many were written"
+                        "@return array{layout: int, entries: int, placeholders: int} how many were written"
                     ],
                     "params": [
                         {
@@ -97172,7 +97172,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
+                    "line": 33,
                     "end": 44
                 },
                 {
@@ -97207,7 +97207,36 @@
                         }
                     ],
                     "line": 51,
-                    "end": 68
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "laidEntries",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "laidEntries(string $engineDir, string $root): array",
+                    "doc": "The entry points at the webroot itself (not under wp-admin/, a tree eject\nremoves whole) whose file is still the one this engine lays: what eject\ndeletes before WordPress's own come back from the park.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -97226,8 +97255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 74
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -97246,8 +97275,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -97268,8 +97297,59 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 92
+                    "line": 99,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "entryFiles",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "entryFiles(string $engineDir): array",
+                    "doc": "index under wp-admin/, layout/entry.php at the webroot (none from an engine\nthat ships no entry list)",
+                    "shapes": [
+                        "@return array<string, string> each entry point with its shape file: wp-admin's"
+                    ],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 130
+                },
+                {
+                    "routes": [],
+                    "name": "layMissing",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "layMissing(array $files, string $root): int",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $files each written where the site has nothing, or the stock placeholder; returns how many"
+                    ],
+                    "params": [
+                        {
+                            "name": "files",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "each written where the site has nothing, or the stock placeholder; returns how many"
+                        },
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -97290,8 +97370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 107
+                    "line": 146,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -97326,8 +97406,8 @@
                             "doc": "what an engine wrote there before"
                         }
                     ],
-                    "line": 110,
-                    "end": 114
+                    "line": 161,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -97353,8 +97433,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 120
+                    "line": 167,
+                    "end": 171
                 }
             ]
         },

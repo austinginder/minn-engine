@@ -20,7 +20,7 @@
 | [`Packages`](#packages) | final readonly class | 484 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 87 | Whether a newer Minn is out, asked of the Minn update service at most |
-| [`ShapeFiles`](#shapefiles) | final class | 104 | The files an install lays at the webroot for tooling to find: the shape |
+| [`ShapeFiles`](#shapefiles) | final class | 152 | The files an install lays at the webroot for tooling to find: the shape |
 | [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 456 | Update offers for the site's plugins and themes from the directory, asked |
 | [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
@@ -781,12 +781,15 @@ Internals: `origin()` (private, line 102)
 `final class Minn\Ops\ShapeFiles` · `public/minn/src/Minn/Ops/ShapeFiles.php`
 
 The files an install lays at the webroot for tooling to find: the shape
-files from layout/ (index.php, wp-settings.php, version.php and the rest)
-and one file for each of the reference's wp-includes and wp-admin/includes
-files, an empty placeholder or, where layout/ ships one, the engine's
-loader. An engine update lays them again from the new engine: a file still
-as the replaced engine wrote it is replaced, a missing one is written, and
-one the site changed is left alone.
+files from layout/ (index.php, wp-settings.php, version.php and the rest),
+a shape file under each of WordPress's request entry points
+(data/entry-files.json: wp-cron.php, wp-admin/admin-ajax.php, ...), so a
+host that runs only PHP files present on disk (nginx) still reaches the
+engine, and one file for each of the reference's wp-includes and
+wp-admin/includes files, an empty placeholder or, where layout/ ships one,
+the engine's loader. An engine update lays them again from the new engine:
+a file still as the replaced engine wrote it is replaced, a missing one is
+written, and one the site changed is left alone.
 
 - const `LAYOUT` = `array (   0 => 'index.php',   1 => 'wp-login.php',   2 => 'wp-settings.php',   3 => 'wp-cli.yml',   4 => 'wp-includes/version.php',   5 => 'wp-admin/index.php', )` — The shape files copied from layout/ as they are.
 
@@ -794,11 +797,11 @@ Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineUpdate`
 
 ### static `lay(string $engineDir, string $root): array`
 
-An install: every layout file copied, and each of the reference's
-files the site lacks written (an empty placeholder found there becomes
-the loader layout/ ships for it).
+An install: every layout file copied, and each entry point and each of
+the reference's files the site lacks written (an empty placeholder found
+there becomes the loader layout/ ships for it).
 
-- `@return array{layout: int, placeholders: int} how many were written`
+- `@return array{layout: int, entries: int, placeholders: int} how many were written`
 
 ### static `refresh(string $engineDir, string $root, string $previous): int`
 
@@ -806,11 +809,19 @@ An update, once the new engine is in place: each file the new engine
 lays that is missing, or still as the replaced engine ($previous, its
 folder) laid it, is written from the new one.
 
+### static `laidEntries(string $engineDir, string $root): array`
+
+The entry points at the webroot itself (not under wp-admin/, a tree eject
+removes whole) whose file is still the one this engine lays: what eject
+deletes before WordPress's own come back from the park.
+
+- `@return list<string>`
+
 ### static `placeholder(string $file): string`
 
 The empty placeholder for one of the reference's files.
 
-Internals: `boots()` (private, line 77), `wanted()` (private, line 83), `referenceFiles()` (private, line 95), `stale()` (private, line 110), `write()` (private, line 116)
+Internals: `boots()` (private, line 93), `wanted()` (private, line 99), `entryFiles()` (private, line 115), `layMissing()` (private, line 133), `referenceFiles()` (private, line 146), `stale()` (private, line 161), `write()` (private, line 167)
 
 
 ## Unzip

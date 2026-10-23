@@ -11,7 +11,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 365 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 370 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 200 | Options, read and written straight to the options table. Serialized |
@@ -384,7 +384,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 119), `inside()` (private, line 327), `move()` (private, line 336), `copyTree()` (private, line 359), `version()` (private, line 378), `say()` (private, line 383)
+Internals: `help()` (private, line 119), `inside()` (private, line 332), `move()` (private, line 341), `copyTree()` (private, line 364), `version()` (private, line 383), `say()` (private, line 388)
 
 
 ## MaintenanceCommand

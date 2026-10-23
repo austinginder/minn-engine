@@ -19,6 +19,18 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 | `wp-includes/version.php` | WP-CLI (`wp_exists()` is `file_exists` on it; `check_wp_version()` includes it and wants `$wp_version >= 3.7`; `core version` parses `$wp_version`, `$wp_db_version`, `$tinymce_version`, `$wp_local_package` by string search), hosting panels, backup tools | The release whose contracts the engine speaks (`7.1.3`, db revision `61833`), as plain assignments in the shape readers expect. No WordPress code. It follows the latest patch release of that branch (see "What a host sees" below). |
 | `wp-login.php` | nginx (a missing `.php` is a 404 before PHP runs), hide-login plugins that `require ABSPATH . 'wp-login.php'` | Boots the engine the way `index.php` does, or throws `ServeLogin` when required mid-request. |
 | `wp-admin/index.php` | nginx (a directory without an index is a 403 before PHP runs) | Boots the engine the way `index.php` does; the router 302s `/wp-admin/` to `/minn-admin/`. Required mid-request, does nothing. |
+| `wp-cron.php`, `wp-comments-post.php`, `xmlrpc.php`, `wp-signup.php`, `wp-activate.php`, `wp-mail.php`, `wp-links-opml.php`, `wp-trackback.php` | nginx (a request for a missing `.php` is a 404 before PHP runs: Kinsta's own cron curls `wp-cron.php`) | `layout/entry.php` under each name: boots the engine the way `index.php` does and the router answers the path. Required mid-request, does nothing. |
+| every other `wp-admin/*.php` (`admin-ajax.php`, `admin-post.php`, `async-upload.php`, `post.php`, ...) | nginx, as above; plugins that `require ABSPATH . 'wp-admin/admin.php'` | `layout/wp-admin/index.php` under each name, same behaviour. |
+
+The entry-point names are `public/minn/data/entry-files.json`, written by
+`php tests/tools/entry-files.php <reference webroot>` from the reference's own
+listing (its root `wp-*.php` and `xmlrpc.php`, and `wp-admin/*.php`, less the
+files laid by their own name, the config files and the two loaders). Install
+lays every one; an engine update lays any that are missing; eject removes the
+root ones still as laid, and the `wp-admin/` tree whole. A development site
+(Cove) has none of them: Caddy sends missing files to `index.php`, which reaches
+the same routes, though `PHP_SELF` then names `index.php` (the runtime's
+`_minn_script_globals` names the wp-admin script for plugins either way).
 
 ## Static assets
 
@@ -43,10 +55,11 @@ missing files through `index.php`. Nothing extra is copied to the webroot.
 
 ## Deliberately absent
 
-- `wp-load.php`, `wp-blog-header.php`, `xmlrpc.php` files: nothing at the
-  webroot runs WordPress. WP-CLI finds the root through `index.php` or the working
-  directory instead; `/xmlrpc.php` is answered by the router
-  (`contracts/front/probes.md`).
+- `wp-load.php` and `wp-blog-header.php`: they are loaders, not entry points, and
+  nothing at the webroot runs WordPress. WP-CLI finds the root through `index.php`
+  or the working directory instead. `/xmlrpc.php` is answered by the router
+  (`contracts/front/probes.md`: no XML-RPC is served); an installed site has its
+  entry-point shape file so nginx passes the request on.
 - `/wp-admin/` as a human UI: the path 302s to `/minn-admin/`. The directory
   exists on disk only so nginx does not 403 it and so plugin `require`s of
   `wp-admin/includes/*.php` resolve to empty placeholders (the engine already

@@ -45,6 +45,18 @@ if (!is_file("$REF_DIR/wp-load.php")) {
     exit($fail === 0 ? 0 : 1);
 }
 
+// The entry points an install lays (data/entry-files.json) are the reference's own, from its listing.
+$listed = array_merge(
+    array_map('basename', glob("$REF_DIR/{wp-*,xmlrpc}.php", GLOB_BRACE) ?: []),
+    array_map(static fn (string $f): string => 'wp-admin/' . basename($f), glob("$REF_DIR/wp-admin/*.php") ?: []),
+);
+$laidByName = ['index.php', 'wp-login.php', 'wp-settings.php', 'wp-load.php', 'wp-blog-header.php', 'wp-config.php', 'wp-config-sample.php', 'wp-admin/index.php'];
+$expected = array_values(array_diff($listed, $laidByName));
+sort($expected);
+$shipped = json_decode((string) file_get_contents("$ROOT/public/minn/data/entry-files.json"), true);
+$check('data/entry-files.json names the reference\'s entry points (php tests/tools/entry-files.php when it drifts)', $shipped === $expected, json_encode([array_values(array_diff($expected, (array) $shipped)), array_values(array_diff((array) $shipped, $expected))]));
+$check('the entry-point template boots like index.php and does nothing mid-request', str_contains((string) file_get_contents("$ROOT/public/minn/layout/entry.php"), "if (defined('MINN_ENGINE_DIR')) {\n    return;\n}") && str_contains((string) file_get_contents("$ROOT/public/minn/layout/entry.php"), "require_once __DIR__ . '/wp-config.php';"));
+
 $run = static function (string $dir, string $command): array {
     $extra = str_contains($dir, 'wp-reference') ? ' --skip-plugins --skip-themes' : '';
     $descriptors = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
