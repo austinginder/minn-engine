@@ -9,7 +9,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 44 | What a classic theme's the_content() prints: the content as written (the |
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 125 | A whole page from the active classic theme: the reference's PHP template |
-| [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
+| [`ClassicTheme`](#classictheme) | final readonly class | 37 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeatureSelectors`](#featureselectors) | final class | 33 | A block's styles split between the selectors its metadata gives its |
@@ -40,8 +40,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 125 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 251 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 359 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Templates`](#templates) | final readonly class | 268 | Which template renders a resolution, and where its markup comes from: |
+| [`Theme`](#theme) | final class | 390 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -194,6 +194,10 @@ Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`
 - readonly `string $template`
 - readonly `string $stylesheetDir`
 - readonly `string $templateDir`
+
+### static `ofBlockTheme(Minn\Theme\Theme $theme): self`
+
+A block theme as a PHP template's theme: a hybrid's own PHP template renders through it (Templates::forResolution).
 
 ### static `active(Minn\Content\Site $site, string $themesDir): ?self`
 
@@ -811,7 +815,7 @@ editor asks for them (?_wp-find-template); null without one.
 
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses): ?string`
 
-The page for a resolution, or null when the theme has no template for it.
+The page for a resolution, or null when the theme has no block template for it (none, or its PHP template wins: the classic renderer's then).
 
 Internals: `document()` (private, line 154), `skipLinkTarget()` (private, line 214), `head()` (private, line 229)
 
@@ -1398,7 +1402,7 @@ a wp_template post saved from the site editor (matched by slug and the
 theme term) wins over the theme's file. Parts resolve the same way
 through wp_template_part.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Theme\Theme $theme, ?Minn\Runtime\BlockTemplates $registered = NULL)
@@ -1408,9 +1412,15 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Theme\Theme $theme, ?Mi
 ### `forResolution(Minn\Front\Resolution $resolution): ?array`
 
 The template that renders a resolution, or null; with the runtime up,
-its fields as the template object holds them too.
+its fields as the template object holds them too. A theme's PHP
+template takes part as the reference's loader lets it (contracts/
+runtime.md, "A child theme's PHP template"): within a template type,
+only block templates for the slugs up to the first one a PHP file
+answers are looked for, a child's PHP file passes over its parent's
+block template of the same slug, and when no block template is left
+the PHP file is the template ('php', its path; no markup).
 
-- `@return array{slug: string, markup: string, fields?: array<string, mixed>}|null`
+- `@return array{slug: string, markup: string, fields?: array<string, mixed>, php?: string}|null`
 
 ### `template(string $slug): ?string`
 
@@ -1448,7 +1458,7 @@ part of the theme by that name, or none.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `found()` (private, line 59), `filtered()` (private, line 122), `groups()` (private, line 140), `savedOfTheme()` (private, line 194), `saved()` (private, line 251), `savedRow()` (private, line 264)
+Internals: `found()` (private, line 74), `filtered()` (private, line 139), `groups()` (private, line 157), `savedOfTheme()` (private, line 211), `saved()` (private, line 268), `savedRow()` (private, line 281)
 
 
 ## Theme
@@ -1462,7 +1472,7 @@ merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\Themes`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\Themes`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)
@@ -1510,6 +1520,21 @@ A template file's markup, or null.
 ### `templatePath(string $slug): ?string`
 
 The file a template is read from: this theme's, else its parent's; null when neither has one.
+
+### `phpTemplate(array $slugs): ?array`
+
+The first of these template slugs a PHP file answers, as locate_template
+looks (each name in this theme, then its parent's), with whether this
+theme holds it itself while it has a parent (a child theme's own); null
+when none does. A hybrid theme's PHP templates take part in the block
+template hierarchy this way.
+
+- `@param list<string> $slugs`
+- `@return array{slug: string, path: string, child: bool}|null`
+
+### `ownsTemplate(string $slug): bool`
+
+Whether this theme's own folder (not its parent's) holds a template file for the slug.
 
 ### `partFile(string $slug): ?string`
 
@@ -1573,7 +1598,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 62), `rawJson()` (private, line 84), `withStylePartials()` (private, line 100), `partialFiles()` (private, line 136), `safe()` (private, line 167), `htmlFiles()` (private, line 244), `patternIndex()` (private, line 367)
+Internals: `at()` (private, line 62), `rawJson()` (private, line 84), `withStylePartials()` (private, line 100), `partialFiles()` (private, line 136), `safe()` (private, line 167), `htmlFiles()` (private, line 275), `patternIndex()` (private, line 398)
 
 
 ## ThemeHeaders

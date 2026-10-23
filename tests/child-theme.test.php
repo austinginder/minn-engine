@@ -41,12 +41,18 @@ $slug   = 'zz-child-suite';
 $before = $wp( 'option get stylesheet' );
 @mkdir( "$themes/$slug" );
 file_put_contents( "$themes/$slug/style.css", "/*\nTheme Name: ZZ Child Suite\nTemplate: $before\n*/\n" );
-file_put_contents( "$themes/$slug/page.php", "<?php // zz child page\n" );
+// The child's page.php renders a page through its own header.php and footer.php (the hierarchy picks it over the
+// parent's block template, contracts/runtime.md "The 0.1.0 field test, and the other entry scripts").
+file_put_contents( "$themes/$slug/page.php", "<?php // zz child page\nget_header();\necho '<main>';\nwhile ( have_posts() ) { the_post(); the_title( '<h1>', '</h1>' ); the_content(); }\necho '</main>';\nget_footer();\n" );
+file_put_contents( "$themes/$slug/header.php", "<!DOCTYPE html>\n<html <?php language_attributes(); ?>>\n<head><meta charset=\"<?php bloginfo( 'charset' ); ?>\"><?php wp_head(); ?></head>\n<body <?php body_class(); ?>><?php wp_body_open(); ?><header>ZZCHILDHEADER <?php bloginfo( 'name' ); ?></header>\n" );
+file_put_contents( "$themes/$slug/footer.php", "<footer>ZZCHILDFOOTER</footer><?php wp_footer(); ?></body></html>\n" );
 register_shutdown_function( static function () use ( $wp, $themes, $slug, $before ): void {
 	$wp( 'option update stylesheet ' . escapeshellarg( $before ) );
 	$wp( 'cache flush' );
 	@unlink( "$themes/$slug/style.css" );
 	@unlink( "$themes/$slug/page.php" );
+	@unlink( "$themes/$slug/header.php" );
+	@unlink( "$themes/$slug/footer.php" );
 	@rmdir( "$themes/$slug" );
 } );
 $wp( 'option update stylesheet ' . $slug );
@@ -71,6 +77,22 @@ foreach ( array( $REF, $ENGINE ) as $base ) {
 	$answers[] = array( $page['status'], (string) $body );
 }
 check( $answers[0] === $answers[1] && str_contains( $answers[0][1], "\"theme\":\"$slug\"" ), 'the template a post gets names the child', substr( $answers[1][1], 0, 200 ) );
+
+// The page the child's page.php draws: its header, the post, its footer, the body classes, and the global styles
+// printed before the theme's stylesheet, as on the reference.
+$pages = array();
+foreach ( array( $REF, $ENGINE ) as $base ) {
+	[ $page, $body ] = minn_test_fetch( "$base/sample-page/", 15 );
+	$html  = str_replace( $REF, $ENGINE, (string) $body );
+	$main  = preg_match( '#<main>.*?</main>#s', $html, $m ) ? $m[0] : '';
+	$class = preg_match( '#<body class="([^"]*)"#', $html, $m ) ? $m[1] : '';
+	$order = array_values( array_intersect( preg_match_all( "#id=['\"]([a-z0-9-]+)['\"]#", $html, $ids ) ? $ids[1] : array(), array( 'global-styles-inline-css', 'twentytwentyfive-style-inline-css', 'twentytwentyfive-style-css' ) ) );
+	$pages[] = array( $page['status'], str_contains( $html, 'ZZCHILDHEADER' ) && str_contains( $html, 'ZZCHILDFOOTER' ), $main, $class, $order );
+}
+check( $pages[0][1] && $pages[1][1], 'the child\'s page.php renders through its own header and footer on both stacks', json_encode( array( $pages[0][1], $pages[1][1] ) ) );
+check( $pages[0][2] !== '' && $pages[0][2] === $pages[1][2], 'the page it draws matches the reference', substr( $pages[1][2], 0, 300 ) );
+check( $pages[0][3] === $pages[1][3], 'its body classes match the reference', $pages[1][3] );
+check( $pages[0][4] === $pages[1][4] && $pages[1][4] !== array(), 'global styles print before the theme\'s stylesheet, as on the reference', json_encode( array( $pages[0][4], $pages[1][4] ) ) );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

@@ -18404,6 +18404,32 @@ Two Low rows of the 2026-10-22 security review, settled.
   8.4; absent from every PHP on the reference's machine, 7.4 to 8.5), so the IMAP branch
   (`imap_rfc822_parse_adrlist` with `$useimap`) is kept out on purpose.
 
+## A child theme's PHP template, and the stylesheet order (2026-10-23)
+
+- **The hierarchy's PHP templates render.** Under a block theme the engine found the template the
+  reference finds and still drew the parent's block template. Per template type, the reference's
+  loader looks for block templates only among the slugs up to the first one a PHP file answers
+  (each name in the child, then the parent), passes over the parent's file template of that slug
+  when the PHP file is the child's own, and when none is left loads the PHP file.
+  `Templates::forResolution` applies that rule (`Theme::phpTemplate`, `Theme::ownsTemplate`) and
+  marks the PHP case; `PageRenderer` then steps aside and the classic renderer, now built for a
+  block theme too (`ClassicTheme::ofBlockTheme`), loads the file through the facade's template
+  getters. Suite `child-theme` draws a child's page.php through its own header.php and footer.php
+  on both stacks and compares the page and the body classes.
+- **Global styles print before the theme's stylesheet.** The engine printed its block stylesheet
+  and global styles at `wp_head` 8 after the style queue, so a theme's style.css came first and a
+  global-styles rule of the same specificity beat it; the reference prints its block library and
+  global styles inside the queue, ahead of the theme's. They print at `wp_head` 7 now, on block and
+  classic pages alike (the image-sizes rule the queue prints first now follows them; it shares no
+  selector with either).
+
+Left open.
+
+- A theme without header.php, footer.php or sidebar.php gets the reference's deprecated
+  theme-compat versions (the old `#page` layout, the sidebar's search, pages, archives, categories
+  and meta, each with a `_deprecated_file` notice); the engine carries only the embed and comments
+  compat templates, so such a call prints nothing.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18516,7 +18542,7 @@ rows that are `open` or `austin`.
 | 18098 | The security sweep (10-20) | a child theme that leaves theme.json to its parent boots as a classic theme | done | `Theme\Theme::at` takes a child without its own theme.json when its parent has one, so the site stays a block theme; suite `child-theme` |
 | 18098 | The security sweep (10-20) | a block template read from the theme's files is named after the parent | done | `Runtime\TemplateFiles::fromFile` names it `<stylesheet>//<slug>` with the stylesheet as its theme, as the reference does whichever theme holds the file; suite `child-theme` |
 | 18098 | The security sweep (10-20) | `resolve_block_template` ignores its PHP fallback | done | a child theme's own PHP template passes over its parent's block template of the same slug, as on the reference (the hierarchy then falls to the next template); suite `child-theme` (12 checks, the `_wp-find-template` answer included) |
-| 18098 | The security sweep (10-20) | the front renders the parent's block template where the reference renders a child theme's own PHP template | open | the engine runs no theme PHP templates (a hybrid theme's PHP templates are amber); the template it finds now matches, only the page drawn from it differs |
+| 18098 | The security sweep (10-20) | the front renders the parent's block template where the reference renders a child theme's own PHP template | done | the PHP template the hierarchy picks renders through the classic renderer; suite `child-theme`; "A child theme's PHP template, and the stylesheet order (2026-10-23)" |
 | 18300 | REST fuzzing (10-21) | `POST` to template and template-part autosaves | done | `TemplateRevisionsController::createAutosave`; suite `rest-parity` |
 | 18300 | REST fuzzing (10-21) | a draft, trashed or auto-draft template not found by its id, and a theme file answering where a saved draft of its slug exists | done | `TemplateIndex::find` reads the site's row by slug in those statuses first |
 | 18300 | REST fuzzing (10-21) | a template trashed through REST kept its slug and no trash meta, so its id still found it | done | `TemplateWriter::trash` through `PostWrites::trash` |
@@ -18587,3 +18613,4 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | open | the engine's CLI boot runs a filter the reference's does not |
 | 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | open | seen on the SandyWP sandbox |
 | 18310 | The 0.1.0 field test (10-23) | Minn Admin's `wp minn install` does not flush page caches after the swap | open | Minn Admin's switch command, as install.sh does |
+| 18407 | Child theme PHP templates (10-23) | the theme-compat header.php, footer.php and sidebar.php a theme without them gets | open | the reference's deprecated layout, captured from its output before it is written |

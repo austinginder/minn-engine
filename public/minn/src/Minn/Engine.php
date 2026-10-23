@@ -354,7 +354,9 @@ final readonly class Engine
         $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);
         $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage(), $bar);
-        $classic = $classicTheme === null ? null : \Minn\Theme\ClassicRenderer::create($db, $classicTheme, Theme::forStyles($site, $permalinks, ABSPATH . 'wp-content/themes'), $permalinks, $resolver->perPage(), $bar);
+        // A block theme's own PHP templates (a hybrid, a child's page.php) render through the classic renderer when the hierarchy picks one.
+        $templateTheme = $classicTheme ?? ($theme === null ? null : \Minn\Theme\ClassicTheme::ofBlockTheme($theme));
+        $classic = $templateTheme === null ? null : \Minn\Theme\ClassicRenderer::create($db, $templateTheme, Theme::forStyles($site, $permalinks, ABSPATH . 'wp-content/themes'), $permalinks, $resolver->perPage(), $bar);
 
         $posts = new Posts($db);
         $front = null;

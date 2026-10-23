@@ -43990,7 +43990,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 341,
+            "lines": 343,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44439,7 +44439,7 @@
                         }
                     ],
                     "line": 342,
-                    "end": 410
+                    "end": 412
                 }
             ]
         },
@@ -192733,12 +192733,14 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ClassicTheme.php",
-            "lines": 31,
+            "lines": 37,
             "doc": "The active classic (PHP-template) theme on disk. A theme is classic when\nit ships no block template index; its templates are PHP files the engine\ndispatches through the reference's hierarchy and runs via load_template().\nThe theme's own functions.php loads through the runtime's symbol gate.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Site"
+                "Minn\\Content\\Site",
+                "Minn\\Theme\\Templates",
+                "Minn\\Theme\\Theme"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -192825,6 +192827,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "ofBlockTheme",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofBlockTheme(Minn\\Theme\\Theme $theme): self",
+                    "doc": "A block theme as a PHP template's theme: a hybrid's own PHP template renders through it (Templates::forResolution).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "theme",
+                            "type": "Minn\\Theme\\Theme",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 29
+                },
+                {
+                    "routes": [],
                     "name": "active",
                     "static": true,
                     "visibility": "public",
@@ -192847,8 +192869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 44
+                    "line": 32,
+                    "end": 50
                 }
             ]
         },
@@ -195511,7 +195533,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "render(Minn\\Front\\Resolution $resolution, array $coreClasses): ?string",
-                    "doc": "The page for a resolution, or null when the theme has no template for it.",
+                    "doc": "The page for a resolution, or null when the theme has no block template for it (none, or its PHP template wins: the classic renderer's then).",
                     "shapes": [],
                     "params": [
                         {
@@ -198768,7 +198790,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/Templates.php",
-            "lines": 251,
+            "lines": 268,
             "doc": "Which template renders a resolution, and where its markup comes from:\na wp_template post saved from the site editor (matched by slug and the\ntheme term) wins over the theme's file. Parts resolve the same way\nthrough wp_template_part.",
             "implements": [],
             "extends": null,
@@ -198789,6 +198811,7 @@
                 "Minn\\Admin\\RenderController",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Theme\\ClassicTheme",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -198876,9 +198899,9 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "forResolution(Minn\\Front\\Resolution $resolution): ?array",
-                    "doc": "The template that renders a resolution, or null; with the runtime up,\nits fields as the template object holds them too.",
+                    "doc": "The template that renders a resolution, or null; with the runtime up,\nits fields as the template object holds them too. A theme's PHP\ntemplate takes part as the reference's loader lets it (contracts/\nruntime.md, \"A child theme's PHP template\"): within a template type,\nonly block templates for the slugs up to the first one a PHP file\nanswers are looked for, a child's PHP file passes over its parent's\nblock template of the same slug, and when no block template is left\nthe PHP file is the template ('php', its path; no markup).",
                     "shapes": [
-                        "@return array{slug: string, markup: string, fields?: array<string, mixed>}|null"
+                        "@return array{slug: string, markup: string, fields?: array<string, mixed>, php?: string}|null"
                     ],
                     "params": [
                         {
@@ -198889,8 +198912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 49
+                    "line": 46,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -198909,8 +198932,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -198929,8 +198952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 94
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -198951,8 +198974,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 110
+                    "line": 119,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -198963,8 +198986,8 @@
                     "doc": "The site editor's saved global styles for the active theme, when any.\nAn emptied node is stored as [] and reads as nothing, the way the\nreference reads it; a list where a map belongs is dropped the same way.",
                     "shapes": [],
                     "params": [],
-                    "line": 176,
-                    "end": 184
+                    "line": 193,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -198975,8 +198998,8 @@
                     "doc": "Has the theme's saved templates (and its term) read, if they are not yet: the template-part lookup answers from them.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 227
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -198997,8 +199020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 239
+                    "line": 252,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -199017,15 +199040,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 249
+                    "line": 259,
+                    "end": 266
                 },
                 {
                     "routes": [],
                     "name": "found",
                     "static": false,
                     "visibility": "private",
-                    "signature": "found(array $slugs): ?array",
+                    "signature": "found(array $slugs, ?string $passedOver = NULL): ?array",
                     "doc": "The first of these slugs a template answers, in their order. With the runtime up the answer is the\nreference's: the templates get_block_templates finds for the slugs (its pre and result filters let a plugin\nadd one or change one, as The Events Calendar and WooCommerce do).",
                     "shapes": [
                         "@param list<string> $slugs",
@@ -199038,10 +199061,17 @@
                             "shape": "list<string>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "passedOver",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 82
+                    "line": 74,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -199070,8 +199100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 130
+                    "line": 139,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -199092,8 +199122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 169
+                    "line": 157,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -199106,8 +199136,8 @@
                         "@return array<string, list<array<string, mixed>>>"
                     ],
                     "params": [],
-                    "line": 194,
-                    "end": 221
+                    "line": 211,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -199133,8 +199163,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 255
+                    "line": 268,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -199162,8 +199192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 273
+                    "line": 281,
+                    "end": 290
                 }
             ]
         },
@@ -199173,7 +199203,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 359,
+            "lines": 390,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
@@ -199196,6 +199226,7 @@
                 "Minn\\Runtime\\TemplateFiles",
                 "Minn\\Runtime\\Themes",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\ClassicTheme",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplateIndex",
@@ -199475,6 +199506,49 @@
                 },
                 {
                     "routes": [],
+                    "name": "phpTemplate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "phpTemplate(array $slugs): ?array",
+                    "doc": "The first of these template slugs a PHP file answers, as locate_template\nlooks (each name in this theme, then its parent's), with whether this\ntheme holds it itself while it has a parent (a child theme's own); null\nwhen none does. A hybrid theme's PHP templates take part in the block\ntemplate hierarchy this way.",
+                    "shapes": [
+                        "@param list<string> $slugs",
+                        "@return array{slug: string, path: string, child: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "slugs",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 199,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "ownsTemplate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ownsTemplate(string $slug): bool",
+                    "doc": "Whether this theme's own folder (not its parent's) holds a template file for the slug.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 215,
+                    "end": 218
+                },
+                {
+                    "routes": [],
                     "name": "partFile",
                     "static": false,
                     "visibility": "public",
@@ -199490,8 +199564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 194
+                    "line": 221,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -199510,8 +199584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 204
+                    "line": 228,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -199522,8 +199596,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 211,
-                    "end": 220
+                    "line": 242,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -199544,8 +199618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 241
+                    "line": 261,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -199564,8 +199638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 264
+                    "line": 287,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -199584,8 +199658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 275
+                    "line": 298,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -199604,8 +199678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 286
+                    "line": 309,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -199624,8 +199698,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 297
+                    "line": 320,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -199644,8 +199718,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 307
+                    "line": 331,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -199666,8 +199740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 329
+                    "line": 346,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -199688,8 +199762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 358
+                    "line": 369,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -199700,8 +199774,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 361,
-                    "end": 364
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -199837,8 +199911,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 253
+                    "line": 275,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -199851,8 +199925,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 367,
-                    "end": 379
+                    "line": 398,
+                    "end": 410
                 }
             ]
         },

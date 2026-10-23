@@ -186,6 +186,37 @@ final class Theme
         return is_file($file) ? $file : $this->parent?->templatePath($slug);
     }
 
+    /**
+     * The first of these template slugs a PHP file answers, as locate_template
+     * looks (each name in this theme, then its parent's), with whether this
+     * theme holds it itself while it has a parent (a child theme's own); null
+     * when none does. A hybrid theme's PHP templates take part in the block
+     * template hierarchy this way.
+     *
+     * @param list<string> $slugs
+     * @return array{slug: string, path: string, child: bool}|null
+     */
+    public function phpTemplate(array $slugs): ?array
+    {
+        foreach ($slugs as $slug) {
+            if (!self::safe($slug)) {
+                continue;
+            }
+            foreach ([[$this->dir, $this->parent !== null], [$this->parent?->dir, false]] as [$dir, $child]) {
+                if ($dir !== null && is_file("{$dir}/{$slug}.php")) {
+                    return ['slug' => $slug, 'path' => "{$dir}/{$slug}.php", 'child' => $child];
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Whether this theme's own folder (not its parent's) holds a template file for the slug. */
+    public function ownsTemplate(string $slug): bool
+    {
+        return self::safe($slug) && is_file("{$this->dir}/templates/{$slug}.html");
+    }
+
     /** A template part file's markup, or null. */
     public function partFile(string $slug): ?string
     {

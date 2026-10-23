@@ -22,6 +22,12 @@ final readonly class ClassicTheme
     ) {
     }
 
+    /** A block theme as a PHP template's theme: a hybrid's own PHP template renders through it (Templates::forResolution). */
+    public static function ofBlockTheme(Theme $theme): self
+    {
+        return new self($theme->slug, $theme->parent->slug ?? $theme->slug, $theme->dir, $theme->parent->dir ?? $theme->dir);
+    }
+
     /** The active classic theme, or null under a block theme. */
     public static function active(Site $site, string $themesDir): ?self
     {

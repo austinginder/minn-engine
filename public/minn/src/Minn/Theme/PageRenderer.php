@@ -122,11 +122,11 @@ final readonly class PageRenderer
         return $this->templates->forResolution($resolution)['fields'] ?? null;
     }
 
-    /** The page for a resolution, or null when the theme has no template for it. */
+    /** The page for a resolution, or null when the theme has no block template for it (none, or its PHP template wins: the classic renderer's then). */
     public function render(Resolution $resolution, array $coreClasses): ?string
     {
         $template = $this->templates->forResolution($resolution);
-        if ($template === null) {
+        if ($template === null || isset($template['php'])) {
             return null;
         }
         $query = $this->bridge->stand($resolution);

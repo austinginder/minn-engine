@@ -33,16 +33,31 @@ final readonly class Templates
 
     /**
      * The template that renders a resolution, or null; with the runtime up,
-     * its fields as the template object holds them too.
+     * its fields as the template object holds them too. A theme's PHP
+     * template takes part as the reference's loader lets it (contracts/
+     * runtime.md, "A child theme's PHP template"): within a template type,
+     * only block templates for the slugs up to the first one a PHP file
+     * answers are looked for, a child's PHP file passes over its parent's
+     * block template of the same slug, and when no block template is left
+     * the PHP file is the template ('php', its path; no markup).
      *
-     * @return array{slug: string, markup: string, fields?: array<string, mixed>}|null
+     * @return array{slug: string, markup: string, fields?: array<string, mixed>, php?: string}|null
      */
     public function forResolution(Resolution $resolution): ?array
     {
         foreach ($this->groups($resolution) as $type => $slugs) {
-            $found = $this->found($this->filtered((string) $type, $slugs));
+            $slugs = $this->filtered((string) $type, $slugs);
+            $php = $this->theme->phpTemplate($slugs);
+            if ($php !== null) {
+                $slugs = array_slice($slugs, 0, (int) array_search($php['slug'], $slugs, true) + 1);
+            }
+            $passedOver = $php !== null && $php['child'] && !$this->theme->ownsTemplate($php['slug']) ? $php['slug'] : null;
+            $found = $this->found($slugs, $passedOver);
             if ($found !== null) {
                 return $found;
+            }
+            if ($php !== null) {
+                return ['slug' => $php['slug'], 'markup' => '', 'php' => $php['path']];
             }
         }
         return null;
@@ -56,11 +71,11 @@ final readonly class Templates
      * @param list<string> $slugs
      * @return array{slug: string, markup: string, fields?: array<string, mixed>}|null
      */
-    private function found(array $slugs): ?array
+    private function found(array $slugs, ?string $passedOver = null): ?array
     {
         if (!Runtime::booted()) {
             foreach ($slugs as $slug) {
-                $markup = $this->template($slug);
+                $markup = $slug === $passedOver && $this->saved('wp_template', $slug) === null ? null : $this->template($slug);
                 if ($markup !== null) {
                     return ['slug' => $slug, 'markup' => $markup];
                 }
@@ -69,7 +84,9 @@ final readonly class Templates
         }
         $found = [];
         foreach ((array) Handoff::blockTemplates(['slug__in' => $slugs], 'wp_template') as $template) {
-            if (is_object($template) && isset($template->slug, $template->content)) {
+            // The parent's file for the slug a child's PHP template answers is passed over; a saved one is not.
+            $skipped = $passedOver !== null && is_object($template) && ($template->slug ?? null) === $passedOver && ($template->source ?? null) === 'theme';
+            if (!$skipped && is_object($template) && isset($template->slug, $template->content)) {
                 $found[(string) $template->slug] ??= $template;
             }
         }
