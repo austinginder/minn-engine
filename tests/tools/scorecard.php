@@ -1,6 +1,7 @@
 <?php
 /**
- * The 0.1.0 maturity scorecard (audit 2026-10-12): each measure the engine
+ * The 0.1.0 maturity scorecard (measures set by the audit of 2026-10-12,
+ * re-taken in each docs/audit-<date>.md since): each measure the engine
  * matures against, its figure and its target, gathered from what the repo
  * holds (no site is asked). Writes contracts/scorecard.json, which
  * compat-status.php --site carries into the marketing site's compat.json
@@ -262,9 +263,15 @@ if (preg_match('/^## Open items register\b.*?(?=^## |\z)/ms', $runtime, $registe
     $open = array_count_values(array_map('strtolower', $rows[1])) + ['open' => 0, 'accepted' => 0, 'done' => 0, 'austin' => 0];
 }
 
+// The latest audit the measures were re-taken in: the newest docs/audit-<date>.md (the first, 2026-10-12, set the measures).
+$audits = glob("{$root}/docs/audit-*.md") ?: [];
+sort($audits);
+$audit = $audits === [] ? null : ['date' => substr(basename((string) end($audits), '.md'), 6), 'file' => 'docs/' . basename((string) end($audits))];
+
 $meta = $json('contracts/api/meta.json') ?? [];
 $card = [
     'wordpress' => $meta['version'] ?? '',
+    'audit' => $audit,
     'security' => ['found' => count($findings), 'fixed' => $fixed],
     'sql' => $sql,
     'hooks' => $hooks,
