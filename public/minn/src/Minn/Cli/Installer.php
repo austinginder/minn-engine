@@ -157,7 +157,9 @@ final class Installer
         $this->say("{$root}: {$state}");
         if ($state === 'minn') {
             $manifest = self::record($root);
-            $this->say('  installed ' . ($manifest['installed'] ?? '?') . ', engine ' . ($manifest['engine_version'] ?? '?') . ', parked at ' . ($manifest['park'] ?? '?'));
+            // The engine running now, which an update moves on; the record keeps the one the install laid down.
+            $running = is_file("{$root}/minn/bootstrap.php") ? EngineUpdate::versionOf("{$root}/minn") : '?';
+            $this->say("  engine {$running}, installed " . ($manifest['installed'] ?? '?') . ' with ' . ($manifest['engine_version'] ?? '?') . ', parked at ' . ($manifest['park'] ?? '?'));
         }
         return 0;
     }

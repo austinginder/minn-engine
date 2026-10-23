@@ -168,7 +168,7 @@ $manifest = json_decode((string) substr($record, (int) strpos($record, "?>\n") +
 $check('the install record sits at the webroot, not in the (possibly shared) engine', str_starts_with($record, '<?php return;') && !file_exists("$WEBROOT/minn/.install.json"));
 $check('the record names its webroot, the park and the moved entries', is_array($manifest) && ($manifest['root'] ?? '') === realpath($WEBROOT) && ($manifest['park'] ?? '') === $PARK && in_array('wp-load.php', $manifest['moved'] ?? [], true) && in_array('wp-admin', $manifest['moved'] ?? [], true), json_encode($manifest));
 [$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
-$check('status reads the engine', $code === 0 && str_contains($out, ': minn') && str_contains($out, 'parked at'), $out);
+$check('status reads the engine, naming the one running', $code === 0 && str_contains($out, ': minn') && str_contains($out, 'parked at') && str_contains($out, 'engine ' . Minn\Ops\EngineUpdate::versionOf("$WEBROOT/minn") . ','), $out);
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
 $check('a second install is refused', $code === 1, $out);
 

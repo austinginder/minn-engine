@@ -26188,7 +26188,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 370,
+            "lines": 372,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -26410,7 +26410,7 @@
                         }
                     ],
                     "line": 154,
-                    "end": 163
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -26438,8 +26438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 225
+                    "line": 173,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -26467,8 +26467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 292
+                    "line": 238,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -26487,8 +26487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 304
+                    "line": 297,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -26509,8 +26509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 324
+                    "line": 316,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -26541,8 +26541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 338
+                    "line": 334,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -26568,8 +26568,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 362
+                    "line": 343,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -26595,8 +26595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 381
+                    "line": 366,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -26607,8 +26607,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 383,
-                    "end": 386
+                    "line": 385,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -26627,8 +26627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 391
+                    "line": 390,
+                    "end": 393
                 }
             ]
         },

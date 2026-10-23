@@ -12,6 +12,28 @@
 
 * **Eject says so when it cannot remove an empty park** instead of printing a PHP warning.
 
+* **WordPress's other stand-alone pages answer as WordPress's do.** `wp-links-opml.php` lists the site's links as OPML, `wp-mail.php` refuses with WordPress's page, `wp-signup.php` and `wp-activate.php` send visitors to registration, and `wp-trackback.php` asked directly answers its error, where each was a 404 page.
+
+* **A theme's own PHP templates render.** A child of a block theme with its own `page.php`, or a page given a PHP template of the theme's (a folder down included), showed the parent's block template; it shows the PHP template, as WordPress does.
+
+* **A theme's stylesheet comes after the site's global styles**, so a rule in the theme's `style.css` wins over a global style of the same weight, as on WordPress.
+
+* **Plugins that read the request's server variables under WP-CLI no longer warn.** Minn makes them whole when it starts, as WordPress does, on the web and the command line.
+
+* **Mail addresses with accented or other non-ASCII letters** are accepted by PHPMailer once one has been added, as WordPress accepts them.
+
+### Security
+
+* **Database quoting follows the connection's character set.** On a site whose `DB_CHARSET` is a multibyte one (gbk, big5, sjis), a crafted search could close a quoted value; Minn now quotes on the connection the query runs on, a database drop-in's own included.
+
+* **REST requests are answered only where WordPress answers them.** `/wp-cron.php?rest_route=...` and `/wp-admin/admin-ajax.php?rest_route=...` ran a REST request where plugins assume cron or Ajax.
+
+* **The links OPML escapes link addresses as addresses**, so a `javascript:` link a plugin stored never reaches a feed reader.
+
+* **One page can no longer make the engine render without end** through patterns that include each other many times over; a request has a budget of sources it opens.
+
+* **The installer reads the site's address without loading its plugins** before it flushes the caches.
+
 ## **v0.1.0** - 2026-10-22
 
 The first release of Minn, a from-scratch, MIT-licensed engine for an existing WordPress site. One command swaps it into the webroot beside the site's untouched `wp-config.php`, `wp-content/` and database, and one command swaps WordPress back. Visitors read the site through its theme, Minn Admin runs on top as the whole admin, plugins written for WordPress load through Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working because the files, tables, cookies and REST answers are the shapes they expect. Every surface is checked against a real WordPress on the same database, request by request.
