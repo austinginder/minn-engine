@@ -1,8 +1,10 @@
 # Changelog
 
-## **v0.1.0** - Unreleased
+## **v0.1.0** - 2026-10-22
 
 The first release of Minn, a from-scratch, MIT-licensed engine for an existing WordPress site. One command swaps it into the webroot beside the site's untouched `wp-config.php`, `wp-content/` and database, and one command swaps WordPress back. Visitors read the site through its theme, Minn Admin runs on top as the whole admin, plugins written for WordPress load through Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working because the files, tables, cookies and REST answers are the shapes they expect. Every surface is checked against a real WordPress on the same database, request by request.
+
+A pre-alpha: not ready for production sites yet. What 1.0 waits on, and where each measure stands, is listed at minn.run.
 
 ### Added
 

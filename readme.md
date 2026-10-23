@@ -8,19 +8,19 @@ It is not a fork. No WordPress code appears in this repository, which is what ma
 
 ## Status
 
-0.1.0, the first release. Minn swaps into an existing WordPress site's webroot in one command and back out in one, beside the site's untouched `wp-config.php` and database and its own `wp-content/`. Visitors read the site through its theme, [Minn Admin](https://github.com/austinginder/minn-admin) is the admin, plugins written for WordPress load against Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working. What it does is listed in `changelog.md`.
+0.1.0, the first release, and a pre-alpha: not ready for production sites yet. Five of the fifteen measures 1.0 waits on are still open; [minn.run](https://minn.run/#where-minn-stands) lists them, and `docs/audit-2026-10-22.md` has the figures. Minn swaps into an existing WordPress site's webroot in one command and back out in one, beside the site's untouched `wp-config.php` and database and its own `wp-content/`. Visitors read the site through its theme, [Minn Admin](https://github.com/austinginder/minn-admin) is the admin, plugins written for WordPress load against Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working. What it does is listed in `changelog.md`.
 
 Measured against WordPress 7.1.3 on the same database:
 
 - **The whole PHP API is accounted for.** All 3,914 functions, 380 classes and 4,075 methods WordPress defines are either implemented and proven by a probe that compares Minn's answer with WordPress's, or a deliberate dead end that answers harmlessly. The dead ends are mostly the screens Minn replaces (wp-admin, the block and site editors, the Customizer) and XML-RPC.
-- **Every hook WordPress fires is accounted for**, 2,543 of them.
+- **Every hook WordPress fires on a single site is accounted for**, 2,542 of them, 97% proven against WordPress weighted by plugin installs.
 - **No page runs more database queries than WordPress** on the five pages measured: the front page, a post, an archive, a search, and the REST posts list.
-- **91 test suites, about 26,700 checks**, most of them comparing Minn's answer with a running WordPress on the same database. 87.6% of the engine's lines run under them.
-- **Two security sweeps before the release** (October 13 and 18): 43 findings, each fixed and pinned by a test, and four design questions left open on purpose, listed in `docs/security-review-2026-10-18.md`. Reporting a vulnerability: `security.md`.
+- **96 test suites, about 30,800 checks**, most of them comparing Minn's answer with a running WordPress on the same database. 88.4% of the engine's lines run under them.
+- **Security sweeps before the release**, the last on October 22: 91 findings across every review since August, each fixed and pinned by a test, and a few named and left open on purpose, listed in `docs/security-review-2026-10-22.md`. Reporting a vulnerability: `security.md`.
 - **Never contacts wordpress.org.** Update checks, directory search, translations and downloads go to updates.minn.run, Minn's update service.
 - **Signed updates.** The installer and the engine's own updater install only a release carrying an Ed25519 signature from a key built into the engine.
 - **Reversible.** `minn eject` gives WordPress back its files byte for byte. A round-trip suite gives WordPress and Minn the same day of work on copies of real sites and compares every row each leaves behind (`contracts/round-trip.md`).
-- **About a third of the size.** The engine (`src/Minn`, about 106,000 lines) and the WordPress-shaped facade plugins call (`wp-api`, about 88,000) come to about 194,000 lines of PHP, against about 618,000 in WordPress 7.1.3 with its admin and bundled libraries.
+- **About a third of the size.** The engine (`src/Minn`, about 116,000 lines) and the WordPress-shaped facade plugins call (`wp-api`, about 76,000) come to about 192,000 lines of PHP, against about 618,000 in WordPress 7.1.3 with its admin and bundled libraries.
 
 ### Who it is for today
 
