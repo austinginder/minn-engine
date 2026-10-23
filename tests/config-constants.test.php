@@ -111,5 +111,28 @@ foreach (['plain' => 'a db-error.php drop-in that only prints', 'status' => 'a d
 $own = $outage('engine', 'none');
 $check('the database away without a drop-in: the engine\'s own 503 page', $own['status'] === 503 && $own['retry'] === '60' && str_contains($own['body'], 'Error establishing a database connection'), json_encode(['status' => $own['status'], 'retry' => $own['retry']]));
 
+// A wp-config without DB_CHARSET or DB_COLLATE (an old one): each stack read through a folder of its own that links to
+// everything but a copy of its wp-config with those two lines left out. The charset and collation stay empty, so do the
+// table defaults plugins create with, and the connection keeps the server's.
+$charsets = [];
+foreach ($stacks as $name => [$root]) {
+    $folder = sys_get_temp_dir() . '/minn-nocharset-' . $name . '-' . getmypid();
+    @mkdir($folder);
+    foreach (scandir($root) ?: [] as $entry) {
+        if (!in_array($entry, ['.', '..', 'wp-config.php'], true)) {
+            @symlink($root . '/' . $entry, $folder . '/' . $entry);
+        }
+    }
+    file_put_contents($folder . '/wp-config.php', implode('', array_filter((array) file($root . '/wp-config.php'), static fn (string $line): bool => !preg_match('/\bDB_(CHARSET|COLLATE)\b/', $line))));
+    $charsets[$name] = trim((string) shell_exec('/opt/homebrew/bin/wp --skip-plugins --skip-themes --path=' . escapeshellarg($folder) . ' eval ' . escapeshellarg('global $wpdb; echo json_encode([$wpdb->charset, $wpdb->collate, $wpdb->get_charset_collate(), $wpdb->get_var("SELECT @@collation_connection")]);') . ' 2>/dev/null'));
+    foreach (scandir($folder) ?: [] as $entry) {
+        if (!in_array($entry, ['.', '..'], true)) {
+            @unlink($folder . '/' . $entry);
+        }
+    }
+    @rmdir($folder);
+}
+$check('without DB_CHARSET: the charset, collation and table defaults stay empty, as on the reference', $charsets['engine'] !== '' && $charsets['engine'] === $charsets['reference'] && str_starts_with($charsets['reference'], '["","",""'), json_encode($charsets, JSON_UNESCAPED_SLASHES));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

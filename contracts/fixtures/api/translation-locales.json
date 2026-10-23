@@ -1,0 +1,117 @@
+[
+    [
+        "the controller starts in",
+        "en_US"
+    ],
+    [
+        "loaded for de_DE and fr_FR",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "looked up by locale",
+        [
+            "Hallo",
+            "Bonjour",
+            false,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "the current locale set to fr_FR",
+        [
+            "fr_FR",
+            "Bonjour",
+            false,
+            {
+                "Hello": "Bonjour",
+                "Only French": "Seulement français"
+            }
+        ]
+    ],
+    [
+        "loaded where",
+        [
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "a second de_DE file comes after the first",
+        [
+            true,
+            "Hallo",
+            "Nur Deutsch"
+        ]
+    ],
+    [
+        "the German file also loaded for fr_FR comes after the French one",
+        [
+            true,
+            "Bonjour",
+            "Nur Deutsch"
+        ]
+    ],
+    [
+        "the French file unloaded for fr_FR",
+        [
+            true,
+            "Hallo",
+            true,
+            "Hallo"
+        ]
+    ],
+    [
+        "the German file unloaded with no locale (the first it was loaded for)",
+        [
+            true,
+            "Hallo",
+            "Servus",
+            true
+        ]
+    ],
+    [
+        "loaded with no locale takes the current one",
+        [
+            true,
+            "Seulement français",
+            false
+        ]
+    ],
+    [
+        "the domain unloaded for de_DE",
+        [
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "the domain unloaded everywhere",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "load_textdomain for de_DE, then __()",
+        [
+            true,
+            "Hallo"
+        ]
+    ],
+    [
+        "load_textdomain for fr_FR, then __()",
+        [
+            true,
+            "Bonjour",
+            "fr_FR"
+        ]
+    ]
+]

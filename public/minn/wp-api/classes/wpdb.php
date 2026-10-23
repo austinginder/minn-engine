@@ -77,7 +77,8 @@ class wpdb
     /** The connection's charset and collation, from DB_CHARSET and DB_COLLATE as determine_charset settles them. */
     public function init_charset()
     {
-        $settled = $this->determine_charset(defined('DB_CHARSET') ? (string) DB_CHARSET : 'utf8', defined('DB_COLLATE') ? (string) DB_COLLATE : '');
+        // Without DB_CHARSET (an old wp-config) the charset and collation stay empty, and so does get_charset_collate().
+        $settled = $this->determine_charset(defined('DB_CHARSET') ? (string) DB_CHARSET : '', defined('DB_COLLATE') ? (string) DB_COLLATE : '');
         [$this->charset, $this->collate] = [$settled['charset'], $settled['collate']];
     }
 

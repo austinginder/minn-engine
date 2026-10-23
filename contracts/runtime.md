@@ -18554,6 +18554,23 @@ On the way: the queued modules print after the queued modules they import (throu
 not queued, dynamic imports included), depth first in queue order, where the engine printed them in
 queue order (`queuedInOrder`).
 
+## The facade review's last doubts: an old wp-config's charset, and translations by locale (2026-10-23)
+
+Measure 31's three open doubts, each settled by measuring both stacks; all three were real.
+
+- **No `DB_CHARSET` in wp-config** (an old one). The reference keeps `$wpdb->charset` and `collate`
+  empty, so `get_charset_collate()` is empty and the tables plugins create take the database's
+  defaults; the connection keeps the server's. The engine settled on utf8mb4 and its 520
+  collation. `wpdb::init_charset` now starts from an empty charset, as the reference does (suite
+  `config-constants`, each stack read through a folder whose wp-config lacks the two lines).
+- **Which locale's file answers a lookup** (two doubts, deferred past 0.1.0). The reference's
+  translation controller keeps each file with the locales it was loaded for: a lookup for a locale
+  asks only those files, in the order they were loaded for it; a file loaded with no locale takes
+  the current one; unloading a file with no locale takes it out of the first locale it was loaded
+  for; `__()` answers in the controller's locale, which each `load_textdomain` sets. The engine
+  answered from every file whatever the locale. `I18n\TextDomains` now keeps each file's locales
+  and their turns, and the locale lookups are made in (probe translation-locales).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

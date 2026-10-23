@@ -8,8 +8,10 @@ namespace Minn\I18n;
  * The text domains this request knows: each domain's files in the order they
  * were loaded, and the domains looked for and not found (known, with no
  * files), all in the order they first appeared, which is the order a locale
- * switch reloads them in. A lookup asks a domain's files in load order and
- * the first one with a translation answers, each under its own plural rule.
+ * switch reloads them in. Each file is kept with the locales it was loaded
+ * for, and a lookup for a locale asks only those files (probe
+ * translation-locales): the domain's files in load order, the first one with
+ * a translation answering, each under its own plural rule.
  * The registry also remembers the folder a plugin or theme named for its
  * domain (and how files there are named), and the domains unloaded for good.
  */
@@ -17,6 +19,15 @@ final class TextDomains
 {
     /** @var array<string, array<string, Catalog>> domain => file => catalog */
     private array $loaded = [];
+
+    /** @var array<string, array<string, array<string, int>>> domain => file => the locales it was loaded for, each with its turn */
+    private array $locales = [];
+
+    /** How many files have been loaded for a locale so far: a file's turn among a locale's files. */
+    private int $turns = 0;
+
+    /** The locale lookups are made in: the translation controller's, en_US until it is set. */
+    private string $locale = 'en_US';
 
     /** @var array<string, array{0: string, 1: bool}> domain => [folder, files named by locale alone] */
     private array $folders = [];
@@ -33,24 +44,37 @@ final class TextDomains
     /** @var array<string, true> domains load_textdomain() loaded, a file that did not parse included */
     private array $accepted = [];
 
-    /** Adds a loaded file to a domain; a file already loaded there is not added twice. */
-    public function add(string $domain, string $file, Catalog $catalog): void
+    /** Sets the locale lookups are made in (the translation controller's set_locale). */
+    public function useLocale(string $locale): void
+    {
+        $this->locale = $locale;
+    }
+
+    /** The locale lookups are made in. */
+    public function locale(): string
+    {
+        return $this->locale;
+    }
+
+    /** Adds a loaded file to a domain for a locale; a file already loaded there is not added twice, only its locale noted. */
+    public function add(string $domain, string $file, Catalog $catalog, string $locale): void
     {
         $this->loaded[$domain][$file] ??= $catalog;
+        $this->locales[$domain][$file][$locale] ??= ++$this->turns;
         unset($this->closed[$domain]);
     }
 
-    /** Whether any file is loaded for the domain. */
-    public function has(string $domain): bool
+    /** Whether any file is loaded for the domain, for the locale when one is given. */
+    public function has(string $domain, ?string $locale = null): bool
     {
-        return ($this->loaded[$domain] ?? []) !== [];
+        return $this->catalogs($domain, $locale) !== [];
     }
 
     /** Forgets a domain and its files; true when it had any. */
     public function unload(string $domain): bool
     {
         $had = $this->has($domain);
-        unset($this->loaded[$domain], $this->accepted[$domain]);
+        unset($this->loaded[$domain], $this->locales[$domain], $this->accepted[$domain]);
         return $had;
     }
 
@@ -105,28 +129,45 @@ final class TextDomains
         return array_map('strval', array_keys($this->loaded));
     }
 
-    /** Drops one file from a domain; true when it was loaded. */
-    public function unloadFile(string $domain, string $file): bool
+    /**
+     * Drops one file from a domain for a locale, the first it was loaded for
+     * when none is given (probe translation-locales); the file stays for its
+     * other locales. True when it was loaded.
+     */
+    public function unloadFile(string $domain, string $file, ?string $locale = null): bool
     {
         $had = isset($this->loaded[$domain][$file]);
-        unset($this->loaded[$domain][$file]);
+        $locales = $this->locales[$domain][$file] ?? [];
+        asort($locales);
+        unset($this->locales[$domain][$file][$locale ?? (string) array_key_first($locales)]);
+        if (($this->locales[$domain][$file] ?? []) === []) {
+            unset($this->loaded[$domain][$file], $this->locales[$domain][$file]);
+        }
         return $had;
     }
 
     /**
-     * The domain's files and catalogs, first loaded first.
+     * The domain's files and catalogs, first loaded first: those loaded for
+     * the locale when one is given, in the order they were loaded for it,
+     * else all of them.
      *
      * @return array<string, Catalog>
      */
-    public function catalogs(string $domain): array
+    public function catalogs(string $domain, ?string $locale = null): array
     {
-        return $this->loaded[$domain] ?? [];
+        $catalogs = $this->loaded[$domain] ?? [];
+        if ($locale === null) {
+            return $catalogs;
+        }
+        $turns = array_filter(array_map(static fn (array $locales): ?int => $locales[$locale] ?? null, $this->locales[$domain] ?? []), 'is_int');
+        asort($turns);
+        return array_intersect_key(array_replace($turns, $catalogs), $turns);
     }
 
-    /** The first loaded translation of a key in the domain, or null. */
-    public function translate(string $domain, string $key): ?string
+    /** The first loaded translation of a key in the domain (among the locale's files when one is given), or null. */
+    public function translate(string $domain, string $key, ?string $locale = null): ?string
     {
-        foreach ($this->catalogs($domain) as $catalog) {
+        foreach ($this->catalogs($domain, $locale) as $catalog) {
             $translation = $catalog->translate($key);
             if ($translation !== null) {
                 return $translation;
@@ -136,16 +177,16 @@ final class TextDomains
     }
 
     /**
-     * The first loaded plural form for a count, or null: each key is looked
-     * for in every file before the next key (the full "singular NUL plural"
-     * key, then the singular alone).
+     * The first loaded plural form for a count (among the locale's files when
+     * one is given), or null: each key is looked for in every file before the
+     * next key (the full "singular NUL plural" key, then the singular alone).
      *
      * @param list<string> $keys
      */
-    public function translatePlural(string $domain, array $keys, int $count): ?string
+    public function translatePlural(string $domain, array $keys, int $count, ?string $locale = null): ?string
     {
         foreach ($keys as $key) {
-            foreach ($this->catalogs($domain) as $catalog) {
+            foreach ($this->catalogs($domain, $locale) as $catalog) {
                 if ($catalog->has($key)) {
                     return $catalog->translatePlural($key, $count);
                 }

@@ -25,6 +25,7 @@ class WP_Translation_Controller
     public function set_locale(string $locale)
     {
         $this->current_locale = $locale;
+        Runtime::textDomains()->useLocale($locale);
     }
 
     public function load_file(string $translation_file, string $textdomain = 'default', ?string $locale = null): bool
@@ -36,18 +37,18 @@ class WP_Translation_Controller
         }
         $catalog = TranslationFiles::read($file);
         if ($catalog !== null) {
-            Runtime::textDomains()->add($textdomain, $file, $catalog);
+            Runtime::textDomains()->add($textdomain, $file, $catalog, $locale ?? $this->current_locale);
         }
         $this->loaded_translations[$locale ?? $this->current_locale][$textdomain] = true;
         $this->loaded_files[$file][$locale ?? $this->current_locale][$textdomain] = true;
         return true;
     }
 
-    /** The file taken out of the domain; true whether or not it was loaded, as on the reference (probe translation-classes). */
+    /** The file taken out of the domain for the locale (the first it was loaded for when none is given); true whether or not it was loaded, as on the reference (probes translation-classes, translation-locales). */
     public function unload_file($file, string $textdomain = 'default', ?string $locale = null): bool
     {
         $path = $file instanceof WP_Translation_File ? $file->get_file() : (string) $file;
-        Runtime::textDomains()->unloadFile($textdomain, realpath($path) ?: $path);
+        Runtime::textDomains()->unloadFile($textdomain, realpath($path) ?: $path, $locale);
         return true;
     }
 
@@ -61,29 +62,25 @@ class WP_Translation_Controller
             return Runtime::textDomains()->unload($textdomain);
         }
         $files = array_keys(array_filter($this->loaded_files, static fn (array $locales): bool => isset($locales[$locale][$textdomain])));
-        return array_filter(array_map(static fn (string $file): bool => Runtime::textDomains()->unloadFile($textdomain, $file), $files)) !== [];
+        return array_filter(array_map(static fn (string $file): bool => Runtime::textDomains()->unloadFile($textdomain, $file, $locale), $files)) !== [];
     }
 
-    /** Whether a domain is loaded for a locale (the current one when none is given); a domain loaded without a locale on record answers for any. */
+    /** Whether a domain has a file loaded for a locale (the current one when none is given). */
     public function is_textdomain_loaded(string $textdomain = 'default', ?string $locale = null): bool
     {
-        $byLocale = array_filter(array_map(static fn (array $domains): bool => isset($domains[$textdomain]), $this->loaded_translations));
-        if ($byLocale !== [] && !isset($byLocale[$locale ?? $this->current_locale])) {
-            return false;
-        }
-        return Runtime::textDomains()->has($textdomain);
+        return Runtime::textDomains()->has($textdomain, $locale ?? $this->current_locale);
     }
 
     public function translate(string $text, string $context = '', string $textdomain = 'default', ?string $locale = null)
     {
-        return Runtime::textDomains()->translate($textdomain, Catalog::key($text, $context)) ?? false;
+        return Runtime::textDomains()->translate($textdomain, Catalog::key($text, $context), $locale ?? $this->current_locale) ?? false;
     }
 
     /** The form a count takes: the plurals joined by NUL bytes are looked for in every file first, then the singular alone (probe translation-files). */
     public function translate_plural(array $plurals, int $number, string $context = '', string $textdomain = 'default', ?string $locale = null)
     {
         $keys = [Catalog::key(implode("\0", $plurals), $context), Catalog::key((string) ($plurals[0] ?? ''), $context)];
-        return Runtime::textDomains()->translatePlural($textdomain, $keys, $number) ?? false;
+        return Runtime::textDomains()->translatePlural($textdomain, $keys, $number, $locale ?? $this->current_locale) ?? false;
     }
 
     public function get_headers(string $textdomain = 'default'): array
@@ -94,7 +91,7 @@ class WP_Translation_Controller
         }
         // Every file's headers in load order, a later file's value replacing an earlier one's (probe translation-files).
         $headers = [];
-        foreach (Runtime::textDomains()->catalogs($textdomain) as $catalog) {
+        foreach (Runtime::textDomains()->catalogs($textdomain, $this->current_locale) as $catalog) {
             foreach ($catalog->headers as $name => $value) {
                 $headers[$this->normalize_header((string) $name)] = $value;
             }
@@ -115,7 +112,7 @@ class WP_Translation_Controller
         }
         // Every file's entries in load order, a later file's translation replacing an earlier one's (probe translation-files).
         $entries = [];
-        foreach (Runtime::textDomains()->catalogs($textdomain) as $catalog) {
+        foreach (Runtime::textDomains()->catalogs($textdomain, $this->current_locale) as $catalog) {
             foreach ($catalog->entries as $key => $entry) {
                 $entries[$key] = implode("\0", $entry['translations']);
             }
@@ -125,7 +122,7 @@ class WP_Translation_Controller
 
     protected function locate_translation(string $singular, string $textdomain = 'default', ?string $locale = null)
     {
-        foreach (Runtime::textDomains()->catalogs($textdomain) as $file => $catalog) {
+        foreach (Runtime::textDomains()->catalogs($textdomain, $locale ?? $this->current_locale) as $file => $catalog) {
             if ($catalog->has($singular)) {
                 return ['entries' => $catalog->entries[$singular]['translations'], 'source' => WP_Translation_File::create($file)];
             }
@@ -135,12 +132,12 @@ class WP_Translation_Controller
 
     protected function get_files(string $textdomain = 'default', ?string $locale = null): array
     {
-        return array_values(array_filter(array_map(static fn (string $file) => WP_Translation_File::create($file), array_keys(Runtime::textDomains()->catalogs($textdomain)))));
+        return array_values(array_filter(array_map(static fn (string $file) => WP_Translation_File::create($file), array_keys(Runtime::textDomains()->catalogs($textdomain, $locale ?? $this->current_locale)))));
     }
 
     /** Whether the domain was loaded for the locale (the current one by default) and a file has an entry for the key, empty or not. */
     public function has_translation(string $singular, string $textdomain = 'default', ?string $locale = null): bool
     {
-        return isset($this->loaded_translations[$locale ?? $this->current_locale][$textdomain]) && Runtime::textDomains()->translate($textdomain, $singular) !== null;
+        return isset($this->loaded_translations[$locale ?? $this->current_locale][$textdomain]) && Runtime::textDomains()->translate($textdomain, $singular, $locale ?? $this->current_locale) !== null;
     }
 }

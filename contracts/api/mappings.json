@@ -30836,8 +30836,8 @@
         },
         "WP_Translation_Controller::is_textdomain_loaded": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
             ],
@@ -30873,9 +30873,11 @@
         },
         "WP_Translation_Controller::set_locale": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::textDomains"
+            ],
             "composes": []
         },
         "WP_Translation_Controller::translate": {
@@ -78261,7 +78263,7 @@
         },
         "wpdb::init_charset": {
             "file": "classes/wpdb.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []

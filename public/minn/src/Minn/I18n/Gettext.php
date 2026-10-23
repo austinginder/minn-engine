@@ -77,14 +77,14 @@ final class Gettext
         return \function_exists('apply_filters');
     }
 
-    /** A domain's translation of a message key, or null (no runtime to have loaded one, no file, no entry). */
+    /** A domain's translation of a message key in the locale lookups are made in, or null (no runtime to have loaded one, no file, no entry). */
     public static function lookup(string $domain, string $key): ?string
     {
         if (self::$loader === null) {
             return null;
         }
         (self::$loader)($domain);
-        return Runtime::textDomains()->translate($domain, $key);
+        return Runtime::textDomains()->translate($domain, $key, Runtime::textDomains()->locale());
     }
 
     /** The plural form a count takes in a domain, or English's when no file has the message. */
@@ -92,7 +92,7 @@ final class Gettext
     {
         if (self::$loader !== null) {
             (self::$loader)($domain);
-            $form = Runtime::textDomains()->translatePlural($domain, [Catalog::key($single . "\0" . $plural, $context), Catalog::key($single, $context)], $number);
+            $form = Runtime::textDomains()->translatePlural($domain, [Catalog::key($single . "\0" . $plural, $context), Catalog::key($single, $context)], $number, Runtime::textDomains()->locale());
             if ($form !== null) {
                 return $form;
             }

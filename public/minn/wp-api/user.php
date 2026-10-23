@@ -347,7 +347,9 @@ function wp_register_persisted_preferences_meta()
 /**
  * The toolbar preference minn-admin registers on init (its
  * register_toolbar_meta), for a boot that runs no init: 'false' or 'true',
- * editable by whoever may edit the user.
+ * editable by whoever may edit the user, and shown over REST in the edit
+ * context only, as minn-admin shows it since its fcab4671 (the public users
+ * list names every author, and a person's toolbar choice is not for it).
  */
 function _minn_register_toolbar_meta()
 {
@@ -355,7 +357,7 @@ function _minn_register_toolbar_meta()
         'type' => 'string',
         'single' => true,
         'default' => 'true',
-        'show_in_rest' => true,
+        'show_in_rest' => ['schema' => ['type' => 'string', 'context' => ['edit']]],
         'sanitize_callback' => static fn ($value) => $value === 'false' ? 'false' : 'true',
         'auth_callback' => static fn ($allowed, $meta_key, $object_id) => current_user_can('edit_user', $object_id),
     ]);

@@ -9750,52 +9750,50 @@
             "WP_Translation_Controller::get_entries": {
                 "verdict": "move",
                 "to": "Minn\\I18n\\TextDomains",
-                "why": "when loaded for the current locale, merges every loaded file's entries in load order, forms NUL-joined; a merge over TextDomains' catalogs that TextDomains should answer",
-                "body": "5768ab3ba096"
+                "why": "when loaded for the current locale, merges every loaded file's entries in load order, forms NUL-joined; a merge over TextDomains' catalogs that TextDomains should answer Per locale since 2026-10-23: TextDomains keeps each file with the locales it was loaded for, in the order loaded for each (probe translation-locales).",
+                "body": "9a4c67cab082"
             },
             "WP_Translation_Controller::get_headers": {
                 "verdict": "move",
                 "to": "Minn\\I18n\\TextDomains",
-                "why": "when loaded for the current locale, merges every loaded file's headers in load order under normalized names; a merge over TextDomains' catalogs that TextDomains should answer",
-                "body": "5f2579323612"
-            },
-            "WP_Translation_Controller::is_textdomain_loaded": {
-                "verdict": "move",
-                "to": "Minn\\I18n\\TextDomains",
-                "why": "answers from the facade's per-locale record when the domain is in it, else from TextDomains::has; the locale bookkeeping belongs with TextDomains",
-                "body": "76c62ad7c464"
+                "why": "when loaded for the current locale, merges every loaded file's headers in load order under normalized names; a merge over TextDomains' catalogs that TextDomains should answer Per locale since 2026-10-23: TextDomains keeps each file with the locales it was loaded for, in the order loaded for each (probe translation-locales).",
+                "body": "37a615a01cc4"
             },
             "WP_Translation_Controller::load_file": {
                 "verdict": "move",
                 "to": "Minn\\I18n\\TextDomains",
-                "why": "resolves the path with realpath, refuses an unreadable file or one that is not .mo or .php, reads it through TranslationFiles, adds it to TextDomains and records the domain and file as loaded for the locale; the per-locale record is engine state TextDomains lacks",
-                "doubt": "which locale's file answers a lookup is the translation pipeline, after 0.1.0 (Austin)",
-                "body": "62a8bd5dec09"
+                "why": "resolves the path with realpath, refuses an unreadable file or one that is not .mo or .php, reads it through TranslationFiles and adds it to TextDomains for the locale (the current one by default), recording the domain and file as loaded there. Doubt settled, real and fixed: a lookup answered from any locale's files; now only from the files loaded for its locale, in the order loaded for it (probe translation-locales).",
+                "body": "545fa0eecd3a"
             },
             "WP_Translation_Controller::locate_translation": {
                 "verdict": "move",
                 "to": "Minn\\I18n\\TextDomains",
-                "why": "finds the first loaded file holding the key and returns its forms with a fresh file object; the lookup is TextDomains', wrapping the file is shape",
-                "body": "3a971778b1bf"
+                "why": "finds the first loaded file holding the key and returns its forms with a fresh file object; the lookup is TextDomains', wrapping the file is shape Per locale since 2026-10-23: TextDomains keeps each file with the locales it was loaded for, in the order loaded for each (probe translation-locales).",
+                "body": "548cb6da0b32"
+            },
+            "WP_Translation_Controller::set_locale": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "keeps the controller's current locale and hands it to TextDomains::useLocale, the locale lookups are made in (probe translation-locales); the controller's own copy is shape",
+                "body": "3c79c271c820"
             },
             "WP_Translation_Controller::translate_plural": {
                 "verdict": "delegate",
                 "to": "Minn\\I18n\\TextDomains::translatePlural",
-                "why": "builds the joined-plurals key and the singular key in context and asks TextDomains::translatePlural, false for none; argument conversion",
-                "body": "11a5c155958f"
+                "why": "builds the joined-plurals key and the singular key in context and asks TextDomains::translatePlural, false for none; argument conversion Per locale since 2026-10-23: TextDomains keeps each file with the locales it was loaded for, in the order loaded for each (probe translation-locales).",
+                "body": "3d431ab166e4"
             },
             "WP_Translation_Controller::unload_file": {
                 "verdict": "delegate",
                 "to": "Minn\\I18n\\TextDomains::unloadFile",
-                "why": "takes the path from a file object or a string, resolved with realpath, and calls TextDomains::unloadFile, answering true",
-                "doubt": "which locale's file answers a lookup is the translation pipeline, after 0.1.0 (Austin)",
-                "body": "b2c30de82d83"
+                "why": "takes the path from a file object or a string, resolved with realpath, and calls TextDomains::unloadFile for the locale given (the first it was loaded for without one), answering true. Doubt settled, real and fixed (probe translation-locales).",
+                "body": "37e711b34715"
             },
             "WP_Translation_Controller::unload_textdomain": {
                 "verdict": "move",
                 "to": "Minn\\I18n\\TextDomains",
-                "why": "clears the domain from the given locale's record (every locale's without one) and unloads it from TextDomains, for a locale only the files loaded for it; the per-locale record belongs with TextDomains",
-                "body": "e709b585110a"
+                "why": "clears the domain from the given locale's record (every locale's without one) and unloads it from TextDomains, for a locale only the files loaded for it; the per-locale record belongs with TextDomains Per locale since 2026-10-23: TextDomains keeps each file with the locales it was loaded for, in the order loaded for each (probe translation-locales).",
+                "body": "b18844a945b7"
             }
         },
         "classes/WP_Translation_File.php": {
@@ -11353,9 +11351,8 @@
             "wpdb::init_charset": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "reads DB_CHARSET and DB_COLLATE and stores what $this->determine_charset settles; a template over the overridable step",
-                "doubt": "with no DB_CHARSET the reference settles on an empty charset, here utf8 (then utf8mb4)",
-                "body": "9795c16cbc80"
+                "why": "reads DB_CHARSET and DB_COLLATE and stores what $this->determine_charset settles; a template over the overridable step. Doubt settled, real and fixed: measured 2026-10-23, without DB_CHARSET the reference keeps an empty charset and collation (so get_charset_collate() is empty) where the engine settled on utf8mb4; now as the reference (suite config-constants).",
+                "body": "f0911e3a6ff3"
             },
             "wpdb::log_query": {
                 "verdict": "keep",

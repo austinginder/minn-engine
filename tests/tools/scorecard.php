@@ -46,7 +46,11 @@
  *   and cliFeatures WP-CLI's own feature tests on both stacks
  *   (contracts/cli-features.json, summary: scenarios, passedReference,
  *   passedEngine, passedBoth); either is
- *   null until its tool has written its file.
+ *   null until its tool has written its file;
+ * - fixtures: whether the API fixtures still hold at the version the
+ *   reference is on (contracts/fixture-currency.json, written by
+ *   php tests/api.test.php --reference: wordpress, rows, differing), current
+ *   when that version is the one meta.json records and no row differs.
  *
  * php tests/tools/scorecard.php [--run-log=<run-all log>]
  */
@@ -203,6 +207,8 @@ $behaviour = [
     'restFuzz' => $json('contracts/rest-fuzz.json')['summary'] ?? null,
     'cliFeatures' => $json('contracts/cli-features.json')['summary'] ?? null,
 ];
+$currency = $json('contracts/fixture-currency.json');
+$fixtures = $currency === null ? null : $currency['summary'] + ['measured' => $currency['measured'], 'current' => ($currency['summary']['wordpress'] ?? '') === ($json('contracts/api/meta.json')['version'] ?? null) && ($currency['summary']['differing'] ?? 1) === 0];
 $coverage = ($lines = $json('contracts/line-coverage.json')) === null ? null : ['measured' => $lines['measured'], 'percent' => $lines['percent'], 'lines' => $lines['lines'], 'covered' => $lines['covered'], 'parts' => $lines['parts']];
 
 // The leanness ceilings the style suite holds (each only falls), with the value each started at and whether one ever rose.
@@ -303,6 +309,7 @@ $card = [
     'clones' => is_array($clones) ? $clones : null,
     'facadeLogic' => $facadeLogic,
     'behaviour' => $behaviour,
+    'fixtures' => $fixtures,
 ];
 file_put_contents("{$root}/contracts/scorecard.json", json_encode($card, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 printf("security %d/%d fixed; sql %s; hooks %s; coverage %s; open %s\n",
@@ -315,6 +322,7 @@ printf("leanness: %d ratchets, %d risen; run %s\n",
     count($ceilings), count(array_filter($ceilings, static fn (array $c): bool => $c['rose'])),
     $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')') . (isset($run['engineWarnings']) ? ", {$run['engineWarnings']} engine warnings" : ''));
 printf("WordPress names in the engine: %s\n", $wordpressNames === null ? 'unmeasured' : "{$wordpressNames['functionCalls']} calls to {$wordpressNames['functions']} functions, {$wordpressNames['hookApi']} hook API calls, {$wordpressNames['classReferences']} references to {$wordpressNames['classes']} classes, in {$wordpressNames['files']} files (target 0, 0, 0)");
+printf("fixtures: %s\n", $fixtures === null ? 'unmeasured (php tests/api.test.php --reference)' : "{$fixtures['differing']} of {$fixtures['rows']} rows differ on the reference at WordPress {$fixtures['wordpress']} (" . ($fixtures['current'] ? 'current' : 'not current') . ", {$fixtures['measured']})");
 printf("behaviour: side effects %s; REST fuzz %s; WP-CLI feature tests %s\n",
     $behaviour['sideEffects'] === null ? 'unmeasured' : "{$behaviour['sideEffects']['differing']} of {$behaviour['sideEffects']['probes']} probes write otherwise ({$behaviour['sideEffects']['rows']} rows)",
     $behaviour['restFuzz'] === null ? 'to build' : json_encode($behaviour['restFuzz']),

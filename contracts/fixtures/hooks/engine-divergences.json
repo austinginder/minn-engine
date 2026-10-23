@@ -484,7 +484,8 @@
         "probe:mail-eai",
         "probe:transient-stores",
         "probe:theme-scans",
-        "probe:locale-reads"
+        "probe:locale-reads",
+        "probe:translation-locales"
     ],
     "hooks": {
         "_get_page_link": {
@@ -804,6 +805,7 @@
             "probe:themes-api": "not fired",
             "probe:translation-classes": "not fired",
             "probe:translation-files": "not fired",
+            "probe:translation-locales": "not fired",
             "probe:translations-early": "not fired",
             "probe:translations-early-after-init": "not fired",
             "probe:translations-early-wplang": "not fired",
@@ -6647,6 +6649,7 @@
             "probe:themes-api": "not fired",
             "probe:translation-classes": "not fired",
             "probe:translation-files": "not fired",
+            "probe:translation-locales": "not fired",
             "probe:translations-early": "not fired",
             "probe:translations-early-after-init": "not fired",
             "probe:translations-early-wplang": "not fired",
@@ -11863,6 +11866,7 @@
             "probe:themes-api": "not fired",
             "probe:translation-classes": "not fired",
             "probe:translation-files": "not fired",
+            "probe:translation-locales": "not fired",
             "probe:translations-early": "not fired",
             "probe:translations-early-after-init": "not fired",
             "probe:translations-early-wplang": "not fired",
@@ -11937,6 +11941,7 @@
             "probe:themes-api": "not fired",
             "probe:translation-classes": "not fired",
             "probe:translation-files": "not fired",
+            "probe:translation-locales": "not fired",
             "probe:translations-early": "not fired",
             "probe:translations-early-after-init": "not fired",
             "probe:translations-early-wplang": "not fired",
@@ -12408,6 +12413,7 @@
             "probe:themes-api": "not fired",
             "probe:translation-classes": "not fired",
             "probe:translation-files": "not fired",
+            "probe:translation-locales": "not fired",
             "probe:translations-early": "not fired",
             "probe:translations-early-after-init": "not fired",
             "probe:translations-early-wplang": "not fired",

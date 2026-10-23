@@ -381,6 +381,7 @@
         "transient-stores-probe.php",
         "translation-classes-probe.php",
         "translation-files-probe.php",
+        "translation-locales-probe.php",
         "translations-early-after-init-probe.php",
         "translations-early-probe.php",
         "translations-early-wplang-probe.php",

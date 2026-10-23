@@ -75227,7 +75227,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "lookup(string $domain, string $key): ?string",
-                    "doc": "A domain's translation of a message key, or null (no runtime to have loaded one, no file, no entry).",
+                    "doc": "A domain's translation of a message key in the locale lookups are made in, or null (no runtime to have loaded one, no file, no entry).",
                     "shapes": [],
                     "params": [
                         {
@@ -76890,8 +76890,8 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/TextDomains.php",
-            "lines": 200,
-            "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. A lookup asks a domain's files in load order and\nthe first one with a translation answers, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
+            "lines": 239,
+            "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. Each file is kept with the locales it was loaded\nfor, and a lookup for a locale asks only those files (probe\ntranslation-locales): the domain's files in load order, the first one with\na translation answering, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -76910,6 +76910,33 @@
                     "readonly": false,
                     "static": false,
                     "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "locales",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "turns",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "How many files have been loaded for a locale so far: a file's turn among a locale's files.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "locale",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The locale lookups are made in: the translation controller's, en_US until it is set.",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -76962,11 +76989,43 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "useLocale",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "useLocale(string $locale): void",
+                    "doc": "Sets the locale lookups are made in (the translation controller's set_locale).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "locale",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "locale(): string",
+                    "doc": "The locale lookups are made in.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 54,
+                    "end": 57
+                },
+                {
+                    "routes": [],
                     "name": "add",
                     "static": false,
                     "visibility": "public",
-                    "signature": "add(string $domain, string $file, Minn\\I18n\\Catalog $catalog): void",
-                    "doc": "Adds a loaded file to a domain; a file already loaded there is not added twice.",
+                    "signature": "add(string $domain, string $file, Minn\\I18n\\Catalog $catalog, string $locale): void",
+                    "doc": "Adds a loaded file to a domain for a locale; a file already loaded there is not added twice, only its locale noted.",
                     "shapes": [],
                     "params": [
                         {
@@ -76989,18 +77048,25 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 41
+                    "line": 60,
+                    "end": 65
                 },
                 {
                     "routes": [],
                     "name": "has",
                     "static": false,
                     "visibility": "public",
-                    "signature": "has(string $domain): bool",
-                    "doc": "Whether any file is loaded for the domain.",
+                    "signature": "has(string $domain, ?string $locale = NULL): bool",
+                    "doc": "Whether any file is loaded for the domain, for the locale when one is given.",
                     "shapes": [],
                     "params": [
                         {
@@ -77009,10 +77075,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -77031,8 +77104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 55
+                    "line": 74,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -77051,8 +77124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -77071,8 +77144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -77091,8 +77164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 99,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -77111,8 +77184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -77131,8 +77204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -77145,16 +77218,16 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 103,
-                    "end": 106
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
                     "name": "unloadFile",
                     "static": false,
                     "visibility": "public",
-                    "signature": "unloadFile(string $domain, string $file): bool",
-                    "doc": "Drops one file from a domain; true when it was loaded.",
+                    "signature": "unloadFile(string $domain, string $file, ?string $locale = NULL): bool",
+                    "doc": "Drops one file from a domain for a locale, the first it was loaded for\nwhen none is given (probe translation-locales); the file stays for its\nother locales. True when it was loaded.",
                     "shapes": [],
                     "params": [
                         {
@@ -77170,18 +77243,25 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 114
+                    "line": 137,
+                    "end": 147
                 },
                 {
                     "routes": [],
                     "name": "catalogs",
                     "static": false,
                     "visibility": "public",
-                    "signature": "catalogs(string $domain): array",
-                    "doc": "The domain's files and catalogs, first loaded first.",
+                    "signature": "catalogs(string $domain, ?string $locale = NULL): array",
+                    "doc": "The domain's files and catalogs, first loaded first: those loaded for\nthe locale when one is given, in the order they were loaded for it,\nelse all of them.",
                     "shapes": [
                         "@return array<string, Catalog>"
                     ],
@@ -77192,18 +77272,25 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 124
+                    "line": 156,
+                    "end": 165
                 },
                 {
                     "routes": [],
                     "name": "translate",
                     "static": false,
                     "visibility": "public",
-                    "signature": "translate(string $domain, string $key): ?string",
-                    "doc": "The first loaded translation of a key in the domain, or null.",
+                    "signature": "translate(string $domain, string $key, ?string $locale = NULL): ?string",
+                    "doc": "The first loaded translation of a key in the domain (among the locale's files when one is given), or null.",
                     "shapes": [],
                     "params": [
                         {
@@ -77219,18 +77306,25 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 136
+                    "line": 168,
+                    "end": 177
                 },
                 {
                     "routes": [],
                     "name": "translatePlural",
                     "static": false,
                     "visibility": "public",
-                    "signature": "translatePlural(string $domain, array $keys, int $count): ?string",
-                    "doc": "The first loaded plural form for a count, or null: each key is looked\nfor in every file before the next key (the full \"singular NUL plural\"\nkey, then the singular alone).",
+                    "signature": "translatePlural(string $domain, array $keys, int $count, ?string $locale = NULL): ?string",
+                    "doc": "The first loaded plural form for a count (among the locale's files when\none is given), or null: each key is looked for in every file before the\nnext key (the full \"singular NUL plural\" key, then the singular alone).",
                     "shapes": [
                         "@param list<string> $keys"
                     ],
@@ -77255,10 +77349,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 155
+                    "line": 186,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -77284,8 +77385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 169
+                    "line": 204,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -77304,8 +77405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -77331,8 +77432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 192
+                    "line": 226,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -77351,8 +77452,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 198
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -77371,8 +77472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 204
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -77385,8 +77486,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 211,
-                    "end": 214
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -77405,8 +77506,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 182
+                    "line": 218,
+                    "end": 223
                 }
             ]
         },

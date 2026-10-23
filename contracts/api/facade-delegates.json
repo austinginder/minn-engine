@@ -454,7 +454,7 @@
         },
         "_minn_register_toolbar_meta": {
             "file": "user.php",
-            "statement": "register_meta('user', 'show_admin_bar_front', [\n        'type' => 'string',\n        'single' => true,\n        'default' => 'true',\n        'show_in_rest' => true,\n        'sanitize_callback' => static fn ($value) => $value === 'false' ? 'false' : 'true',\n        'auth_callback' => static fn ($allowed, $meta_key, $object_id) => current_user_can('edit_user', $object_id),\n    ]);"
+            "statement": "register_meta('user', 'show_admin_bar_front', [\n        'type' => 'string',\n        'single' => true,\n        'default' => 'true',\n        'show_in_rest' => ['schema' => ['type' => 'string', 'context' => ['edit']]],\n        'sanitize_callback' => static fn ($value) => $value === 'false' ? 'false' : 'true',\n        'auth_callback' => static fn ($allowed, $meta_key, $object_id) => current_user_can('edit_user', $object_id),\n    ]);"
         },
         "_minn_registered_meta": {
             "file": "meta.php",
