@@ -18461,6 +18461,20 @@ are delegates. Suite `cli` compares the three variables on both stacks.
   (`page-templates/full.php`); a name that climbs out is not taken (`Hierarchy::page` with
   `Paths::validate`, `Theme::phpTemplate`).
 
+## A query loop that navigates on the client (2026-10-23)
+
+The field test's WooCommerce shop printed no router loading bar on the engine; the cause was core's
+query loop. With `enhancedPagination` the reference makes the loop an interactive region and the
+engine rendered it plain. `Blocks\Dynamic\Theme\QueryBlocks` now does what the reference does:
+the wrapper gets `data-wp-context="{}" data-wp-interactive="core/query" data-wp-key="{queryId}"
+data-wp-router-region="query-{queryId}"` ahead of its stored attributes, each post-template item
+`data-wp-key="post-template-item-{id}"`, the previous and next links their key and the
+`core/query` navigate and prefetch actions ahead of the href, and each numbered item (dots included)
+`data-wp-key="index-{n}"`, a numbered link the navigate action too. The block's view module is
+enqueued, which brings the router into the import map, and the region, once processed, the loading
+bar and its animation styles. A loop holding a block with no interactivity support (a Custom HTML
+block) still navigates, on the reference as here. Suite `query-navigation`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18642,6 +18656,6 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | austin | carry a POP3 client, or leave post by email out (the engine refuses as unconfigured) |
 | 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | open | hook-parity snapshot names the six hooks |
 | 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | done | the boot makes the server variables whole as the reference's does; "The server variables at boot (2026-10-23)" |
-| 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | open | seen on the SandyWP sandbox |
+| 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | done | core's query loop with enhancedPagination, now as on the reference; "A query loop that navigates on the client (2026-10-23)", suite `query-navigation` |
 | 18310 | The 0.1.0 field test (10-23) | Minn Admin's `wp minn install` does not flush page caches after the swap | open | Minn Admin's switch command, as install.sh does |
 | 18407 | Child theme PHP templates (10-23) | the theme-compat header.php, footer.php and sidebar.php a theme without them gets | open | the reference's deprecated layout, captured from its output before it is written |

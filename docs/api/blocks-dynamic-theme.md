@@ -8,7 +8,7 @@ the template blocks a block theme composes with
 | [`Navigation`](#navigation) | final readonly class | 554 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`NavigationParts`](#navigationparts) | final class | 197 | The navigation family's small answers for the block_core_navigation_* |
 | [`PostBlocks`](#postblocks) | final readonly class | 294 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 343 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`QueryBlocks`](#queryblocks) | final class | 382 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -188,6 +188,8 @@ Internals: `title()` (private, line 57), `content()` (private, line 73), `conten
 
 query, post-template, query-title, query-no-results, query-pagination, query-total.
 
+- const `NAVIGATE` = `'data-wp-on--click="core/query::actions.navigate" data-wp-on--mouseenter="core/query::actions.prefetch" data-wp-watch="core/query::callbacks.prefetch" '` — A navigating link's directives (previous and next), in the reference's order, a space after them.
+
 Used by: `Minn\Blocks\Renderer`
 
 ```php
@@ -199,7 +201,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 63), `queried()` (private, line 85), `page()` (private, line 94), `loop()` (private, line 110), `current()` (private, line 131), `total()` (private, line 148), `postTemplate()` (private, line 172), `queryTitle()` (private, line 215), `noResults()` (private, line 235), `pagination()` (private, line 256), `paginationBase()` (private, line 328), `numbers()` (private, line 348), `archiveTitle()` (private, line 368)
+Internals: `query()` (private, line 68), `navigating()` (private, line 91), `enhanced()` (private, line 99), `queried()` (private, line 114), `page()` (private, line 123), `loop()` (private, line 139), `current()` (private, line 160), `total()` (private, line 177), `postTemplate()` (private, line 201), `queryTitle()` (private, line 245), `noResults()` (private, line 265), `pagination()` (private, line 286), `paginationBase()` (private, line 361), `numbers()` (private, line 382), `archiveTitle()` (private, line 407)
 
 
 ## Structure

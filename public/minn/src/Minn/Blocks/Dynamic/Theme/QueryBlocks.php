@@ -32,6 +32,11 @@ final class QueryBlocks
 {
     /** @var list<array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int, id: int}|\Closure> the loops being rendered, innermost last; each runs when a block inside first asks for it */
     private array $queries = [];
+    /** @var list<bool> whether each loop being rendered navigates on the client (enhancedPagination), innermost last */
+    private array $enhanced = [];
+
+    /** A navigating link's directives (previous and next), in the reference's order, a space after them. */
+    private const NAVIGATE = 'data-wp-on--click="core/query::actions.navigate" data-wp-on--mouseenter="core/query::actions.prefetch" data-wp-watch="core/query::callbacks.prefetch" ';
 
     public function __construct(
         private readonly Site $site,
@@ -63,13 +68,37 @@ final class QueryBlocks
     private function query(Block $block, Renderer $renderer): string
     {
         $this->queries[] = fn (): array => $this->loop($block, (array) $block->attr('query', []), $renderer);
+        $enhanced = $block->attr('enhancedPagination', false) === true;
+        $this->enhanced[] = $enhanced;
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
             $out .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$inner++]);
         }
         array_pop($this->queries);
-        return Html::addClasses($out, Layout::classes('core/query', $block->attrs));
+        array_pop($this->enhanced);
+        $out = Html::addClasses($out, Layout::classes('core/query', $block->attrs));
+        return $enhanced ? $this->navigating($out, (int) $block->attr('queryId', 0)) : $out;
+    }
+
+    /**
+     * A loop that navigates on the client (enhancedPagination), as the
+     * reference marks it: the wrapper an interactive core/query region keyed
+     * by the query's id, its attributes ahead of the stored ones, and the
+     * block's view module on the page. The router region, once processed,
+     * brings the loading bar.
+     */
+    private function navigating(string $out, int $queryId): string
+    {
+        Runtime::scriptModules()->enqueue('@wordpress/block-library/query/view', '', [], false, []);
+        $directives = 'data-wp-context="{}" data-wp-interactive="core/query" data-wp-key="' . $queryId . '" data-wp-router-region="query-' . $queryId . '"';
+        return (string) preg_replace('/^(\s*<[a-z][a-z0-9-]*)(?=[\s>\/])/i', '$1 ' . $directives, $out, 1);
+    }
+
+    /** Whether the innermost loop being rendered navigates on the client. */
+    private function enhanced(): bool
+    {
+        return $this->enhanced !== [] && end($this->enhanced);
     }
 
     /**
@@ -197,7 +226,8 @@ final class QueryBlocks
             $context->popPost();
             // Its classes are asked for once its blocks are rendered, through post_class, as the reference asks,
             // for the item's own post: a loop inside its blocks has set the main query's post up again.
-            $items .= '<li class="' . Html::attr(implode(' ', (array) Handoff::postClass('wp-block-post', $post->id))) . '">' . $inner . '</li>';
+            $key = $this->enhanced() ? 'data-wp-key="post-template-item-' . $post->id . '" ' : '';
+            $items .= '<li ' . $key . 'class="' . Html::attr(implode(' ', (array) Handoff::postClass('wp-block-post', $post->id))) . '">' . $inner . '</li>';
         }
         MainQuery::current()->reset_postdata();
         $columns = (int) ($block->attrs['layout']['columnCount'] ?? 0);
@@ -291,6 +321,9 @@ final class QueryBlocks
             'chevron' => $next ? '»' : '«',
             default => '',
         };
+        // A navigating loop's links carry their keys and the query's navigate and prefetch actions, ahead of the href.
+        $navigate = $this->enhanced();
+        $wired = static fn (string $key): string => $navigate ? 'data-wp-key="' . $key . '" ' . self::NAVIGATE : '';
         // The parts in the markup's own order, the whitespace between them as written.
         $parts = '';
         $index = 0;
@@ -302,12 +335,12 @@ final class QueryBlocks
             $inner = $block->innerBlocks[$index++];
             $parts .= match ($inner->name) {
                 'core/query-pagination-previous' => $paged > 1
-                    ? '<a href="' . Escape::url($link($paged - 1)) . '" class="wp-block-query-pagination-previous">'
+                    ? '<a ' . $wired('query-pagination-previous') . 'href="' . Escape::url($link($paged - 1)) . '" class="wp-block-query-pagination-previous">'
                         . ($arrow === 'none' ? '' : "<span class='wp-block-query-pagination-previous-arrow is-arrow-{$arrow}' aria-hidden='true'>" . $glyph(false) . '</span>')
                         . 'Previous Page</a>'
                     : '',
                 'core/query-pagination-next' => $paged < $pages
-                    ? '<a href="' . Escape::url($link($paged + 1)) . '" class="wp-block-query-pagination-next">Next Page'
+                    ? '<a ' . $wired('query-pagination-next') . 'href="' . Escape::url($link($paged + 1)) . '" class="wp-block-query-pagination-next">Next Page'
                         . ($arrow === 'none' ? '' : "<span class='wp-block-query-pagination-next-arrow is-arrow-{$arrow}' aria-hidden='true'>" . $glyph(true) . '</span>')
                         . '</a>'
                     : '',
@@ -341,23 +374,29 @@ final class QueryBlocks
 
     /**
      * The page numbers: the first and last page, and those within $around of
-     * the current one, with dots where pages are left out.
+     * the current one, with dots where pages are left out. In a navigating
+     * loop each item is keyed by its place (index-N) and each link navigates.
      *
      * @param callable(int): string $link
      */
     private function numbers(int $paged, int $pages, callable $link, int $around): string
     {
+        $navigate = $this->enhanced();
         $items = [];
         $dots = false;
+        // Each item's key is its place in the list, dots included, as the reference numbers them.
+        $key = static function () use (&$items, $navigate): string {
+            return $navigate ? 'data-wp-key="index-' . count($items) . '" ' : '';
+        };
         for ($page = 1; $page <= $pages; $page++) {
             if ($page === $paged) {
-                $items[] = '<span aria-current="page" class="page-numbers current">' . $page . '</span>';
+                $items[] = '<span ' . $key() . 'aria-current="page" class="page-numbers current">' . $page . '</span>';
                 $dots = true;
             } elseif ($page === 1 || $page === $pages || abs($page - $paged) <= $around) {
-                $items[] = '<a class="page-numbers" href="' . Escape::url($link($page)) . '">' . $page . '</a>';
+                $items[] = '<a ' . $key() . ($navigate ? 'data-wp-on--click="core/query::actions.navigate" ' : '') . 'class="page-numbers" href="' . Escape::url($link($page)) . '">' . $page . '</a>';
                 $dots = true;
             } elseif ($dots) {
-                $items[] = '<span class="page-numbers dots">&hellip;</span>';
+                $items[] = '<span ' . $key() . 'class="page-numbers dots">&hellip;</span>';
                 $dots = false;
             }
         }

@@ -18261,7 +18261,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 343,
+            "lines": 382,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, query-total.",
             "implements": [],
             "extends": null,
@@ -18314,14 +18314,30 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 40
+                "line": 41,
+                "end": 45
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "NAVIGATE",
+                    "value": "'data-wp-on--click=\"core/query::actions.navigate\" data-wp-on--mouseenter=\"core/query::actions.prefetch\" data-wp-watch=\"core/query::callbacks.prefetch\" '",
+                    "doc": "A navigating link's directives (previous and next), in the reference's order, a space after them.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "queries",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "enhanced",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -18366,8 +18382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 54
+                    "line": 48,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -18393,8 +18409,47 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 73
+                    "line": 68,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "navigating",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "navigating(string $out, int $queryId): string",
+                    "doc": "A loop that navigates on the client (enhancedPagination), as the\nreference marks it: the wrapper an interactive core/query region keyed\nby the query's id, its attributes ahead of the stored ones, and the\nblock's view module on the page. The router region, once processed,\nbrings the loading bar.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "out",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "queryId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "enhanced",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "enhanced(): bool",
+                    "doc": "Whether the innermost loop being rendered navigates on the client.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -18430,8 +18485,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 91
+                    "line": 114,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -18450,8 +18505,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 97
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -18487,8 +18542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 128
+                    "line": 139,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -18507,8 +18562,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 145
+                    "line": 160,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -18534,8 +18589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 162
+                    "line": 177,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -18561,8 +18616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 213
+                    "line": 201,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -18588,8 +18643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 233
+                    "line": 245,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -18615,8 +18670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 246
+                    "line": 265,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -18642,8 +18697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 325
+                    "line": 286,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -18662,8 +18717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 340
+                    "line": 361,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -18671,7 +18726,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "numbers(int $paged, int $pages, callable $link, int $around): string",
-                    "doc": "The page numbers: the first and last page, and those within $around of\nthe current one, with dots where pages are left out.",
+                    "doc": "The page numbers: the first and last page, and those within $around of\nthe current one, with dots where pages are left out. In a navigating\nloop each item is keyed by its place (index-N) and each link navigates.",
                     "shapes": [
                         "@param callable(int): string $link"
                     ],
@@ -18705,8 +18760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 365
+                    "line": 382,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -18725,8 +18780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 372
+                    "line": 407,
+                    "end": 411
                 }
             ]
         },
