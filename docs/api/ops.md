@@ -13,7 +13,7 @@
 | [`Directory`](#directory) | final class | 76 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
-| [`EngineUpdate`](#engineupdate) | final readonly class | 160 | Replaces the running engine with a published release. The release's |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 181 | Replaces the running engine with a published release. The release's |
 | [`FilesystemCredentials`](#filesystemcredentials) | final class | 214 | How the site reaches its own files, and the connection it asks for when |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
@@ -408,9 +408,12 @@ The version a bootstrap.php names; "0.0.0" when it names none.
 
 ### static `isCheckout(string $dir): bool`
 
-A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).
+A link, or a folder inside a git working copy at any depth (the engine's
+own repository keeps it two levels down). Folders open_basedir keeps
+PHP out of are not looked in: asking there only warns, on every request
+(a host such as Kinsta allows the webroot and not the site folder above it).
 
-Internals: `swap()` (private, line 96), `signed()` (private, line 150), `refuseCheckout()` (private, line 175)
+Internals: `swap()` (private, line 96), `signed()` (private, line 150), `refuseCheckout()` (private, line 175), `reachable()` (private, line 198)
 
 
 ## FilesystemCredentials
