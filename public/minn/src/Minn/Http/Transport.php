@@ -57,6 +57,9 @@ final class Transport
         $milliseconds = (int) ($request->timeout * 1000);
         return [
             CURLOPT_URL => $request->url,
+            // HTTP and HTTPS only, redirects included, as the reference's transports allow (security review 2026-10-22).
+            CURLOPT_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_NOSIGNAL => true,
             CURLOPT_CUSTOMREQUEST => $request->method,

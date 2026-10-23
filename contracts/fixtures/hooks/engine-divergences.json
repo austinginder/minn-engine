@@ -474,7 +474,8 @@
         "probe:filesystem-credentials",
         "probe:filesystem-credentials-constants",
         "probe:block-class-stages",
-        "probe:auth-redirect-ssl"
+        "probe:auth-redirect-ssl",
+        "probe:sweep-1022"
     ],
     "hooks": {
         "_get_page_link": {
@@ -577,6 +578,7 @@
             "probe:scheduled-delete": "not fired",
             "probe:security-parity": "not fired",
             "probe:sideload-image-meta": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:taxonomy-more": "not fired",
             "probe:taxonomy-remaining": "not fired",
@@ -1179,6 +1181,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -1382,6 +1385,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:tax-terms": "not fired",
@@ -1858,6 +1862,7 @@
             "probe:style-engine-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:table-charsets": "not fired",
             "probe:tabs-and-parts": "not fired",
@@ -2218,6 +2223,7 @@
             "probe:security-parity": "2 arguments, not 4",
             "probe:sitemap-classes": "2 arguments, not 4",
             "probe:sweep-1020b": "2 arguments, not 4",
+            "probe:sweep-1022": "2 arguments, not 4",
             "probe:taxonomy-default-term": "2 arguments, not 4",
             "probe:taxonomy-remaining": "2 arguments, not 4",
             "probe:the-content": "2 arguments, not 4",
@@ -2283,6 +2289,7 @@
             "probe:security-parity": "not fired",
             "probe:sitemap-classes": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-default-term": "not fired",
             "probe:taxonomy-more": "not fired",
             "probe:taxonomy-remaining": "not fired",
@@ -2440,6 +2447,7 @@
             "probe:security-parity": "2 arguments, not 4",
             "probe:sitemap-classes": "2 arguments, not 4",
             "probe:sweep-1020b": "2 arguments, not 4",
+            "probe:sweep-1022": "2 arguments, not 4",
             "probe:taxonomy-default-term": "2 arguments, not 4",
             "probe:taxonomy-more": "2 arguments, not 4",
             "probe:taxonomy-remaining": "2 arguments, not 4",
@@ -2507,6 +2515,7 @@
             "probe:security-parity": "not fired",
             "probe:sitemap-classes": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-default-term": "not fired",
             "probe:taxonomy-more": "not fired",
             "probe:taxonomy-remaining": "not fired",
@@ -2852,6 +2861,7 @@
             "probe:script-printing": "not fired",
             "probe:small-hooks": "not fired",
             "probe:speculative-loading": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loading": "not fired",
             "probe:template-part-lookup": "not fired",
@@ -2891,6 +2901,7 @@
         },
         "expiration_of_site_transient_{*}": {
             "probe:db-mail-rewrite-doubts": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:template-loading": "not fired",
             "probe:wp-theme": "not fired"
         },
@@ -2953,13 +2964,15 @@
             "probe:nav-pomo-rest-doubts": "not fired"
         },
         "filesystem_method": {
-            "probe:plugin-uninstall": "not fired"
+            "probe:plugin-uninstall": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "filesystem_method_file": {
             "probe:plugin-queue7": "not fired",
             "probe:plugin-symbols": "not fired",
             "probe:plugin-uninstall": "not fired",
             "probe:rest-plugins-controller": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:unzip-file": "not fired",
             "probe:upgrader": "not fired"
@@ -2981,6 +2994,7 @@
             "probe:rest-comments-controller": "1 arguments, not 2",
             "probe:rest-notes": "1 arguments, not 2",
             "probe:rest-protected-comments": "1 arguments, not 2",
+            "probe:sweep-1022": "1 arguments, not 2",
             "probe:wp-comment-query-sql": "1 arguments, not 2"
         },
         "found_posts": {
@@ -3151,6 +3165,7 @@
             "probe:rest-posts-controller": "not fired",
             "probe:rest-protected-comments": "not fired",
             "probe:security-parity": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
         "get_avatar_data": {
@@ -3183,6 +3198,7 @@
             "probe:rest-users-controller": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
         "get_avatar_url": {
@@ -3215,6 +3231,7 @@
             "probe:rest-users-controller": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
         "get_block_file_template": {
@@ -3342,6 +3359,7 @@
             "probe:rest-posts-controller": "not fired",
             "probe:rest-protected-comments": "not fired",
             "probe:security-parity": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
         "get_comments_link": {
@@ -4120,6 +4138,7 @@
             "probe:sitemap-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
             "probe:taxonomy-default-term": "not fired",
             "probe:taxonomy-more": "not fired",
@@ -4711,6 +4730,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -4911,6 +4931,7 @@
             "probe:small-classes": "fired here only",
             "probe:sweep-1020": "fired here only",
             "probe:sweep-1020b": "fired here only",
+            "probe:sweep-1022": "fired here only",
             "probe:template-loader-more": "fired here only",
             "probe:user-insert-filters": "fired here only",
             "probe:user-meta-writes": "fired here only",
@@ -5108,6 +5129,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tail-helpers": "not fired",
@@ -5432,6 +5454,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",
@@ -5498,6 +5521,7 @@
             "probe:rest-posts-write": "not fired",
             "probe:rest-themes": "not fired",
             "probe:rest-themes-controller": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
             "probe:template-getters": "not fired",
@@ -5912,6 +5936,7 @@
             "probe:security-parity": "not fired",
             "probe:sideload-image-meta": "not fired",
             "probe:small-hooks": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:the-content": "not fired",
             "probe:theme-remaining": "not fired",
@@ -6142,6 +6167,7 @@
             "probe:script-printing": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:theme-json-resolver": "not fired",
             "probe:type-object-sharing": "not fired",
             "probe:upgrader": "not fired",
@@ -6273,6 +6299,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -6389,6 +6416,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -7356,6 +7384,7 @@
             "probe:small-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
             "probe:template-loader-more": "not fired",
             "probe:user-meta-writes": "not fired",
@@ -7494,6 +7523,7 @@
             "probe:sideload-image-meta": "not fired",
             "probe:sitemap-classes": "not fired",
             "probe:small-hooks": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:taxonomy-more": "not fired",
@@ -10787,6 +10817,7 @@
             "probe:rest-users-controller": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
         "pre_get_block_file_template": {
@@ -11002,6 +11033,7 @@
             "probe:stored-objects": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:tax-terms": "not fired",
@@ -11184,6 +11216,7 @@
             "probe:security-parity": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
             "probe:text-domain-timing": "not fired",
@@ -11350,6 +11383,7 @@
             "probe:sitemap-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-default-term": "not fired",
             "probe:taxonomy-more": "not fired",
             "probe:template-bindings-helpers": "not fired",
@@ -11544,6 +11578,7 @@
             "probe:stored-objects": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:tax-terms": "not fired",
@@ -11885,6 +11920,7 @@
         },
         "pre_set_site_transient_{*}": {
             "probe:db-mail-rewrite-doubts": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:template-loading": "not fired",
             "probe:wp-theme": "not fired"
         },
@@ -12126,6 +12162,7 @@
             "probe:script-printing": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-and-parts": "not fired",
@@ -12178,6 +12215,7 @@
             "probe:plugin-uninstall": "not fired",
             "probe:rest-sidebar-classes": "not fired",
             "probe:script-printing": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:theme-json-css": "not fired"
         },
         "pre_unschedule_event": {
@@ -12372,6 +12410,7 @@
             "probe:script-printing": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-and-parts": "not fired",
@@ -12716,7 +12755,8 @@
         },
         "request_filesystem_credentials": {
             "probe:plugin-uninstall": "not fired",
-            "probe:rest-plugins-controller": "not fired"
+            "probe:rest-plugins-controller": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "rest_after_insert_{*}": {
             "probe:global-styles-unfiltered": "not fired",
@@ -12831,6 +12871,7 @@
             "probe:security-parity": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:type-object-sharing": "not fired"
         },
         "rest_block_hooks_post_types": {
@@ -12956,6 +12997,7 @@
             "probe:security-parity": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:type-object-sharing": "not fired"
         },
         "rest_get_max_batch_size": {
@@ -13055,6 +13097,7 @@
             "probe:security-parity": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:type-object-sharing": "not fired"
         },
         "rest_index": {
@@ -13191,6 +13234,7 @@
             "probe:security-parity": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:type-object-sharing": "not fired"
         },
         "rest_post_dispatch": {
@@ -13227,7 +13271,8 @@
             "probe:nav-pomo-rest-doubts": "not fired"
         },
         "rest_prepare_plugin": {
-            "probe:plugin-data": "not fired"
+            "probe:plugin-data": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "rest_prepare_revision": {
             "probe:hook-inputs-2": "not fired",
@@ -13303,7 +13348,8 @@
             "probe:rest-terms-for-post": "not fired",
             "probe:rest-themes": "not fired",
             "probe:rest-widgets": "not fired",
-            "probe:security-parity": "not fired"
+            "probe:security-parity": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "rest_request_parameter_order": {
             "http:admin-rest-me": "not fired",
@@ -13336,7 +13382,8 @@
             "probe:rest-protected-comments": "not fired",
             "probe:rest-settings": "fired here only",
             "probe:rest-terms-for-post": "not fired",
-            "probe:security-parity": "not fired"
+            "probe:security-parity": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "rest_revision_query": {
             "probe:rest-autosaves": "not fired",
@@ -13375,7 +13422,8 @@
             "probe:rest-posts-controller": "not fired",
             "probe:rest-protected-comments": "not fired",
             "probe:security-parity": "not fired",
-            "probe:sweep-1020": "not fired"
+            "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "rest_route_for_post_type_items": {
             "http:admin-rest-posts-edit": "not fired",
@@ -13421,7 +13469,8 @@
             "probe:rest-terms-controller": "not fired",
             "probe:rest-terms-for-post": "not fired",
             "probe:security-parity": "not fired",
-            "probe:sweep-1020": "not fired"
+            "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired"
         },
         "rest_route_for_taxonomy_items": {
             "http:admin-rest-posts-edit": "not fired",
@@ -13705,6 +13754,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -13776,6 +13826,7 @@
             "probe:rest-server-methods": "not fired",
             "probe:rest-sidebar-classes": "not fired",
             "probe:schema-and-menus": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:template-family": "not fired"
         },
@@ -14105,6 +14156,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
@@ -14700,6 +14752,7 @@
             "probe:sideload-image-meta": "fired here only",
             "probe:site-logo": "fired here only",
             "probe:sweep-1018": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:tabs-render": "not fired",
             "probe:theme-headers": "not fired",
             "probe:theme-json-data": "not fired",
@@ -14774,6 +14827,7 @@
             "probe:script-printing": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
             "probe:theme-headers": "not fired",
@@ -14903,6 +14957,7 @@
             "probe:script-modules": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",
@@ -14995,6 +15050,7 @@
             "probe:script-modules": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -15375,6 +15431,7 @@
             "probe:rest-templates-controller": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
         "theme_file_path": {
@@ -15487,6 +15544,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-and-parts": "not fired",
@@ -15564,6 +15622,7 @@
             "probe:speculative-loading": "fired here only",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:tabs-render": "not fired",
             "probe:theme-caches": "fired here only",
             "probe:theme-json-data": "not fired",
@@ -15627,6 +15686,7 @@
             "probe:plugin-uninstall": "not fired",
             "probe:rest-sidebar-classes": "not fired",
             "probe:script-printing": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:theme-json-css": "not fired"
         },
         "transition_post_status": {
@@ -15812,6 +15872,7 @@
             "probe:small-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
             "probe:template-loader-more": "not fired",
             "probe:user-insert-filters": "not fired",
@@ -16177,6 +16238,7 @@
             "probe:stored-objects": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:tax-terms": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
@@ -16641,6 +16703,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
@@ -16820,6 +16883,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -17495,6 +17559,7 @@
             "probe:small-hooks": "not fired",
             "probe:speculative-loading": "not fired",
             "probe:sweep-1018": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tail-helpers": "not fired",
@@ -17627,6 +17692,7 @@
             "probe:sitemap-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:taxonomy-blocks-user-doubts": "not fired",
             "probe:taxonomy-default-term": "not fired",
             "probe:taxonomy-more": "not fired",
@@ -18013,6 +18079,7 @@
             "probe:style-engine-classes": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tail-helpers": "not fired",
@@ -18133,6 +18200,7 @@
             "probe:rest-validators": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-classes": "not fired",
             "probe:widgets": "not fired"
         },
@@ -18164,6 +18232,7 @@
             "probe:rest-validators": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:widget-classes": "not fired",
             "probe:widgets": "not fired"
         },
@@ -18287,6 +18356,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
@@ -18323,6 +18393,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",
@@ -18377,6 +18448,7 @@
             "probe:script-printing": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",
@@ -18406,6 +18478,7 @@
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",
@@ -18657,6 +18730,7 @@
             "probe:script-modules": "not fired",
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
+            "probe:sweep-1022": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",

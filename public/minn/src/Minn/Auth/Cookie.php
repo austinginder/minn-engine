@@ -7,6 +7,7 @@ namespace Minn\Auth;
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Runtime\Handoff;
 
 /**
  * The sign-in cookies: username|expiration|token|hmac, with
@@ -96,7 +97,10 @@ final readonly class Cookie
         if ($expected === null || !hash_equals($expected, $hmac)) {
             return ['bad_hash', null];
         }
-        if (!$this->sessions->isLive($user->id, $token)) {
+        // Once the runtime is up the session manager decides (session_token_manager), so a plugin's own refuses a
+        // session it holds no more, as on the reference (security review 2026-10-22); before, the stored sessions do.
+        $live = Handoff::bound('sessionTokens') ? (bool) Handoff::sessionTokens($user->id)->verify($token) : $this->sessions->isLive($user->id, $token);
+        if (!$live) {
             return ['bad_session_token', null];
         }
         return ['valid', $user];

@@ -49,6 +49,10 @@ function ap_call( string $base, string $method, string $route, ?array $body = nu
 		$headers[] = 'X-WP-Nonce: ' . $mint['nonce'];
 	} elseif ( 'basic' === $auth ) {
 		$headers[] = 'Authorization: Basic ' . base64_encode( $basic );
+	} elseif ( 'cookie-basic' === $auth ) {
+		// The sign-in cookie with no nonce, beside Basic credentials.
+		$headers[] = $cookieHeader;
+		$headers[] = 'Authorization: Basic ' . base64_encode( $basic );
 	}
 	$ctx = stream_context_create( array(
 		'ssl'  => array( 'verify_peer' => false, 'verify_peer_name' => false ),
@@ -153,6 +157,20 @@ check( 2 === count( $stored ) && 2 === count( preg_grep( '/^\$generic\$[A-Za-z0-
 shell_exec( "$refWp eval " . escapeshellarg( 'require_once ABSPATH . WPINC . "/class-phpass.php"; $all = WP_Application_Passwords::get_user_application_passwords(1); foreach ($all as $i => $item) { if ($item["name"] === "made on the reference") { $all[$i]["password"] = (new PasswordHash(8, true))->HashPassword(str_replace(" ", "", "' . $refPlain . '")); } } update_user_meta(1, "_application_passwords", $all);' ) . ' 2>/dev/null' );
 [ $status ] = ap_call( $ENGINE, 'GET', '/wp/v2/users/me', null, 'basic', "admin:$refPlain" );
 check( 200 === $status, 'a password stored as phpass (before WordPress 6.8) still signs in on the engine', (string) $status );
+// Another account's application password beside an administrator's sign-in cookie and no nonce: the cookie
+// settles the user, and without its nonce the request is nobody, never the cookie's user (security review 2026-10-22).
+$zzLogin = 'zz-ap-' . bin2hex( random_bytes( 3 ) );
+$zzId    = (int) trim( (string) shell_exec( "$refWp user create $zzLogin $zzLogin@example.test --role=subscriber --porcelain 2>/dev/null" ) );
+$zzPlain = $zzId > 1 ? trim( (string) shell_exec( "$refWp user application-password create $zzId zz --porcelain 2>/dev/null" ) ) : '';
+$asked   = array();
+foreach ( array( 'engine' => $ENGINE, 'reference' => $REF ) as $stack => $base ) {
+	[ $status, $body ] = ap_call( $base, 'GET', '/wp/v2/users/me', null, 'cookie-basic', "$zzLogin:$zzPlain" );
+	$asked[ $stack ]   = array( $status, $body['code'] ?? ( $body['id'] ?? null ) );
+}
+check( '' !== $zzPlain && $asked['engine'] === $asked['reference'] && array( 401, 'rest_not_logged_in' ) === $asked['engine'], 'a sign-in cookie without its nonce beside another account\'s application password: nobody, as on the reference', json_encode( $asked ) );
+if ( $zzId > 1 ) {
+	shell_exec( "$refWp user delete $zzId --yes >/dev/null 2>&1" );
+}
 ap_call( $ENGINE, 'DELETE', '/wp/v2/users/me/application-passwords' );
 $meta = json_decode( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' user meta get 1 _application_passwords --format=json 2>/dev/null' ), true );
 check( array() === $meta || null === $meta, 'nothing is left in the user meta afterwards', json_encode( $meta ) );

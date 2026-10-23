@@ -281,9 +281,16 @@ final readonly class CommentsController
         return $this->caller->can('read_post', $post->id) || $post->isPublished();
     }
 
-    /** A listed comment this caller may read: a moderator any, its author their own, anyone an approved one on a post they may read. */
+    /**
+     * A listed comment this caller may read: a note only someone who may
+     * edit its post (security review 2026-10-22); otherwise a moderator any,
+     * its author their own, anyone an approved one on a post they may read.
+     */
     private function readable(Comment $comment, string $password): bool
     {
+        if ($comment->comment_type === 'note') {
+            return (int) $comment->comment_post_ID > 0 && $this->caller->can('edit_post', (int) $comment->comment_post_ID);
+        }
         if ($this->caller->can('moderate_comments') || ((int) $comment->user_id > 0 && (int) $comment->user_id === $this->caller->id())) {
             return true;
         }

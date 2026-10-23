@@ -3,10 +3,10 @@
     "summary": {
         "functions": 3496,
         "methods": 3814,
-        "delegates": 3562,
-        "logicFunctions": 1777,
+        "delegates": 3561,
+        "logicFunctions": 1778,
         "logicMethods": 1971,
-        "logicLines": 29283,
+        "logicLines": 29294,
         "kept": 0
     },
     "byFile": {
@@ -50,13 +50,13 @@
             "logic": 73,
             "lines": 566
         },
+        "admin.php": {
+            "logic": 61,
+            "lines": 538
+        },
         "user.php": {
             "logic": 52,
             "lines": 534
-        },
-        "admin.php": {
-            "logic": 60,
-            "lines": 527
         },
         "classes/WP_REST_Posts_Controller.php": {
             "logic": 43,
@@ -4598,7 +4598,7 @@
         },
         "WP_Filesystem": {
             "file": "admin.php",
-            "line": 758,
+            "line": 773,
             "statements": 13,
             "lines": 36
         },
@@ -12914,7 +12914,7 @@
         },
         "_draft_or_post_title": {
             "file": "admin.php",
-            "line": 910,
+            "line": 925,
             "statements": 2,
             "lines": 2
         },
@@ -13826,7 +13826,7 @@
         },
         "_minn_inline_extras": {
             "file": "admin.php",
-            "line": 1034,
+            "line": 1049,
             "statements": 10,
             "lines": 18
         },
@@ -14564,7 +14564,7 @@
         },
         "_post_states": {
             "file": "admin.php",
-            "line": 943,
+            "line": 958,
             "statements": 3,
             "lines": 5
         },
@@ -14792,7 +14792,7 @@
         },
         "_wp_admin_html_begin": {
             "file": "admin.php",
-            "line": 638,
+            "line": 653,
             "statements": 4,
             "lines": 4
         },
@@ -15068,7 +15068,7 @@
         },
         "_wp_oembed_get_object": {
             "file": "admin.php",
-            "line": 894,
+            "line": 909,
             "statements": 3,
             "lines": 5
         },
@@ -15231,12 +15231,12 @@
         "activate_plugin": {
             "file": "admin.php",
             "line": 479,
-            "statements": 5,
-            "lines": 7
+            "statements": 7,
+            "lines": 11
         },
         "activate_plugins": {
             "file": "admin.php",
-            "line": 490,
+            "line": 495,
             "statements": 4,
             "lines": 12
         },
@@ -15320,7 +15320,7 @@
         },
         "add_screen_option": {
             "file": "admin.php",
-            "line": 559,
+            "line": 574,
             "statements": 2,
             "lines": 4
         },
@@ -16034,7 +16034,7 @@
         },
         "deactivate_plugins": {
             "file": "admin.php",
-            "line": 522,
+            "line": 527,
             "statements": 2,
             "lines": 2
         },
@@ -16082,7 +16082,7 @@
         },
         "delete_theme": {
             "file": "admin.php",
-            "line": 883,
+            "line": 898,
             "statements": 3,
             "lines": 7
         },
@@ -16208,7 +16208,7 @@
         },
         "enqueue_comment_hotkeys_js": {
             "file": "admin.php",
-            "line": 1057,
+            "line": 1072,
             "statements": 1,
             "lines": 3
         },
@@ -16652,7 +16652,7 @@
         },
         "get_column_headers": {
             "file": "admin.php",
-            "line": 1015,
+            "line": 1030,
             "statements": 3,
             "lines": 3
         },
@@ -16898,19 +16898,19 @@
         },
         "get_hidden_columns": {
             "file": "admin.php",
-            "line": 567,
+            "line": 582,
             "statements": 5,
             "lines": 10
         },
         "get_hidden_meta_boxes": {
             "file": "admin.php",
-            "line": 964,
+            "line": 979,
             "statements": 5,
             "lines": 8
         },
         "get_home_path": {
             "file": "admin.php",
-            "line": 690,
+            "line": 705,
             "statements": 4,
             "lines": 11
         },
@@ -16922,7 +16922,7 @@
         },
         "get_importers": {
             "file": "admin.php",
-            "line": 994,
+            "line": 1009,
             "statements": 2,
             "lines": 4
         },
@@ -16934,7 +16934,7 @@
         },
         "get_inline_data": {
             "file": "admin.php",
-            "line": 1023,
+            "line": 1038,
             "statements": 4,
             "lines": 6
         },
@@ -17246,7 +17246,7 @@
         },
         "get_post_states": {
             "file": "admin.php",
-            "line": 922,
+            "line": 937,
             "statements": 6,
             "lines": 16
         },
@@ -17978,13 +17978,13 @@
         },
         "iframe_footer": {
             "file": "admin.php",
-            "line": 679,
+            "line": 694,
             "statements": 6,
             "lines": 6
         },
         "iframe_header": {
             "file": "admin.php",
-            "line": 647,
+            "line": 662,
             "statements": 10,
             "lines": 12
         },
@@ -18452,7 +18452,7 @@
         },
         "plugins_api": {
             "file": "admin.php",
-            "line": 734,
+            "line": 749,
             "statements": 2,
             "lines": 2
         },
@@ -18500,7 +18500,7 @@
         },
         "postbox_classes": {
             "file": "admin.php",
-            "line": 977,
+            "line": 992,
             "statements": 3,
             "lines": 3
         },
@@ -18542,7 +18542,7 @@
         },
         "print_admin_styles": {
             "file": "admin.php",
-            "line": 870,
+            "line": 885,
             "statements": 3,
             "lines": 3
         },
@@ -18656,7 +18656,7 @@
         },
         "register_importer": {
             "file": "admin.php",
-            "line": 985,
+            "line": 1000,
             "statements": 2,
             "lines": 4
         },
@@ -18914,7 +18914,7 @@
         },
         "request_filesystem_credentials": {
             "file": "admin.php",
-            "line": 723,
+            "line": 738,
             "statements": 4,
             "lines": 6
         },
@@ -19274,7 +19274,7 @@
         },
         "set_screen_options": {
             "file": "admin.php",
-            "line": 581,
+            "line": 596,
             "statements": 12,
             "lines": 29
         },
@@ -19310,7 +19310,7 @@
         },
         "show_message": {
             "file": "admin.php",
-            "line": 711,
+            "line": 726,
             "statements": 4,
             "lines": 7
         },
@@ -19592,7 +19592,7 @@
         },
         "themes_api": {
             "file": "admin.php",
-            "line": 741,
+            "line": 756,
             "statements": 2,
             "lines": 2
         },
@@ -19854,9 +19854,15 @@
             "statements": 9,
             "lines": 15
         },
+        "validate_plugin": {
+            "file": "admin.php",
+            "line": 537,
+            "statements": 3,
+            "lines": 7
+        },
         "validate_plugin_requirements": {
             "file": "admin.php",
-            "line": 534,
+            "line": 549,
             "statements": 2,
             "lines": 2
         },
@@ -19958,7 +19964,7 @@
         },
         "wp_add_privacy_policy_content": {
             "file": "admin.php",
-            "line": 1003,
+            "line": 1018,
             "statements": 3,
             "lines": 6
         },
@@ -20072,7 +20078,7 @@
         },
         "wp_auth_check_load": {
             "file": "admin.php",
-            "line": 664,
+            "line": 679,
             "statements": 3,
             "lines": 10
         },
@@ -20258,7 +20264,7 @@
         },
         "wp_clean_plugins_cache": {
             "file": "admin.php",
-            "line": 848,
+            "line": 863,
             "statements": 2,
             "lines": 4
         },
@@ -20270,7 +20276,7 @@
         },
         "wp_clean_themes_cache": {
             "file": "admin.php",
-            "line": 856,
+            "line": 871,
             "statements": 3,
             "lines": 7
         },
@@ -20942,7 +20948,7 @@
         },
         "wp_get_code_editor_settings": {
             "file": "admin.php",
-            "line": 551,
+            "line": 566,
             "statements": 2,
             "lines": 2
         },
@@ -21452,7 +21458,7 @@
         },
         "wp_iframe": {
             "file": "admin.php",
-            "line": 621,
+            "line": 636,
             "statements": 9,
             "lines": 13
         },
@@ -23360,7 +23366,7 @@
         },
         "wp_version_check": {
             "file": "admin.php",
-            "line": 825,
+            "line": 840,
             "statements": 6,
             "lines": 8
         },

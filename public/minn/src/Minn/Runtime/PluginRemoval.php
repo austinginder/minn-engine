@@ -47,7 +47,7 @@ final class PluginRemoval
         }
         self::forgetUpdates(array_diff($plugins, $failed));
         if ($failed !== []) {
-            return Handoff::newError('could_not_remove_plugin', sprintf('Could not fully remove the plugin(s) %s.', implode(', ', $failed)));
+            return Handoff::newError('could_not_remove_plugin', sprintf(count($failed) === 1 ? 'Could not fully remove the plugin %s.' : 'Could not fully remove the plugins %s.', implode(', ', $failed)));
         }
         return $kept ?? true;
     }
@@ -105,6 +105,11 @@ final class PluginRemoval
             return false;
         }
         $path = $root . '/' . (str_contains($plugin, '/') ? dirname($plugin) : $plugin);
+        if (!str_contains($plugin, '/')) {
+            // A name with no folder is one file: a folder by that name, '.' or '..' is left where it is, as the
+            // reference's plain delete leaves it (security review 2026-10-22).
+            return is_file($path) && unlink($path);
+        }
         $parent = realpath(dirname($path));
         $rootReal = realpath($root);
         if ($parent === false || $rootReal === false || ($parent !== $rootReal && !str_starts_with($parent . '/', $rootReal . '/'))) {

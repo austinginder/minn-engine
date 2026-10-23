@@ -8,7 +8,7 @@ the template blocks a block theme composes with
 | [`Navigation`](#navigation) | final readonly class | 554 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`NavigationParts`](#navigationparts) | final class | 197 | The navigation family's small answers for the block_core_navigation_* |
 | [`PostBlocks`](#postblocks) | final readonly class | 294 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 333 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`QueryBlocks`](#queryblocks) | final class | 343 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -199,7 +199,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 57), `queried()` (private, line 79), `page()` (private, line 88), `loop()` (private, line 104), `current()` (private, line 125), `total()` (private, line 138), `postTemplate()` (private, line 162), `queryTitle()` (private, line 205), `noResults()` (private, line 225), `pagination()` (private, line 246), `paginationBase()` (private, line 318), `numbers()` (private, line 338), `archiveTitle()` (private, line 358)
+Internals: `query()` (private, line 63), `queried()` (private, line 85), `page()` (private, line 94), `loop()` (private, line 110), `current()` (private, line 131), `total()` (private, line 148), `postTemplate()` (private, line 172), `queryTitle()` (private, line 215), `noResults()` (private, line 235), `pagination()` (private, line 256), `paginationBase()` (private, line 328), `numbers()` (private, line 348), `archiveTitle()` (private, line 368)
 
 
 ## Structure

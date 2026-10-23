@@ -209,11 +209,16 @@ final readonly class Engine
         if ($settled === $caller->id()) {
             return;
         }
-        if (!$caller->cookieBound()) {
+        // A sign-in cookie that settled the user (wp_rest_auth_cookie) binds the request to its nonce whoever
+        // else the request named: with none, the request is nobody, as on the reference (security review 2026-10-22).
+        $fromCookie = ($GLOBALS['wp_rest_auth_cookie'] ?? null) === true;
+        if (!$caller->cookieBound() && !$fromCookie) {
             $api->actingAs($settled, $runtime->reader->sessionToken);
             return;
         }
-        if ($caller->id() > 0) {
+        if (!$caller->cookieBound()) {
+            $caller->resolveAnonymous();
+        } elseif ($caller->id() > 0) {
             $caller->resolveInvalidNonce();
         }
         Handoff::becomeUser(0);

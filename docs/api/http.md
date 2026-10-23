@@ -8,7 +8,7 @@ request, response, routing, and the outgoing client
 | [`Args`](#args) | final class | 201 | The parameters a route accepts, as the reference describes them in the |
 | [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
 | [`CookieText`](#cookietext) | final class | 133 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
-| [`Destination`](#destination) | final readonly class | 102 | Where Minn\Http lets a request go. Only http and https; when hosts are |
+| [`Destination`](#destination) | final readonly class | 119 | Where Minn\Http lets a request go. Only http and https; when hosts are |
 | [`DiePage`](#diepage) | final class | 126 | The page wp_die shows a browser, as the reference draws it (probe |
 | [`Download`](#download) | final readonly class | 36 | A file the engine fetches for itself (a package, a language pack), over |
 | [`Envelope`](#envelope) | interface | 9 | What runs around a matched route once the router knows the route takes |
@@ -42,7 +42,7 @@ request, response, routing, and the outgoing client
 | [`Router`](#router) | final class | 291 | Matches a request to a #[Route] on one of the registered handler |
 | [`StatusText`](#statustext) | final class | 16 | The reason phrase a status line carries for each code, as the reference's |
 | [`Subject`](#subject) | enum | 49 | The record a route capture names, so a policy can have it looked up |
-| [`Transport`](#transport) | final class | 138 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
+| [`Transport`](#transport) | final class | 141 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 115 | Which addresses in front of the engine may speak for the client. |
 
 ## Access
@@ -231,7 +231,7 @@ somewhere private it was not allowed.
 
 A URL's host, lower-cased, without the brackets around an IPv6 address.
 
-Internals: `startsWithOne()` (private, line 89), `allowed()` (private, line 99), `dns()` (private, line 111)
+Internals: `startsWithOne()` (private, line 89), `allowed()` (private, line 99), `nonGlobalSix()` (private, line 112), `dns()` (private, line 128)
 
 
 ## DiePage
@@ -1463,7 +1463,7 @@ Used by: `Minn\Http`
 
 Performs one outgoing request over curl and returns the exchange, a transport error included.
 
-Internals: `options()` (private, line 55), `limit()` (private, line 85), `lastHead()` (private, line 100), `lastBlock()` (private, line 118)
+Internals: `options()` (private, line 55), `limit()` (private, line 88), `lastHead()` (private, line 103), `lastBlock()` (private, line 121)
 
 
 ## TrustedProxies

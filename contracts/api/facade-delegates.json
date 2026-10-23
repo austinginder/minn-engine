@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1660
+        "delegates": 1659
     },
     "functions": {
         "__": {
@@ -4767,10 +4767,6 @@
         "validate_file": {
             "file": "functions.php",
             "statement": "return Minn\\Support\\Paths::validate($file, $allowed_files);"
-        },
-        "validate_plugin": {
-            "file": "admin.php",
-            "statement": "return is_file(WP_PLUGIN_DIR . '/' . $plugin) ? 0 : new WP_Error('plugin_not_found', 'Plugin file does not exist.');"
         },
         "validate_username": {
             "file": "user.php",

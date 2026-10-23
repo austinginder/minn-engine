@@ -1,11 +1,11 @@
 {
-    "generated": "2026-10-22",
+    "generated": "2026-10-23",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 708,
-        "composes": 2060,
+        "composes": 2061,
         "leaf": 959,
-        "noop": 3266,
+        "noop": 3265,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8681,
@@ -41417,7 +41417,7 @@
         },
         "activate_plugin": {
             "file": "admin.php",
-            "lines": 7,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PluginActivation::activate",
@@ -41425,8 +41425,11 @@
             ],
             "composes": [
                 "get_site_option",
+                "is_plugin_active",
+                "is_wp_error",
                 "plugin_basename",
-                "update_site_option"
+                "update_site_option",
+                "validate_plugin"
             ],
             "deadend": "admin"
         },
@@ -63497,10 +63500,14 @@
         },
         "validate_plugin": {
             "file": "admin.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": [],
+            "composes": [
+                "__",
+                "get_plugins",
+                "validate_file"
+            ],
             "deadend": "admin"
         },
         "validate_plugin_requirements": {

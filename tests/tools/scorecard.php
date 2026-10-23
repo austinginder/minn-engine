@@ -155,6 +155,17 @@ $findings = [
     // The probe writes this label with its quote escaped.
     'The RSS widget fetched the site\'s own address' => ['tests/tools/sweep-1020b-probe.php', 'the RSS widget\\\'s address'],
     'Sendmail took "+", "=" and non-ASCII senders' => ['tests/tools/sweep-1020b-probe.php', 'shell-safe sender addresses'],
+    // The security review of 2026-10-22 (docs/security-review-2026-10-22.md).
+    'A sign-in cookie without its nonce, beside another account\'s application password, acted as the cookie\'s user' => ['tests/application-passwords.test.php', 'a sign-in cookie without its nonce beside another account'],
+    'Contributors listed other people\'s editorial notes' => ['tests/tools/sweep-1022-probe.php', 'notes listed to'],
+    'REST plugin activation skipped the plugin\'s own capability' => ['tests/tools/sweep-1022-probe.php', 'a plugin whose own activation is refused, over REST'],
+    'activate_plugin included a file outside the plugins folder' => ['tests/tools/sweep-1022-probe.php', 'activate_plugin {$plugin}'],
+    'delete_plugins removed a folder named without a file, ".." included' => ['tests/tools/sweep-1022-probe.php', 'delete_plugins a folder named without a file'],
+    'The curl transports fetched file:// and other protocols' => ['tests/tools/sweep-1022-probe.php', 'WP_Http_Curl asked for a file:// address'],
+    'The cookie check skipped the session manager' => ['tests/tools/sweep-1022-probe.php', 'cookies under a manager that refuses every session'],
+    'A query block with nothing that lists posts queried anyway, the block renderer included' => ['tests/tools/sweep-1022-probe.php', 'the block renderer asked for a query block'],
+    'NAT64, site-local and multicast IPv6 passed the engine client\'s private-address check' => ['tests/unit/http.php', 'a name resolving only to NAT64'],
+    'Minn Admin installed languages with file changes off' => ['public/minn/src/Minn/Admin/LanguageController.php', "can('install_languages')"],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Admin\AdminPlugin;
+use Minn\Auth\Can;
 use Minn\Http\Access;
 use Minn\Http\Args;
 use Minn\Objects\Errors;
@@ -143,6 +144,11 @@ final readonly class PluginsController
         if ($status !== $current) {
             $state = new PluginState($this->site, $this->inventory, $this->extensions);
             $target = $this->manifestFor($plugin) ?? $plugin . '.php';
+            // The plugin's own capability, which a filter may refuse for this one plugin (security review 2026-10-22).
+            $verb = $status === 'active' ? 'activate' : 'deactivate';
+            if (!Can::user($this->caller->id(), "{$verb}_plugin", $target)) {
+                throw new RestError("rest_cannot_{$verb}_plugin", "Sorry, you are not allowed to {$verb} this plugin.", 403);
+            }
             if ($status === 'active') {
                 self::refuse($state->activate($target));
             } else {

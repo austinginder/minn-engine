@@ -30,7 +30,7 @@ use Minn\Support\Escape;
 /** query, post-template, query-title, query-no-results, query-pagination, query-total. */
 final class QueryBlocks
 {
-    /** @var list<array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int, id: int}> the loops being rendered, innermost last */
+    /** @var list<array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int, id: int}|\Closure> the loops being rendered, innermost last; each runs when a block inside first asks for it */
     private array $queries = [];
 
     public function __construct(
@@ -53,10 +53,16 @@ final class QueryBlocks
         $renderer->registerDynamic('core/query-total', $this->total(...));
     }
 
-    /** The query wrapper is stored markup; the block sets the loop its children read. */
+    /**
+     * The query wrapper is stored markup; the block sets the loop its
+     * children read, run only once one of them asks (a post template,
+     * pagination, no results, the total), as the reference runs it in
+     * those blocks: a query block with nothing that lists posts queries
+     * nothing (security review 2026-10-22).
+     */
     private function query(Block $block, Renderer $renderer): string
     {
-        $this->queries[] = $this->loop($block, (array) $block->attr('query', []), $renderer);
+        $this->queries[] = fn (): array => $this->loop($block, (array) $block->attr('query', []), $renderer);
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
@@ -125,7 +131,11 @@ final class QueryBlocks
     private function current(?Renderer $renderer = null): array
     {
         if ($this->queries !== []) {
-            return $this->queries[count($this->queries) - 1];
+            $last = count($this->queries) - 1;
+            if ($this->queries[$last] instanceof \Closure) {
+                $this->queries[$last] = ($this->queries[$last])();
+            }
+            return $this->queries[$last];
         }
         $provided = $renderer?->blockContext() ?? [];
         if ($renderer === null || !is_array($provided['query'] ?? null)) {

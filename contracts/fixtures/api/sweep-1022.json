@@ -1,0 +1,238 @@
+[
+    [
+        "notes listed to a contributor",
+        {
+            "note": [
+                200,
+                false
+            ],
+            "all": [
+                200,
+                false
+            ],
+            "the post's notes": [
+                200,
+                false
+            ]
+        }
+    ],
+    [
+        "notes listed to an editor",
+        {
+            "note": [
+                200,
+                true
+            ],
+            "all": [
+                200,
+                true
+            ],
+            "the post's notes": [
+                200,
+                true
+            ]
+        }
+    ],
+    [
+        "notes listed to the post author",
+        {
+            "note": [
+                200,
+                true
+            ],
+            "all": [
+                200,
+                true
+            ],
+            "the post's notes": [
+                200,
+                true
+            ]
+        }
+    ],
+    [
+        "a plugin whose own activation is refused, over REST",
+        [
+            403,
+            "rest_cannot_activate_plugin",
+            "Sorry, you are not allowed to activate this plugin.",
+            false,
+            [
+                [
+                    "activate_plugin",
+                    "minn-test-plugin/minn-test-plugin.php"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the same plugin asked for the status it has",
+        [
+            200,
+            [
+                [
+                    "activate_plugin",
+                    "minn-test-plugin/minn-test-plugin.php"
+                ]
+            ]
+        ]
+    ],
+    [
+        "validate_plugin ../index.php",
+        [
+            "plugin_invalid",
+            "Invalid plugin path."
+        ]
+    ],
+    [
+        "validate_plugin zz-sweepc-missing.php",
+        [
+            "plugin_not_found",
+            "Plugin file does not exist."
+        ]
+    ],
+    [
+        "validate_plugin minn-test-plugin/minn-test-plugin.php",
+        0
+    ],
+    [
+        "validate_plugin minn-test-plugin/../minn-test-plugin/minn-test-plugin.php",
+        [
+            "plugin_invalid",
+            "Invalid plugin path."
+        ]
+    ],
+    [
+        "validate_plugin {plugins}/minn-test-plugin/minn-test-plugin.php",
+        [
+            "plugin_not_found",
+            "Plugin file does not exist."
+        ]
+    ],
+    [
+        "validate_plugin ./minn-test-plugin/minn-test-plugin.php",
+        [
+            "no_plugin_header",
+            "The plugin does not have a valid header."
+        ]
+    ],
+    [
+        "validate_plugin minn-test-plugin/probe.css",
+        [
+            "no_plugin_header",
+            "The plugin does not have a valid header."
+        ]
+    ],
+    [
+        "activate_plugin ../index.php",
+        [
+            [
+                "plugin_invalid",
+                "Invalid plugin path."
+            ],
+            true
+        ]
+    ],
+    [
+        "activate_plugin minn-test-plugin/../minn-test-plugin/minn-test-plugin.php",
+        [
+            [
+                "plugin_invalid",
+                "Invalid plugin path."
+            ],
+            true
+        ]
+    ],
+    [
+        "activate_plugin zz-sweepc-missing.php",
+        [
+            [
+                "plugin_not_found",
+                "Plugin file does not exist."
+            ],
+            true
+        ]
+    ],
+    [
+        "activate_plugin minn-test-plugin/probe.css",
+        [
+            [
+                "no_plugin_header",
+                "The plugin does not have a valid header."
+            ],
+            true
+        ]
+    ],
+    [
+        "delete_plugins a folder named without a file",
+        [
+            [
+                "could_not_remove_plugin",
+                "Could not fully remove the plugin zz-sweepc-folder."
+            ],
+            true,
+            true
+        ]
+    ],
+    [
+        "delete_plugins a single-file plugin",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "delete_plugins the folder plugin by its file",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "WP_Http_Curl asked for a file:// address",
+        [
+            "http_request_failed",
+            "Protocol \"file\" is disabled"
+        ]
+    ],
+    [
+        "the Requests curl transport asked for a file:// address",
+        [
+            "WpOrg\\Requests\\Exception",
+            "cURL error 1: Protocol \"file\" is disabled"
+        ]
+    ],
+    [
+        "cookies under the stock session manager",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "cookies under a manager that refuses every session",
+        [
+            false,
+            false,
+            [
+                "auth_cookie_bad_session_token",
+                "auth_cookie_bad_session_token"
+            ]
+        ]
+    ],
+    [
+        "a query block holding only its title: queries run",
+        0
+    ],
+    [
+        "a query block holding a post template: queries run",
+        2
+    ],
+    [
+        "the block renderer asked for a query block: queries run",
+        [
+            200,
+            0
+        ]
+    ]
+]

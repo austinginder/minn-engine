@@ -98,9 +98,26 @@ final readonly class Destination
 
     private function allowed(string $host, string $address): bool
     {
-        return filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE) !== false
+        return filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE) !== false && !self::nonGlobalSix($address)
             || in_array($host, $this->private, true)
             || in_array(strtolower($address), $this->private, true);
+    }
+
+    /**
+     * IPv6 ranges PHP's global-range flag lets through that reach no public
+     * host: NAT64 (64:ff9b::/96 and 64:ff9b:1::/48, which carry an IPv4
+     * address, a private one included), site-local fec0::/10 and multicast
+     * ff00::/8 (security review 2026-10-22).
+     */
+    private static function nonGlobalSix(string $address): bool
+    {
+        $packed = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false ? false : inet_pton($address);
+        if ($packed === false) {
+            return false;
+        }
+        $hex = bin2hex($packed);
+        return str_starts_with($hex, '0064ff9b0000000000000000') || str_starts_with($hex, '0064ff9b0001')
+            || (hexdec(substr($hex, 0, 3)) & 0xffc) === 0xfec || str_starts_with($hex, 'ff');
     }
 
     /**

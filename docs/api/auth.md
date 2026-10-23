@@ -11,7 +11,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Can`](#can) | final class | 51 | Whether a user may do something, as WordPress decides it: the capability |
 | [`Capabilities`](#capabilities) | final readonly class | 279 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
-| [`Cookie`](#cookie) | final readonly class | 117 | The sign-in cookies: username\|expiration\|token\|hmac, with |
+| [`Cookie`](#cookie) | final readonly class | 120 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
@@ -306,7 +306,7 @@ filters included), the user's capabilities as user_has_cap leaves them,
 and every primitive one granted. "exist" is always granted and
 "do_not_allow" never.
 
-Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\MenuItemStatus`, `Minn\Rest\RestMeta`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\UserCounts`
+Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\MenuItemStatus`, `Minn\Rest\PluginsController`, `Minn\Rest\RestMeta`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\UserCounts`
 
 ### static `current(mixed $capability, mixed ...$args): mixed`
 
@@ -451,7 +451,7 @@ derived from a different host.
 
 A cookie's hmac under a scheme's salt, or null for a scheme with none.
 
-Internals: `hash()` (private, line 35)
+Internals: `hash()` (private, line 36)
 
 
 ## FastHash

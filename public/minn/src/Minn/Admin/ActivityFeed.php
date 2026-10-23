@@ -142,7 +142,8 @@ final readonly class ActivityFeed
     /** @return list<array> */
     private function latestComments(int $userId): array
     {
-        $where = $this->capabilities->can($userId, 'moderate_comments') ? "comment_approved IN ('0','1')" : "comment_approved = '1'";
+        // Editorial notes are not comments: they stay off the feed (security review 2026-10-22).
+        $where = ($this->capabilities->can($userId, 'moderate_comments') ? "comment_approved IN ('0','1')" : "comment_approved = '1'") . " AND comment_type <> 'note'";
         $recent = $this->db->rows(
             "SELECT comment_ID, comment_post_ID, comment_author, comment_approved, comment_date_gmt
              FROM {$this->db->table('comments')} WHERE {$where} ORDER BY comment_date_gmt DESC LIMIT 3",

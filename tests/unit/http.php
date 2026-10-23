@@ -173,6 +173,13 @@ return [
             && $lan instanceof Outbound && $lan->prepare === null
             && $none instanceof Minn\Http\Exchange && $none->errno === CURLE_COULDNT_RESOLVE_HOST ? true : json_encode([$rebind, $public, $lan, $none]);
     },
+    'a name resolving only to NAT64, site-local or multicast IPv6 is refused; a public IPv6 one is pinned (security review 2026-10-22)' => static function (): bool|string {
+        $lookup = static fn (string $host): array => ['nat64.example' => ['64:ff9b::a00:1'], 'nat64b.example' => ['64:ff9b:1::a00:1'], 'sitelocal.example' => ['fec0::1'], 'multicast.example' => ['ff02::1'], 'public6.example' => ['2606:4700::1111']][$host] ?? [];
+        $where = new Destination([], [], $lookup);
+        $refused = array_map(static fn (string $host): bool => $where->pinned(new Outbound('GET', "https://{$host}/")) instanceof Minn\Http\Exchange, ['nat64.example', 'nat64b.example', 'sitelocal.example', 'multicast.example']);
+        $public = $where->pinned(new Outbound('GET', 'https://public6.example/'));
+        return !in_array(false, $refused, true) && $public instanceof Outbound ? true : json_encode([$refused, $public]);
+    },
     'a Location resolves against the URL that sent it' => static function (): bool|string {
         $rows = [
             Location::resolve('https://a.example/x/y?z=1', '/root') === 'https://a.example/root',

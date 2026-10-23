@@ -19,7 +19,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 311 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 318 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -57,7 +57,7 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PathArgs`](#pathargs) | final class | 79 | The arguments a route's path names, as the reference lists them among the |
 | [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 120 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 287 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 292 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
@@ -893,7 +893,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 81), `events()` (private, line 166), `allowed()` (private, line 235), `readablePost()` (private, line 276), `readable()` (private, line 285), `plainComment()` (private, line 295), `prepared()` (private, line 318)
+Internals: `totals()` (private, line 81), `events()` (private, line 166), `allowed()` (private, line 235), `readablePost()` (private, line 276), `readable()` (private, line 289), `plainComment()` (private, line 302), `prepared()` (private, line 325)
 
 
 ## Context
@@ -2386,7 +2386,7 @@ rendered description.
 - `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
 - `@return array<string, mixed>`
 
-Internals: `mentions()` (private, line 79), `items()` (private, line 188), `find()` (private, line 209), `statusOf()` (private, line 223), `manifestFor()` (private, line 235), `extensionItem()` (private, line 245), `pluginItem()` (private, line 273), `links()` (private, line 307), `extensionKey()` (private, line 312), `refuse()` (private, line 319)
+Internals: `mentions()` (private, line 80), `items()` (private, line 194), `find()` (private, line 215), `statusOf()` (private, line 229), `manifestFor()` (private, line 241), `extensionItem()` (private, line 251), `pluginItem()` (private, line 279), `links()` (private, line 313), `extensionKey()` (private, line 318), `refuse()` (private, line 325)
 
 
 ## PolicyGate

@@ -147,7 +147,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/ActivityFeed.php",
-            "lines": 212,
+            "lines": 213,
             "doc": "What happened lately, as the overview and the bell tell it: the caller's\nown recent posts and the latest comments, and the events behind one\nchart bar. Also the visibility rule every comment row is put through.",
             "implements": [],
             "extends": null,
@@ -421,7 +421,7 @@
                         }
                     ],
                     "line": 143,
-                    "end": 168
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -449,8 +449,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 193
+                    "line": 172,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -485,8 +485,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 227
+                    "line": 197,
+                    "end": 228
                 }
             ]
         },
@@ -3839,7 +3839,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/LanguageController.php",
-            "lines": 108,
+            "lines": 109,
             "doc": "Languages: what is installed, what a person reads in, what the site defaults to.",
             "implements": [],
             "extends": null,
@@ -4128,7 +4128,7 @@
                         }
                     ],
                     "line": 113,
-                    "end": 126
+                    "end": 127
                 }
             ]
         },
@@ -9975,6 +9975,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\MenuItemStatus",
+                "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentChecks",
@@ -10615,7 +10616,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Cookie.php",
-            "lines": 117,
+            "lines": 120,
             "doc": "The sign-in cookies: username|expiration|token|hmac, with\nkey  = HMAC-md5(username|fragment|expiration|token, the scheme's salt)\nhmac = HMAC-sha256(username|expiration|token, key)\nand the session live in the user's session_tokens store. The engine's own\nsign-in reads the logged_in one; check() judges any scheme's the way\nwp_validate_auth_cookie reports it (probe auth-cookies).",
             "implements": [],
             "extends": null,
@@ -10626,7 +10627,8 @@
                 "Minn\\Auth\\Sessions",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
-                "Minn\\Db"
+                "Minn\\Db",
+                "Minn\\Runtime\\Handoff"
             ],
             "usedBy": [
                 "Minn\\Auth\\AuthCookies",
@@ -10662,8 +10664,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 26
+                "line": 22,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -10706,8 +10708,8 @@
                     "doc": "The cookie name this site uses: a hash of the siteurl option.",
                     "shapes": [],
                     "params": [],
-                    "line": 29,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -10740,8 +10742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 46
+                    "line": 42,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -10760,8 +10762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 57
+                    "line": 50,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -10789,8 +10791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 76
+                    "line": 68,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -10846,8 +10848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 103
+                    "line": 87,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -10868,8 +10870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 124
+                    "line": 116,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -10916,8 +10918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 134
+                    "line": 131,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -10928,8 +10930,8 @@
                     "doc": "The site's cookie hash, which every one of its sign-in cookie names ends in.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 }
             ]
         },
@@ -18259,7 +18261,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 333,
+            "lines": 343,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, query-total.",
             "implements": [],
             "extends": null,
@@ -18373,7 +18375,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "query(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "The query wrapper is stored markup; the block sets the loop its children read.",
+                    "doc": "The query wrapper is stored markup; the block sets the loop its\nchildren read, run only once one of them asks (a post template,\npagination, no results, the total), as the reference runs it in\nthose blocks: a query block with nothing that lists posts queries\nnothing (security review 2026-10-22).",
                     "shapes": [],
                     "params": [
                         {
@@ -18391,8 +18393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 67
+                    "line": 63,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -18428,8 +18430,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 85
+                    "line": 85,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -18448,8 +18450,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -18485,8 +18487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 122
+                    "line": 110,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -18505,8 +18507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 135
+                    "line": 131,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -18532,8 +18534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 152
+                    "line": 148,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -18559,8 +18561,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 203
+                    "line": 172,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -18586,8 +18588,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 223
+                    "line": 215,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -18613,8 +18615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 236
+                    "line": 235,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -18640,8 +18642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 315
+                    "line": 256,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -18660,8 +18662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 330
+                    "line": 328,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -18703,8 +18705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 355
+                    "line": 348,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -18723,8 +18725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 362
+                    "line": 368,
+                    "end": 372
                 }
             ]
         },
@@ -43958,7 +43960,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 335,
+            "lines": 340,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44235,7 +44237,7 @@
                         }
                     ],
                     "line": 205,
-                    "end": 221
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -44261,8 +44263,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 255
+                    "line": 238,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -44281,8 +44283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 262
+                    "line": 263,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -44308,8 +44310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 333
+                    "line": 269,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -44405,8 +44407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 403
+                    "line": 341,
+                    "end": 408
                 }
             ]
         },
@@ -67337,7 +67339,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Destination.php",
-            "lines": 102,
+            "lines": 119,
             "doc": "Where Minn\\Http lets a request go. Only http and https; when hosts are\nnamed, every hop must start with one of them (and with one of the\nclient's own, when it is bound); and an address outside the\npublic internet (loopback, private and shared ranges, link-local, cloud\nmetadata, reserved) is refused unless its host is listed in $private. A\nname is resolved here and curl is pinned to the addresses that were\nchecked, so DNS cannot answer one way to the check and another to the\nconnection.",
             "implements": [],
             "extends": null,
@@ -67553,6 +67555,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "nonGlobalSix",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "nonGlobalSix(string $address): bool",
+                    "doc": "IPv6 ranges PHP's global-range flag lets through that reach no public\nhost: NAT64 (64:ff9b::/96 and 64:ff9b:1::/48, which carry an IPv4\naddress, a private one included), site-local fec0::/10 and multicast\nff00::/8 (security review 2026-10-22).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 121
+                },
+                {
+                    "routes": [],
                     "name": "dns",
                     "static": true,
                     "visibility": "private",
@@ -67570,8 +67592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 119
+                    "line": 128,
+                    "end": 136
                 }
             ]
         },
@@ -73857,7 +73879,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Transport.php",
-            "lines": 138,
+            "lines": 141,
             "doc": "The engine's outgoing HTTP transport over curl: it sends exactly what an\nOutbound says and nothing else decides. Redirects are followed by curl, so\nthe header lines of every hop arrive in order; only the last response's\nblock is kept, the way plugin code expects to read it. Code calling out\ngoes through Minn\\Http, which owns the rules about where a request may go.",
             "implements": [],
             "extends": null,
@@ -73922,7 +73944,7 @@
                         }
                     ],
                     "line": 55,
-                    "end": 77
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -73943,8 +73965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 92
+                    "line": 88,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -73966,8 +73988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 112
+                    "line": 103,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -73989,8 +74011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 150
+                    "line": 121,
+                    "end": 153
                 }
             ]
         },
@@ -105930,7 +105952,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentsController.php",
-            "lines": 311,
+            "lines": 318,
             "doc": "wp/v2/comments: the status tabs with pagination headers, single,\nsigned-in replies, moderation updates, trash, and force delete.",
             "implements": [],
             "extends": null,
@@ -106313,7 +106335,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "readable(Minn\\Objects\\Comment $comment, string $password): bool",
-                    "doc": "A listed comment this caller may read: a moderator any, its author their own, anyone an approved one on a post they may read.",
+                    "doc": "A listed comment this caller may read: a note only someone who may\nedit its post (security review 2026-10-22); otherwise a moderator any,\nits author their own, anyone an approved one on a post they may read.",
                     "shapes": [],
                     "params": [
                         {
@@ -106331,8 +106353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 292
+                    "line": 289,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -106351,8 +106373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 302
+                    "line": 302,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -106381,8 +106403,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 343
+                    "line": 325,
+                    "end": 350
                 }
             ]
         },
@@ -113843,12 +113865,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 287,
+            "lines": 292,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\AdminPlugin",
+                "Minn\\Auth\\Can",
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\PluginState",
                 "Minn\\Content\\Site",
@@ -113929,8 +113952,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 47,
-                "end": 55
+                "line": 48,
+                "end": 56
             },
             "cases": [],
             "constants": [
@@ -114017,8 +114040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 71
+                    "line": 60,
+                    "end": 72
                 },
                 {
                     "routes": [
@@ -114039,8 +114062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 123
+                    "line": 92,
+                    "end": 124
                 },
                 {
                     "routes": [
@@ -114068,8 +114091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [
@@ -114099,8 +114122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 153
+                    "line": 137,
+                    "end": 159
                 },
                 {
                     "routes": [
@@ -114128,8 +114151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 180
+                    "line": 163,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -114172,8 +114195,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 305
+                    "line": 294,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -114201,8 +114224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 87
+                    "line": 80,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -114215,8 +114238,8 @@
                         "@return list<array{0: array<string, mixed>, 1: list<string>}>"
                     ],
                     "params": [],
-                    "line": 188,
-                    "end": 206
+                    "line": 194,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -114235,8 +114258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 220
+                    "line": 215,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -114255,8 +114278,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 233
+                    "line": 229,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -114275,8 +114298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 243
+                    "line": 241,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -114302,8 +114325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 266
+                    "line": 251,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -114336,8 +114359,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 276
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -114356,8 +114379,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 310
+                    "line": 313,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -114376,8 +114399,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 315
+                    "line": 318,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -114396,8 +114419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 324
+                    "line": 325,
+                    "end": 330
                 }
             ]
         },
@@ -144609,6 +144632,7 @@
             "usedBy": [
                 "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Can",
+                "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\Salts",
                 "Minn\\Auth\\SignIn",
                 "Minn\\Blocks\\Bindings",
@@ -155624,7 +155648,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PluginRemoval.php",
-            "lines": 135,
+            "lines": 140,
             "doc": "Deleting plugins as the reference's delete_plugins does it: each in turn\nis uninstalled first when it can be (its uninstall.php, or the callback\nit registered), then delete_plugin, its folder (or file) removed,\ndeleted_plugin, and its installed translations removed with it; the\nupdates offered for the deleted ones are forgotten. A plugin already\ngone counts as deleted. Only what lies inside the plugins folder is\never removed, and a symlinked folder is unlinked, never followed.",
             "implements": [],
             "extends": null,
@@ -155737,7 +155761,7 @@
                         }
                     ],
                     "line": 101,
-                    "end": 114
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -155765,8 +155789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 131
+                    "line": 122,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -155794,8 +155818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 140
+                    "line": 139,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -155816,8 +155840,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 154
+                    "line": 148,
+                    "end": 159
                 }
             ]
         },

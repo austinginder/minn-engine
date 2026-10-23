@@ -5,7 +5,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
-| [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
+| [`ActivityFeed`](#activityfeed) | final readonly class | 213 | What happened lately, as the overview and the bell tell it: the caller's |
 | [`AdminArgs`](#adminargs) | final class | 29 | The arguments Minn Admin's own routes register, as the reference lists |
 | [`AdminMenu`](#adminmenu) | final class | 75 | The admin menu's arithmetic, as plugins' menu calls see it on the |
 | [`AdminNotice`](#adminnotice) | final class | 25 | An admin notice's markup, as wp_get_admin_notice builds it on the |
@@ -23,7 +23,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`IframeMarkup`](#iframemarkup) | final class | 41 | The fixed markup of the two bare admin documents plugins print into, as |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
-| [`LanguageController`](#languagecontroller) | final readonly class | 108 | Languages: what is installed, what a person reads in, what the site defaults to. |
+| [`LanguageController`](#languagecontroller) | final readonly class | 109 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`LegacyPackController`](#legacypackcontroller) | final readonly class | 49 | The Minn Legacy Pack installed for an editor that needs it |
 | [`MetaBoxMarkup`](#metaboxmarkup) | final class | 23 | A meta box's frame as do_meta_boxes prints it on the reference (probe |
 | [`MetaBoxes`](#metaboxes) | final class | 56 | One screen's meta boxes as add_meta_box files them on the reference |
@@ -124,7 +124,7 @@ A post's stored title, empty when the post is gone.
 
 A user's display name, empty when the user is gone.
 
-Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 171), `commentsBetween()` (private, line 196)
+Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 172), `commentsBetween()` (private, line 197)
 
 
 ## AdminArgs

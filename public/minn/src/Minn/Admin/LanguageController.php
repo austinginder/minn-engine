@@ -116,7 +116,8 @@ final readonly class LanguageController
         if ($locale === '' || $locale === 'en_US' || $this->translations->isInstalled($locale)) {
             return [$locale, false];
         }
-        if (!$this->caller->can('manage_options')) {
+        // Installing a language is install_languages, which file changes being off (DISALLOW_FILE_MODS) take away (security review 2026-10-22).
+        if (!$this->caller->can('install_languages')) {
             throw new RestError('minn_language_install', 'That language is not installed, and you cannot install languages on this site.', 403);
         }
         if (!$this->translations->install($locale)) {

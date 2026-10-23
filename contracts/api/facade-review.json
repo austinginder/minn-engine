@@ -147,8 +147,8 @@
             "activate_plugin": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PluginActivation",
-                "why": "the network-wide branch (already in active_sitewide_plugins, else the site option written with the time) is stored-data behaviour PluginActivation::activate should own; the WP_Error from its refusal stays",
-                "body": "3926b0d74004"
+                "why": "a plugin not yet active is asked validate_plugin first (security review 2026-10-22: nothing outside the plugins folder or without a header loads); the network-wide branch (already in active_sitewide_plugins, else the site option written with the time) is stored-data behaviour PluginActivation::activate should own; the WP_Error from its refusal stays",
+                "body": "515e6bb94016"
             },
             "activate_plugins": {
                 "verdict": "keep",
@@ -453,6 +453,12 @@
                 ],
                 "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for themes, which a factory would make one call Doubt fixed (2026-10-22): the content folder is Runtime::contentDir(), as wp_update_themes reads it.",
                 "body": "aa0512a92e4c"
+            },
+            "validate_plugin": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "validate_file, the file on disk and get_plugins() in the reference's order: plugin_invalid, plugin_not_found, no_plugin_header (probe sweep-1022)",
+                "body": "c8b174d0f9cd"
             },
             "validate_plugin_requirements": {
                 "verdict": "keep",

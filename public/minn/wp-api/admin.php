@@ -482,6 +482,11 @@ function activate_plugin($plugin, $redirect = '', $network_wide = false, $silent
     if ($network_wide && isset(((array) get_site_option('active_sitewide_plugins', []))[$plugin])) {
         return null;
     }
+    // A plugin not yet active is one the site lists, inside the plugins folder, before anything of it loads.
+    $valid = is_plugin_active($plugin) ? 0 : validate_plugin($plugin);
+    if (is_wp_error($valid)) {
+        return $valid;
+    }
     $store = $network_wide ? static fn (string $file) => update_site_option('active_sitewide_plugins', array_replace((array) get_site_option('active_sitewide_plugins', []), [$file => time()])) : null;
     $refusal = Minn\Runtime\PluginActivation::activate($plugin, $silent ? null : Minn\Runtime\Runtime::hooks(), $store);
     return $refusal === null ? null : new WP_Error($refusal->code, $refusal->message, $refusal->data);
@@ -525,9 +530,19 @@ function deactivate_plugins($plugins, $silent = false, $network_wide = null)
     Minn\Runtime\PluginActivation::deactivate($files, $silent ? null : Minn\Runtime\Runtime::hooks());
 }
 
+/**
+ * 0 for a plugin file the site lists; else why not, in the reference's order: a path that leaves the plugins
+ * folder, a file that is not there, a file with no plugin header (security review 2026-10-22).
+ */
 function validate_plugin($plugin)
 {
-    return is_file(WP_PLUGIN_DIR . '/' . $plugin) ? 0 : new WP_Error('plugin_not_found', 'Plugin file does not exist.');
+    if (validate_file((string) $plugin)) {
+        return new WP_Error('plugin_invalid', __('Invalid plugin path.'));
+    }
+    if (!file_exists(WP_PLUGIN_DIR . '/' . $plugin)) {
+        return new WP_Error('plugin_not_found', __('Plugin file does not exist.'));
+    }
+    return array_key_exists((string) $plugin, get_plugins()) ? 0 : new WP_Error('no_plugin_header', __('The plugin does not have a valid header.'));
 }
 
 /** True when the plugin's header asks for nothing the site lacks; otherwise the refusal activation gives. */
