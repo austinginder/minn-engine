@@ -87,6 +87,8 @@ final readonly class Engine
      */
     public function serve(): void
     {
+        // The server variables made whole before the request is read, so the engine routes the path plugins see.
+        Request::fixServerVars();
         $request = Request::fromGlobals();
         // admin-ajax.php (and an upload) declares DOING_AJAX before the reference's boot reads the debug constants.
         Failure::install(DebugMode::defined() + (AjaxController::doing($request) ? ['DOING_AJAX' => true] : []), ['HTTP_ACCEPT' => $request->header('accept'), 'CONTENT_TYPE' => $request->header('content-type')]);
@@ -122,9 +124,15 @@ final readonly class Engine
     }
 
     /** The REST route a request names, in the path or in ?rest_route=, or null when it is not a REST request. */
+    /** The reference's entry scripts that never run the main query, so never answer ?rest_route=. */
+    private const SCRIPTS_WITHOUT_REST = ['/wp-cron.php', '/wp-login.php', '/wp-comments-post.php', '/xmlrpc.php', '/wp-links-opml.php', '/wp-mail.php'];
+
     private static function restRoute(Request $request): ?string
     {
-        $route = $request->query('rest_route');
+        // ?rest_route= is REST only where the reference's script runs the main query (the front controller,
+        // signup, activation, trackback); its other scripts answer as themselves (the 2026-10-23 sweep).
+        $scripted = str_starts_with($request->path, '/wp-admin/') || in_array($request->path, self::SCRIPTS_WITHOUT_REST, true);
+        $route = $scripted ? null : $request->query('rest_route');
         if ($route === null && str_starts_with($request->path, '/wp-json')) {
             $route = substr($request->path, strlen('/wp-json')) ?: '/';
         }

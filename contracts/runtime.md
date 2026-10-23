@@ -18443,6 +18443,24 @@ API) warned on every command. `Http\Request::fixServerVars()` holds the rules (w
 the command line, and `wp_fix_server_vars` and `wp_populate_basic_auth_from_authorization_header`
 are delegates. Suite `cli` compares the three variables on both stacks.
 
+## The 2026-10-23 security sweep (2026-10-23)
+
+`docs/security-review-2026-10-23.md` is the record. What it settled in the runtime:
+
+- `?rest_route=` is REST only on the paths whose reference script runs the main query (the front
+  controller, signup, activation, trackback); `wp-cron.php`, `wp-login.php`, `wp-comments-post.php`,
+  `xmlrpc.php`, `wp-links-opml.php`, `wp-mail.php` and `wp-admin/*.php` answer as themselves
+  (`Engine::SCRIPTS_WITHOUT_REST`). The comment form's 405 is sent with no body, as the reference's.
+- The server variables are made whole before the engine reads its request (`Engine::serve`), so
+  it routes the path plugins see.
+- The engine's SQL literals are quoted on the connection `$wpdb` holds (a `db.php` drop-in's own
+  included), the facade handing `Sql::through()` that connection at each call.
+- A request's render budget holds for the whole request; a synced pattern asks it, and the cycle
+  guard, before reading its row.
+- A page's own template chosen in its meta may be a PHP file at the theme's root or a folder down
+  (`page-templates/full.php`); a name that climbs out is not taken (`Hierarchy::page` with
+  `Paths::validate`, `Theme::phpTemplate`).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

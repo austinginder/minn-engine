@@ -13490,7 +13490,7 @@
         },
         "_minn_browser_globals": {
             "file": "load.php",
-            "line": 500,
+            "line": 507,
             "statements": 4,
             "lines": 10
         },
@@ -14120,7 +14120,7 @@
         },
         "_minn_require_wp_db": {
             "file": "load.php",
-            "line": 481,
+            "line": 488,
             "statements": 4,
             "lines": 8
         },
@@ -14180,7 +14180,7 @@
         },
         "_minn_script_globals": {
             "file": "load.php",
-            "line": 544,
+            "line": 551,
             "statements": 6,
             "lines": 11
         },
@@ -14252,7 +14252,7 @@
         },
         "_minn_start_object_cache": {
             "file": "load.php",
-            "line": 514,
+            "line": 521,
             "statements": 5,
             "lines": 13
         },
@@ -18080,7 +18080,7 @@
         },
         "is_login": {
             "file": "load.php",
-            "line": 578,
+            "line": 585,
             "statements": 3,
             "lines": 3
         },
@@ -18110,13 +18110,13 @@
         },
         "is_protected_ajax_action": {
             "file": "load.php",
-            "line": 595,
+            "line": 602,
             "statements": 3,
             "lines": 5
         },
         "is_protected_endpoint": {
             "file": "load.php",
-            "line": 586,
+            "line": 593,
             "statements": 2,
             "lines": 4
         },
@@ -19292,7 +19292,7 @@
         },
         "shutdown_action_hook": {
             "file": "load.php",
-            "line": 689,
+            "line": 696,
             "statements": 2,
             "lines": 2
         },
@@ -19574,13 +19574,13 @@
         },
         "timer_start": {
             "file": "load.php",
-            "line": 225,
+            "line": 232,
             "statements": 2,
             "lines": 2
         },
         "timer_stop": {
             "file": "load.php",
-            "line": 232,
+            "line": 239,
             "statements": 4,
             "lines": 6
         },
@@ -20210,7 +20210,7 @@
         },
         "wp_check_php_mysql_versions": {
             "file": "load.php",
-            "line": 304,
+            "line": 311,
             "statements": 4,
             "lines": 13
         },
@@ -20300,7 +20300,7 @@
         },
         "wp_convert_hr_to_bytes": {
             "file": "load.php",
-            "line": 242,
+            "line": 249,
             "statements": 4,
             "lines": 10
         },
@@ -20384,7 +20384,7 @@
         },
         "wp_debug_mode": {
             "file": "load.php",
-            "line": 179,
+            "line": 186,
             "statements": 3,
             "lines": 7
         },
@@ -20654,7 +20654,7 @@
         },
         "wp_favicon_request": {
             "file": "load.php",
-            "line": 322,
+            "line": 329,
             "statements": 1,
             "lines": 6
         },
@@ -20708,7 +20708,7 @@
         },
         "wp_finalize_scraping_edited_file_errors": {
             "file": "load.php",
-            "line": 394,
+            "line": 401,
             "statements": 5,
             "lines": 5
         },
@@ -20792,7 +20792,7 @@
         },
         "wp_get_active_and_valid_themes": {
             "file": "load.php",
-            "line": 678,
+            "line": 685,
             "statements": 4,
             "lines": 6
         },
@@ -20948,7 +20948,7 @@
         },
         "wp_get_development_mode": {
             "file": "load.php",
-            "line": 136,
+            "line": 143,
             "statements": 2,
             "lines": 2
         },
@@ -20990,13 +20990,13 @@
         },
         "wp_get_environment_type": {
             "file": "load.php",
-            "line": 130,
+            "line": 137,
             "statements": 2,
             "lines": 2
         },
         "wp_get_extension_error_description": {
             "file": "load.php",
-            "line": 411,
+            "line": 418,
             "statements": 4,
             "lines": 8
         },
@@ -21524,19 +21524,19 @@
         },
         "wp_is_development_mode": {
             "file": "load.php",
-            "line": 142,
+            "line": 149,
             "statements": 2,
             "lines": 2
         },
         "wp_is_fatal_error_handler_enabled": {
             "file": "load.php",
-            "line": 404,
+            "line": 411,
             "statements": 2,
             "lines": 2
         },
         "wp_is_ini_value_changeable": {
             "file": "load.php",
-            "line": 257,
+            "line": 264,
             "statements": 5,
             "lines": 7
         },
@@ -21548,7 +21548,7 @@
         },
         "wp_is_json_request": {
             "file": "load.php",
-            "line": 85,
+            "line": 92,
             "statements": 2,
             "lines": 4
         },
@@ -21620,7 +21620,7 @@
         },
         "wp_is_xml_request": {
             "file": "load.php",
-            "line": 94,
+            "line": 101,
             "statements": 3,
             "lines": 9
         },
@@ -21776,7 +21776,7 @@
         },
         "wp_load_translations_early": {
             "file": "load.php",
-            "line": 197,
+            "line": 204,
             "statements": 8,
             "lines": 17
         },
@@ -21818,7 +21818,7 @@
         },
         "wp_magic_quotes": {
             "file": "load.php",
-            "line": 635,
+            "line": 642,
             "statements": 5,
             "lines": 5
         },
@@ -21830,7 +21830,7 @@
         },
         "wp_maintenance": {
             "file": "load.php",
-            "line": 337,
+            "line": 344,
             "statements": 4,
             "lines": 11
         },
@@ -21998,7 +21998,7 @@
         },
         "wp_not_installed": {
             "file": "load.php",
-            "line": 353,
+            "line": 360,
             "statements": 4,
             "lines": 6
         },
@@ -22100,13 +22100,13 @@
         },
         "wp_paused_plugins": {
             "file": "load.php",
-            "line": 443,
+            "line": 450,
             "statements": 2,
             "lines": 2
         },
         "wp_paused_themes": {
             "file": "load.php",
-            "line": 450,
+            "line": 457,
             "statements": 2,
             "lines": 2
         },
@@ -22232,7 +22232,7 @@
         },
         "wp_raise_memory_limit": {
             "file": "load.php",
-            "line": 274,
+            "line": 281,
             "statements": 8,
             "lines": 19
         },
@@ -22244,7 +22244,7 @@
         },
         "wp_recovery_mode": {
             "file": "load.php",
-            "line": 436,
+            "line": 443,
             "statements": 2,
             "lines": 2
         },
@@ -22850,13 +22850,13 @@
         },
         "wp_set_internal_encoding": {
             "file": "load.php",
-            "line": 659,
+            "line": 666,
             "statements": 1,
             "lines": 3
         },
         "wp_set_lang_dir": {
             "file": "load.php",
-            "line": 667,
+            "line": 674,
             "statements": 2,
             "lines": 6
         },
@@ -22898,7 +22898,7 @@
         },
         "wp_set_wpdb_vars": {
             "file": "load.php",
-            "line": 623,
+            "line": 630,
             "statements": 2,
             "lines": 2
         },
@@ -22988,13 +22988,13 @@
         },
         "wp_skip_paused_plugins": {
             "file": "load.php",
-            "line": 457,
+            "line": 464,
             "statements": 2,
             "lines": 7
         },
         "wp_skip_paused_themes": {
             "file": "load.php",
-            "line": 469,
+            "line": 476,
             "statements": 2,
             "lines": 4
         },
@@ -23030,7 +23030,7 @@
         },
         "wp_ssl_constants": {
             "file": "load.php",
-            "line": 605,
+            "line": 612,
             "statements": 3,
             "lines": 7
         },
@@ -23042,7 +23042,7 @@
         },
         "wp_start_scraping_edited_file_errors": {
             "file": "load.php",
-            "line": 370,
+            "line": 377,
             "statements": 8,
             "lines": 19
         },
@@ -23294,7 +23294,7 @@
         },
         "wp_using_ext_object_cache": {
             "file": "load.php",
-            "line": 163,
+            "line": 170,
             "statements": 4,
             "lines": 6
         },

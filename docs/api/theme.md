@@ -20,7 +20,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FrontLifecycle`](#frontlifecycle) | final class | 111 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
-| [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
+| [`Hierarchy`](#hierarchy) | final class | 150 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 154 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 218 | A whole page from the active block theme: the template the resolution |
@@ -40,8 +40,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 125 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 268 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 390 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Templates`](#templates) | final readonly class | 271 | Which template renders a resolution, and where its markup comes from: |
+| [`Theme`](#theme) | final class | 392 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -1458,7 +1458,7 @@ part of the theme by that name, or none.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `found()` (private, line 74), `filtered()` (private, line 139), `groups()` (private, line 157), `savedOfTheme()` (private, line 211), `saved()` (private, line 268), `savedRow()` (private, line 281)
+Internals: `found()` (private, line 77), `filtered()` (private, line 142), `groups()` (private, line 160), `savedOfTheme()` (private, line 214), `saved()` (private, line 271), `savedRow()` (private, line 284)
 
 
 ## Theme
@@ -1598,7 +1598,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 62), `rawJson()` (private, line 84), `withStylePartials()` (private, line 100), `partialFiles()` (private, line 136), `safe()` (private, line 167), `htmlFiles()` (private, line 275), `patternIndex()` (private, line 398)
+Internals: `at()` (private, line 62), `rawJson()` (private, line 84), `withStylePartials()` (private, line 100), `partialFiles()` (private, line 136), `safe()` (private, line 167), `htmlFiles()` (private, line 277), `patternIndex()` (private, line 400)
 
 
 ## ThemeHeaders

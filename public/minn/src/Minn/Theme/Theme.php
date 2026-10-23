@@ -199,12 +199,14 @@ final class Theme
     public function phpTemplate(array $slugs): ?array
     {
         foreach ($slugs as $slug) {
-            if (!self::safe($slug)) {
+            // A page's own template is named by its file (template-full.php, page-templates/full.php), one folder deep at most.
+            $file = str_ends_with($slug, '.php') ? $slug : $slug . '.php';
+            if (preg_match('#^[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)?$#', $file) !== 1 || str_contains($file, '..')) {
                 continue;
             }
             foreach ([[$this->dir, $this->parent !== null], [$this->parent?->dir, false]] as [$dir, $child]) {
-                if ($dir !== null && is_file("{$dir}/{$slug}.php")) {
-                    return ['slug' => $slug, 'path' => "{$dir}/{$slug}.php", 'child' => $child];
+                if ($dir !== null && is_file("{$dir}/{$file}")) {
+                    return ['slug' => $slug, 'path' => "{$dir}/{$file}", 'child' => $child];
                 }
             }
         }

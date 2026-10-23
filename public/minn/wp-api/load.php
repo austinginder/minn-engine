@@ -66,6 +66,13 @@ function get_current_network_id()
     return 1;
 }
 
+// The engine's SQL literals are quoted on the connection $wpdb runs them on, a db.php drop-in's own
+// included, so its character set (DB_CHARSET: gbk, big5, sjis...) is the one the quoting follows.
+Minn\Query\Sql::through(static function (string $value): string {
+    $dbh = $GLOBALS['wpdb']->dbh ?? null;
+    return ($dbh instanceof mysqli ? $dbh : Minn\Runtime\Runtime::current()->db->connection())->real_escape_string($value);
+});
+
 function wp_installing($is_installing = null)
 {
     return Minn\Runtime\Runtime::booted() ? Minn\Runtime\Runtime::current()->installingFlag($is_installing) : Minn\Runtime\EarlyRequest::installing();

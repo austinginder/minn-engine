@@ -37,6 +37,8 @@ final class RenderState
      */
     public const MAX_SOURCES = 10000;
     private int $sources = 0;
+    /** Whether this state is one request's: its budget then holds for the whole request (every do_blocks of it), not each outermost render. */
+    private bool $request = false;
     /** Whether the theme's layout puts root padding in custom properties; render configuration, so reset() leaves it. */
     private bool $rootPaddingAware = true;
     /** Whether the theme writes block gaps (settings.spacing.blockGap); render configuration too. */
@@ -64,6 +66,14 @@ final class RenderState
     private array $contentPosts = [];
     /** @var list<string> the contexts content is rendered in, innermost last */
     private array $contexts = [];
+
+    /** A request's own state, its source budget held for the whole request. */
+    public static function forRequest(): self
+    {
+        $state = new self();
+        $state->request = true;
+        return $state;
+    }
 
     /**
      * The state of the request being rendered, which its runtime holds, so
@@ -367,10 +377,10 @@ final class RenderState
         return true;
     }
 
-    /** Counts one more source opened, starting over at an outermost render; false past MAX_SOURCES. */
+    /** Counts one more source opened (per request, or per outermost render off a request); false past MAX_SOURCES. */
     private function spend(): bool
     {
-        if ($this->active === [] && $this->contentPosts === []) {
+        if (!$this->request && $this->active === [] && $this->contentPosts === []) {
             $this->sources = 0;
         }
         return ++$this->sources <= self::MAX_SOURCES;

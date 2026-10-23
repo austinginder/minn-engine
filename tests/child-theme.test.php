@@ -46,6 +46,11 @@ file_put_contents( "$themes/$slug/style.css", "/*\nTheme Name: ZZ Child Suite\nT
 file_put_contents( "$themes/$slug/page.php", "<?php // zz child page\nget_header();\necho '<main>';\nwhile ( have_posts() ) { the_post(); the_title( '<h1>', '</h1>' ); the_content(); }\necho '</main>';\nget_footer();\n" );
 file_put_contents( "$themes/$slug/header.php", "<!DOCTYPE html>\n<html <?php language_attributes(); ?>>\n<head><meta charset=\"<?php bloginfo( 'charset' ); ?>\"><?php wp_head(); ?></head>\n<body <?php body_class(); ?>><?php wp_body_open(); ?><header>ZZCHILDHEADER <?php bloginfo( 'name' ); ?></header>\n" );
 file_put_contents( "$themes/$slug/footer.php", "<footer>ZZCHILDFOOTER</footer><?php wp_footer(); ?></body></html>\n" );
+// A page's own PHP templates, one at the root and one a folder down.
+@mkdir( "$themes/$slug/page-templates" );
+file_put_contents( "$themes/$slug/template-full.php", "<?php\n/* Template Name: ZZ Full */\necho '<main>ZZFULLTEMPLATE</main>';\n" );
+file_put_contents( "$themes/$slug/page-templates/sub.php", "<?php\n/* Template Name: ZZ Sub */\necho '<main>ZZSUBTEMPLATE</main>';\n" );
+$pageTemplate = $wp( 'post meta get 2 _wp_page_template' );
 register_shutdown_function( static function () use ( $wp, $themes, $slug, $before ): void {
 	$wp( 'option update stylesheet ' . escapeshellarg( $before ) );
 	$wp( 'cache flush' );
@@ -53,6 +58,9 @@ register_shutdown_function( static function () use ( $wp, $themes, $slug, $befor
 	@unlink( "$themes/$slug/page.php" );
 	@unlink( "$themes/$slug/header.php" );
 	@unlink( "$themes/$slug/footer.php" );
+	@unlink( "$themes/$slug/template-full.php" );
+	@unlink( "$themes/$slug/page-templates/sub.php" );
+	@rmdir( "$themes/$slug/page-templates" );
 	@rmdir( "$themes/$slug" );
 } );
 $wp( 'option update stylesheet ' . $slug );
@@ -93,6 +101,19 @@ check( $pages[0][1] && $pages[1][1], 'the child\'s page.php renders through its 
 check( $pages[0][2] !== '' && $pages[0][2] === $pages[1][2], 'the page it draws matches the reference', substr( $pages[1][2], 0, 300 ) );
 check( $pages[0][3] === $pages[1][3], 'its body classes match the reference', $pages[1][3] );
 check( $pages[0][4] === $pages[1][4] && $pages[1][4] !== array(), 'global styles print before the theme\'s stylesheet, as on the reference', json_encode( array( $pages[0][4], $pages[1][4] ) ) );
+
+// The page's own template, chosen in its meta: named at the root or a folder down it renders; a name that climbs out is not taken.
+foreach ( array( 'template-full.php' => 'ZZFULLTEMPLATE', 'page-templates/sub.php' => 'ZZSUBTEMPLATE', 'page-templates/../template-full.php' => '' ) as $chosen => $marker ) {
+	$wp( 'post meta update 2 _wp_page_template ' . escapeshellarg( $chosen ) );
+	$wp( 'cache flush' );
+	$seen = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		[ , $body ] = minn_test_fetch( "$base/sample-page/", 15 );
+		$seen[] = preg_match( '#ZZ(FULL|SUB)TEMPLATE#', (string) $body, $m ) ? $m[0] : 'block template';
+	}
+	check( $seen[0] === $seen[1] && $seen[0] === ( $marker === '' ? 'block template' : $marker ), "the page template $chosen renders as on the reference", json_encode( $seen ) );
+}
+$wp( '' === $pageTemplate ? 'post meta delete 2 _wp_page_template' : 'post meta update 2 _wp_page_template ' . escapeshellarg( $pageTemplate ) );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

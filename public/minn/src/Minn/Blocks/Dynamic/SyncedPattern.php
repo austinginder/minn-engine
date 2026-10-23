@@ -27,11 +27,16 @@ final readonly class SyncedPattern
         if ($ref <= 0) {
             return '';
         }
+        // The cycle guard and the render's budget are asked before the pattern is read, so a refused one costs no query.
+        if (!$renderer->state()->enter('block:' . $ref)) {
+            return '';
+        }
         $row = $this->db->row(
             "SELECT post_content FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = 'wp_block' AND post_status = 'publish' LIMIT 1",
             [$ref],
         );
-        if ($row === null || !$renderer->state()->enter('block:' . $ref)) {
+        if ($row === null) {
+            $renderer->state()->leave('block:' . $ref);
             return '';
         }
         $blocks = Parser::named(BlockHooks::forPost((string) $row['post_content'], $ref));

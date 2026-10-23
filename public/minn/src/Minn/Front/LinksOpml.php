@@ -62,7 +62,7 @@ final class LinksOpml
         foreach (is_array($links) ? $links : [] as $link) {
             $updated = (string) ($link->link_updated ?? '') === '0000-00-00 00:00:00' ? '' : (string) ($link->link_updated ?? '');
             $out .= "\t<outline text=\"" . Escape::attr(Runtime::hooks()->filter('link_title', [$link->link_name])) . '" type="link" xmlUrl="'
-                . Escape::attr($link->link_rss ?? '') . '" htmlUrl="' . Escape::attr($link->link_url ?? '') . "\" updated=\"\n\t\t\t\t\t\t\t{$updated}\" />\n\t";
+                . Escape::url($link->link_rss ?? '') . '" htmlUrl="' . Escape::url($link->link_url ?? '') . "\" updated=\"\n\t\t\t\t\t\t\t{$updated}\" />\n\t";
         }
         return $out . "\t</outline>\n\t";
     }

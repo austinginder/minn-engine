@@ -168,6 +168,12 @@ $findings = [
     'Minn Admin installed languages with file changes off' => ['public/minn/src/Minn/Admin/LanguageController.php', "can('install_languages')"],
     'The engine\'s own quoting ignored a multibyte connection charset (gbk), and set_charset fataled on a collation the charset lacks' => ['tests/security-sweep.test.php', 'a gbk connection'],
     'Distinct synced patterns and post-content loops nested combinatorially with no budget' => ['tests/unit/render-state.php', 'one outermost render opens at most MAX_SOURCES sources'],
+    '?rest_route= answered as REST on wp-cron.php and admin-ajax.php, under DOING_CRON and DOING_AJAX' => ['tests/security-sweep.test.php', '?rest_route= is answered as REST only where the reference answers it'],
+    'The engine routed its request before the server variables were made whole' => ['public/minn/src/Minn/Engine.php', 'Request::fixServerVars();'],
+    'The installer\'s flush read the address with the site\'s plugins loaded and handed it to curl unchecked' => ['install.sh', "--skip-plugins --skip-themes"],
+    'The links OPML printed stored link addresses unescaped as addresses' => ['tests/probes.test.php', "'link_name' => 'Unsafe'"],
+    'The render budget started over at every outermost render, and a refused pattern was still read' => ['tests/unit/render-state.php', 'holds one budget for the whole request'],
+    'A db.php drop-in\'s own multibyte connection let a lead byte close the engine\'s quote' => ['tests/security-sweep.test.php', "a drop-in\\'s own gbk connection"],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

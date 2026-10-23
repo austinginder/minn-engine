@@ -201,12 +201,16 @@ flush_caches() {
         return 0
     fi
     local url headers seen="" misses=0
-    url="$(cd "$WEBROOT" && wp eval 'echo home_url("/");' 2>/dev/null || true)"
+    # The address alone, read with no plugin or theme loaded; the flush below loads them, as the host's purge hooks live there.
+    url="$(cd "$WEBROOT" && wp eval 'echo home_url("/");' --skip-plugins --skip-themes 2>/dev/null || true)"
+    if ! printf '%s' "$url" | grep -qE '^https?://[A-Za-z0-9._~:/?#@!$&()*+,;=%-]+$'; then
+        url=""
+    fi
     if [ -n "$url" ]; then
         echo_info "Waiting for $url to answer as Minn"
         for _ in $(seq 1 30); do
             # A logged-in cookie name and a fresh query string step past page caches; the value signs nobody in.
-            headers="$(curl -s -o /dev/null -D - --max-time 15 -b 'wordpress_logged_in_minn_install=1' "${url}?minn-install=${RANDOM}" 2>/dev/null || true)"
+            headers="$(curl -s -o /dev/null -D - --max-time 15 -b 'wordpress_logged_in_minn_install=1' --url "${url}?minn-install=${RANDOM}" 2>/dev/null || true)"
             if printf '%s' "$headers" | grep -qi '^x-powered-by: Minn'; then
                 seen=yes
                 break

@@ -33,6 +33,30 @@ return [
         $s->leave('template');
         return $opened && !$spent && $content === '' && $s->enter('template') && $s->postContent(7, static fn (): string => 'content') === 'content' ?: json_encode([$opened, $spent, $content]);
     },
+    'a request\'s state holds one budget for the whole request, across separate outermost renders' => static function () {
+        $s = RenderState::forRequest();
+        $allowed = 0;
+        for ($i = 0; $i < RenderState::MAX_SOURCES + 5; $i++) {
+            // Each a render of its own: nothing is open between them, as with one post's content after another.
+            if ($s->enter("block:{$i}")) {
+                $allowed++;
+                $s->leave("block:{$i}");
+            }
+        }
+        $s->reset();
+        return $allowed === RenderState::MAX_SOURCES && $s->enter('block:after-reset') ?: (string) $allowed;
+    },
+    'off a request, each outermost render starts the count over' => static function () {
+        $s = new RenderState();
+        $allowed = 0;
+        for ($i = 0; $i < RenderState::MAX_SOURCES + 5; $i++) {
+            if ($s->enter("block:{$i}")) {
+                $allowed++;
+                $s->leave("block:{$i}");
+            }
+        }
+        return $allowed === RenderState::MAX_SOURCES + 5 ?: (string) $allowed;
+    },
     'sources opened and closed in turn count toward the same render' => static function () {
         $s = new RenderState();
         $s->enter('template');

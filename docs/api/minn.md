@@ -7,7 +7,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 428 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 343 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Engine`](#engine) | final readonly class | 351 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 133 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 144 | JSON in and out, for the engine and for code written for Minn: |
@@ -265,6 +265,7 @@ REST is dispatched first (from the path or from ?rest_route=), then the
 admin, the login endpoint, and finally the public site.
 
 - const `WP_VERSION` = `'7.1.3'` — The WordPress release whose contracts the runtime speaks; wp-includes/version.php says the same.
+- const `SCRIPTS_WITHOUT_REST` = `array (   0 => '/wp-cron.php',   1 => '/wp-login.php',   2 => '/wp-comments-post.php',   3 => '/xmlrpc.php',   4 => '/wp-links-opml.php',   5 => '/wp-mail.php', )` — The reference's entry scripts that never run the main query, so never answer ?rest_route=.
 
 Used by: `Minn\Cli\Runtime`, `Minn\Ops\Directory`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\PatternDirectoryController`
 
@@ -285,7 +286,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 125), `bootRuntimeForRest()` (private, line 139), `recheckNonce()` (private, line 183), `adoptSettledUser()` (private, line 206), `armRecoveryPause()` (private, line 239), `plain()` (private, line 264), `handle()` (private, line 270), `frontPipeline()` (private, line 342)
+Internals: `restRoute()` (private, line 130), `bootRuntimeForRest()` (private, line 147), `recheckNonce()` (private, line 191), `adoptSettledUser()` (private, line 214), `armRecoveryPause()` (private, line 247), `plain()` (private, line 272), `handle()` (private, line 278), `frontPipeline()` (private, line 350)
 
 
 ## Html

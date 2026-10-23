@@ -51,13 +51,16 @@ final readonly class Templates
             if ($php !== null) {
                 $slugs = array_slice($slugs, 0, (int) array_search($php['slug'], $slugs, true) + 1);
             }
-            $passedOver = $php !== null && $php['child'] && !$this->theme->ownsTemplate($php['slug']) ? $php['slug'] : null;
+            // A page's own template named by its file looks for a block template by its name without the suffix.
+            $slugs = array_map(static fn (string $slug): string => (string) preg_replace('/\.php$/', '', $slug), $slugs);
+            $phpSlug = $php === null ? null : (string) preg_replace('/\.php$/', '', $php['slug']);
+            $passedOver = $php !== null && $php['child'] && !$this->theme->ownsTemplate((string) $phpSlug) ? $phpSlug : null;
             $found = $this->found($slugs, $passedOver);
             if ($found !== null) {
                 return $found;
             }
             if ($php !== null) {
-                return ['slug' => $php['slug'], 'markup' => '', 'php' => $php['path']];
+                return ['slug' => (string) $phpSlug, 'markup' => '', 'php' => $php['path']];
             }
         }
         return null;

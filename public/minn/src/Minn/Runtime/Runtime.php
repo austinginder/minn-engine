@@ -102,7 +102,7 @@ final class Runtime
     /** The render state for this request, made on first use: one set of counters for everything rendered. */
     public function renderState(): RenderState
     {
-        return $this->renderState ??= new RenderState();
+        return $this->renderState ??= RenderState::forRequest();
     }
 
     /** Makes a render state this request's, so a renderer that brought its own is the one the leaves read. */

@@ -937,7 +937,7 @@ keeps the empty line after its final newline.
 
 File-system path and permission spellings, and whether a path is safe to use.
 
-Used by: `Minn\Runtime\FileNames`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
+Used by: `Minn\Runtime\FileNames`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Theme\Hierarchy`
 
 ### static `validate(mixed $file, mixed $allowed = array ( )): int`
 

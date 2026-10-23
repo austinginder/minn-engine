@@ -50,7 +50,8 @@ final class Hierarchy
     public static function page(string $custom, string $slug, int $id): array
     {
         $templates = [];
-        if ($custom !== '' && basename($custom) === $custom) {
+        // A page's own template may sit one folder down (page-templates/full.php); a name that climbs out is not taken.
+        if ($custom !== '' && \Minn\Support\Paths::validate($custom) === 0) {
             $templates[] = $custom;
         }
         if ($slug !== '') {
@@ -75,7 +76,8 @@ final class Hierarchy
     public static function single(string $type, string $slug, string $custom): array
     {
         $templates = [];
-        if ($custom !== '' && basename($custom) === $custom) {
+        // A page's own template may sit one folder down (page-templates/full.php); a name that climbs out is not taken.
+        if ($custom !== '' && \Minn\Support\Paths::validate($custom) === 0) {
             $templates[] = $custom;
         }
         if ($slug !== '') {
