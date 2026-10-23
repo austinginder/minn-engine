@@ -5,8 +5,8 @@
         "file": "docs/audit-2026-10-22.md"
     },
     "security": {
-        "found": 93,
-        "fixed": 93
+        "found": 99,
+        "fixed": 99
     },
     "sql": {
         "measured": "2026-10-22",
@@ -244,14 +244,14 @@
         },
         "facadeLogicCeiling": {
             "label": "Facade functions and methods holding logic",
-            "ceiling": 3746,
+            "ceiling": 3743,
             "started": 3865,
             "since": "db6aa5a6",
             "rose": false
         },
         "facadeLogicLinesCeiling": {
             "label": "Lines of logic in the facade",
-            "ceiling": 29266,
+            "ceiling": 29232,
             "started": 30383,
             "since": "db6aa5a6",
             "rose": false
@@ -265,16 +265,16 @@
         }
     },
     "open": {
-        "done": 131,
-        "accepted": 29,
-        "open": 8,
-        "austin": 5
+        "done": 142,
+        "accepted": 30,
+        "austin": 5,
+        "open": 2
     },
     "run": {
         "measured": "2026-10-23",
-        "suites": 96,
-        "green": 96,
-        "checks": 30961,
+        "suites": 98,
+        "green": 98,
+        "checks": 31094,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -305,10 +305,10 @@
             "window": 100,
             "stretches": 125,
             "lines": 2204,
-            "of": 192383
+            "of": 192801
         },
         "engine": {
-            "of": 116303,
+            "of": 116619,
             "php": {
                 "strict": {
                     "window": 40,
@@ -317,8 +317,8 @@
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 71,
-                    "lines": 306
+                    "stretches": 73,
+                    "lines": 314
                 }
             },
             "assets": {
@@ -335,32 +335,32 @@
             "sequences": 20
         },
         "facade": {
-            "of": 76080,
+            "of": 76182,
             "window": 80,
             "stretches": 108,
             "lines": 2901
         }
     },
     "facadeLogic": {
-        "functions": 3496,
+        "functions": 3495,
         "methods": 3814,
-        "delegates": 3564,
-        "logicFunctions": 1776,
+        "delegates": 3566,
+        "logicFunctions": 1773,
         "logicMethods": 1970,
-        "logicLines": 29266,
+        "logicLines": 29232,
         "kept": 0,
         "review": {
             "doubts": 3,
-            "reviewed": 3129,
+            "reviewed": 3126,
             "stale": 0,
             "verdicts": {
                 "delegate": 147,
                 "move": 1472,
-                "keep": 1496,
+                "keep": 1493,
                 "remove": 14
             },
             "keep": {
-                "scope": 115,
+                "scope": 112,
                 "shape": 289,
                 "compose": 604,
                 "contract": 477,
@@ -369,7 +369,7 @@
             "gates": {
                 "subclass": 301,
                 "pluggable": 26,
-                "unprobed": 148,
+                "unprobed": 147,
                 "globals": 170,
                 "refs": 27
             },
@@ -378,9 +378,9 @@
     },
     "behaviour": {
         "sideEffects": {
-            "probes": 408,
-            "differing": 1,
-            "rows": 1
+            "probes": 411,
+            "differing": 0,
+            "rows": 0
         },
         "restFuzz": {
             "routes": 201,
