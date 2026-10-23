@@ -14,7 +14,7 @@
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 181 | Replaces the running engine with a published release. The release's |
-| [`FilesystemCredentials`](#filesystemcredentials) | final class | 214 | How the site reaches its own files, and the connection it asks for when |
+| [`FilesystemCredentials`](#filesystemcredentials) | final class | 220 | How the site reaches its own files, and the connection it asks for when |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 484 | Putting plugins, themes and extensions on disk. Plugins and themes come |
@@ -463,7 +463,7 @@ The connection, or false with the form to print
 - `@param array<string, mixed> $posted the request's form`
 - `@return array{0: mixed, 1: string} the answer, then what is printed`
 
-Internals: `credentials()` (private, line 108), `host()` (private, line 135), `types()` (private, line 141), `ownsNewFiles()` (private, line 152), `transport()` (private, line 166), `form()` (private, line 185)
+Internals: `credentials()` (private, line 108), `host()` (private, line 135), `types()` (private, line 141), `ownsNewFiles()` (private, line 152), `scriptOwner()` (private, line 166), `transport()` (private, line 172), `form()` (private, line 191)
 
 
 ## InstalledSoftware

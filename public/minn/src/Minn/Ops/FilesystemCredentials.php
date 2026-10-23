@@ -156,10 +156,16 @@ final class FilesystemCredentials
         if ($handle === false) {
             return null;
         }
-        $own = fileowner($file) === getmyuid();
+        $own = fileowner($file) === self::scriptOwner();
         fclose($handle);
         unlink($file);
         return $own;
+    }
+
+    /** The running script's owner, as getmyuid() reports it; read from the entry file where a host disables getmyuid() (Kinsta). */
+    private static function scriptOwner(): int|false
+    {
+        return function_exists('getmyuid') ? getmyuid() : fileowner(get_included_files()[0]);
     }
 
     /** The first remote transport this PHP has, or false. */
