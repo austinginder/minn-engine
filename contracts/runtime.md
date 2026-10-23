@@ -18307,6 +18307,68 @@ Left open.
   theme export: each would have the engine reach wordpress.org or build what the reference
   builds from its own install; waiting on Austin.
 
+## The 0.1.0 field test, and the other entry scripts (2026-10-23)
+
+Minn 0.1.0 installed with `bash <(curl -sL https://minn.run/install)` on a SandyWP sandbox
+(Apache, PHP 8.3, WooCommerce, Contact Form 7, Yoast SEO, Query Monitor) and on a Kinsta site
+(nginx, PHP 8.3, Blocksy, Gravity Forms and Gravity SMTP, Search & Filter Pro, Perfmatters, Code
+Snippets), each compared page by page and in a browser with the same site on WordPress, then
+ejected. What it found, and what changed:
+
+- **A host that disables `getmyuid()`** (Kinsta disables 63 functions) took every request down:
+  Code Snippets asks for the filesystem method while it loads, and `Ops\FilesystemCredentials`
+  called `getmyuid()` without asking whether it exists. It reads the entry file's owner there now;
+  the reference answers `direct` on the same host.
+- **nginx runs a `.php` request only when the file exists**, so every entry point the install
+  parked answered 404 before the engine saw it, the host's own cron (`wp-cron.php`) among them.
+  The install lays a shape file under each (`contracts/layout.md`).
+- **A page cache keeps WordPress's pages** after the swap, and Kinsta's opcode cache keeps the
+  old `index.php` running for up to 30 seconds. The curl installer waits for the site to answer as
+  Minn, then runs `wp cache flush`, which runs Kinsta's purge (it does on both stacks).
+- **The other stand-alone scripts** answered the engine's 404 page. `Front\EntryScriptsController`
+  answers them as the reference does (probes suite, hook-parity scenarios `http:links-opml`,
+  `http:post-by-email`, `http:signup`, `http:activate`, `http:trackback-direct`):
+  `wp-links-opml.php` prints the link categories that have links (all, or the one `link_cat`
+  names by its whole number made positive; `all` itself finds none), each with its visible links
+  by name, whitespace to the tab (`Front\LinksOpml`); `wp-mail.php` is refused with the
+  reference's 403 page; `wp-signup.php` and `wp-activate.php` run the main query on their own
+  address, then send a single site to `wp_registration_url()`; `wp-trackback.php` asked directly
+  runs the main query and answers the "need an ID" XML with a 404. The scripts that run the main
+  query run it as the reference's `wp()` does, without `template_redirect`
+  (`MainQueryBridge::run`; `stand` is that and `template_redirect`, for pages). `wp-activate.php`
+  is an installing request: `WP_INSTALLING` is defined for it, `wp_installing()` starts from the
+  constant after boot (it ignored it before), and the site's plugins are read and not loaded.
+  `get_bookmarks`, `get_categories` (its earlier `keep` verdict said it composes public
+  functions, but neither `get_terms` nor `_make_cat_compat` can be replaced by a plugin),
+  `esc_xml` and `wp_registration_url` moved into `Runtime\Bookmarks`, `TermLookup::categories`,
+  `Escape::forXml` and `SiteUrls::registration`; the facade delegates.
+
+Left open.
+
+- Recovery blames the file a fatal happened in, and an engine file belongs to nobody, so a plugin
+  whose hook fatals inside engine code is never paused and the site stays down (the getmyuid case).
+  Blaming the first plugin frame in the trace would pause it; the reference blames the file too,
+  but its own files are rarely where a plugin's call dies.
+- `wp_mail` is declared in `minn/wp-api/pluggable.php`. Code that decides who owns mail by where
+  `wp_mail` is defined (SandyWP's helper, FluentSMTP's conflict check:
+  `ReflectionFunction('wp_mail')->getFileName()` against `wp-includes/pluggable.php`) concludes a
+  plugin has taken mail over and stands aside; on the sandbox PHP's `mail()` then failed where
+  WordPress's mail was captured.
+- The Kinsta site answered in 390 to 530 ms of server time where WordPress took 110 to 125 ms (an
+  in-process probe, page cache bypassed, about 1,900 files a request, 550 of them the engine's,
+  under `open_basedir`); locally the engine is about 125% of WordPress.
+- Post by email: with a mail server configured the reference reads it over POP3 and posts what it
+  finds; the engine refuses as if none were configured.
+- `http:activate`: the reference refreshes the theme's pattern-files transient on the installing
+  request (`theme_block_pattern_files`, `set_transient`); the engine reads its cache as on any
+  request.
+- The JWT authentication plugin warns `Undefined array key "REQUEST_URI"` under WP-CLI on the
+  engine and not on WordPress.
+- WooCommerce's shop page: the reference prints the interactivity router's loading bar; the
+  engine does not.
+- Minn Admin's own door (`wp minn install`) does not flush page caches after the swap as the
+  curl installer does.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18476,3 +18538,17 @@ rows that are `open` or `austin`.
 | 18300 | Security review (10-22) | a recovery pause counts requests whose path and headers a visitor chose (only query, body, upload and cookie make a request not plain) | open | Low; the reference never pauses outside an administrator's recovery session. Narrow what counts toward a pause; docs/security-review-2026-10-22.md |
 | 18300 | Security review (10-22) | the sign-in cookies carry no SameSite flag | accepted | as the reference sends them (57182094); the request it let reach further (cookie without nonce beside another account's application password) is fixed at its root |
 | 18300 | Hook parity (10-22) | `add_query_arg` read an address's own query without `wp_parse_str`'s filter (120 scenarios recorded it not fired) | done | `Runtime\QueryArgs::add` hears the filter; a script's or style's version is added as the dependency printers add it, without it (`QueryArgs::versioned`), and the themes list builds no page links; 148 recorded hook differences dropped |
+| 18310 | The 0.1.0 field test (10-23) | a host that disables `getmyuid()` (Kinsta) fails every request a plugin asks the filesystem method on | done | `Ops\FilesystemCredentials` reads the entry file's owner there (20621f2f) |
+| 18310 | The 0.1.0 field test (10-23) | nginx 404s every entry point the install parked (`wp-cron.php`, `admin-ajax.php`, comments) | done | a shape file under each name in `data/entry-files.json` (abb2209b; `contracts/layout.md`) |
+| 18310 | The 0.1.0 field test (10-23) | page caches keep WordPress's pages after the swap | done | the curl installer waits for Minn, then `wp cache flush` (abb2209b) |
+| 18310 | The 0.1.0 field test (10-23) | eject printed a PHP warning for a park it cannot remove | done | it says so instead (abb2209b) |
+| 18310 | The 0.1.0 field test (10-23) | `wp-links-opml.php`, `wp-mail.php`, `wp-signup.php`, `wp-activate.php`, `wp-trackback.php` answered the engine's 404 | done | `Front\EntryScriptsController`, probes suite, five hook-parity scenarios |
+| 18310 | The 0.1.0 field test (10-23) | an array `link_cat` on `wp-links-opml.php` fatals on the reference (TypeError, 500) | accepted | the engine lists every category; a fatal is no contract |
+| 18310 | The 0.1.0 field test (10-23) | recovery never pauses a plugin whose hook fatals inside engine code | austin | blame the first plugin frame in the trace, or keep the reference's file-only blame |
+| 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | austin | declare the pluggable functions from the webroot's `wp-includes/pluggable.php`, or accept |
+| 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host |
+| 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | austin | carry a POP3 client, or leave post by email out (the engine refuses as unconfigured) |
+| 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | open | hook-parity snapshot names the six hooks |
+| 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | open | the engine's CLI boot runs a filter the reference's does not |
+| 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | open | seen on the SandyWP sandbox |
+| 18310 | The 0.1.0 field test (10-23) | Minn Admin's `wp minn install` does not flush page caches after the swap | open | Minn Admin's switch command, as install.sh does |

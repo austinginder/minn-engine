@@ -15,12 +15,14 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 56 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
+| [`EntryScriptsController`](#entryscriptscontroller) | final readonly class | 72 | The reference's other stand-alone scripts at the webroot, answered as it |
 | [`FeedController`](#feedcontroller) | final readonly class | 63 | The feeds, wherever a request asks for one: the feed var of the rule its |
 | [`FeedTags`](#feedtags) | final class | 197 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 134 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
+| [`LinksOpml`](#linksopml) | final class | 47 | wp-links-opml.php: the site's links as an OPML outline, as the reference |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
 | [`Maintenance`](#maintenance) | final class | 28 | Maintenance mode, as hosting tools and updaters switch it on: a |
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
@@ -429,6 +431,55 @@ The button that opens the sharing dialog; none on a 404.
 The sharing dialog: the post's address and its embed code, each a tab; none on a 404.
 
 
+## EntryScriptsController
+
+`final readonly class Minn\Front\EntryScriptsController` · `public/minn/src/Minn/Front/EntryScriptsController.php`
+
+The reference's other stand-alone scripts at the webroot, answered as it
+answers them (contracts/front/probes.md, "Entry scripts"): the links
+OPML and post by email load the site and nothing more; signup,
+activation and trackback run the main query on their own address first,
+which finds nothing, as the reference's do.
+
+Used by: `Minn\Engine`
+
+```php
+__construct(Minn\Front\Resolver $resolver, Minn\Theme\MainQueryBridge $bridge)
+```
+
+
+### `linksOpml(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `* /wp-links-opml.php (public)`
+
+wp-links-opml.php: the site's links as OPML.
+
+### `mail(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `* /wp-mail.php (public)`
+
+wp-mail.php: post by email. Refused (403) while the configuration is
+turned off or names no mail server; a configured POP3 server is not
+read, so it is refused the same way (the engine carries no POP3
+client: the open items register).
+
+### `signup(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `* /wp-signup.php (public)`
+
+Route: `* /wp-activate.php (public)`
+
+wp-signup.php and wp-activate.php: a single site sends both to registration.
+
+### `trackback(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `* /wp-trackback.php (public)`
+
+wp-trackback.php asked directly: the address names no post, so the answer is the reference's "need an ID".
+
+Internals: `stopped()` (private, line 83)
+
+
 ## FeedController
 
 `final readonly class Minn\Front\FeedController` · `public/minn/src/Minn/Front/FeedController.php`
@@ -637,6 +688,27 @@ What a public URL resolved to.
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
 Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+
+
+## LinksOpml
+
+`final class Minn\Front\LinksOpml` · `public/minn/src/Minn/Front/LinksOpml.php`
+
+wp-links-opml.php: the site's links as an OPML outline, as the reference
+prints it (contracts/front/probes.md, "Entry scripts"). The link
+categories with links (all of them, or the one link_cat names), each
+with its visible links by name; whatever opml_head prints (the generator
+comment, by default) in the head. The whitespace is the reference's to
+the tab: a category opens flush, each link sits after a tab, and the
+run that closes one item opens the next.
+
+Used by: `Minn\Front\EntryScriptsController`
+
+### static `page(array $query): string`
+
+The page for a request's query (its link_cat), under its content type.
+
+Internals: `categoryArgs()` (private, line 47), `category()` (private, line 57)
 
 
 ## ListingLinks
@@ -1233,7 +1305,7 @@ posts, newest first. Archives never guess.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
-Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Front\SingleQueries`
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\EntryScriptsController`, `Minn\Front\FrontController`, `Minn\Front\SingleQueries`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)

@@ -220,22 +220,7 @@ function get_terms($args = [], $deprecated = '')
 /** Categories (or another taxonomy's terms, through get_categories_taxonomy) as get_terms finds them, each given the old category fields. */
 function get_categories($args = '')
 {
-    $args = wp_parse_args($args, ['taxonomy' => 'category']);
-    $args['taxonomy'] = apply_filters('get_categories_taxonomy', $args['taxonomy'], $args);
-    if (($args['type'] ?? '') === 'link') {
-        _deprecated_argument(__FUNCTION__, '3.0.0', sprintf(__('%1$s is deprecated. Use %2$s instead.'), '<code>type => link</code>', '<code>taxonomy => link_category</code>'));
-        $args['taxonomy'] = 'link_category';
-    }
-    $terms = get_terms($args);
-    if (is_wp_error($terms)) {
-        return [];
-    }
-    foreach ($terms as $term) {
-        if ($term instanceof WP_Term) {
-            _make_cat_compat($term);
-        }
-    }
-    return $terms;
+    return \Minn\Runtime\TermLookup::categories($args);
 }
 
 function get_tags($args = '')

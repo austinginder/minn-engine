@@ -1,0 +1,5 @@
+<?xml version="X" encoding="utf-8"?>
+<response>
+<error>1</error>
+<message>I really need an ID for this to work.</message>
+</response>

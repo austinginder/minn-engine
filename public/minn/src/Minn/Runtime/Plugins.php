@@ -76,6 +76,10 @@ final class Plugins
         // Read through the option filters: WP-CLI's --skip-plugins, and a plugin
         // that switches others off per request, both answer there.
         $active = Runtime::options()->filtered('active_plugins');
+        // While installing, the list is read and nothing in it loads, as on the reference (wp-activate.php).
+        if (Runtime::installing()) {
+            $active = [];
+        }
         // An extension that killed a request is paused until someone lets
         // it back in; loading it again would only kill this one too.
         $paused = (new Recovery(new Site($runtime->db), $content))->pausedPlugins();

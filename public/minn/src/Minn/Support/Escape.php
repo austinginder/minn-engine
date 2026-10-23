@@ -95,8 +95,14 @@ final class Escape
         return Entities::specialchars(str_contains($text, '&') ? Kses::normalizeEntities($text) : $text, $quotes, false, KsesEntities::known(...));
     }
 
+    /** Text for XML (esc_xml): invalid UTF-8 emptied, the specials encoded outside CDATA sections, through esc_xml. */
+    public static function forXml(mixed $text): mixed
+    {
+        return Runtime::hooks()->filter('esc_xml', [self::xml(self::validUtf8((string) $text)), $text]);
+    }
+
     /**
-     * Text for an XML document (esc_xml): named references XML lacks are
+     * Text for an XML document (what esc_xml filters): named references XML lacks are
      * decoded (or their ampersand escaped), a bare ampersand and the four
      * specials encoded, and CDATA sections left exactly as written (probe
      * media-template-doubts).

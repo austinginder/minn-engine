@@ -140,6 +140,10 @@ final class Runtime
         \Minn\Support\Lists::filterParsed(static fn (array $parsed): mixed => self::hooks()->filter('wp_parse_str', [$parsed]));
         self::registry()->shareObjects();
         Constants::define($runtime);
+        // wp_installing() starts from WP_INSTALLING, as the reference's does.
+        if (EarlyRequest::installing()) {
+            $runtime->installingFlag(true);
+        }
         if ($runtime->request !== null) {
             \_minn_script_globals($runtime->request->path);
         }

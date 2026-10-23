@@ -50,17 +50,7 @@ function get_bookmark_field($field, $bookmark, $context = 'display')
 /** The links asked for (Content\Links), through get_bookmarks; none for a category name that is not there. */
 function get_bookmarks($args = '')
 {
-    $r = wp_parse_args($args, ['orderby' => 'name', 'order' => 'ASC', 'limit' => -1, 'category' => '', 'category_name' => '', 'hide_invisible' => 1, 'show_updated' => 0, 'include' => '', 'exclude' => '', 'search' => '']);
-    if (!empty($r['category_name'])) {
-        $category = get_term_by('name', $r['category_name'], 'link_category');
-        if (!$category) {
-            return [];
-        }
-        $r['category'] = $category->term_id;
-    }
-    $categories = empty($r['include']) ? wp_parse_id_list($r['category']) : [];
-    $links = array_map(static fn (array $row) => (object) $row, _minn_links()->matching($r, array_values(array_filter($categories)), (int) get_option('links_recently_updated_time')));
-    return apply_filters('get_bookmarks', $links, $r);
+    return \Minn\Runtime\Bookmarks::find($args);
 }
 
 /** Every field a link (object or array) carries, sanitized for a context. */

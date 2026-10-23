@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1659
+        "delegates": 1661
     },
     "functions": {
         "__": {
@@ -1618,7 +1618,7 @@
         },
         "esc_xml": {
             "file": "template.php",
-            "statement": "return apply_filters('esc_xml', Minn\\Support\\Escape::xml(wp_check_invalid_utf8((string) $text)), $text);"
+            "statement": "return \\Minn\\Support\\Escape::forXml($text);"
         },
         "excerpt_remove_footnotes": {
             "file": "blocks.php",
@@ -1779,6 +1779,14 @@
         "get_bloginfo_rss": {
             "file": "feed.php",
             "statement": "return Minn\\Runtime\\SiteInfo::rss($show);"
+        },
+        "get_bookmarks": {
+            "file": "bookmark.php",
+            "statement": "return \\Minn\\Runtime\\Bookmarks::find($args);"
+        },
+        "get_categories": {
+            "file": "taxonomy.php",
+            "statement": "return \\Minn\\Runtime\\TermLookup::categories($args);"
         },
         "get_category_feed_link": {
             "file": "link-template.php",
@@ -6134,7 +6142,7 @@
         },
         "wp_registration_url": {
             "file": "link-template.php",
-            "statement": "return apply_filters('register_url', site_url('wp-login.php?action=register', 'login'));"
+            "statement": "return \\Minn\\Runtime\\SiteUrls::registration();"
         },
         "wp_rel_callback": {
             "file": "formatting.php",

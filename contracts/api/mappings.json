@@ -2,14 +2,14 @@
     "generated": "2026-10-23",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 708,
-        "composes": 2061,
+        "minn": 707,
+        "composes": 2060,
         "leaf": 959,
-        "noop": 3265,
+        "noop": 3267,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8681,
-        "minnMethods": 1558,
+        "minnMethods": 1560,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -45724,12 +45724,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Escape::xml"
+                "Minn\\Support\\Escape::forXml"
             ],
-            "composes": [
-                "apply_filters",
-                "wp_check_invalid_utf8"
-            ]
+            "composes": []
         },
         "excerpt_remove_blocks": {
             "file": "blocks.php",
@@ -47598,19 +47595,12 @@
         },
         "get_bookmarks": {
             "file": "bookmark.php",
-            "lines": 11,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Links::matching"
+                "Minn\\Runtime\\Bookmarks::find"
             ],
-            "composes": [
-                "_minn_links",
-                "apply_filters",
-                "get_option",
-                "get_term_by",
-                "wp_parse_args",
-                "wp_parse_id_list"
-            ]
+            "composes": []
         },
         "get_border_color_classes_for_block_core_search": {
             "file": "core-blocks-content.php",
@@ -47709,18 +47699,12 @@
         },
         "get_categories": {
             "file": "taxonomy.php",
-            "lines": 16,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_deprecated_argument",
-                "_make_cat_compat",
-                "apply_filters",
-                "get_terms",
-                "is_wp_error",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::categories"
+            ],
+            "composes": []
         },
         "get_category": {
             "file": "taxonomy.php",
@@ -74011,11 +73995,10 @@
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "site_url"
-            ]
+            "minn": [
+                "Minn\\Runtime\\SiteUrls::registration"
+            ],
+            "composes": []
         },
         "wp_rel_callback": {
             "file": "formatting.php",

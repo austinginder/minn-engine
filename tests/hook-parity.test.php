@@ -116,6 +116,11 @@ $pages = [
     'login-lost' => '/wp-login.php?action=lostpassword',
     'ajax' => '/wp-admin/admin-ajax.php?action=minn_hook_parity',
     'canonical-move' => '/?p=1',
+    'links-opml' => '/wp-links-opml.php',
+    'post-by-email' => '/wp-mail.php',
+    'signup' => '/wp-signup.php',
+    'activate' => '/wp-activate.php',
+    'trackback-direct' => '/wp-trackback.php',
 ];
 foreach ($pages as $name => $path) {
     $scenarios["http:{$name}"] = ['path' => $path];
@@ -123,6 +128,9 @@ foreach ($pages as $name => $path) {
 // The canonical move is the scenario: the reference's answer points at the site's own address, which is
 // the engine's, so following it would record the engine's page on one side only.
 $scenarios['http:canonical-move']['follow'] = false;
+// Signup and activation send a single site to registration: the move is the scenario, as above.
+$scenarios['http:signup']['follow'] = false;
+$scenarios['http:activate']['follow'] = false;
 foreach (['front-home' => '/', 'front-single' => '/hello-world/', 'rest-me' => '/?rest_route=/wp/v2/users/me', 'rest-settings' => '/?rest_route=/wp/v2/settings', 'rest-posts-edit' => '/?rest_route=/wp/v2/posts&context=edit', 'ajax' => '/wp-admin/admin-ajax.php?action=minn_hook_parity'] as $name => $path) {
     $scenarios["http:admin-{$name}"] = ['path' => $path, 'signedIn' => true];
 }

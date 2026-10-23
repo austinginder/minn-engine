@@ -613,7 +613,7 @@ add_action('do_feed_rdf', 'do_feed_rdf', 10, 0);
 add_action('do_feed_rss', 'do_feed_rss', 10, 0);
 add_action('do_feed_rss2', 'do_feed_rss2', 10, 1);
 add_action('do_feed_atom', 'do_feed_atom', 10, 1);
-foreach (['rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head'] as $minnFeedHead) {
+foreach (['rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head', 'opml_head'] as $minnFeedHead) {
     add_action($minnFeedHead, 'the_generator');
 }
 add_action('rss2_head', 'rss2_site_icon');

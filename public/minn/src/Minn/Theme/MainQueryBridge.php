@@ -35,11 +35,34 @@ final readonly class MainQueryBridge
 
     /**
      * The page of posts a resolution shows, through the runtime's main
-     * query; the variables a request adds of its own (a feed's) win.
+     * query, then template_redirect, as a page the theme draws stands; the
+     * variables a request adds of its own (a feed's) win.
      *
      * @param array<string, mixed> $extra
      */
     public function stand(Resolution $resolution, array $extra = []): Page
+    {
+        $done = Runtime::current()->get('front_lifecycle') === true;
+        $page = $this->run($resolution, $extra);
+        if ($done) {
+            return $page;
+        }
+        Runtime::hooks()->action('template_redirect', []);
+        // A HEAD request ends once template_redirect has had its say, unless a plugin wants the page built (exit_on_http_head).
+        if (Runtime::current()->request?->method === Method::Head && Runtime::hooks()->filter('exit_on_http_head', [true])) {
+            throw new Printed();
+        }
+        return $page;
+    }
+
+    /**
+     * The main query alone, as the reference's wp() runs it for a script
+     * that draws no template (signup, trackback): the request parsed, the
+     * query run, the headers sent, then the wp action.
+     *
+     * @param array<string, mixed> $extra
+     */
+    public function run(Resolution $resolution, array $extra = []): Page
     {
         // The steps run once a request: a page rendered after a handler declined it (a sitemap that is a 404) stands on that query.
         if (Runtime::current()->get('front_lifecycle') === true) {
@@ -77,11 +100,6 @@ final readonly class MainQueryBridge
         Runtime::current()->set('front_lifecycle', true);
         Runtime::current()->set('main_query_page', $page);
         Runtime::hooks()->action('wp', [$wp]);
-        Runtime::hooks()->action('template_redirect', []);
-        // A HEAD request ends once template_redirect has had its say, unless a plugin wants the page built (exit_on_http_head).
-        if (Runtime::current()->request?->method === Method::Head && Runtime::hooks()->filter('exit_on_http_head', [true])) {
-            throw new Printed();
-        }
         return $page;
     }
 

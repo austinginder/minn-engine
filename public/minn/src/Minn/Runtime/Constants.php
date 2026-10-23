@@ -81,6 +81,10 @@ final class Constants
         if ($runtime->request?->path === '/wp-cron.php') {
             $computed['DOING_CRON'] = true;
         }
+        // wp-activate.php declares an install under way before anything loads: no plugin of the site's loads for it.
+        if ($runtime->request?->path === '/wp-activate.php') {
+            $computed['WP_INSTALLING'] = true;
+        }
         // admin-ajax.php (and async-upload.php's upload) declares DOING_AJAX
         // before anything loads, so plugins know it is no page view; the
         // runtime is booted as an admin request for it, which WP_ADMIN above

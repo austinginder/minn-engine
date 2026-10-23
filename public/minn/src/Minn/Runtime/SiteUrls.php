@@ -70,6 +70,12 @@ final class SiteUrls
         return (string) Runtime::hooks()->filter('site_url', [self::joined($site, $path), $path, $scheme, $blogId]);
     }
 
+    /** Where registration starts (wp_registration_url): the sign-in page's register action, through register_url. */
+    public static function registration(): mixed
+    {
+        return Runtime::hooks()->filter('register_url', [self::site('wp-login.php?action=register', 'login')]);
+    }
+
     /** An address in the admin (get_admin_url, admin_url). */
     public static function admin(mixed $path = '', mixed $scheme = 'admin', mixed $blogId = null): string
     {

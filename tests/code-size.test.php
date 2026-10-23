@@ -68,7 +68,8 @@ $ids = array_column($minn['components'] ?? [], 'id');
 foreach (['engine', 'facade', 'admin-php', 'admin-app'] as $id) {
     $check(in_array($id, $ids, true), "Minn has the $id row");
 }
-$check(($wordpress['totals']['lines'] ?? 0) > 5 * ($minn['totals']['lines'] ?? 1), 'WordPress is several times the size of Minn', number_format((int) ($wordpress['totals']['lines'] ?? 0)) . ' vs ' . number_format((int) ($minn['totals']['lines'] ?? 0)));
+// Four times, since the report counts the whole Minn Admin plugin a release bundles (0.1.0: 4.5 times).
+$check(($wordpress['totals']['lines'] ?? 0) > 4 * ($minn['totals']['lines'] ?? 1), 'WordPress is several times the size of Minn', number_format((int) ($wordpress['totals']['lines'] ?? 0)) . ' vs ' . number_format((int) ($minn['totals']['lines'] ?? 0)));
 $ratio = static fn (int $a, int $b): float => $b === 0 ? 0.0 : round($a / $b, 1);
 $check($ratio(1500, 1000) === 1.5 && $ratio(1, 0) === 0.0, 'ratio rounds to one decimal and survives zero');
 

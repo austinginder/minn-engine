@@ -21,7 +21,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 136 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 154 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 218 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 78 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
@@ -719,7 +719,7 @@ on the reference, and the page stands empty.
 
 - const `LISTINGS` = `array (   0 =>    \Minn\Front\Kind::Home,   1 =>    \Minn\Front\Kind::Category,   2 =>    \Minn\Front\Kind::Tag,   3 =>    \Minn\Front\Kind::Taxonomy,   4 =>    \Minn\Front\Kind::PostTypeArchive,   5 =>    \Minn\Front\Kind::Author,   6 =>    \Minn\Front\Kind::Date,   7 =>    \Minn\Front\Kind::Search, )`
 
-Used by: `Minn\Engine`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\EntryScriptsController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(int $perPage)
@@ -729,7 +729,16 @@ __construct(int $perPage)
 ### `stand(Minn\Front\Resolution $resolution, array $extra = array ( )): Minn\Content\Page`
 
 The page of posts a resolution shows, through the runtime's main
-query; the variables a request adds of its own (a feed's) win.
+query, then template_redirect, as a page the theme draws stands; the
+variables a request adds of its own (a feed's) win.
+
+- `@param array<string, mixed> $extra`
+
+### `run(Minn\Front\Resolution $resolution, array $extra = array ( )): Minn\Content\Page`
+
+The main query alone, as the reference's wp() runs it for a script
+that draws no template (signup, trackback): the request parsed, the
+query run, the headers sent, then the wp action.
 
 - `@param array<string, mixed> $extra`
 
@@ -743,7 +752,7 @@ vars it was asked under.
 
 Posts per page.
 
-Internals: `vars()` (private, line 113), `postVars()` (private, line 125), `queried()` (private, line 144), `seeded()` (private, line 157)
+Internals: `vars()` (private, line 131), `postVars()` (private, line 143), `queried()` (private, line 162), `seeded()` (private, line 175)
 
 
 ## NotModified
@@ -887,7 +896,7 @@ Raised once a WordPress handler has printed a whole response (a sitemap,
 a stylesheet) or sent a redirect, where the reference exits: the request
 ends there and the engine answers with what was printed.
 
-Used by: `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`, `Minn\Theme\MainQueryBridge`
+Used by: `Minn\Front\EntryScriptsController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`, `Minn\Theme\MainQueryBridge`
 
 
 ## QueryClasses

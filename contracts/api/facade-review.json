@@ -1844,12 +1844,6 @@
                 "why": "one field of get_bookmark through sanitize_bookmark_field",
                 "body": "efe20e3ad422"
             },
-            "get_bookmarks": {
-                "verdict": "move",
-                "to": "Minn\\Content\\Links",
-                "why": "the links query: defaults, a category by name, the engine's matching, its filter",
-                "body": "ae9e4c1e822e"
-            },
             "get_link": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -19450,12 +19444,6 @@
                 "reason": "compose",
                 "why": "get_term in category, its name or an empty string",
                 "body": "6e511f447273"
-            },
-            "get_categories": {
-                "verdict": "keep",
-                "reason": "compose",
-                "why": "get_terms by name after its get_categories_taxonomy filter and the type link back-compat, then _make_cat_compat on each term; an error answers an empty array",
-                "body": "e8dde5e46874"
             },
             "get_category": {
                 "verdict": "keep",

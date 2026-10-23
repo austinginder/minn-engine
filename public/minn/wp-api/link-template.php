@@ -89,7 +89,7 @@ function wp_logout_url($redirect = '')
 
 function wp_registration_url()
 {
-    return apply_filters('register_url', site_url('wp-login.php?action=register', 'login'));
+    return \Minn\Runtime\SiteUrls::registration();
 }
 
 function wp_lostpassword_url($redirect = '')

@@ -1,8 +1,11 @@
 <?php
 /**
  * Probe suite: feeds, sitemaps, robots.txt, xmlrpc, cron, the admin entry,
- * and the REST index, compared with the reference on status, content type,
- * and (for feeds and sitemaps) body after host and generator normalisation.
+ * the other stand-alone scripts (links OPML, post by email, signup,
+ * activation, trackback), and the REST index, compared with the reference on
+ * status, content type, and body after host and generator normalisation.
+ * The links OPML is compared again live with links on the site (made on the
+ * reference, which shares the database, and removed after).
  * Pinned copies in contracts/fixtures/probes/; re-capture with --capture.
  */
 require_once __DIR__ . '/lib.php';
@@ -35,6 +38,11 @@ $probes = [
     '/robots.txt' => [200, 'text/plain', true],
     '/xmlrpc.php' => [405, 'text/plain', true],
     '/wp-cron.php' => [200, 'text/html', true],
+    '/wp-links-opml.php' => [200, 'text/xml', true],
+    '/wp-mail.php' => [403, 'text/html', true],
+    '/wp-signup.php' => [302, '', false],
+    '/wp-activate.php' => [302, '', false],
+    '/wp-trackback.php' => [404, 'text/xml', true],
     '/wp-admin/' => [302, '', false],
     '/wp-json/' => [200, 'application/json', false],
 ];
@@ -59,6 +67,7 @@ function probe_normalise(string $body, string $host, string $engine): string
 {
     $body = str_replace([$host, str_replace('https://', 'http://', $engine)], $engine, $body);
     $body = preg_replace('/(\?v=|version=")[0-9.]+/', '${1}X', $body);
+    $body = preg_replace('#<dateCreated>[^<]*</dateCreated>#', '<dateCreated>X</dateCreated>', $body);
     $body = preg_replace('/(wp-container-core-[a-z-]+-is-layout-)[0-9a-f]{8}/', '$1HASH', $body);
     $body = preg_replace('/wp-block-search__input-\d+/', 'wp-block-search__input-N', $body);
     return preg_replace('/(wp-block-gallery-|is-style-[a-z-]+--)\d+/', '$1N', $body);
@@ -140,6 +149,54 @@ if ($live) {
     }
     [$status, , $body] = probe_fetch($ENGINE, '/wp-json/nope/v9');
     $check($status === 404 && str_contains((string) $body, 'rest_no_route'), 'an unknown namespace index is no-route');
+
+    // Signup and activation send a single site to registration, where the reference sends it.
+    foreach (['/wp-signup.php', '/wp-activate.php'] as $path) {
+        $ours = probe_location($ENGINE, $path);
+        $check($ours !== '' && $ours === probe_location($REF, $path), "$path redirects where the reference does", $ours);
+    }
+
+    // The links OPML with links on the site: categories by name, an empty one left out, one whose only link
+    // is hidden kept with nothing in it, a zero updated date printed empty, and link_cat read as a whole number.
+    $wp = '/opt/homebrew/bin/wp --skip-plugins --skip-themes --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference');
+    $made = json_decode((string) shell_exec($wp . ' eval ' . escapeshellarg(<<<'PHP'
+        $friends = wp_insert_term('Zz Probes Friends', 'link_category');
+        $hidden = wp_insert_term('Mm Probes Hidden', 'link_category');
+        $empty = wp_insert_term('Aa Probes Empty', 'link_category');
+        $terms = array_map(static fn ($t) => is_array($t) ? (int) $t['term_id'] : 0, [$friends, $hidden, $empty]);
+        $links = [
+            wp_insert_link(['link_url' => 'https://a.example.com/', 'link_name' => 'Alpha & <Co>', 'link_rss' => 'https://a.example.com/feed/', 'link_category' => [$terms[0]]]),
+            wp_insert_link(['link_url' => 'https://b.example.com/', 'link_name' => 'Beta "quoted"', 'link_category' => [$terms[0]]]),
+            wp_insert_link(['link_url' => 'https://h.example.com/', 'link_name' => 'Hidden', 'link_visible' => 'N', 'link_category' => [$terms[1]]]),
+        ];
+        global $wpdb;
+        $wpdb->update($wpdb->links, ['link_updated' => '0000-00-00 00:00:00'], ['link_id' => $links[1]]);
+        echo json_encode(['terms' => $terms, 'links' => $links]);
+        PHP) . ' 2>/dev/null'), true);
+    register_shutdown_function(static function () use ($wp, $made): void {
+        $links = array_values(array_filter((array) ($made['links'] ?? []), static fn ($id) => is_int($id) && $id > 1));
+        $terms = array_values(array_filter((array) ($made['terms'] ?? []), static fn ($id) => is_int($id) && $id > 1));
+        shell_exec($wp . ' eval ' . escapeshellarg('foreach (' . var_export($links, true) . ' as $id) { wp_delete_link($id); } foreach (' . var_export($terms, true) . ' as $id) { wp_delete_term($id, "link_category"); }') . ' 2>/dev/null');
+    });
+    $friends = (int) ($made['terms'][0] ?? 0);
+    $check($friends > 1 && count(array_filter((array) ($made['links'] ?? []))) === 3, 'links made on the reference for the OPML comparison', json_encode($made));
+    foreach (['', "?link_cat={$friends}", "?link_cat=-{$friends}x", '?link_cat=abc', '?link_cat=all'] as $query) {
+        $ours = probe_normalise(probe_fetch($ENGINE, '/wp-links-opml.php' . $query)[2], $REF, $ENGINE);
+        $theirs = probe_normalise(probe_fetch($REF, '/wp-links-opml.php' . $query)[2], $REF, $ENGINE);
+        $check(str_contains($theirs, 'Zz Probes Friends') === ($query !== '?link_cat=all') && $ours === $theirs, "links OPML with links ({$query}) matches the reference", $firstDiff($ours, $theirs));
+    }
+}
+
+function probe_location(string $base, string $path): string
+{
+    $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false], 'http' => ['ignore_errors' => true, 'timeout' => 20, 'follow_location' => 0]]);
+    @file_get_contents($base . $path, false, $context);
+    foreach ($http_response_header ?? [] as $header) {
+        if (stripos($header, 'Location:') === 0) {
+            return trim(substr($header, 9));
+        }
+    }
+    return '';
 }
 echo "\n$pass passed, $fail failed\n";
 exit($fail === 0 ? 0 : 1);

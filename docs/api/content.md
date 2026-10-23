@@ -569,6 +569,8 @@ is known), ascending unless told otherwise.
 - const `FIELDS` = `array (   0 => 'link_id',   1 => 'link_url',   2 => 'link_name',   3 => 'link_image',   4 => 'link_target',   5 => 'link_description',   6 => 'link_visible',   7 => 'link_owner',   8 => 'link_rating',   9 => 'link_updated',   10 => 'link_rel',   11 => 'link_notes',   12 => 'link_rss', )` — The columns a link row holds, in the table's order.
 - const `ORDERS` = `array (   'name' => 'link_name',   'url' => 'link_url',   'rating' => 'link_rating',   'id' => 'link_id',   'owner' => 'link_owner',   'visible' => 'link_visible',   'updated' => 'link_updated',   'notes' => 'link_notes',   'description' => 'link_description',   'rel' => 'link_rel',   'target' => 'link_target',   'image' => 'link_image',   'rss' => 'link_rss',   'length' => 'length',   'rand' => 'RAND()', )`
 
+Used by: `Minn\Runtime\Bookmarks`
+
 ```php
 __construct(Minn\Db $db)
 ```

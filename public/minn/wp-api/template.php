@@ -373,7 +373,7 @@ function wp_make_link_relative($link)
 
 function esc_xml($text)
 {
-    return apply_filters('esc_xml', Minn\Support\Escape::xml(wp_check_invalid_utf8((string) $text)), $text);
+    return \Minn\Support\Escape::forXml($text);
 }
 
 function sanitize_hex_color($color)

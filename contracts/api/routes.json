@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 289,
-    "withPolicy": 283,
+    "routes": 294,
+    "withPolicy": 288,
     "entries": [
         {
             "method": "GET",
@@ -1691,6 +1691,76 @@
             "name": "Minn\\Front\\CommentPostController::post",
             "handler": "Minn\\Front\\CommentPostController::post",
             "summary": "The comment form's target.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "*",
+            "pattern": "/wp-links-opml.php",
+            "name": "Minn\\Front\\EntryScriptsController::linksOpml",
+            "handler": "Minn\\Front\\EntryScriptsController::linksOpml",
+            "summary": "wp-links-opml.php: the site's links as OPML.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "*",
+            "pattern": "/wp-mail.php",
+            "name": "Minn\\Front\\EntryScriptsController::mail",
+            "handler": "Minn\\Front\\EntryScriptsController::mail",
+            "summary": "wp-mail.php: post by email.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "*",
+            "pattern": "/wp-signup.php",
+            "name": "Minn\\Front\\EntryScriptsController::signup",
+            "handler": "Minn\\Front\\EntryScriptsController::signup",
+            "summary": "wp-signup.php and wp-activate.php: a single site sends both to registration.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "*",
+            "pattern": "/wp-activate.php",
+            "name": "Minn\\Front\\EntryScriptsController::signup",
+            "handler": "Minn\\Front\\EntryScriptsController::signup",
+            "summary": "wp-signup.php and wp-activate.php: a single site sends both to registration.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "*",
+            "pattern": "/wp-trackback.php",
+            "name": "Minn\\Front\\EntryScriptsController::trackback",
+            "handler": "Minn\\Front\\EntryScriptsController::trackback",
+            "summary": "wp-trackback.php asked directly: the address names no post, so the answer is the reference's \"need an ID\".",
             "policy": {
                 "access": "Public",
                 "describe": "public"

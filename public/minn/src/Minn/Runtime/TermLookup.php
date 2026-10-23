@@ -8,6 +8,7 @@ use Closure;
 use Minn\Content\RowCache;
 use Minn\Content\TermRecord;
 use Minn\I18n\Gettext;
+use Minn\Objects\Errors;
 use Minn\Objects\Term;
 use Minn\Support\Lists;
 use Minn\Support\Sanitize;
@@ -58,6 +59,32 @@ final class TermLookup
             return $terms;
         }
         return Runtime::hooks()->filter('get_terms', [$terms, $query->query_vars['taxonomy'], $query->query_vars, $query]);
+    }
+
+    /**
+     * Categories, or another taxonomy's terms (get_categories): the terms
+     * query through get_categories_taxonomy, the old type => link argument
+     * noted as deprecated and read as the link categories, each term given
+     * the old category fields; none when the query is refused.
+     */
+    public static function categories(mixed $args = ''): mixed
+    {
+        $args = Lists::args($args, ['taxonomy' => 'category']);
+        $args['taxonomy'] = Runtime::hooks()->filter('get_categories_taxonomy', [$args['taxonomy'], $args]);
+        if (($args['type'] ?? '') === 'link') {
+            Notices::deprecated('argument', 'get_categories', '3.0.0', sprintf(Gettext::text('%1$s is deprecated. Use %2$s instead.'), '<code>type => link</code>', '<code>taxonomy => link_category</code>'));
+            $args['taxonomy'] = 'link_category';
+        }
+        $terms = self::terms($args);
+        if ($terms instanceof Errors) {
+            return [];
+        }
+        foreach ($terms as $term) {
+            if ($term instanceof Term) {
+                TermTags::categoryFields($term);
+            }
+        }
+        return $terms;
     }
 
     /**

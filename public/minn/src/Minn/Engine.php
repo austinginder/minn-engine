@@ -51,6 +51,7 @@ use Minn\Auth\PasswordReset;
 use Minn\Cron\Cron;
 use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
+use Minn\Front\EntryScriptsController;
 use Minn\Extension\Extensions;
 use Minn\Runtime\AjaxController;
 use Minn\Runtime\DebugMode;
@@ -401,6 +402,7 @@ final readonly class Engine
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
             $sitemapController,
             new CommentPostController(),
+            new EntryScriptsController($resolver, $bridge),
             $front,
         );
         $response = (new Kernel($router))->handle($request);

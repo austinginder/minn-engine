@@ -475,7 +475,12 @@
         "probe:filesystem-credentials-constants",
         "probe:block-class-stages",
         "probe:auth-redirect-ssl",
-        "probe:sweep-1022"
+        "probe:sweep-1022",
+        "http:links-opml",
+        "http:post-by-email",
+        "http:signup",
+        "http:activate",
+        "http:trackback-direct"
     ],
     "hooks": {
         "_get_page_link": {
@@ -817,6 +822,7 @@
             "probe:sweep-1020": "not fired"
         },
         "attribute_escape": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -835,8 +841,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-class-stages": "not fired",
             "probe:block-hooks": "not fired",
@@ -966,6 +974,7 @@
             "probe:theme-json-presets": "not fired"
         },
         "block_type_metadata": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -987,10 +996,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -1001,12 +1012,15 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:boot-defaults": "not fired",
             "probe:core-blocks": "not fired"
         },
         "block_type_metadata_settings": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -1028,10 +1042,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -1042,8 +1058,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:boot-defaults": "not fired",
             "probe:core-blocks": "not fired"
         },
@@ -1911,6 +1929,7 @@
             "probe:wpdb": "not fired"
         },
         "current_theme_supports-{*}": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -1922,10 +1941,12 @@
             "http:comment-empty": "not fired",
             "http:feed": "not fired",
             "http:feed-comments": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -1936,8 +1957,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:audit-lows": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:nav-pomo-rest-doubts": "not fired",
@@ -2002,6 +2025,7 @@
             "probe:media": "not fired"
         },
         "default_option_{*}": {
+            "http:activate": "not fired",
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
             "probe:av-shortcodes": "not fired",
@@ -2798,6 +2822,7 @@
             "probe:symbols": "not fired"
         },
         "esc_html": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -2810,6 +2835,7 @@
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -2820,8 +2846,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:abilities-classes": "not fired",
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
@@ -2900,10 +2928,14 @@
             "probe:rest-template-create": "not fired"
         },
         "expiration_of_site_transient_{*}": {
+            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:sweep-1022": "not fired",
             "probe:template-loading": "not fired",
             "probe:wp-theme": "not fired"
+        },
+        "expiration_of_transient_{*}": {
+            "http:activate": "not fired"
         },
         "ext2type": {
             "probe:plugin-symbols3": "not fired"
@@ -2943,10 +2975,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -2957,8 +2991,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
+            "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired"
         },
         "file_mod_allowed": {
             "probe:nav-pomo-rest-doubts": "not fired"
@@ -3102,6 +3138,7 @@
             "probe:rest-embed-details": "fired here only"
         },
         "get_available_languages": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -3120,13 +3157,17 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:abilities-lookup": "not fired",
             "probe:embed-remaining": "not fired",
             "probe:plugin-helpers": "not fired"
@@ -4837,6 +4878,7 @@
             "probe:rest-widgets": "not fired"
         },
         "includes_url": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -4846,6 +4888,8 @@
             "http:canonical-move": "not fired",
             "http:comment-empty": "not fired",
             "http:feed-comments": "not fired",
+            "http:links-opml": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -4853,8 +4897,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:script-modules": "not fired"
         },
         "index_template_hierarchy": {
@@ -5163,10 +5209,12 @@
             "http:ajax": "not fired",
             "http:ajax-heartbeat": "not fired",
             "http:comment-empty": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -5469,6 +5517,7 @@
             "probe:widgets-more": "not fired"
         },
         "lang_dir_for_domain": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -5490,10 +5539,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -5504,8 +5555,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:blocks": "not fired",
             "probe:functions": "not fired",
             "probe:l10n": "not fired",
@@ -11085,6 +11138,7 @@
             "probe:widget-factory": "not fired"
         },
         "pre_get_language_files_from_path": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -11106,10 +11160,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -11120,8 +11176,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:abilities-lookup": "not fired",
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
@@ -11919,10 +11977,14 @@
             "probe:rest-terms-for-post": "not fired"
         },
         "pre_set_site_transient_{*}": {
+            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:sweep-1022": "not fired",
             "probe:template-loading": "not fired",
             "probe:wp-theme": "not fired"
+        },
+        "pre_set_transient_{*}": {
+            "http:activate": "not fired"
         },
         "pre_site_option": {
             "probe:av-shortcodes": "not fired",
@@ -12177,6 +12239,7 @@
             "probe:wp-theme": "not fired"
         },
         "pre_transient_{*}": {
+            "http:activate": "not fired",
             "http:admin-front-home": "not fired",
             "http:admin-front-single": "not fired",
             "http:admin-rest-me": "not fired",
@@ -12194,10 +12257,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -12208,8 +12273,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-supports": "not fired",
             "probe:media": "not fired",
             "probe:plugin-uninstall": "not fired",
@@ -12513,6 +12580,7 @@
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
             "probe:account-flows": "not fired",
@@ -12644,6 +12712,7 @@
             "probe:rest-media-save": "not fired"
         },
         "recovery_mode_email_link_ttl": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -12665,10 +12734,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -12679,10 +12750,13 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
+            "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired"
         },
         "recovery_mode_email_rate_limit": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -12704,10 +12778,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -12718,8 +12794,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
+            "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired"
         },
         "register_block_type_args": {
             "probe:boot-defaults": "fired here only",
@@ -13532,14 +13610,19 @@
             "http:ajax-heartbeat": "not fired"
         },
         "rest_url_prefix": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:ajax": "not fired",
             "http:ajax-heartbeat": "not fired",
             "http:canonical-move": "not fired",
             "http:comment-empty": "not fired",
+            "http:links-opml": "not fired",
+            "http:post-by-email": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
+            "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired"
         },
         "rest_user_collection_params": {
             "probe:abilities-lookup": "not fired",
@@ -13863,6 +13946,7 @@
             "probe:wp-theme": "not fired"
         },
         "sanitize_text_field": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -13872,10 +13956,12 @@
             "http:ajax-heartbeat": "not fired",
             "http:canonical-move": "not fired",
             "http:comment-empty": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -13885,6 +13971,8 @@
             "http:rest-search": "not fired",
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
+            "http:signup": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-class-stages": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -13945,10 +14033,12 @@
             "http:comment-empty": "not fired",
             "http:feed": "not fired",
             "http:feed-comments": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -14321,12 +14411,20 @@
             "probe:tail-helpers": "not fired"
         },
         "set_site_transient": {
+            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:template-loading": "not fired"
         },
         "set_site_transient_{*}": {
+            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:template-loading": "not fired"
+        },
+        "set_transient": {
+            "http:activate": "not fired"
+        },
+        "set_transient_{*}": {
+            "http:activate": "not fired"
         },
         "set_url_scheme": {
             "probe:content-img-tag": "not fired",
@@ -14342,8 +14440,12 @@
             "probe:user-insert-filters": "fired here only"
         },
         "setted_site_transient": {
+            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:template-loading": "not fired"
+        },
+        "setted_transient": {
+            "http:activate": "not fired"
         },
         "shake_error_codes": {
             "http:login": "not fired",
@@ -14364,6 +14466,7 @@
             "probe:rest-block-patterns-controller": "not fired"
         },
         "should_load_separate_core_block_assets": {
+            "http:activate": "not fired",
             "http:admin-front-home": "not fired",
             "http:admin-front-single": "not fired",
             "http:admin-rest-me": "not fired",
@@ -14381,10 +14484,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -14395,8 +14500,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-supports": "not fired",
             "probe:core-blocks": "not fired",
             "probe:dependencies-classes": "not fired",
@@ -14763,6 +14870,7 @@
             "probe:widgets": "fired here only"
         },
         "stylesheet_directory": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -14772,10 +14880,12 @@
             "http:canonical-move": "not fired",
             "http:comment-empty": "not fired",
             "http:feed-comments": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -14785,8 +14895,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-renderers": "fired here only",
             "probe:breadcrumbs": "not fired",
             "probe:comment-blocks": "not fired",
@@ -14885,6 +14997,7 @@
             "probe:post-remaining": "not fired"
         },
         "template": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -14896,10 +15009,12 @@
             "http:comment-empty": "not fired",
             "http:feed": "not fired",
             "http:feed-comments": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -14910,8 +15025,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-class-stages": "not fired",
             "probe:block-renderers": "fired here only",
@@ -14972,6 +15089,7 @@
             "probe:widgets": "fired here only"
         },
         "template_directory": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-rest-me": "not fired",
@@ -14983,10 +15101,12 @@
             "http:comment-empty": "not fired",
             "http:feed": "not fired",
             "http:feed-comments": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -14997,8 +15117,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-class-stages": "not fired",
             "probe:block-renderers": "fired here only",
@@ -15434,7 +15556,11 @@
             "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
+        "theme_block_pattern_files": {
+            "http:activate": "not fired"
+        },
         "theme_file_path": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -15456,10 +15582,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -15470,8 +15598,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-class-stages": "not fired",
             "probe:block-hooks": "not fired",
@@ -15639,6 +15769,7 @@
             "probe:taxonomy-blocks-user-doubts": "fired here only"
         },
         "theme_scandir_exclusions": {
+            "http:activate": "not fired",
             "probe:hook-inputs-2": "not fired",
             "probe:theme-caches": "not fired"
         },
@@ -15648,6 +15779,7 @@
             "probe:rest-template-create": "not fired"
         },
         "transient_{*}": {
+            "http:activate": "not fired",
             "http:admin-front-home": "not fired",
             "http:admin-front-single": "not fired",
             "http:admin-rest-me": "not fired",
@@ -15665,10 +15797,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -15679,8 +15813,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:block-supports": "not fired",
             "probe:media": "not fired",
             "probe:plugin-uninstall": "not fired",
@@ -16045,6 +16181,7 @@
             "probe:wp-user-query-sql": "not fired"
         },
         "wp_allowed_block_metadata_collection_roots": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -16066,10 +16203,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -16080,8 +16219,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
+            "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired"
         },
         "wp_audio_shortcode_library": {
             "http:admin-ajax": "not fired",
@@ -16286,6 +16427,7 @@
             "http:front-single": "not fired"
         },
         "wp_cache_set_last_changed": {
+            "http:activate": "not fired",
             "http:admin-front-home": "not fired",
             "http:admin-front-single": "not fired",
             "http:admin-rest-posts-edit": "not fired",
@@ -16300,6 +16442,7 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-pages": "not fired",
@@ -16308,8 +16451,10 @@
             "http:rest-search": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
@@ -16779,11 +16924,14 @@
             "probe:front-query": "not fired"
         },
         "wp_default_scripts": {
+            "http:activate": "fired here only",
             "http:admin-rest-me": "fired here only",
             "http:admin-rest-settings": "fired here only",
             "http:canonical-move": "fired here only",
             "http:comment-empty": "fired here only",
             "http:feed-comments": "fired here only",
+            "http:links-opml": "fired here only",
+            "http:post-by-email": "fired here only",
             "http:rest-categories": "fired here only",
             "http:rest-comments": "fired here only",
             "http:rest-index": "fired here only",
@@ -16791,8 +16939,10 @@
             "http:rest-types": "fired here only",
             "http:rest-users": "fired here only",
             "http:robots": "fired here only",
+            "http:signup": "fired here only",
             "http:sitemap-index": "fired here only",
             "http:sitemap-posts": "fired here only",
+            "http:trackback-direct": "fired here only",
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-doubts": "not fired",
@@ -17061,6 +17211,7 @@
             "probe:wp-query-sql": "not fired"
         },
         "wp_fatal_error_handler_enabled": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -17082,10 +17233,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -17096,8 +17249,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
+            "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired"
         },
         "wp_filesize": {
             "http:admin-front-home": "not fired",
@@ -17354,6 +17509,7 @@
             "probe:functions-formatting-doubts": "not fired"
         },
         "wp_is_application_passwords_available": {
+            "http:activate": "not fired",
             "http:ajax": "not fired",
             "http:ajax-heartbeat": "not fired",
             "http:canonical-move": "not fired",
@@ -17368,10 +17524,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-pages": "not fired",
@@ -17381,8 +17539,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:audit-lows": "fired here only",
             "probe:namespaced-type": "fired here only",
             "probe:nav-pomo-rest-doubts": "fired here only",
@@ -17425,6 +17585,7 @@
             "probe:symbols": "not fired"
         },
         "wp_is_rest_endpoint": {
+            "http:activate": "not fired",
             "http:admin-rest-me": "not fired",
             "http:admin-rest-posts-edit": "not fired",
             "http:admin-rest-settings": "not fired",
@@ -17433,10 +17594,12 @@
             "http:feed": "not fired",
             "http:feed-comments": "not fired",
             "http:front-embed": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -17447,8 +17610,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:core-blocks": "not fired",
             "probe:dependencies-classes": "not fired",
             "probe:editor-styles": "not fired",
@@ -17830,6 +17995,7 @@
             "http:comment-empty": "not fired"
         },
         "wp_roles_init": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -17851,10 +18017,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -17865,8 +18033,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:rest-user-lists": "not fired",
             "probe:wp-user-query-sql": "not fired"
         },
@@ -18131,6 +18301,7 @@
             "probe:theme-remaining": "not fired"
         },
         "wp_spaces_regexp": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -18152,10 +18323,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -18166,8 +18339,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:plugin-queue2": "fired here only"
         },
         "wp_sprintf": {
@@ -18237,6 +18412,7 @@
             "probe:widgets": "not fired"
         },
         "wp_supports_ai": {
+            "http:activate": "not fired",
             "http:admin-ajax": "not fired",
             "http:admin-ajax-heartbeat": "not fired",
             "http:admin-front-home": "not fired",
@@ -18258,10 +18434,12 @@
             "http:front-page": "not fired",
             "http:front-search": "not fired",
             "http:front-single": "not fired",
+            "http:links-opml": "not fired",
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "http:post-by-email": "not fired",
             "http:rest-categories": "not fired",
             "http:rest-comments": "not fired",
             "http:rest-index": "not fired",
@@ -18272,8 +18450,10 @@
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "http:trackback-direct": "not fired",
             "probe:ai-client-prompt": "not fired",
             "probe:boot-defaults": "not fired",
             "probe:connector-defaults": "not fired",
@@ -18297,6 +18477,7 @@
             "http:front-embed": "not fired"
         },
         "wp_theme_files_cache_ttl": {
+            "http:activate": "not fired",
             "probe:wp-theme": "not fired"
         },
         "wp_theme_json_data_blocks": {
@@ -18400,6 +18581,7 @@
             "probe:template-part-lookup": "not fired"
         },
         "wp_theme_json_data_theme": {
+            "http:activate": "fired here only",
             "http:admin-ajax": "fired here only",
             "http:admin-ajax-heartbeat": "fired here only",
             "http:admin-rest-me": "fired here only",
@@ -18410,10 +18592,12 @@
             "http:comment-empty": "fired here only",
             "http:feed-comments": "fired here only",
             "http:front-embed": "fired here only",
+            "http:links-opml": "fired here only",
             "http:login": "fired here only",
             "http:login-lost": "fired here only",
             "http:login-refused": "fired here only",
             "http:lostpassword-nobody": "fired here only",
+            "http:post-by-email": "fired here only",
             "http:rest-categories": "fired here only",
             "http:rest-comments": "fired here only",
             "http:rest-index": "fired here only",
@@ -18422,8 +18606,10 @@
             "http:rest-types": "fired here only",
             "http:rest-users": "fired here only",
             "http:robots": "fired here only",
+            "http:signup": "fired here only",
             "http:sitemap-index": "fired here only",
             "http:sitemap-posts": "fired here only",
+            "http:trackback-direct": "fired here only",
             "probe:block-class-stages": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:comment-blocks": "not fired",
@@ -18601,6 +18787,7 @@
             "probe:rest-template-create": "not fired"
         },
         "wp_using_themes": {
+            "http:activate": "not fired",
             "http:admin-front-home": "not fired",
             "http:admin-front-single": "not fired",
             "http:canonical-move": "not fired",
@@ -18615,6 +18802,7 @@
             "http:front-search": "not fired",
             "http:front-single": "not fired",
             "http:robots": "not fired",
+            "http:signup": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired"
         },

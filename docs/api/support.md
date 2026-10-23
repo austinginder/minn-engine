@@ -10,7 +10,7 @@ escaping, serialized readers, small helpers
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 89 | HTML special-character encoding with the reference's quote styles and its |
-| [`Escape`](#escape) | final class | 128 | Text made safe the way WordPress's escapers make it, each ending in the |
+| [`Escape`](#escape) | final class | 134 | Text made safe the way WordPress's escapers make it, each ending in the |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 146 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
@@ -186,7 +186,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Ops\FilesystemCredentials`, `Minn\Rest\FontSettings`, `Minn\Rest\FontWritesController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\WpdbReads`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\EntryScriptsController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\LinksOpml`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Ops\FilesystemCredentials`, `Minn\Rest\FontSettings`, `Minn\Rest\FontWritesController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\WpdbReads`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -226,14 +226,18 @@ The specials encoded in the given quote style (_wp_specialchars),
 references already present normalised the way kses normalises them
 rather than encoded again.
 
+### static `forXml(mixed $text): mixed`
+
+Text for XML (esc_xml): invalid UTF-8 emptied, the specials encoded outside CDATA sections, through esc_xml.
+
 ### static `xml(string $text): string`
 
-Text for an XML document (esc_xml): named references XML lacks are
+Text for an XML document (what esc_xml filters): named references XML lacks are
 decoded (or their ampersand escaped), a bare ampersand and the four
 specials encoded, and CDATA sections left exactly as written (probe
 media-template-doubts).
 
-Internals: `xmlText()` (private, line 113), `xmlCharacter()` (private, line 137), `encoded()` (private, line 142)
+Internals: `xmlText()` (private, line 119), `xmlCharacter()` (private, line 143), `encoded()` (private, line 148)
 
 
 ## FileHeaders
@@ -786,7 +790,7 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\PluginsController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\SearchController`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DieInput`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Runtime\WpdbReads`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\PluginsController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\SearchController`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\Bookmarks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DieInput`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Runtime\WpdbReads`, `Minn\Theme\HeadLinks`
 
 
 ### static `filterParsed(?Closure $filter): void`
