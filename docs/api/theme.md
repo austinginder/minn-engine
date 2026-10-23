@@ -24,7 +24,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 154 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 218 | A whole page from the active block theme: the template the resolution |
-| [`PatternHeaders`](#patternheaders) | final class | 78 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
+| [`PatternHeaders`](#patternheaders) | final class | 54 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 234 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
@@ -834,18 +834,6 @@ commas and whitespace. A file
 without a title and a slug is not a pattern.
 
 - const `LISTS` = `array (   'categories' => 'Categories',   'keywords' => 'Keywords',   'blockTypes' => 'Block Types',   'postTypes' => 'Post Types',   'templateTypes' => 'Template Types', )`
-
-### static `all(string $themeDir): array`
-
-The patterns directory's files by file name, in name order.
-
-- `@return array<string, array<string, mixed>>`
-
-### static `files(string $themeDir): array`
-
-The pattern files a theme ships, file name => path, in name order.
-
-- `@return array<string, string>`
 
 ### static `of(array $files): array`
 

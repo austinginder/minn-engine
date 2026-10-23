@@ -57,8 +57,9 @@ final readonly class Dashboard
             'canSetMetricDefaults' => $this->capabilities->can($userId, 'manage_options'),
             'chart' => $this->chart->bars($days, $now),
             'traffic' => null,
+            'sales' => null,
             'activity' => $this->feed->recent($userId, $now, $offset),
-            // No extension runtime yet: the store and traffic sections are honestly absent.
+            // No extension runtime yet: the store, its sales and the traffic sections are honestly absent.
             'store' => null,
             'greeting' => $hour < 12 ? 'Good morning' : ($hour < 17 ? 'Good afternoon' : 'Good evening'),
         ];

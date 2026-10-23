@@ -1,0 +1,66 @@
+[
+    [
+        "read first",
+        [
+            "en_US",
+            [
+                "pre_option_WPLANG",
+                "default_option_WPLANG",
+                "locale"
+            ],
+            "en_US"
+        ]
+    ],
+    [
+        "read again",
+        [
+            "en_US",
+            [
+                "locale"
+            ]
+        ]
+    ],
+    [
+        "a value already in the global",
+        [
+            "fr_FR",
+            [
+                "locale"
+            ]
+        ]
+    ],
+    [
+        "the global unset",
+        [
+            "en_US",
+            [
+                "pre_option_WPLANG",
+                "default_option_WPLANG",
+                "locale"
+            ],
+            "en_US"
+        ]
+    ],
+    [
+        "the locale filter changes the answer, not what is kept",
+        [
+            "en_US+marked",
+            "en_US+marked",
+            "en_US"
+        ]
+    ],
+    [
+        "a filter on the option",
+        [
+            "de_DE",
+            "de_DE"
+        ]
+    ],
+    [
+        "the WPLANG constant, then the option over it",
+        [
+            "nl_NL",
+            "de_DE"
+        ]
+    ]
+]

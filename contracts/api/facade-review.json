@@ -9682,8 +9682,8 @@
             "WP_Theme::get_block_patterns": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\PatternHeaders",
-                "why": "the patterns folder read through PatternHeaders and cached by stylesheet directory for wp_theme_files_cache_ttl, the version ending it early",
-                "body": "1aba09ae84bd"
+                "why": "the patterns folder walked to any depth (relative names, exclusions per folder), read through PatternHeaders and cached by stylesheet directory for wp_theme_files_cache_ttl, the version ending it early; probes theme-scans, hook-inputs-2",
+                "body": "18d06288e287"
             },
             "WP_Theme::get_block_template_folders": {
                 "verdict": "move",
@@ -9700,8 +9700,8 @@
             "WP_Theme::get_files": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\Folder",
-                "why": "the folder's files by type and depth, theme_scandir_exclusions heard, the parent's added when asked",
-                "body": "6a03ea8ce3a2"
+                "why": "the folder's files by type and depth, theme_scandir_exclusions heard at each folder entered, the parent's added when asked; probe theme-scans",
+                "body": "2a47f7545452"
             },
             "WP_Theme::get_page_templates": {
                 "verdict": "keep",
@@ -9742,11 +9742,8 @@
             "WP_Theme::scan": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\Folder",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "a recursive listing that skips dot entries and exclusions, filtered by extension",
-                "body": "98a483e7beef"
+                "why": "a recursive listing that skips dot entries and the folders theme_scandir_exclusions names, asked at each folder as the reference asks, filtered by extension; probe theme-scans",
+                "body": "bff06ec9fc28"
             }
         },
         "classes/WP_Translation_Controller.php": {

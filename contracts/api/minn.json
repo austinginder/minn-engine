@@ -2563,7 +2563,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Dashboard.php",
-            "lines": 273,
+            "lines": 274,
             "doc": "The overview payload: stat cards, the activity chart, and the recent\nactivity feed, plus the per-bar activity drill-down.",
             "implements": [],
             "extends": null,
@@ -2734,7 +2734,7 @@
                         }
                     ],
                     "line": 31,
-                    "end": 65
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -2771,8 +2771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 190
+                    "line": 173,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -2791,8 +2791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 213
+                    "line": 194,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -2825,8 +2825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 263
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -2854,8 +2854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 82
+                    "line": 69,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -2876,8 +2876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -2888,8 +2888,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -2917,8 +2917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 109
+                    "line": 97,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -2946,8 +2946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 116
+                    "line": 113,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -3008,8 +3008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 162
+                    "line": 131,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -3047,8 +3047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 257
+                    "line": 225,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -3069,8 +3069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 274
+                    "line": 267,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -3083,8 +3083,8 @@
                         "@return array{approved: int, moderated: int}"
                     ],
                     "params": [],
-                    "line": 277,
-                    "end": 288
+                    "line": 278,
+                    "end": 289
                 }
             ]
         },
@@ -76792,7 +76792,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/SiteLanguage.php",
-            "lines": 53,
+            "lines": 65,
             "doc": "The site's language as pages declare it: the locale in force (a switched\none first, then what the WPLANG option gives, through the locale filter) and the html element's dir and lang\nattributes, which a plugin may change through language_attributes.",
             "implements": [],
             "extends": null,
@@ -76832,11 +76832,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "configured(): string",
-                    "doc": "The locale the WPLANG option names (en_US when it names none), through the locale filter.",
+                    "doc": "The site's locale through the locale filter: the $locale global once\nset, else the WPLANG option read as get_option reads it (its filters\nincluded), the WPLANG constant when the option names none, then en_US,\nkept in the global unfiltered for the next ask (probe locale-reads).",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 36
+                    "line": 37,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -76847,8 +76847,8 @@
                     "doc": "The language tag pages carry: the locale in force (determine_locale; probe sweep-1020) with a hyphen, plain \"en\" read as en_US.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 43
+                    "line": 51,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -76859,8 +76859,8 @@
                     "doc": "Whether the site's language is written right to left (is_rtl).",
                     "shapes": [],
                     "params": [],
-                    "line": 46,
-                    "end": 50
+                    "line": 58,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -76879,8 +76879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 68
+                    "line": 65,
+                    "end": 80
                 }
             ]
         },
@@ -142391,16 +142391,19 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 119,
+            "lines": 135,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Json",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\EarlyRequest",
+                "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": null,
@@ -142460,7 +142463,27 @@
                         }
                     ],
                     "line": 50,
-                    "end": 114
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "cookies",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cookies(string $siteUrl): void",
+                    "doc": "The cookie hash and the cookie names made from it, for the site's\naddress: at boot, or while installing once the must-use plugins have\nloaded, from the address read as a site option (hook-parity\nhttp:activate hears pre_site_option_siteurl there).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "siteUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -142471,8 +142494,8 @@
                     "doc": "256M, unless PHP starts with no limit or a higher one, which is then\nkept as written (probe: the reference started at 128M, 300M, 1G, -1).",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 131
+                    "line": 136,
+                    "end": 147
                 }
             ]
         },
@@ -144446,6 +144469,7 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
+                "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": null,
@@ -145469,6 +145493,7 @@
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Themes",
+                "Minn\\Runtime\\Transients",
                 "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserCounts",
@@ -156784,7 +156809,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 274,
+            "lines": 277,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -156792,11 +156817,13 @@
                 "Minn\\Content\\Site",
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\ServeLogin",
+                "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteOptions",
                 "Minn\\Runtime\\Symbols",
                 "Minn\\Runtime\\Translations",
                 "Minn\\Support\\FileHeaders"
@@ -156805,6 +156832,7 @@
                 "Minn\\Cli\\Runtime",
                 "Minn\\Engine",
                 "Minn\\Extension\\Loader",
+                "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\PluginActivation",
                 "Minn\\Theme\\ClassicRenderer"
             ],
@@ -156882,8 +156910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 148
+                    "line": 141,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -156896,8 +156924,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 197,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -156910,8 +156938,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 204,
-                    "end": 207
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -156937,8 +156965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 235
+                    "line": 220,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -156957,8 +156985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 241
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -156978,7 +157006,7 @@
                         }
                     ],
                     "line": 67,
-                    "end": 129
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -156997,8 +157025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 173
+                    "line": 160,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -157024,8 +157052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 187
+                    "line": 183,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -157058,8 +157086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 266
+                    "line": 246,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -157092,8 +157120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 284
+                    "line": 277,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -157112,8 +157140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 292
+                    "line": 290,
+                    "end": 295
                 }
             ]
         },
@@ -171236,6 +171264,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\ApplicationPasswordRecords",
+                "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Transients"
             ],
             "constructor": null,
@@ -179630,11 +179659,12 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Transients.php",
-            "lines": 142,
-            "doc": "Values kept for a while, as WordPress keeps them in options: the site's\ntransients (_transient_{name}, with _transient_timeout_{name} when they\nexpire) and the network's (_site_transient_{name}), each read, set and\nremoved through the filters and actions plugins hook. An expired one reads\nas false and is removed as it is read.",
+            "lines": 170,
+            "doc": "Values kept for a while, as WordPress keeps them in options: the site's\ntransients (_transient_{name}, with _transient_timeout_{name} when they\nexpire) and the network's (_site_transient_{name}), each read, set and\nremoved through the filters and actions plugins hook. An expired one reads\nas false and is removed as it is read. While the request is installing, or\nwith a persistent object cache, they live in the object cache instead (the\ntransient and site-transient groups, an expiry handed along): the table is\nneither read nor written, and removing one the cache lacks answers false\n(probe transient-stores).",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteOptions"
@@ -179668,8 +179698,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 34
+                    "line": 21,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -179702,8 +179732,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 78
+                    "line": 48,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -179722,8 +179752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 91
+                    "line": 90,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -179742,8 +179772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 114
+                    "line": 109,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -179776,8 +179806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 141
+                    "line": 135,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -179796,8 +179826,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 154
+                    "line": 164,
+                    "end": 180
+                },
+                {
+                    "routes": [],
+                    "name": "cached",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cached(): bool",
+                    "doc": "Whether transients live in the object cache: while installing, or with a persistent object cache.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 183,
+                    "end": 186
                 }
             ]
         },
@@ -195822,7 +195864,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/PatternHeaders.php",
-            "lines": 78,
+            "lines": 54,
             "doc": "A theme's pattern files read by their headers, as WP_Theme::get_block_patterns\nlists them (probe wp-theme). Each one gives title, slug and description\n(empty when the header has none), then whatever of viewportWidth (a\nnumber), inserter (false for \"no\"), and the lists categories,\nkeywords, blockTypes, postTypes and templateTypes it declares, split on\ncommas and whitespace. A file\nwithout a title and a slug is not a pattern.",
             "implements": [],
             "extends": null,
@@ -195840,50 +195882,6 @@
             ],
             "properties": [],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "all",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "all(string $themeDir): array",
-                    "doc": "The patterns directory's files by file name, in name order.",
-                    "shapes": [
-                        "@return array<string, array<string, mixed>>"
-                    ],
-                    "params": [
-                        {
-                            "name": "themeDir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 25,
-                    "end": 28
-                },
-                {
-                    "routes": [],
-                    "name": "files",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "files(string $themeDir): array",
-                    "doc": "The pattern files a theme ships, file name => path, in name order.",
-                    "shapes": [
-                        "@return array<string, string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "themeDir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 35,
-                    "end": 42
-                },
                 {
                     "routes": [],
                     "name": "of",
@@ -195904,8 +195902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 61
+                    "line": 27,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -195926,8 +195924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 92
+                    "line": 44,
+                    "end": 68
                 }
             ]
         },

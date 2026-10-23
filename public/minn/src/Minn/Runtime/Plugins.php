@@ -73,6 +73,9 @@ final class Plugins
             $hooks->action('mu_plugin_loaded', [$file]);
         }
         $hooks->action('muplugins_loaded', []);
+        if (Runtime::installing()) {
+            Constants::cookies((string) SiteOptions::get('siteurl'));
+        }
         // Read through the option filters: WP-CLI's --skip-plugins, and a plugin
         // that switches others off per request, both answer there.
         $active = Runtime::options()->filtered('active_plugins');

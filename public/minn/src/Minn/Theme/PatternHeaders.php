@@ -18,30 +18,6 @@ final class PatternHeaders
     private const LISTS = ['categories' => 'Categories', 'keywords' => 'Keywords', 'blockTypes' => 'Block Types', 'postTypes' => 'Post Types', 'templateTypes' => 'Template Types'];
 
     /**
-     * The patterns directory's files by file name, in name order.
-     *
-     * @return array<string, array<string, mixed>>
-     */
-    public static function all(string $themeDir): array
-    {
-        return self::of(self::files($themeDir));
-    }
-
-    /**
-     * The pattern files a theme ships, file name => path, in name order.
-     *
-     * @return array<string, string>
-     */
-    public static function files(string $themeDir): array
-    {
-        $files = [];
-        foreach (glob($themeDir . '/patterns/*.php') ?: [] as $file) {
-            $files[basename($file)] = $file;
-        }
-        return $files;
-    }
-
-    /**
      * The records of a list of pattern files, file name => path (a list a
      * plugin may have changed); a file that is not a pattern is left out.
      *

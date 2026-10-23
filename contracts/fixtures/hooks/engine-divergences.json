@@ -481,7 +481,10 @@
         "http:signup",
         "http:activate",
         "http:trackback-direct",
-        "probe:mail-eai"
+        "probe:mail-eai",
+        "probe:transient-stores",
+        "probe:theme-scans",
+        "probe:locale-reads"
     ],
     "hooks": {
         "_get_page_link": {
@@ -2027,7 +2030,6 @@
             "probe:media": "not fired"
         },
         "default_option_{*}": {
-            "http:activate": "not fired",
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
             "probe:av-shortcodes": "not fired",
@@ -2930,7 +2932,6 @@
             "probe:rest-template-create": "not fired"
         },
         "expiration_of_site_transient_{*}": {
-            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:sweep-1022": "not fired",
             "probe:template-loading": "not fired",
@@ -2953,6 +2954,7 @@
             "probe:plugin-surface": "fired here only",
             "probe:rest-sidebar-classes": "fired here only",
             "probe:rest-view-config": "fired here only",
+            "probe:theme-scans": "fired here only",
             "probe:view-config-functions": "fired here only"
         },
         "extra_{*}_headers": {
@@ -6610,6 +6612,7 @@
             "probe:kses-remaining": "not fired",
             "probe:l10n": "not fired",
             "probe:locale-names": "not fired",
+            "probe:locale-reads": "not fired",
             "probe:mail-addresses": "not fired",
             "probe:mail-eai": "not fired",
             "probe:media-meta": "not fired",
@@ -10806,7 +10809,8 @@
             "probe:wp-user-query-sql": "not fired"
         },
         "pre_cache_alloptions": {
-            "probe:cache-remaining": "not fired"
+            "probe:cache-remaining": "not fired",
+            "probe:transient-stores": "not fired"
         },
         "pre_category_nicename": {
             "probe:hook-inputs-2": "fired here only",
@@ -11106,7 +11110,9 @@
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
             "probe:theme-caches": "not fired",
+            "probe:theme-scans": "not fired",
             "probe:theme-tags": "not fired",
+            "probe:transient-stores": "not fired",
             "probe:upgrader": "not fired",
             "probe:user-insert-filters": "not fired",
             "probe:user-meta-writes": "not fired",
@@ -11655,7 +11661,9 @@
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
             "probe:theme-caches": "not fired",
+            "probe:theme-scans": "not fired",
             "probe:theme-tags": "not fired",
+            "probe:transient-stores": "not fired",
             "probe:upgrader": "not fired",
             "probe:user-insert-filters": "not fired",
             "probe:user-meta-writes": "not fired",
@@ -11982,7 +11990,6 @@
             "probe:rest-terms-for-post": "not fired"
         },
         "pre_set_site_transient_{*}": {
-            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:sweep-1022": "not fired",
             "probe:template-loading": "not fired",
@@ -12680,6 +12687,7 @@
             "probe:theme-json-insecure": "not fired",
             "probe:theme-json-nodes": "not fired",
             "probe:theme-json-presets": "not fired",
+            "probe:theme-scans": "not fired",
             "probe:type-object-sharing": "not fired",
             "probe:upgrader": "not fired",
             "probe:upload-filters": "not fired",
@@ -14417,12 +14425,10 @@
             "probe:tail-helpers": "not fired"
         },
         "set_site_transient": {
-            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:template-loading": "not fired"
         },
         "set_site_transient_{*}": {
-            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:template-loading": "not fired"
         },
@@ -14446,7 +14452,6 @@
             "probe:user-insert-filters": "fired here only"
         },
         "setted_site_transient": {
-            "http:activate": "not fired",
             "probe:db-mail-rewrite-doubts": "not fired",
             "probe:template-loading": "not fired"
         },
@@ -15562,9 +15567,6 @@
             "probe:sweep-1022": "not fired",
             "probe:widget-factory": "not fired"
         },
-        "theme_block_pattern_files": {
-            "http:activate": "not fired"
-        },
         "theme_file_path": {
             "http:activate": "not fired",
             "http:admin-ajax": "not fired",
@@ -15765,6 +15767,7 @@
             "probe:theme-json-insecure": "not fired",
             "probe:theme-json-nodes": "not fired",
             "probe:theme-json-presets": "not fired",
+            "probe:theme-scans": "fired here only",
             "probe:widgets": "fired here only"
         },
         "theme_root_uri": {
@@ -15775,7 +15778,6 @@
             "probe:taxonomy-blocks-user-doubts": "fired here only"
         },
         "theme_scandir_exclusions": {
-            "http:activate": "not fired",
             "probe:hook-inputs-2": "not fired",
             "probe:theme-caches": "not fired"
         },
@@ -16403,7 +16405,9 @@
             "probe:term-lookup": "not fired",
             "probe:theme-caches": "not fired",
             "probe:theme-remaining": "not fired",
+            "probe:theme-scans": "not fired",
             "probe:theme-switch": "not fired",
+            "probe:transient-stores": "not fired",
             "probe:upgrader": "not fired",
             "probe:user-insert-filters": "not fired",
             "probe:user-meta-writes": "not fired",
@@ -18274,8 +18278,10 @@
             "probe:theme-caches": "not fired",
             "probe:theme-json-resolver": "not fired",
             "probe:theme-remaining": "not fired",
+            "probe:theme-scans": "not fired",
             "probe:theme-switch": "not fired",
             "probe:theme-symbols": "not fired",
+            "probe:transient-stores": "not fired",
             "probe:translation-classes": "not fired",
             "probe:translation-files": "not fired",
             "probe:trash-dates": "not fired",
@@ -18483,7 +18489,6 @@
             "http:front-embed": "not fired"
         },
         "wp_theme_files_cache_ttl": {
-            "http:activate": "not fired",
             "probe:wp-theme": "not fired"
         },
         "wp_theme_json_data_blocks": {

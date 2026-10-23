@@ -166,11 +166,10 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
     /** The theme's files of a type (an extension or a list of them; any when null), to a depth (-1 for all), relative path => path; its parent's after when asked. */
     public function get_files($type = null, $depth = 0, $search_parent = false)
     {
-        $exclusions = (array) apply_filters('theme_scandir_exclusions', ['CVS', 'node_modules', 'vendor', 'bower_components']);
         $types = $type === null ? null : (array) $type;
-        $files = self::scan($this->get_stylesheet_directory(), '', (int) $depth, $exclusions, $types);
+        $files = self::scan($this->get_stylesheet_directory(), '', (int) $depth, $types);
         if ($search_parent && $this->parent()) {
-            $files += self::scan($this->get_template_directory(), '', (int) $depth, $exclusions, $types);
+            $files += self::scan($this->get_template_directory(), '', (int) $depth, $types);
         }
         return array_filter($files);
     }
@@ -234,21 +233,24 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
     }
 
     /**
-     * A folder's files, skipping dot files and the exclusions, to a depth
-     * (-1 for all), of the types given (all when null).
+     * A folder's files, skipping dot files and the folders
+     * theme_scandir_exclusions names (asked at each folder entered, as the
+     * reference asks), to a depth (-1 for all), of the types given (all when
+     * null), relative path => path.
      *
-     * @param list<string> $exclusions @param list<string>|null $types
+     * @param list<string>|null $types
      * @return array<string, string>
      */
-    private static function scan(string $dir, string $prefix, int $depth, array $exclusions, ?array $types): array
+    private static function scan(string $dir, string $prefix, int $depth, ?array $types): array
     {
         $found = [];
+        $skip = (array) apply_filters('theme_scandir_exclusions', ['CVS', 'node_modules', 'vendor', 'bower_components']);
         foreach (is_dir($dir) ? (scandir($dir) ?: []) : [] as $entry) {
-            if ($entry[0] === '.' || in_array($entry, $exclusions, true)) {
+            if ($entry[0] === '.' || in_array($entry, $skip, true)) {
                 continue;
             }
             if (is_dir("{$dir}/{$entry}")) {
-                $found += $depth !== 0 ? self::scan("{$dir}/{$entry}", "{$prefix}{$entry}/", $depth - 1, $exclusions, $types) : [];
+                $found += $depth !== 0 ? self::scan("{$dir}/{$entry}", "{$prefix}{$entry}/", $depth - 1, $types) : [];
             } elseif ($types === null || in_array(strtolower(pathinfo($entry, PATHINFO_EXTENSION)), $types, true)) {
                 $found["{$prefix}{$entry}"] = "{$dir}/{$entry}";
             }
@@ -311,7 +313,7 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
             return (array) $cached['patterns'];
         }
         $dir = $this->get_stylesheet_directory() . '/patterns';
-        $files = (array) apply_filters('theme_block_pattern_files', \Minn\Theme\PatternHeaders::files($this->get_stylesheet_directory()), $dir);
+        $files = (array) apply_filters('theme_block_pattern_files', self::scan($dir, '', -1, ['php']), $dir);
         $patterns = \Minn\Theme\PatternHeaders::of($files);
         $ttl = (int) apply_filters('wp_theme_files_cache_ttl', 1800, 'theme_block_patterns');
         $kept = ['version' => $this->get('Version'), 'patterns' => $patterns];

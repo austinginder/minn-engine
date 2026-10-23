@@ -62,7 +62,6 @@ final class Constants
             'WP_LANG_DIR' => $abs . 'wp-content/languages',
             'FORCE_SSL_ADMIN' => str_starts_with($siteUrl, 'https://'),
             'WP_DEFAULT_THEME' => 'twentytwentyfive',
-            'COOKIEHASH' => md5($siteUrl),
             'COOKIEPATH' => rtrim((string) (parse_url((string) ($runtime->site->option('home') ?? ''), PHP_URL_PATH) ?: ''), '/') . '/',
             'SITECOOKIEPATH' => rtrim((string) (parse_url($siteUrl, PHP_URL_PATH) ?: ''), '/') . '/',
             'COOKIE_DOMAIN' => '',
@@ -97,10 +96,9 @@ final class Constants
                 define($name, $value);
             }
         }
-        foreach (['ADMIN_COOKIE_PATH' => SITECOOKIEPATH . 'wp-admin', 'PLUGINS_COOKIE_PATH' => rtrim((string) (parse_url(WP_PLUGIN_URL, PHP_URL_PATH) ?: ''), '/'), 'USER_COOKIE' => 'wordpressuser_' . COOKIEHASH, 'PASS_COOKIE' => 'wordpresspass_' . COOKIEHASH, 'AUTH_COOKIE' => 'wordpress_' . COOKIEHASH, 'SECURE_AUTH_COOKIE' => 'wordpress_sec_' . COOKIEHASH, 'LOGGED_IN_COOKIE' => 'wordpress_logged_in_' . COOKIEHASH, 'TEST_COOKIE' => 'wordpress_test_cookie', 'RECOVERY_MODE_COOKIE' => 'wordpress_rec_' . COOKIEHASH] as $name => $value) {
-            if (!defined($name)) {
-                define($name, $value);
-            }
+        // While installing, the cookie names wait for the must-use plugins (Plugins), as on the reference.
+        if (!EarlyRequest::installing()) {
+            self::cookies($siteUrl);
         }
         if (!defined('object')) {
             define('object', 'OBJECT');
@@ -111,6 +109,24 @@ final class Constants
             $GLOBALS['_wp_using_ext_object_cache'] = null;
         }
         $GLOBALS['table_prefix'] = $runtime->db->prefix();
+    }
+
+    /**
+     * The cookie hash and the cookie names made from it, for the site's
+     * address: at boot, or while installing once the must-use plugins have
+     * loaded, from the address read as a site option (hook-parity
+     * http:activate hears pre_site_option_siteurl there).
+     */
+    public static function cookies(string $siteUrl): void
+    {
+        if (!defined('COOKIEHASH')) {
+            define('COOKIEHASH', md5(rtrim($siteUrl, '/')));
+        }
+        foreach (['ADMIN_COOKIE_PATH' => SITECOOKIEPATH . 'wp-admin', 'PLUGINS_COOKIE_PATH' => rtrim((string) (parse_url(WP_PLUGIN_URL, PHP_URL_PATH) ?: ''), '/'), 'USER_COOKIE' => 'wordpressuser_' . COOKIEHASH, 'PASS_COOKIE' => 'wordpresspass_' . COOKIEHASH, 'AUTH_COOKIE' => 'wordpress_' . COOKIEHASH, 'SECURE_AUTH_COOKIE' => 'wordpress_sec_' . COOKIEHASH, 'LOGGED_IN_COOKIE' => 'wordpress_logged_in_' . COOKIEHASH, 'TEST_COOKIE' => 'wordpress_test_cookie', 'RECOVERY_MODE_COOKIE' => 'wordpress_rec_' . COOKIEHASH] as $name => $value) {
+            if (!defined($name)) {
+                define($name, $value);
+            }
+        }
     }
 
     /**

@@ -28,11 +28,23 @@ final class SiteLanguage
         return $stack->switched() ? (string) $stack->current() : self::configured();
     }
 
-    /** The locale the WPLANG option names (en_US when it names none), through the locale filter. */
+    /**
+     * The site's locale through the locale filter: the $locale global once
+     * set, else the WPLANG option read as get_option reads it (its filters
+     * included), the WPLANG constant when the option names none, then en_US,
+     * kept in the global unfiltered for the next ask (probe locale-reads).
+     */
     public static function configured(): string
     {
-        $locale = (string) (Runtime::options()->get('WPLANG') ?? '');
-        return (string) Runtime::hooks()->filter('locale', [$locale === '' ? 'en_US' : $locale]);
+        $locale = $GLOBALS['locale'] ?? null;
+        if ($locale === null) {
+            $locale = (string) Runtime::options()->filtered('WPLANG');
+            if ($locale === '' && defined('WPLANG')) {
+                $locale = (string) constant('WPLANG');
+            }
+            $locale = $GLOBALS['locale'] = $locale === '' ? 'en_US' : $locale;
+        }
+        return (string) Runtime::hooks()->filter('locale', [(string) $locale]);
     }
 
     /** The language tag pages carry: the locale in force (determine_locale; probe sweep-1020) with a hyphen, plain "en" read as en_US. */

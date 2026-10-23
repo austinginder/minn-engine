@@ -17,7 +17,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`BootPayload`](#bootpayload) | final readonly class | 257 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`CodeEditor`](#codeeditor) | final class | 96 | The code editor's settings as wp_get_code_editor_settings gives them |
-| [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
+| [`Dashboard`](#dashboard) | final readonly class | 274 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 31 | The editor's edit lock in minn-admin/v1. Its template and pattern lists |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
@@ -585,7 +585,7 @@ At most six unique sanitize_key metric ids; anything else drops.
 
 The events behind one chart bar, (from, to] GMT.
 
-Internals: `postsCard()` (private, line 68), `pagesCard()` (private, line 85), `usersCard()` (private, line 90), `commentsCard()` (private, line 96), `mediaCard()` (private, line 112), `metricCatalog()` (private, line 130), `overlayMetricKeys()` (private, line 224), `statusCounts()` (private, line 266), `commentCounts()` (private, line 277)
+Internals: `postsCard()` (private, line 69), `pagesCard()` (private, line 86), `usersCard()` (private, line 91), `commentsCard()` (private, line 97), `mediaCard()` (private, line 113), `metricCatalog()` (private, line 131), `overlayMetricKeys()` (private, line 225), `statusCounts()` (private, line 267), `commentCounts()` (private, line 278)
 
 
 ## EditorController

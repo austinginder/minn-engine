@@ -9,7 +9,7 @@
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8680,
-        "minnMethods": 1563,
+        "minnMethods": 1562,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -29187,7 +29187,6 @@
             "lines": 15,
             "kind": "minn",
             "minn": [
-                "Minn\\Theme\\PatternHeaders::files",
                 "Minn\\Theme\\PatternHeaders::of"
             ],
             "composes": [
@@ -29226,12 +29225,10 @@
         },
         "WP_Theme::get_files": {
             "file": "classes/WP_Theme.php",
-            "lines": 7,
-            "kind": "composes",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "WP_Theme::get_page_templates": {
             "file": "classes/WP_Theme.php",
@@ -29422,10 +29419,12 @@
         },
         "WP_Theme::scan": {
             "file": "classes/WP_Theme.php",
-            "lines": 12,
-            "kind": "leaf",
+            "lines": 13,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "WP_Theme::sort_by_name": {
             "file": "classes/WP_Theme.php",

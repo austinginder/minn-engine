@@ -1,0 +1,171 @@
+[
+    [
+        "while installing",
+        {
+            "read": [
+                false,
+                false
+            ],
+            "set": [
+                true,
+                true,
+                true
+            ],
+            "read back": [
+                "new",
+                "new",
+                "forever"
+            ],
+            "object cache": [
+                "new",
+                "new",
+                false
+            ],
+            "table": [
+                [],
+                [],
+                []
+            ],
+            "removed": [
+                true,
+                true,
+                false
+            ],
+            "after": [
+                false,
+                false,
+                "from the table",
+                [
+                    "_transient_timeout_zz_store_kept",
+                    "_transient_zz_store_kept"
+                ]
+            ],
+            "heard": [
+                [
+                    "set_transient",
+                    "zz_store_kept"
+                ],
+                [
+                    "set_site_transient",
+                    "zz_store_site_kept"
+                ],
+                [
+                    "set_transient",
+                    "zz_store_new"
+                ],
+                [
+                    "set_site_transient",
+                    "zz_store_site_new"
+                ],
+                [
+                    "set_transient",
+                    "zz_store_forever"
+                ],
+                [
+                    "deleted_transient",
+                    "zz_store_new"
+                ],
+                [
+                    "deleted_site_transient",
+                    "zz_store_site_new"
+                ],
+                [
+                    "deleted_transient",
+                    "zz_store_kept"
+                ],
+                [
+                    "deleted_site_transient",
+                    "zz_store_site_kept"
+                ]
+            ]
+        }
+    ],
+    [
+        "with a persistent object cache",
+        {
+            "read": [
+                false,
+                false
+            ],
+            "set": [
+                true,
+                true,
+                true
+            ],
+            "read back": [
+                "new",
+                "new",
+                "forever"
+            ],
+            "object cache": [
+                "new",
+                "new",
+                false
+            ],
+            "table": [
+                [],
+                [],
+                []
+            ],
+            "removed": [
+                true,
+                true,
+                false
+            ],
+            "after": [
+                false,
+                false,
+                "from the table",
+                [
+                    "_transient_timeout_zz_store_kept",
+                    "_transient_zz_store_kept"
+                ]
+            ],
+            "heard": [
+                [
+                    "set_transient",
+                    "zz_store_kept"
+                ],
+                [
+                    "set_site_transient",
+                    "zz_store_site_kept"
+                ],
+                [
+                    "set_transient",
+                    "zz_store_new"
+                ],
+                [
+                    "set_site_transient",
+                    "zz_store_site_new"
+                ],
+                [
+                    "set_transient",
+                    "zz_store_forever"
+                ],
+                [
+                    "deleted_transient",
+                    "zz_store_new"
+                ],
+                [
+                    "deleted_site_transient",
+                    "zz_store_site_new"
+                ],
+                [
+                    "deleted_transient",
+                    "zz_store_kept"
+                ],
+                [
+                    "deleted_site_transient",
+                    "zz_store_site_kept"
+                ]
+            ]
+        }
+    ],
+    [
+        "the switches are off again",
+        [
+            false,
+            false
+        ]
+    ]
+]

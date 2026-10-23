@@ -9,7 +9,11 @@ namespace Minn\Runtime;
  * transients (_transient_{name}, with _transient_timeout_{name} when they
  * expire) and the network's (_site_transient_{name}), each read, set and
  * removed through the filters and actions plugins hook. An expired one reads
- * as false and is removed as it is read.
+ * as false and is removed as it is read. While the request is installing, or
+ * with a persistent object cache, they live in the object cache instead (the
+ * transient and site-transient groups, an expiry handed along): the table is
+ * neither read nor written, and removing one the cache lacks answers false
+ * (probe transient-stores).
  */
 final class Transients
 {
@@ -20,6 +24,9 @@ final class Transients
         $pre = Runtime::hooks()->filter("pre_transient_{$transient}", [false, $transient]);
         if ($pre !== false) {
             return $pre;
+        }
+        if (self::cached()) {
+            return Runtime::hooks()->filter("transient_{$transient}", [Handoff::cacheGet($transient, 'transient'), $transient]);
         }
         // The timeout and the value are read together, one query rather than two.
         Runtime::options()->prime(["_transient_timeout_{$transient}", "_transient_{$transient}"]);
@@ -46,7 +53,9 @@ final class Transients
         $expiration = (int) Runtime::hooks()->filter("expiration_of_transient_{$transient}", [$expiration, $value, $transient]);
         $name = "_transient_{$transient}";
         $timeoutName = "_transient_timeout_{$transient}";
-        if (Runtime::options()->filtered($name) === false) {
+        if (self::cached()) {
+            $result = (bool) Handoff::cacheSet($transient, $value, 'transient', $expiration);
+        } elseif (Runtime::options()->filtered($name) === false) {
             $autoload = 'on';
             if ($expiration !== 0) {
                 $autoload = 'off';
@@ -82,9 +91,15 @@ final class Transients
     {
         $transient = (string) $transient;
         Runtime::hooks()->action("delete_transient_{$transient}", [$transient]);
-        $result = OptionWrites::delete("_transient_{$transient}");
+        if (self::cached()) {
+            $result = (bool) Handoff::cacheDelete($transient, 'transient');
+        } else {
+            $result = OptionWrites::delete("_transient_{$transient}");
+            if ($result) {
+                OptionWrites::delete("_transient_timeout_{$transient}");
+            }
+        }
         if ($result) {
-            OptionWrites::delete("_transient_timeout_{$transient}");
             Runtime::hooks()->action('deleted_transient', [$transient]);
         }
         return $result;
@@ -97,6 +112,9 @@ final class Transients
         $pre = Runtime::hooks()->filter("pre_site_transient_{$transient}", [false, $transient]);
         if ($pre !== false) {
             return $pre;
+        }
+        if (self::cached()) {
+            return Runtime::hooks()->filter("site_transient_{$transient}", [Handoff::cacheGet($transient, 'site-transient'), $transient]);
         }
         $name = "_site_transient_{$transient}";
         $expired = false;
@@ -121,7 +139,9 @@ final class Transients
         $expiration = (int) Runtime::hooks()->filter("expiration_of_site_transient_{$transient}", [(int) $expiration, $value, $transient]);
         $name = "_site_transient_{$transient}";
         $timeout = "_site_transient_timeout_{$transient}";
-        if (SiteOptions::get($name) === false) {
+        if (self::cached()) {
+            $result = (bool) Handoff::cacheSet($transient, $value, 'site-transient', $expiration);
+        } elseif (SiteOptions::get($name) === false) {
             if ($expiration) {
                 SiteOptions::add($timeout, time() + $expiration);
             }
@@ -145,11 +165,23 @@ final class Transients
     {
         $transient = (string) $transient;
         Runtime::hooks()->action("delete_site_transient_{$transient}", [$transient]);
-        $result = SiteOptions::delete("_site_transient_{$transient}");
+        if (self::cached()) {
+            $result = (bool) Handoff::cacheDelete($transient, 'site-transient');
+        } else {
+            $result = SiteOptions::delete("_site_transient_{$transient}");
+            if ($result) {
+                SiteOptions::delete("_site_transient_timeout_{$transient}");
+            }
+        }
         if ($result) {
-            SiteOptions::delete("_site_transient_timeout_{$transient}");
             Runtime::hooks()->action('deleted_site_transient', [$transient]);
         }
         return $result;
+    }
+
+    /** Whether transients live in the object cache: while installing, or with a persistent object cache. */
+    private static function cached(): bool
+    {
+        return Runtime::installing() || !empty($GLOBALS['_wp_using_ext_object_cache']);
     }
 }

@@ -18505,6 +18505,36 @@ term stays the 404 it is. An empty page past a feed's first is a 404 too (`Front
 before, a feed was never one), printed as the posts' feed of nothing. Suite `permalinks` (fixture
 cases, and a live block at two posts a page).
 
+## Transients in the object cache, the theme's folder walks, and the site's locale (2026-10-23)
+
+Chasing `http:activate`'s refreshed pattern transient (the field test's register row) found three
+behaviours of the reference the engine lacked, each now probed on both stacks:
+
+- **Transients in the object cache** (probe transient-stores). While a request is installing
+  (`wp_installing()`), and with a persistent object cache (`wp_using_ext_object_cache()`, an
+  `object-cache.php` drop-in), the reference keeps transients in the object cache, the `transient`
+  and `site-transient` groups, the expiry handed along: the options table is neither read nor
+  written, a value left in it reads as false, and removing one the cache lacks answers false with
+  no `deleted_transient`. The engine always used the table, so on a host with Redis or Memcached it
+  wrote every transient to the database the reference never touches, and read rows the reference
+  ignores. `Runtime\Transients` now asks `cached()` first.
+- **The cookie constants while installing.** The reference defines `COOKIEHASH` and the cookie names
+  after the must-use plugins load, from the site address read as a site option, so
+  `pre_site_option_siteurl` is heard there (hook-parity `http:activate`). `Constants::cookies` runs
+  at boot as before, or then while installing (`Plugins`).
+- **The theme's folder walks** (probe theme-scans). The pattern list walks `patterns/` to any depth,
+  keyed by relative path (`zzsub/zzdeep/zz-deep.php`), skipping the folders
+  `theme_scandir_exclusions` names, which it asks at each folder entered, as `get_files` does too.
+  The engine read `patterns/*.php` alone and asked the filter once per walk.
+- **The site's locale** (probe locale-reads). `get_locale` reads `WPLANG` through `get_option` (its
+  filters heard, a filter able to change it), falls back to the `WPLANG` constant and then en_US,
+  and keeps the unfiltered value in the `$locale` global, which answers every later ask and which a
+  plugin may set; the `locale` filter runs on each ask. The engine read the option raw on every ask.
+
+What still differs on `http:activate`: the reference also refreshes its core block stylesheet list
+(`wp_core_block_css_files`), a transient the engine has no use for, since it keeps no such list
+(its read already differs on every request; snapshotted).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18684,7 +18714,10 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | austin | declare the pluggable functions from the webroot's `wp-includes/pluggable.php`, or accept |
 | 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host |
 | 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | austin | carry a POP3 client, or leave post by email out (the engine refuses as unconfigured) |
-| 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | open | hook-parity snapshot names the six hooks |
+| 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | done | transients live in the object cache while installing (and with a persistent cache), cookie constants after the must-use plugins; the core block stylesheet list stays the reference's own; "Transients in the object cache, the theme's folder walks, and the site's locale (2026-10-23)" |
+| 18310 | The 0.1.0 field test (10-23) | transients written to the options table under a persistent object cache, where the reference keeps them in the cache | done | `Runtime\Transients::cached`; probe transient-stores |
+| 18310 | The 0.1.0 field test (10-23) | theme pattern files read one folder deep, `theme_scandir_exclusions` asked once a walk | done | `WP_Theme::scan` walks and asks per folder; probe theme-scans |
+| 18310 | The 0.1.0 field test (10-23) | `get_locale` read `WPLANG` raw, without its filters, the constant or the `$locale` global | done | `I18n\SiteLanguage::configured`; probe locale-reads |
 | 18310 | The 0.1.0 field test (10-23) | JWT authentication warns `REQUEST_URI` under WP-CLI on the engine only | done | the boot makes the server variables whole as the reference's does; "The server variables at boot (2026-10-23)" |
 | 18310 | The 0.1.0 field test (10-23) | WooCommerce's shop page lacks the interactivity router's loading bar | done | core's query loop with enhancedPagination, now as on the reference; "A query loop that navigates on the client (2026-10-23)", suite `query-navigation` |
 | 18310 | The 0.1.0 field test (10-23) | Minn Admin's `wp minn install` does not flush page caches after the swap | open | Minn Admin's switch command, as install.sh does |

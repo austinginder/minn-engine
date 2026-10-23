@@ -10760,13 +10760,13 @@
         },
         "WP_Theme::custom_block_templates": {
             "file": "classes/WP_Theme.php",
-            "line": 260,
+            "line": 262,
             "statements": 3,
             "lines": 10
         },
         "WP_Theme::delete_pattern_cache": {
             "file": "classes/WP_Theme.php",
-            "line": 323,
+            "line": 325,
             "statements": 2,
             "lines": 2
         },
@@ -10784,19 +10784,19 @@
         },
         "WP_Theme::get_allowed": {
             "file": "classes/WP_Theme.php",
-            "line": 342,
+            "line": 344,
             "statements": 2,
             "lines": 2
         },
         "WP_Theme::get_allowed_on_site": {
             "file": "classes/WP_Theme.php",
-            "line": 355,
+            "line": 357,
             "statements": 2,
             "lines": 2
         },
         "WP_Theme::get_block_patterns": {
             "file": "classes/WP_Theme.php",
-            "line": 303,
+            "line": 305,
             "statements": 11,
             "lines": 15
         },
@@ -10808,25 +10808,25 @@
         },
         "WP_Theme::get_core_default_theme": {
             "file": "classes/WP_Theme.php",
-            "line": 382,
+            "line": 384,
             "statements": 2,
             "lines": 7
         },
         "WP_Theme::get_files": {
             "file": "classes/WP_Theme.php",
             "line": 167,
-            "statements": 5,
-            "lines": 7
+            "statements": 4,
+            "lines": 6
         },
         "WP_Theme::get_page_templates": {
             "file": "classes/WP_Theme.php",
-            "line": 220,
+            "line": 219,
             "statements": 4,
             "lines": 6
         },
         "WP_Theme::get_post_templates": {
             "file": "classes/WP_Theme.php",
-            "line": 187,
+            "line": 186,
             "statements": 5,
             "lines": 27
         },
@@ -10838,27 +10838,27 @@
         },
         "WP_Theme::network_disable_theme": {
             "file": "classes/WP_Theme.php",
-            "line": 372,
+            "line": 374,
             "statements": 3,
             "lines": 5
         },
         "WP_Theme::network_enable_theme": {
             "file": "classes/WP_Theme.php",
-            "line": 362,
+            "line": 364,
             "statements": 3,
             "lines": 5
         },
         "WP_Theme::offsetGet": {
             "file": "classes/WP_Theme.php",
-            "line": 411,
+            "line": 413,
             "statements": 4,
             "lines": 6
         },
         "WP_Theme::scan": {
             "file": "classes/WP_Theme.php",
-            "line": 243,
-            "statements": 3,
-            "lines": 12
+            "line": 244,
+            "statements": 4,
+            "lines": 13
         },
         "WP_Theme_JSON::__construct": {
             "file": "classes/WP_Theme_JSON.php",
