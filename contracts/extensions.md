@@ -22,7 +22,7 @@ A folder under `wp-content/plugins/` (or `mu-plugins/`) with a `minn.json`:
 
 The class implements `Minn\Extension\Extension` (one method, `register(Seams $minn)`)
 in plain modern PHP: PSR-4 from the manifest, typed seams, no globals, no hook
-names to remember. `Seams` is the whole surface an extension sees: the nine
+names to remember. `Seams` is the whole surface an extension sees: the ten
 registrations below plus the request it runs in (`db`, `site`, `request`,
 `reader`) and the outgoing HTTP its manifest asks for (`http`). What the engine does with the registrations lives in
 `Minn\Extension\SeamRunner`, which an extension never touches. The same folder may also be a WordPress plugin; nothing in the
@@ -66,6 +66,7 @@ registrations, each a typed closure, called in registration order:
 | `head` / `footer` | `(Seams): string` | in the themed document, after the theme stylesheet and before `</body>` |
 | `bodyClass` | `string` | appended after the theme classes |
 | `filterDocument` | `(string $html): string` | the whole themed document before it is sent (what an output buffer did on the reference) |
+| `routes` | `object ...$controllers` | controllers whose public methods carry `#[Route]`, as the engine's own do (`Request` and the captures in, `Response` out, a `Policy` each); asked after every engine route and before the themed front, so an extension adds pages but never takes over one the engine answers; a path its pattern refuses falls through to the front |
 
 A manifest may add `"covers"`: what part of the replaced plugin the extension
 provides when it is not all of it; preflight prints it and lights AMBER instead of
@@ -79,7 +80,7 @@ permalinks are `/{slug}/{post_name}/`. Front URL resolution for those
 types is not wired yet. Preflight GREENS extra post types a manifest
 declares.
 
-Not yet seams (next ports decide their shape): routes and REST controllers, cron
+Not yet seams (next ports decide their shape): REST controllers under `/wp-json/`, cron
 jobs, CLI verbs, file assets by URL (a plugin folder is web-served, so an extension
 can link its own files), Minn Admin surfaces.
 

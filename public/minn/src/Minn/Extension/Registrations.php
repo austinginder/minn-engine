@@ -18,6 +18,7 @@ final readonly class Registrations
      * @param list<Closure> $footer
      * @param list<string> $bodyClasses
      * @param list<Closure> $documentFilters
+     * @param list<object> $routes controllers with #[Route] methods
      */
     public function __construct(
         public array $blockGates,
@@ -29,6 +30,7 @@ final readonly class Registrations
         public array $bodyClasses,
         public array $documentFilters,
         public ?Closure $title,
+        public array $routes = [],
     ) {
     }
 }

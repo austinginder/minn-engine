@@ -178,11 +178,34 @@ final class Extension implements MinnExtension
 }
 ```
 
-`Seams` is everything you can touch: nine registrations (`gateBlocks`,
+`Seams` is everything you can touch: ten registrations (`gateBlocks`,
 `filterBlocks`, `shortcode`, `filterContent`, `head`, `footer`, `bodyClass`,
-`title`, `filterDocument`), the request you run in (`db`, `site`, `request`,
+`title`, `filterDocument`, `routes`), the request you run in (`db`, `site`, `request`,
 `reader`), and the outgoing HTTP your manifest asks for (`http`, below). There are no hook names, no globals, and no priority numbers: seams
 run in registration order.
+
+An extension can answer paths of its own with `routes`: hand it controllers
+written exactly like the engine's (above), and they are asked after every
+engine route and before the themed front. A page the engine already answers
+stays the engine's.
+
+```php
+$minn->routes(new Pages($minn));
+
+final class Pages
+{
+    public function __construct(private readonly Seams $minn)
+    {
+    }
+
+    /** The extension's own page. */
+    #[Route(Method::Get, '/acme/{slug:[a-z-]+}/', policy: new Policy(Access::Public))]
+    public function show(Request $request, string $slug): Response
+    {
+        return Response::html('<p>' . Html::esc($slug) . '</p>');
+    }
+}
+```
 
 Prove it the way `tests/extensions.test.php` proves the fixture extension:
 activate it through the `minn_active_extensions` option, fetch a page, assert

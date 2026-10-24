@@ -20,5 +20,6 @@ final class Extension implements MinnExtension
         $minn->head(static fn (): string => '<meta name="seam-probe" content="head">' . "\n");
         $minn->footer(static fn (Seams $s): string => '<!-- seam:footer reader-' . $s->reader->userId . ' -->' . "\n");
         $minn->bodyClass('seam-body');
+        $minn->routes(new Routes($minn));
     }
 }

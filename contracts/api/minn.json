@@ -44066,7 +44066,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 361,
+            "lines": 363,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44521,7 +44521,7 @@
                         }
                     ],
                     "line": 360,
-                    "end": 430
+                    "end": 432
                 }
             ]
         },
@@ -45132,7 +45132,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Registrations.php",
-            "lines": 25,
+            "lines": 27,
             "doc": "Everything the extensions registered for this request, handed from Seams to the runner once.",
             "implements": [],
             "extends": null,
@@ -45142,7 +45142,7 @@
                 "Minn\\Extension\\Seams"
             ],
             "constructor": {
-                "signature": "__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title)",
+                "signature": "__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param list<Closure> $blockGates",
@@ -45152,7 +45152,8 @@
                     "@param list<Closure> $head",
                     "@param list<Closure> $footer",
                     "@param list<string> $bodyClasses",
-                    "@param list<Closure> $documentFilters"
+                    "@param list<Closure> $documentFilters",
+                    "@param list<object> $routes controllers with #[Route] methods"
                 ],
                 "params": [
                     {
@@ -45217,11 +45218,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "routes",
+                        "type": "array",
+                        "shape": "list<object>",
+                        "default": "array ( )",
+                        "doc": "controllers with #[Route] methods"
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 33
+                "line": 23,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -45301,6 +45309,15 @@
                 {
                     "name": "title",
                     "type": "?Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "routes",
+                    "type": "array",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -45539,8 +45556,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Seams.php",
-            "lines": 145,
-            "doc": "Where an extension can take part in a request: eight typed registrations,\nthe request they run in, and the outgoing HTTP its minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
+            "lines": 161,
+            "doc": "Where an extension can take part in a request: nine typed registrations,\nthe request they run in, and the outgoing HTTP its minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -45604,8 +45621,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 47,
-                "end": 55
+                "line": 49,
+                "end": 57
             },
             "cases": [],
             "constants": [],
@@ -45692,6 +45709,15 @@
                     "promoted": false
                 },
                 {
+                    "name": "routes",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "http",
                     "type": "Minn\\Http",
                     "readonly": true,
@@ -45755,8 +45781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 68
+                    "line": 64,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -45775,8 +45801,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 96
+                    "line": 77,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -45795,8 +45821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 102
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -45815,8 +45841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -45842,8 +45868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -45862,8 +45888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -45882,8 +45908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -45902,8 +45928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 132
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -45922,8 +45948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 138
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -45942,8 +45968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 144
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -45962,8 +45988,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 150,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "routes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "routes(object ...$controllers): void",
+                    "doc": "Answers paths with controllers whose public methods carry #[Route]\nattributes, as the engine's own do: each method takes the Request and\nthe captures it names and returns a Response. They are asked after the\nengine's own routes and before the themed front, so an extension can\nadd pages but never take over one the engine answers.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "controllers",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -45974,8 +46020,8 @@
                     "doc": "What was registered, for the engine's runner. Extensions have no reason to call this.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 166
+                    "line": 168,
+                    "end": 182
                 }
             ]
         },

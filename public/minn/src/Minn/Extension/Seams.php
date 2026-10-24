@@ -13,7 +13,7 @@ use Minn\Http;
 use Minn\Http\Request;
 
 /**
- * Where an extension can take part in a request: eight typed registrations,
+ * Where an extension can take part in a request: nine typed registrations,
  * the request they run in, and the outgoing HTTP its minn.json asks for.
  * This is the whole surface an extension sees. Each extension registers on
  * its own (forExtension), and what it registered joins the request's once
@@ -40,6 +40,8 @@ final class Seams
     private array $documentFilters = [];
     /** @var Closure(string): string|null */
     private ?Closure $title = null;
+    /** @var list<object> controllers whose #[Route] methods answer paths */
+    private array $routes = [];
 
     /** Outgoing HTTP, bound to the hosts the extension's needs.http lists; a client that throws when it asked for none. */
     public readonly Http $http;
@@ -93,6 +95,7 @@ final class Seams
         array_push($this->bodyClasses, ...$extension->bodyClasses);
         array_push($this->documentFilters, ...$extension->documentFilters);
         $this->title = $extension->title ?? $this->title;
+        array_push($this->routes, ...$extension->routes);
     }
 
     /** Decides whether a block renders at all; the first gate to answer false wins. */
@@ -149,6 +152,18 @@ final class Seams
         $this->documentFilters[] = $filter;
     }
 
+    /**
+     * Answers paths with controllers whose public methods carry #[Route]
+     * attributes, as the engine's own do: each method takes the Request and
+     * the captures it names and returns a Response. They are asked after the
+     * engine's own routes and before the themed front, so an extension can
+     * add pages but never take over one the engine answers.
+     */
+    public function routes(object ...$controllers): void
+    {
+        array_push($this->routes, ...$controllers);
+    }
+
     /** What was registered, for the engine's runner. Extensions have no reason to call this. */
     public function registrations(): Registrations
     {
@@ -162,6 +177,7 @@ final class Seams
             $this->bodyClasses,
             $this->documentFilters,
             $this->title,
+            $this->routes,
         );
     }
 }

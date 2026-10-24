@@ -412,7 +412,7 @@ final readonly class Engine
                 }
             }
         };
-        $router = (new Router($gate))->register(
+        $router = (new Router($gate))->register(...[
             new AssetsController($this->engineDir . '/assets'),
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
             new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users)),
@@ -423,8 +423,10 @@ final readonly class Engine
             $sitemapController,
             new CommentPostController(),
             new EntryScriptsController($resolver, $bridge),
+            // An extension's own pages: after every engine route, before the themed front's catch-all.
+            ...$seams->registrations()->routes,
             $front,
-        );
+        ]);
         $response = (new Kernel($router))->handle($request);
         return $response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404);
     }

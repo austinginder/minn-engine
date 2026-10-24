@@ -71,8 +71,13 @@ check(str_contains($page, '<!-- seam:footer reader-0 -->'), 'the footer seam con
 check(preg_match('/<body class="[^"]*\bseam-body\b/', $page) === 1, 'the body class seam');
 $feed = fetch("$ENGINE/feed/");
 check(str_contains($feed, 'data-name="n"') && str_contains($feed, 'seam:content'), 'shortcodes and content filters run for feeds too');
+$routed = fetch("$ENGINE/seam-probe/hello-there/");
+check(str_contains($routed, '<p class="seam-route" data-name="hello-there">reader-0</p>'), 'the route seam answers its path, with the capture and the reader', $routed);
+check(!str_contains(fetch("$ENGINE/minn-admin/login"), 'seam-shadow'), 'an engine route keeps its path: the route seam comes after the engine');
+check(!str_contains(fetch("$ENGINE/seam-probe/UPPER/"), 'seam-route'), 'a path the capture refuses falls through to the front');
 wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
 check(!str_contains(fetch("$ENGINE/$slug/"), 'seam-probe'), 'an extension not activated does nothing');
+check(!str_contains(fetch("$ENGINE/seam-probe/hello-there/"), 'seam-route'), 'an inactive extension\'s routes do not answer');
 
 // 2. Manifest discovery and status.
 $status = trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . ' && wp minn info 2>&1'));

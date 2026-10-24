@@ -8,9 +8,9 @@ the extension contract and its seams
 | [`Extensions`](#extensions) | final class | 14 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 129 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
 | [`Manifest`](#manifest) | final readonly class | 78 | minn.json, read as data. A folder under wp-content/plugins (or |
-| [`Registrations`](#registrations) | final readonly class | 25 | Everything the extensions registered for this request, handed from Seams to the runner once. |
+| [`Registrations`](#registrations) | final readonly class | 27 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 79 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 145 | Where an extension can take part in a request: eight typed registrations, |
+| [`Seams`](#seams) | final class | 161 | Where an extension can take part in a request: nine typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 
 ## Extension
@@ -170,7 +170,7 @@ Everything the extensions registered for this request, handed from Seams to the 
 Used by: `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`
 
 ```php
-__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title)
+__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ))
 ```
 - `@param list<Closure> $blockGates`
 - `@param list<Closure> $blockFilters`
@@ -180,6 +180,7 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 - `@param list<Closure> $footer`
 - `@param list<string> $bodyClasses`
 - `@param list<Closure> $documentFilters`
+- `@param list<object> $routes controllers with #[Route] methods`
 
 - readonly `array $blockGates`
 - readonly `array $blockFilters`
@@ -190,6 +191,7 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 - readonly `array $bodyClasses`
 - readonly `array $documentFilters`
 - readonly `?Closure $title`
+- readonly `array $routes`
 
 
 ## SeamRunner
@@ -248,7 +250,7 @@ The whole document through every document filter.
 
 `final class Minn\Extension\Seams` · `public/minn/src/Minn/Extension/Seams.php`
 
-Where an extension can take part in a request: eight typed registrations,
+Where an extension can take part in a request: nine typed registrations,
 the request they run in, and the outgoing HTTP its minn.json asks for.
 This is the whole surface an extension sees. Each extension registers on
 its own (forExtension), and what it registered joins the request's once
@@ -314,6 +316,14 @@ Replaces the document title; receives the engine's own.
 ### `filterDocument(Closure $filter): void`
 
 Rewrites the whole themed document before it is sent (what an output buffer did on the reference).
+
+### `routes(object ...$controllers): void`
+
+Answers paths with controllers whose public methods carry #[Route]
+attributes, as the engine's own do: each method takes the Request and
+the captures it names and returns a Response. They are asked after the
+engine's own routes and before the themed front, so an extension can
+add pages but never take over one the engine answers.
 
 ### `registrations(): Minn\Extension\Registrations`
 
