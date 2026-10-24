@@ -237,34 +237,44 @@ final readonly class Engine
     /** The response the request's own surface produces: REST, then the admin, the login endpoint, and the public site. */
     /**
      * With the database in hand, a fatal during boot can be blamed on the
-     * extension it came from; the second inside ten minutes pauses it, so
-     * the next request comes back without it. The window in which this
-     * applies is opened by Plugins::load. Only a request that carries
-     * nothing a visitor chose counts: an extension that fails on some input
-     * fails for that input alone, and a visitor could otherwise pause it for
-     * everyone with two requests.
+     * extension it came from. The window in which this applies is opened by
+     * Plugins::load. A visitor's request only notes the failure, and only
+     * when it carries no query, body, upload or cookie: its path and headers
+     * are still the visitor's, and an extension that fails on some input
+     * fails for that input alone (security review 2026-10-22; Austin,
+     * 2026-10-24). On the first note inside the window the engine asks the
+     * site itself, once (Recovery::check); that request carries its token,
+     * and when it fails at boot on the same extension, the extension is
+     * paused and the next request comes back without it.
      */
     private static function armRecoveryPause(Db $db, Request $request): void
     {
         Failure::onFatal(static function (array $error) use ($db, $request): void {
-            if (!self::plain($request)) {
+            $token = $request->header(Recovery::CHECK_HEADER);
+            if ($token === null && !self::plain($request)) {
                 return;
             }
             $recovery = new Recovery(new Site($db), ABSPATH . 'wp-content');
             $realpaths = array_flip(array_filter((array) ($GLOBALS['wp_plugin_paths'] ?? []), 'is_string'));
             unset($realpaths['']);
-            $blamed = $recovery->blame($error['file'], $realpaths);
+            $blamed = $recovery->blameFailure($error['file'], $error['trace'] ?? [], $realpaths);
             if ($blamed === null) {
                 return;
             }
-            if (!$recovery->strike($blamed)) {
-                error_log(sprintf('Minn Engine: %s %s failed while booting; a second failure within ten minutes pauses it', $blamed['kind'], $blamed['name']));
+            if ($token !== null) {
+                if ($recovery->confirmed($blamed, $token) && $recovery->pause($blamed, $error)) {
+                    error_log(sprintf('Minn Engine: paused %s %s: it failed while booting, and again on the engine\'s own request; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
+                }
                 return;
             }
-            if (!$recovery->pause($blamed, $error)) {
+            if ($recovery->strike($blamed)) {
                 return;
             }
-            error_log(sprintf('Minn Engine: paused %s %s after a second fatal error while booting; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
+            error_log(sprintf('Minn Engine: %s %s failed while booting; asking the site once without the request\'s input, which pauses it if it fails there too', $blamed['kind'], $blamed['name']));
+            $unanswered = $recovery->check($blamed);
+            if ($unanswered !== null) {
+                error_log(sprintf('Minn Engine: the site did not answer its own check on %s %s (%s), so it is not paused', $blamed['kind'], $blamed['name'], $unanswered));
+            }
         });
     }
 

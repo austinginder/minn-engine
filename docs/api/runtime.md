@@ -86,7 +86,7 @@ the WordPress runtime plugins load against
 | [`OptionLock`](#optionlock) | final class | 23 | A lock the reference keeps as an option row (the revision upgrade's |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
 | [`OptionWrites`](#optionwrites) | final class | 133 | Options written the way add_option(), update_option() and delete_option() |
-| [`Options`](#options) | final class | 530 | Options as plugin code sees them, kept where the reference keeps them: |
+| [`Options`](#options) | final class | 531 | Options as plugin code sees them, kept where the reference keeps them: |
 | [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
 | [`OutputFloor`](#outputfloor) | final class | 23 | The output buffers the engine reads its pages from. The reference prints |
 | [`Pages`](#pages) | final class | 136 | get_pages() as the reference shapes it: its arguments as a post query |
@@ -125,7 +125,7 @@ the WordPress runtime plugins load against
 | [`QueryFlags`](#queryflags) | final readonly class | 202 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`RecipientLocale`](#recipientlocale) | final class | 30 | An email written in its reader's language, as the reference writes each: |
 | [`Records`](#records) | final class | 140 | Posts, terms and comments as WordPress hands them to plugins: found by |
-| [`Recovery`](#recovery) | final readonly class | 241 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 314 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 188 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 108 | Settings as register_setting keeps them (probe rest-settings): the |
@@ -4730,10 +4730,11 @@ copy still different, or its change is never written.
 
 - const `ALL` = `'alloptions'`
 - const `MISSING` = `'notoptions'`
-- const `GUARDED` = `array (   0 => 'minn_runtime_symbols',   1 => 'minn_recovery_strikes',   2 => 'minn_cron_lock', )` — The options the engine keeps for itself: the symbol-gate cache a plugin
-could otherwise rewrite to pass its own gate, the recovery strikes, the
-cron lock, and the sign-in throttle rows. The facade refuses to write
-them; the engine writes them through this class directly.
+- const `GUARDED` = `array (   0 => 'minn_runtime_symbols',   1 => 'minn_recovery_strikes',   2 => 'minn_recovery_check',   3 => 'minn_cron_lock', )` — The options the engine keeps for itself: the symbol-gate cache a plugin
+could otherwise rewrite to pass its own gate, the recovery strikes and
+the token of recovery's own check, the cron lock, and the sign-in
+throttle rows. The facade refuses to write them; the engine writes
+them through this class directly.
 - const `GUARDED_PREFIX` = `'minn_login_throttle_'`
 - const `ON_DEMAND` = `array (   0 => 'minn_admin_changelog',   1 => 'minn_changelog',   2 => 'minn_release',   3 => 'minn_plugin_info',   4 => 'minn_updates',   5 => '_transient_minn_admin_uploads_size',   6 => '_transient_timeout_minn_admin_uploads_size',   7 => 'minn_admin_uploads_size_lock', )` — The engine's own caches, read on demand and written with autoload off
 (Site::setOption). Rows an older engine wrote autoloaded are set right
@@ -4871,7 +4872,7 @@ reads back as that string, other scalars as their string form.
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `listed()` (private, line 100), `missing()` (private, line 125), `lookup()` (private, line 142), `decode()` (private, line 167), `remember()` (private, line 384), `found()` (private, line 395), `holdsObject()` (private, line 405), `switchAutoload()` (private, line 436)
+Internals: `listed()` (private, line 101), `missing()` (private, line 126), `lookup()` (private, line 143), `decode()` (private, line 168), `remember()` (private, line 385), `found()` (private, line 396), `holdsObject()` (private, line 406), `switchAutoload()` (private, line 437)
 
 
 ## OptionsGroup
@@ -6768,13 +6769,18 @@ Internals: `termNumbers()` (private, line 144), `shaped()` (private, line 153)
 `final readonly class Minn\Runtime\Recovery` · `public/minn/src/Minn/Runtime/Recovery.php`
 
 Recovery from a fatal in someone else's code. When a plugin or theme
-kills the boot of a request, the file it died in names it; a second
-such failure inside ten minutes records it as paused, and the next
-request loads without it: the site comes back on its own instead of
-staying down until a human reads the log. One failure is only noted:
-a pause is a site-wide decision, and a single request can be a
-crafted one. Failures after boot (a route, a template) never pause
-anything; see Failure::armRecovery().
+kills the boot of a request, the file it died in names it (or, when that
+file is the engine's or core's, the first plugin or theme file the trace
+passes through); the failure is noted, and the engine asks the site once
+itself (check()): one request to the home page carrying nothing a visitor
+chose. If that request fails at boot on the same extension, it is paused,
+and the next request loads without it: the site comes back on its own
+instead of staying down until a human reads the log. A visitor's request
+never pauses anything by itself: a pause is a site-wide decision, and a
+request's path, headers and their values are the visitor's to choose, so
+an extension that fails on some input fails for that input alone.
+Failures after boot (a route, a template) never pause anything; see
+Failure::armRecovery().
 
 The paused list is stored where WordPress stores it, in the same shape
 (`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,
@@ -6785,7 +6791,10 @@ engine's own `minn_recovery_strikes` option.
 - const `PLUGINS_OPTION` = `'paused_plugins'`
 - const `THEMES_OPTION` = `'paused_themes'`
 - const `STRIKES_OPTION` = `'minn_recovery_strikes'`
-- const `WINDOW` = `600` — Seconds inside which a second boot failure pauses the extension.
+- const `CHECK_OPTION` = `'minn_recovery_check'` — The engine's own check in flight: the extension it asks about, its token, when the token lapses.
+- const `CHECK_HEADER` = `'x-minn-recovery-check'` — The header the engine's own check carries its token in.
+- const `WINDOW` = `600` — Seconds a strike is remembered: one check of the site per extension inside it.
+- const `CHECK_TTL` = `60` — Seconds a check's token is good for: one request to the site, no longer.
 
 Used by: `Minn\Cli\MinnCommand`, `Minn\Engine`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\Options`, `Minn\Runtime\Plugins`
 
@@ -6815,6 +6824,17 @@ brings it home first.
 - `@param list<string>|null $active the active plugin files; read from the site when omitted`
 - `@return array{kind: 'plugin'|'theme', name: string}|null`
 
+### `blameFailure(string $file, array $trace, array $realpaths = array ( )): ?array`
+
+The extension a failure belongs to: the file it died in, else the
+first plugin or theme file its trace passes through, innermost first.
+A plugin's hook that fails inside engine or core code (an engine call
+it made, a core function) is still the plugin's failure.
+
+- `@param list<string> $trace the files of the failure's stack frames, innermost first`
+- `@param array<string, string> $realpaths`
+- `@return array{kind: 'plugin'|'theme', name: string}|null`
+
 ### `pause(array $blamed, array $error): bool`
 
 Records an extension as paused. Returns false when it was already
@@ -6826,10 +6846,34 @@ notify once.
 
 ### `strike(array $blamed): bool`
 
-Notes a boot failure against an extension. True when it is the
-second inside the window, which is when the caller pauses it; the
-first is only remembered. Strikes older than the window are dropped
-as they are read, so the option never grows.
+Notes a boot failure against an extension. True when one is already
+noted inside the window, which is when the caller has asked the site
+about it once already; the first is when it asks (check()). Strikes
+older than the window are dropped as they are read, so the option
+never grows.
+
+- `@param array{kind: string, name: string} $blamed`
+
+### `check(array $blamed): ?string`
+
+Asks the site once about an extension a request saw fail at boot: a
+token is kept for it, then one GET of the home page goes out carrying
+the token and nothing a visitor chose (no body, the engine's own
+headers; a fresh query and a signed-in cookie name, which sign nobody
+in, step past a page cache that would answer from what it holds). If
+that request fails at boot on the same extension, its own recovery
+pauses it (confirmed()). The address is the site's own, so its
+certificate is not checked, as the reference sends its requests to
+itself (a local certificate authority the server's own PHP does not
+know would refuse it); the request carries nothing but a token good
+once, for a minute. Null when the site answered, else why not.
+
+- `@param array{kind: string, name: string} $blamed`
+
+### `confirmed(array $blamed, string $token): bool`
+
+Whether a request's token is the one check() kept for this extension
+and still good. The token is spent either way, so it answers once.
 
 - `@param array{kind: string, name: string} $blamed`
 
@@ -6863,7 +6907,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.
 
-Internals: `pluginFile()` (private, line 97), `activePlugins()` (private, line 111), `strikes()` (private, line 168), `forgetStrikes()` (private, line 175), `read()` (private, line 251), `write()` (private, line 259)
+Internals: `pluginFile()` (private, line 131), `activePlugins()` (private, line 145), `strikes()` (private, line 247), `forgetStrikes()` (private, line 254), `read()` (private, line 331), `write()` (private, line 339)
 
 
 ## Refusal

@@ -35,9 +35,9 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
     }
 };
 /** @return array{0: int, 1: string} status and body */
-$http = static function (string $url, string $method = 'GET', array $fields = [], string $cookie = ''): array {
+$http = static function (string $url, string $method = 'GET', array $fields = [], string $cookie = '', array $headers = []): array {
     $ch = curl_init($url);
-    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 120, CURLOPT_CUSTOMREQUEST => $method]);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 120, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_HTTPHEADER => $headers]);
     if ($fields !== []) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
     }
@@ -76,7 +76,8 @@ foreach ($folders as $folder) {
 $engineAnswer = json_decode($engineBody, true);
 $check('media_handle_upload refuses a type its overrides leave out, through the upload filters', is_array($engineAnswer) && isset($engineAnswer['error']) && $engineAnswer === json_decode($referenceBody, true), "engine {$engineBody}\n      reference {$referenceBody}");
 
-// The recovery pause: input-dependent failures never pause a plugin; failures on plain requests still do.
+// The recovery pause: failures on a visitor's input (query, header, path, a forged check token) never pause a plugin;
+// one that fails on every request is paused once the engine's own request fails on it too (Austin, 2026-10-24).
 $plugins = "{$PUBLIC}/wp-content/plugins/minn-test-sweep-fails";
 @mkdir($plugins, 0755, true);
 copy(__DIR__ . '/fixtures/sweep/minn-test-sweep-fails.php', "{$plugins}/minn-test-sweep-fails.php");
@@ -94,12 +95,29 @@ foreach ([1, 2] as $try) {
 }
 $status = $wp('minn recovery');
 $check('two requests that make a plugin fail on their input do not pause it', str_contains($status, 'nothing paused'), $status);
-$wp('option update minn_test_sweep_fail_always 1');
+$wp('minn recovery resume-all');
+$failed = [];
 foreach ([1, 2] as $try) {
-    $http("{$ENGINE}/");
+    [$failed[]] = $http("{$ENGINE}/", headers: ['X-Minn-Test-Sweep-Fail: 1']);
 }
 $status = $wp('minn recovery');
-$check('a plugin failing on plain requests is still paused after the second', str_contains($status, 'minn-test-sweep-fails'), $status);
+$check('two plain requests that make a plugin fail on a header they carry do not pause it', $failed === [500, 500] && str_contains($status, 'nothing paused'), json_encode($failed) . ' ' . $status);
+$wp('minn recovery resume-all');
+$failed = [];
+foreach ([1, 2] as $try) {
+    [$failed[]] = $http("{$ENGINE}/zz-sweep-fail/");
+}
+$status = $wp('minn recovery');
+$check('two plain requests that make a plugin fail on their path do not pause it', $failed === [500, 500] && str_contains($status, 'nothing paused'), json_encode($failed) . ' ' . $status);
+$wp('minn recovery resume-all');
+[$forged] = $http("{$ENGINE}/", headers: ['X-Minn-Test-Sweep-Fail: 1', 'X-Minn-Recovery-Check: ' . str_repeat('0', 32)]);
+$status = $wp('minn recovery');
+$check('a request carrying a check token recovery did not issue pauses nothing', $forged === 500 && str_contains($status, 'nothing paused'), $forged . ' ' . $status);
+$wp('minn recovery resume-all');
+$wp('option update minn_test_sweep_fail_always 1');
+[$first] = $http("{$ENGINE}/");
+$status = $wp('minn recovery');
+$check('a plugin failing on every request is paused after the first, once the engine\'s own request fails on it too', $first === 500 && str_contains($status, 'minn-test-sweep-fails'), $first . ' ' . $status);
 
 // A long post password is refused before any hashing (the reference stops at 4,096 characters).
 $started = microtime(true);

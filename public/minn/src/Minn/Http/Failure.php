@@ -19,7 +19,7 @@ final class Failure
 {
     private const FATAL = E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR;
 
-    /** @var null|callable(array{type:int,file:string,line:int,message:string}): void */
+    /** @var null|callable(array{type:int,file:string,line:int,message:string,trace?:list<string>}): void */
     private static $recorder = null;
     /** Whether errors display for this request: display_errors, once the debug constants set it. */
     private static bool $display = false;
@@ -50,7 +50,7 @@ final class Failure
      * the extension it came from so the next request loads without it.
      * Installed once the runtime is up, since it needs the database.
      *
-     * @param callable(array{type:int,file:string,line:int,message:string}): void $recorder
+     * @param callable(array{type:int,file:string,line:int,message:string,trace?:list<string>}): void $recorder
      */
     public static function onFatal(callable $recorder): void
     {
@@ -123,7 +123,8 @@ final class Failure
     {
         error_log(sprintf('Minn Engine: %s: %s in %s:%d', $error::class, $error->getMessage(), $error->getFile(), $error->getLine()));
         self::discardOutput();
-        self::record(['type' => E_ERROR, 'file' => $error->getFile(), 'line' => $error->getLine(), 'message' => $error->getMessage()]);
+        $trace = array_values(array_filter(array_column($error->getTrace(), 'file'), 'is_string'));
+        self::record(['type' => E_ERROR, 'file' => $error->getFile(), 'line' => $error->getLine(), 'message' => $error->getMessage(), 'trace' => $trace]);
     }
 
     /**
@@ -131,7 +132,7 @@ final class Failure
      * take the request down: a site that cannot record a pause should
      * still answer with the error page.
      *
-     * @param array{type: int, file: string, line: int, message: string} $error
+     * @param array{type: int, file: string, line: int, message: string, trace?: list<string>} $error
      */
     private static function record(array $error): void
     {

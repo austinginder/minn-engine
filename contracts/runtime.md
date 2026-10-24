@@ -18639,6 +18639,33 @@ mode). Still left under `open_basedir`, about 10 ms each: the facade's files, lo
 (`Runtime::loadFacade`, the lazy facade the 0.1.0 audit named), and the pattern headers read once (the reference keeps
 them in its `wp_theme_files_patterns-*` transient, which the facade already fills). Kinsta's figure needs the host.
 
+## Recovery asks the site itself (2026-10-24)
+
+Two of Austin's calls on the register (2026-10-24) change how a boot failure pauses an extension:
+
+- **Only a request with nothing a visitor chose counts.** A pause used to come from two plain requests inside ten
+  minutes (no query, body, upload or cookie), but their path and headers, and the headers' values, were still the
+  visitor's: a plugin that fails at boot on one of them could be paused by anyone (security review 2026-10-22). No
+  rule over a visitor's request can close that, since a User-Agent is as much the visitor's as a custom header. So a
+  visitor's plain request now only notes the failure, and on the first note inside the window the engine asks the
+  site itself, once: a GET of the home page with no body, the engine's own User-Agent, a fresh query and a signed-in
+  cookie name (which sign nobody in) to step past a page cache, and a token kept in the guarded
+  `minn_recovery_check` option (random, good once, for sixty seconds). When that request fails at boot on the same
+  extension, its own recovery pauses it. A plugin that fails only on a visitor's path, header or value meets nothing
+  on the engine's request and stays up for everyone else; a forged token pauses nothing. The request goes to the
+  site's own address without checking the certificate, as the reference's requests to itself go (a local certificate
+  authority the server's PHP does not know refused it here). A host that refuses a site's request to itself leaves
+  the extension unpaused, as the reference leaves it outside an administrator's recovery session; the log says why.
+- **A failure inside engine code is the plugin's that made the call.** On the field test's Kinsta site a plugin's hook
+  failed inside an engine class and every request answered 500, because only the throwing file was blamed and it was
+  the engine's. `Recovery::blameFailure` now takes the throwing file, then the files of the trace's frames, innermost
+  first, and blames the first under plugins/ or themes/. `Failure::note` hands the trace's files to recovery.
+
+Proven by the recovery suite (a failure pauses once the engine's request meets it too, the token spent, a hook that
+fails inside `Minn\Json::decode` blamed on its plugin) and the security-sweep suite (two plain requests failing on a
+header, or on a path, pause nothing; a forged token pauses nothing; a plugin failing on every request is paused after
+the first). Post by email over POP3 is left out (accepted).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18806,7 +18833,7 @@ rows that are `open` or `austin`.
 | 18300 | Facade doubts (10-22, fourth wave) | `wp_ob_end_flush_all` mid-page ended the engine's own capture buffers: the page lost its doctype, the start of its head and its headers | done | measured over HTTP with a plugin calling it in wp_head: the reference prints as it goes, so its page only leaves early, unchanged; the engine builds the page in buffers and sends it whole. Its page captures (`Runtime::capture`, `Theme\TemplateBuffer`, `Front\PrintedResponse`, the feed's) now hold their level in `Runtime\OutputFloor`, and the function ends only the buffers above the innermost one (all of them once none is open, as at shutdown); suite `output-flush` (wp_head, wp_footer, a plugin's own buffer: each page as served without the plugin, under the same headers, its markers in the reference's order) |
 | 18300 | Security review (10-22) | the engine's own SQL quoting (`Query\Sql::escape`) ignores a multibyte connection charset (gbk, big5, sjis, cp932, gb18030), where the reference escapes with the connection | done | quoted through the connection (`Sql::through`), and `set_charset` with a collation the charset lacks no longer fatals; "Quoting through the connection, and a render budget (2026-10-23)" |
 | 18300 | Security review (10-22) | distinct synced patterns or post-content loops nest combinatorially (depth capped at 64, width not), each synced pattern read from the database | done | `RenderState::MAX_SOURCES` per outermost render; "Quoting through the connection, and a render budget (2026-10-23)" |
-| 18300 | Security review (10-22) | a recovery pause counts requests whose path and headers a visitor chose (only query, body, upload and cookie make a request not plain) | austin | one decision with the field test's recovery row: narrow what counts (path, headers), or pause only in an administrator's session as the reference does |
+| 18300 | Security review (10-22) | a recovery pause counts requests whose path and headers a visitor chose (only query, body, upload and cookie make a request not plain) | done | Austin 2026-10-24: narrow it. A visitor's request now only notes a boot failure; the pause comes from the engine's own request ("Recovery asks the site itself", 2026-10-24), so a failure on a visitor's path, header or a header's value never pauses anything (security-sweep suite) |
 | 18300 | Security review (10-22) | the sign-in cookies carry no SameSite flag | accepted | as the reference sends them (57182094); the request it let reach further (cookie without nonce beside another account's application password) is fixed at its root |
 | 18300 | Hook parity (10-22) | `add_query_arg` read an address's own query without `wp_parse_str`'s filter (120 scenarios recorded it not fired) | done | `Runtime\QueryArgs::add` hears the filter; a script's or style's version is added as the dependency printers add it, without it (`QueryArgs::versioned`), and the themes list builds no page links; 148 recorded hook differences dropped |
 | 18310 | The 0.1.0 field test (10-23) | a host that disables `getmyuid()` (Kinsta) fails every request a plugin asks the filesystem method on | done | `Ops\FilesystemCredentials` reads the entry file's owner there (20621f2f) |
@@ -18815,10 +18842,10 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | eject printed a PHP warning for a park it cannot remove | done | it says so instead (abb2209b) |
 | 18310 | The 0.1.0 field test (10-23) | `wp-links-opml.php`, `wp-mail.php`, `wp-signup.php`, `wp-activate.php`, `wp-trackback.php` answered the engine's 404 | done | `Front\EntryScriptsController`, probes suite, five hook-parity scenarios |
 | 18310 | The 0.1.0 field test (10-23) | an array `link_cat` on `wp-links-opml.php` fatals on the reference (TypeError, 500) | accepted | the engine lists every category; a fatal is no contract |
-| 18310 | The 0.1.0 field test (10-23) | recovery never pauses a plugin whose hook fatals inside engine code | austin | blame the first plugin frame in the trace, or keep the reference's file-only blame |
+| 18310 | The 0.1.0 field test (10-23) | recovery never pauses a plugin whose hook fatals inside engine code | done | Austin 2026-10-24: blame the first plugin frame. `Recovery::blameFailure` takes the throwing file, then the trace's files innermost first (recovery suite, a hook that fails inside `Minn\Json::decode`) |
 | 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | austin | declare the pluggable functions from the webroot's `wp-includes/pluggable.php`, or accept |
 | 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host. Locally (2026-10-23, "Theme files read once a request"): one request per process, `open_basedir` took Minn from 145% to 209% of WordPress; theme files read once brings it to 175%. Left: the facade's files loaded whole, the pattern headers, and the host's own measure |
-| 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | austin | carry a POP3 client, or leave post by email out (the engine refuses as unconfigured) |
+| 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | accepted | Austin 2026-10-24: left out. wp-mail.php answers as a site with no mail server configured, on every site |
 | 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | done | transients live in the object cache while installing (and with a persistent cache), cookie constants after the must-use plugins; the core block stylesheet list stays the reference's own; "Transients in the object cache, the theme's folder walks, and the site's locale (2026-10-23)" |
 | 18310 | The 0.1.0 field test (10-23) | transients written to the options table under a persistent object cache, where the reference keeps them in the cache | done | `Runtime\Transients::cached`; probe transient-stores |
 | 18310 | The 0.1.0 field test (10-23) | theme pattern files read one folder deep, `theme_scandir_exclusions` asked once a walk | done | `WP_Theme::scan` walks and asks per folder; probe theme-scans |

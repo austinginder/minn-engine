@@ -24,7 +24,7 @@ class WP_Paused_Extensions_Storage
         $this->type = $extension_type;
     }
 
-    /** Minn pauses an extension itself, after a second boot failure; nothing else records one. */
+    /** Minn pauses an extension itself, once a boot failure meets the engine's own request too; nothing else records one. */
     public function set($extension, $error)
     {
         return false;

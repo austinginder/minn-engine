@@ -63,15 +63,12 @@ $check(str_contains($wp('minn recovery'), 'nothing paused'), 'nothing is paused 
 
 [$first] = minn_test_fetch($ENGINE . '/');
 $check($first['status'] === 500, 'the fatal answers 500', (string) $first['status']);
-$check(str_contains($wp('minn recovery'), 'nothing paused'), 'one boot failure is noted, not paused (a single request can be a crafted one)');
-$strikes = json_decode($wp('option get minn_recovery_strikes'), true);
-$check(is_array($strikes) && count($strikes['plugin:' . $plugin] ?? []) === 1, 'the strike is recorded against the plugin', json_encode($strikes));
-
-[$again] = minn_test_fetch($ENGINE . '/');
-$check($again['status'] === 500, 'the second boot failure answers 500 too', (string) $again['status']);
+// The visitor's request only notes the failure; the engine then asks the site once itself, carrying nothing the
+// visitor chose, and that request fails on the plugin too: it is paused (Austin, 2026-10-24).
 $status = $wp('minn recovery');
-$check(str_contains($status, $plugin), 'the second failure inside the window pauses the plugin', $status);
+$check(str_contains($status, $plugin), 'a boot failure the engine\'s own request meets too pauses the plugin', $status);
 $check(str_contains($wp('option get minn_recovery_strikes'), 'Could not get') || !str_contains($wp('option get minn_recovery_strikes'), 'plugin:' . $plugin), 'a pause clears its strikes');
+$check(str_contains($wp('option get minn_recovery_check'), 'Could not get'), 'and spends the check\'s token', $wp('option get minn_recovery_check'));
 $check(str_contains($status, 'minn_recovery_probe_no_such_function'), 'the pause records why', $status);
 
 [$second] = minn_test_fetch($ENGINE . '/');
@@ -98,6 +95,38 @@ $wp('plugin deactivate ' . escapeshellarg($slug));
 $wp('minn recovery resume-all');
 [$fourth] = minn_test_fetch($ENGINE . '/');
 $check($fourth['status'] === 200, 'the site is well once the plugin is off', (string) $fourth['status']);
+
+// A plugin whose hook fails inside engine code is still the plugin's failure: the trace's first plugin frame is
+// blamed (the 0.1.0 field test's Kinsta site stayed down when only the throwing file was; Austin, 2026-10-24).
+$engineSlug = 'minn-recovery-engine-probe';
+$engineDir = $public . '/wp-content/plugins/' . $engineSlug;
+$enginePlugin = $engineSlug . '/' . $engineSlug . '.php';
+$engineCleanup = static function () use ($engineDir, $wp, $engineSlug): void {
+    $wp('plugin deactivate ' . escapeshellarg($engineSlug));
+    $wp('minn recovery resume-all');
+    array_map('unlink', glob($engineDir . '/*') ?: []);
+    @rmdir($engineDir);
+};
+register_shutdown_function($engineCleanup);
+@mkdir($engineDir, 0755, true);
+file_put_contents($engineDir . '/' . $engineSlug . '.php', <<<'PLUGIN'
+<?php
+/**
+ * Plugin Name: Minn Recovery Engine Probe
+ */
+add_action('init', static function (): void {
+    if (!defined('WP_CLI') && PHP_SAPI !== 'cli') {
+        Minn\Json::decode(['not a string']);
+    }
+});
+PLUGIN);
+$wp('plugin activate ' . escapeshellarg($engineSlug));
+[$inEngine] = minn_test_fetch($ENGINE . '/');
+$status = $wp('minn recovery');
+$check($inEngine['status'] === 500 && str_contains($status, $enginePlugin), 'a plugin whose hook fails inside engine code is blamed through its trace, and paused', $inEngine['status'] . ' ' . $status);
+$engineCleanup();
+[$wellAgain] = minn_test_fetch($ENGINE . '/');
+$check($wellAgain['status'] === 200, 'the site is well once that plugin is off', (string) $wellAgain['status']);
 
 // Deleting through WordPress's storage lets the extension load again.
 $wp('option update paused_plugins ' . escapeshellarg(json_encode(['zz-paused/zz-paused.php' => ['type' => 1, 'file' => 'x.php', 'line' => 1, 'message' => 'ZZ']])) . ' --format=json');

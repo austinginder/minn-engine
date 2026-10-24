@@ -31,11 +31,12 @@ final class Options
 
     /**
      * The options the engine keeps for itself: the symbol-gate cache a plugin
-     * could otherwise rewrite to pass its own gate, the recovery strikes, the
-     * cron lock, and the sign-in throttle rows. The facade refuses to write
-     * them; the engine writes them through this class directly.
+     * could otherwise rewrite to pass its own gate, the recovery strikes and
+     * the token of recovery's own check, the cron lock, and the sign-in
+     * throttle rows. The facade refuses to write them; the engine writes
+     * them through this class directly.
      */
-    public const GUARDED = ['minn_runtime_symbols', 'minn_recovery_strikes', 'minn_cron_lock'];
+    public const GUARDED = ['minn_runtime_symbols', 'minn_recovery_strikes', 'minn_recovery_check', 'minn_cron_lock'];
     private const GUARDED_PREFIX = 'minn_login_throttle_';
 
     /**

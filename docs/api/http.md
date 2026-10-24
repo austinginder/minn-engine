@@ -13,7 +13,7 @@ request, response, routing, and the outgoing client
 | [`Download`](#download) | final readonly class | 36 | A file the engine fetches for itself (a package, a language pack), over |
 | [`Envelope`](#envelope) | interface | 9 | What runs around a matched route once the router knows the route takes |
 | [`Exchange`](#exchange) | final readonly class | 74 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
-| [`Failure`](#failure) | final class | 207 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Failure`](#failure) | final class | 208 | What the public sees when the engine cannot answer: a plain page with no |
 | [`Fake`](#fake) | final class | 94 | Answers requests in place of the network, and keeps what was sent. A test |
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
@@ -388,7 +388,7 @@ What to do with a fatal beyond showing the page: the engine records
 the extension it came from so the next request loads without it.
 Installed once the runtime is up, since it needs the database.
 
-- `@param callable(array{type:int,file:string,line:int,message:string}): void $recorder`
+- `@param callable(array{type:int,file:string,line:int,message:string,trace?:list<string>}): void $recorder`
 
 ### static `install(array $constants, array $server): void`
 
@@ -429,7 +429,7 @@ The same page with the cause on it, for a site that asked to see
 errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
-Internals: `discardOutput()` (private, line 93), `note()` (private, line 122), `record()` (private, line 136), `dropin()` (private, line 176), `page()` (private, line 210)
+Internals: `discardOutput()` (private, line 93), `note()` (private, line 122), `record()` (private, line 137), `dropin()` (private, line 177), `page()` (private, line 211)
 
 
 ## Fake
@@ -751,7 +751,7 @@ Last-Modified always marked for removal.
 
 One outgoing HTTP request, normalised: the transport needs nothing else.
 
-Used by: `Minn\Http`, `Minn\Http\Destination`, `Minn\Http\Fake`, `Minn\Http\Transport`
+Used by: `Minn\Http`, `Minn\Http\Destination`, `Minn\Http\Fake`, `Minn\Http\Transport`, `Minn\Runtime\Recovery`
 
 ```php
 __construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL, ?int $maxBytes = NULL)
@@ -1474,7 +1474,7 @@ the header lines of every hop arrive in order; only the last response's
 block is kept, the way plugin code expects to read it. Code calling out
 goes through Minn\Http, which owns the rules about where a request may go.
 
-Used by: `Minn\Http`
+Used by: `Minn\Http`, `Minn\Runtime\Recovery`
 
 ### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
 

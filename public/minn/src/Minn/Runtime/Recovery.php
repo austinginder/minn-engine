@@ -5,18 +5,25 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Site;
+use Minn\Http\Outbound;
+use Minn\Http\Transport;
 use Minn\Json;
 use Minn\Support\Serialized;
 
 /**
  * Recovery from a fatal in someone else's code. When a plugin or theme
- * kills the boot of a request, the file it died in names it; a second
- * such failure inside ten minutes records it as paused, and the next
- * request loads without it: the site comes back on its own instead of
- * staying down until a human reads the log. One failure is only noted:
- * a pause is a site-wide decision, and a single request can be a
- * crafted one. Failures after boot (a route, a template) never pause
- * anything; see Failure::armRecovery().
+ * kills the boot of a request, the file it died in names it (or, when that
+ * file is the engine's or core's, the first plugin or theme file the trace
+ * passes through); the failure is noted, and the engine asks the site once
+ * itself (check()): one request to the home page carrying nothing a visitor
+ * chose. If that request fails at boot on the same extension, it is paused,
+ * and the next request loads without it: the site comes back on its own
+ * instead of staying down until a human reads the log. A visitor's request
+ * never pauses anything by itself: a pause is a site-wide decision, and a
+ * request's path, headers and their values are the visitor's to choose, so
+ * an extension that fails on some input fails for that input alone.
+ * Failures after boot (a route, a template) never pause anything; see
+ * Failure::armRecovery().
  *
  * The paused list is stored where WordPress stores it, in the same shape
  * (`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,
@@ -35,8 +42,14 @@ final readonly class Recovery
         return false;
     }
     public const STRIKES_OPTION = 'minn_recovery_strikes';
-    /** Seconds inside which a second boot failure pauses the extension. */
+    /** The engine's own check in flight: the extension it asks about, its token, when the token lapses. */
+    public const CHECK_OPTION = 'minn_recovery_check';
+    /** The header the engine's own check carries its token in. */
+    public const CHECK_HEADER = 'x-minn-recovery-check';
+    /** Seconds a strike is remembered: one check of the site per extension inside it. */
     public const WINDOW = 600;
+    /** Seconds a check's token is good for: one request to the site, no longer. */
+    private const CHECK_TTL = 60;
 
     public function __construct(private Site $site, private string $contentDir)
     {
@@ -82,6 +95,27 @@ final readonly class Recovery
                 return ['kind' => 'theme', 'name' => $parts[0]];
             }
             return ['kind' => 'plugin', 'name' => $this->pluginFile($parts, $active ?? $this->activePlugins())];
+        }
+        return null;
+    }
+
+    /**
+     * The extension a failure belongs to: the file it died in, else the
+     * first plugin or theme file its trace passes through, innermost first.
+     * A plugin's hook that fails inside engine or core code (an engine call
+     * it made, a core function) is still the plugin's failure.
+     *
+     * @param list<string> $trace the files of the failure's stack frames, innermost first
+     * @param array<string, string> $realpaths
+     * @return array{kind: 'plugin'|'theme', name: string}|null
+     */
+    public function blameFailure(string $file, array $trace, array $realpaths = []): ?array
+    {
+        foreach ([$file, ...$trace] as $frame) {
+            $blamed = $this->blame($frame, $realpaths);
+            if ($blamed !== null) {
+                return $blamed;
+            }
         }
         return null;
     }
@@ -140,10 +174,11 @@ final readonly class Recovery
     }
 
     /**
-     * Notes a boot failure against an extension. True when it is the
-     * second inside the window, which is when the caller pauses it; the
-     * first is only remembered. Strikes older than the window are dropped
-     * as they are read, so the option never grows.
+     * Notes a boot failure against an extension. True when one is already
+     * noted inside the window, which is when the caller has asked the site
+     * about it once already; the first is when it asks (check()). Strikes
+     * older than the window are dropped as they are read, so the option
+     * never grows.
      *
      * @param array{kind: string, name: string} $blamed
      */
@@ -162,6 +197,50 @@ final readonly class Recovery
         $strikes[$key][] = $now;
         $this->site->setOption(self::STRIKES_OPTION, Json::encode($strikes));
         return $second;
+    }
+
+    /**
+     * Asks the site once about an extension a request saw fail at boot: a
+     * token is kept for it, then one GET of the home page goes out carrying
+     * the token and nothing a visitor chose (no body, the engine's own
+     * headers; a fresh query and a signed-in cookie name, which sign nobody
+     * in, step past a page cache that would answer from what it holds). If
+     * that request fails at boot on the same extension, its own recovery
+     * pauses it (confirmed()). The address is the site's own, so its
+     * certificate is not checked, as the reference sends its requests to
+     * itself (a local certificate authority the server's own PHP does not
+     * know would refuse it); the request carries nothing but a token good
+     * once, for a minute. Null when the site answered, else why not.
+     *
+     * @param array{kind: string, name: string} $blamed
+     */
+    public function check(array $blamed): ?string
+    {
+        $home = rtrim((string) ($this->site->option('home') ?? ''), '/');
+        $host = (string) parse_url($home, PHP_URL_HOST);
+        if ($host === '') {
+            return 'the site has no home address';
+        }
+        $token = bin2hex(random_bytes(16));
+        $this->site->setOption(self::CHECK_OPTION, Json::encode(['key' => $blamed['kind'] . ':' . $blamed['name'], 'token' => $token, 'expires' => time() + self::CHECK_TTL]));
+        $answer = Transport::send(new Outbound('GET', $home . '/?minn-recovery-check=' . bin2hex(random_bytes(4)), [self::CHECK_HEADER . ': ' . $token, 'Cookie: wordpress_logged_in_minn_recovery_check=1'], null, 10.0, 0, false, 'Minn Engine recovery check'));
+        return $answer->code > 0 ? null : (string) ($answer->error ?? 'no answer');
+    }
+
+    /**
+     * Whether a request's token is the one check() kept for this extension
+     * and still good. The token is spent either way, so it answers once.
+     *
+     * @param array{kind: string, name: string} $blamed
+     */
+    public function confirmed(array $blamed, string $token): bool
+    {
+        $kept = Json::decode((string) ($this->site->option(self::CHECK_OPTION) ?? ''), or: null);
+        if (!is_array($kept) || !is_string($kept['token'] ?? null) || !hash_equals($kept['token'], $token)) {
+            return false;
+        }
+        $this->site->deleteOption(self::CHECK_OPTION);
+        return ($kept['key'] ?? null) === $blamed['kind'] . ':' . $blamed['name'] && (int) ($kept['expires'] ?? 0) >= time();
     }
 
     /** @return array<string, list<int>> */
@@ -244,6 +323,7 @@ final readonly class Recovery
         $this->site->deleteOption(self::PLUGINS_OPTION);
         $this->site->deleteOption(self::THEMES_OPTION);
         $this->site->deleteOption(self::STRIKES_OPTION);
+        $this->site->deleteOption(self::CHECK_OPTION);
         return $count;
     }
 
