@@ -18599,6 +18599,24 @@ page, probed on `oembed/1.0`, `wp-abilities/v1`, `wp-site-health/v1`, `wp-block-
 Its own indexes answer 200. Neither is a warning from engine code (measure 24 counts only PHP warnings,
 notices and deprecations from `public/minn`), and matching the reference's fatal would gain nothing.
 
+## The upgrade path and two hosting tools on 7d55e945 (2026-10-23)
+
+- **Upgrade from 0.1.0 (measure 26).** A signed 0.2.0 candidate was built from 7d55e945 in a throwaway worktree (only
+  the version raised; nothing published). The released 0.1.0 `minn.zip`, unpacked, installed it with its own
+  `EngineUpdate::install`: 0.1.0 became 0.2.0 and nothing was left beside it. Putting 0.1.0 back was refused as not
+  newer, and the candidate with one byte flipped was refused as unsigned, leaving 0.1.0 in place. The install suite
+  passes against the unpacked candidate (`MINN_TEST_ENGINE_DIR`, 63 of 63). The same check on bda1b2c5 updated the
+  SandyWP sandbox's 0.1.0 site, which served every page after.
+- **UpdraftPlus 1.26.10 again (measure 28)**, on the hunt lab running this engine: a database backup through its own
+  cron event (`updraft_backupnow_backup_database`, the one Minn Admin's Back up now schedules) ran to "The backup
+  succeeded" (16 tables). The dump imported into a scratch database gives the live content tables checksum for
+  checksum (posts, postmeta, users, usermeta, terms, term_taxonomy, term_relationships, comments). The options differ
+  only by UpdraftPlus's own records written after the dump and two update transients. The plugin was deactivated and
+  its files and cron event removed after.
+- Disembark stands on its 2026-10-18 run, and Kinsta on the 2026-10-23 field test (a signed dev build: pages, forms,
+  Minn Admin, Kinsta's cron and cache purge). CaptainCore has not been run against a Minn site: it needs an
+  environment on its manager.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
