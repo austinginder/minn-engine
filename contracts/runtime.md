@@ -18617,6 +18617,28 @@ notices and deprecations from `public/minn`), and matching the reference's fatal
   Minn Admin, Kinsta's cron and cache purge). CaptainCore has not been run against a Minn site: it needs an
   environment on its manager.
 
+## Theme files read once a request (2026-10-23)
+
+The register's Kinsta row (server time 3.5 to 4 times WordPress's there, about 125% here) said to profile under
+`open_basedir`, which Kinsta sets. Measured here without the host: the front page of the test site served once per
+process (forked children with opcache shared, as PHP-FPM serves), median of twenty, `open_basedir` naming the site
+folders, with the page byte for byte the same in every case:
+
+| | Minn | WordPress | Minn ÷ WordPress |
+|---|---|---|---|
+| no `open_basedir` | 77.5 ms | 53.3 ms | 145% |
+| `open_basedir` | 143.5 ms | 68.7 ms | 209% |
+| `open_basedir`, theme files read once | 120.0 ms | 68.7 ms | 175% |
+
+`open_basedir` checks every path a file call names, and a sampling profile (excimer, PHP 8.2) put most of what it
+added to Minn's time on the theme's files: TT5's 32 JSON files under `styles/` were read and decoded five times a
+page, by each `Theme` built over the same folder (the block renderer, global styles, the template index, the facade's
+theme.json data through `ThemeStyles`), and its 98 pattern headers once per `Theme`. `Theme\ThemeFiles` now reads
+each document, each folder's listing and each patterns folder once a process, which is once a request (no worker
+mode). Still left under `open_basedir`, about 10 ms each: the facade's files, loaded whole at boot
+(`Runtime::loadFacade`, the lazy facade the 0.1.0 audit named), and the pattern headers read once (the reference keeps
+them in its `wp_theme_files_patterns-*` transient, which the facade already fills). Kinsta's figure needs the host.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18795,7 +18817,7 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | an array `link_cat` on `wp-links-opml.php` fatals on the reference (TypeError, 500) | accepted | the engine lists every category; a fatal is no contract |
 | 18310 | The 0.1.0 field test (10-23) | recovery never pauses a plugin whose hook fatals inside engine code | austin | blame the first plugin frame in the trace, or keep the reference's file-only blame |
 | 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | austin | declare the pluggable functions from the webroot's `wp-includes/pluggable.php`, or accept |
-| 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host |
+| 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host. Locally (2026-10-23, "Theme files read once a request"): one request per process, `open_basedir` took Minn from 145% to 209% of WordPress; theme files read once brings it to 175%. Left: the facade's files loaded whole, the pattern headers, and the host's own measure |
 | 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | austin | carry a POP3 client, or leave post by email out (the engine refuses as unconfigured) |
 | 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | done | transients live in the object cache while installing (and with a persistent cache), cookie constants after the must-use plugins; the core block stylesheet list stays the reference's own; "Transients in the object cache, the theme's folder walks, and the site's locale (2026-10-23)" |
 | 18310 | The 0.1.0 field test (10-23) | transients written to the options table under a persistent object cache, where the reference keeps them in the cache | done | `Runtime\Transients::cached`; probe transient-stores |

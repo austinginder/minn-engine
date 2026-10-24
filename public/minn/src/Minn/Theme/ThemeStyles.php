@@ -113,7 +113,7 @@ final readonly class ThemeStyles
         $out = [];
         $partials = $this->partials();
         foreach ($this->theme?->styleFiles() ?? [] as $file) {
-            $variation = Json::file($file, or: null);
+            $variation = ThemeFiles::json($file);
             if (!is_array($variation) || isset($variation['blockTypes'])) {
                 continue;
             }
@@ -163,7 +163,7 @@ final readonly class ThemeStyles
     {
         $partials = [];
         foreach ($this->theme?->styleFiles() ?? [] as $file) {
-            $partial = Json::file($file, or: null);
+            $partial = ThemeFiles::json($file);
             if (is_array($partial) && is_array($partial['blockTypes'] ?? null)) {
                 $partials[(string) ($partial['slug'] ?? pathinfo($file, PATHINFO_FILENAME))] = array_values(array_filter($partial['blockTypes'], 'is_string'));
             }

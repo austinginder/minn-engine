@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
-use Minn\Json;
 use Minn\Runtime\Runtime;
 
 use Minn\Content\Site;
@@ -22,8 +21,6 @@ use Minn\Front\Permalinks;
 final class Theme
 {
     private ?array $json = null;
-    /** @var array<string, string>|null pattern slug => file */
-    private ?array $patterns = null;
 
     public function __construct(
         public readonly string $slug,
@@ -84,7 +81,7 @@ final class Theme
     private function rawJson(): array
     {
         if ($this->json === null) {
-            $own = (array) Json::file("{$this->dir}/theme.json", or: null);
+            $own = (array) ThemeFiles::json("{$this->dir}/theme.json");
             $this->json = $this->parent === null ? $own : self::merge($this->parent->rawJson(), $own);
             $this->json = $this->withStylePartials($this->json);
         }
@@ -100,7 +97,7 @@ final class Theme
     private function withStylePartials(array $json): array
     {
         foreach ($this->styleFiles() as $file) {
-            $partial = Json::file($file, or: null);
+            $partial = ThemeFiles::json($file);
             if (!is_array($partial) || !is_array($partial['blockTypes'] ?? null)) {
                 continue;
             }
@@ -127,24 +124,8 @@ final class Theme
     {
         $files = [];
         for ($theme = $this; $theme !== null; $theme = $theme->parent) {
-            $files = [...self::partialFiles("{$theme->dir}/styles"), ...$files];
+            $files = [...ThemeFiles::jsonUnder("{$theme->dir}/styles"), ...$files];
         }
-        return $files;
-    }
-
-    /** @return list<string> */
-    private static function partialFiles(string $dir): array
-    {
-        if (!is_dir($dir)) {
-            return [];
-        }
-        $files = [];
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS)) as $file) {
-            if ($file->getExtension() === 'json') {
-                $files[] = $file->getPathname();
-            }
-        }
-        sort($files);
         return $files;
     }
 
@@ -399,15 +380,6 @@ final class Theme
     /** @return array<string, string> */
     private function patternIndex(): array
     {
-        if ($this->patterns === null) {
-            $this->patterns = [];
-            foreach (glob("{$this->dir}/patterns/*.php") ?: [] as $file) {
-                $head = (string) file_get_contents($file, false, null, 0, 2000);
-                if (preg_match('/^\s*\*\s*Slug:\s*(\S+)/m', $head, $m)) {
-                    $this->patterns[$m[1]] = $file;
-                }
-            }
-        }
-        return $this->patterns;
+        return ThemeFiles::patterns("{$this->dir}/patterns");
     }
 }

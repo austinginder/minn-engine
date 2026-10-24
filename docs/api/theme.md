@@ -41,7 +41,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 125 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 271 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 392 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Theme`](#theme) | final class | 365 | The active block theme on disk, read as data: theme.json, the templates |
+| [`ThemeFiles`](#themefiles) | final class | 64 | The theme files a request reads, each read once: a theme's JSON documents |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -1587,7 +1588,42 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 62), `rawJson()` (private, line 84), `withStylePartials()` (private, line 100), `partialFiles()` (private, line 136), `safe()` (private, line 167), `htmlFiles()` (private, line 277), `patternIndex()` (private, line 400)
+Internals: `at()` (private, line 59), `rawJson()` (private, line 81), `withStylePartials()` (private, line 97), `safe()` (private, line 148), `htmlFiles()` (private, line 258), `patternIndex()` (private, line 381)
+
+
+## ThemeFiles
+
+`final class Minn\Theme\ThemeFiles` · `public/minn/src/Minn/Theme/ThemeFiles.php`
+
+The theme files a request reads, each read once: a theme's JSON documents
+(theme.json and the partials under styles/), the JSON files under a
+folder, and a patterns folder's files by slug. Several parts of a page
+build a Theme over the same folders (the block renderer, global styles,
+the template index, the facade's theme.json data), and each read every
+file again; under open_basedir, which checks each path a file call names,
+those reads were the larger part of a page's time. A process answers one
+request, so the next request reads what is on disk then.
+
+Used by: `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
+
+
+### static `json(string $file): mixed`
+
+A JSON file's contents, null when it is missing or not JSON.
+
+### static `jsonUnder(string $dir): array`
+
+Every JSON file under a folder and its subfolders, in path order; none
+when the folder is not there.
+
+- `@return list<string>`
+
+### static `patterns(string $dir): array`
+
+The PHP files directly in a patterns folder, by the slug each one's
+header declares (a file without one is left out).
+
+- `@return array<string, string>`
 
 
 ## ThemeHeaders

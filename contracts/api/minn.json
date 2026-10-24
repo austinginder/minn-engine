@@ -77768,7 +77768,7 @@
                 "Minn\\Theme\\TemplatePartTheme",
                 "Minn\\Theme\\TemplatePatterns",
                 "Minn\\Theme\\Templates",
-                "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeFiles",
                 "Minn\\Theme\\ThemeStyles",
                 "Minn\\Theme\\UserStyles"
             ],
@@ -199621,16 +199621,16 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 392,
+            "lines": 365,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Json",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\PatternText",
+                "Minn\\Theme\\ThemeFiles",
                 "Minn\\Theme\\ThemeJsonData"
             ],
             "usedBy": [
@@ -199687,23 +199687,14 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 34
+                "line": 25,
+                "end": 31
             },
             "cases": [],
             "constants": [],
             "properties": [
                 {
                     "name": "json",
-                    "type": "?array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "patterns",
                     "type": "?array",
                     "readonly": false,
                     "static": false,
@@ -199780,8 +199771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 47
+                    "line": 34,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -199814,8 +199805,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 60
+                    "line": 51,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -199826,8 +199817,8 @@
                     "doc": "The theme's own name, and the parent's, for body classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 72,
-                    "end": 75
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -199838,8 +199829,8 @@
                     "doc": "The theme.json with the parent's merged in; with plugins loaded, through wp_theme_json_data_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -199852,8 +199843,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 126,
-                    "end": 133
+                    "line": 123,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -199879,8 +199870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 164
+                    "line": 136,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -199899,8 +199890,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 177
+                    "line": 154,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -199919,8 +199910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 187
+                    "line": 161,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -199942,8 +199933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 214
+                    "line": 180,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -199962,8 +199953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -199982,8 +199973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 227
+                    "line": 204,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -200002,8 +199993,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 237
+                    "line": 211,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -200014,8 +200005,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 244,
-                    "end": 253
+                    "line": 225,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -200036,8 +200027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 274
+                    "line": 244,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -200056,8 +200047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 297
+                    "line": 270,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -200076,8 +200067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 308
+                    "line": 281,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -200096,8 +200087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 319
+                    "line": 292,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -200116,8 +200107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 330
+                    "line": 303,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -200136,8 +200127,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 340
+                    "line": 314,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -200158,8 +200149,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 362
+                    "line": 329,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -200180,8 +200171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 391
+                    "line": 352,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -200192,8 +200183,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 394,
-                    "end": 397
+                    "line": 375,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -200233,8 +200224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 69
+                    "line": 59,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -200245,8 +200236,8 @@
                     "doc": "The theme.json as written, the parent's merged in.",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 92
+                    "line": 81,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -200265,30 +200256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 118
-                },
-                {
-                    "routes": [],
-                    "name": "partialFiles",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "partialFiles(string $dir): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "dir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 136,
-                    "end": 149
+                    "line": 97,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -200307,8 +200276,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 170
+                    "line": 148,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -200329,8 +200298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 286
+                    "line": 258,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -200343,8 +200312,124 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 400,
-                    "end": 412
+                    "line": 381,
+                    "end": 384
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\ThemeFiles",
+            "short": "ThemeFiles",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/ThemeFiles.php",
+            "lines": 64,
+            "doc": "The theme files a request reads, each read once: a theme's JSON documents\n(theme.json and the partials under styles/), the JSON files under a\nfolder, and a patterns folder's files by slug. Several parts of a page\nbuild a Theme over the same folders (the block renderer, global styles,\nthe template index, the facade's theme.json data), and each read every\nfile again; under open_basedir, which checks each path a file call names,\nthose reads were the larger part of a page's time. A process answers one\nrequest, so the next request reads what is on disk then.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Json"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeStyles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "documents",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "folders",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "patterns",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "json",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "json(string $file): mixed",
+                    "doc": "A JSON file's contents, null when it is missing or not JSON.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "jsonUnder",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "jsonUnder(string $dir): array",
+                    "doc": "Every JSON file under a folder and its subfolders, in path order; none\nwhen the folder is not there.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "patterns",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "patterns(string $dir): array",
+                    "doc": "The PHP files directly in a patterns folder, by the slug each one's\nheader declares (a file without one is left out).",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 81
                 }
             ]
         },
@@ -200712,6 +200797,7 @@
                 "Minn\\Json",
                 "Minn\\Theme\\StyleSettings",
                 "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeFiles",
                 "Minn\\Theme\\ThemeJsonData"
             ],
             "usedBy": [
