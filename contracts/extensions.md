@@ -31,7 +31,12 @@ manifest is read by WordPress and nothing in the plugin's PHP is read by the eng
 **Activation** follows the levers the site already has: the extension is active when
 one of the plugin files it `replaces` is in `active_plugins`, when its own folder is
 in `active_plugins` (a plugin that is also an extension), when its slug is in the
-`minn_active_extensions` option (JSON list), or when it lives in `mu-plugins`.
+`minn_active_extensions` option (JSON list), when it lives in `mu-plugins`, or when
+it is the active theme: a theme folder with a `minn.json` is an extension too, on while
+it is the theme (the child's, then its parent's) and off the moment the theme changes,
+with no plugin switch. A block theme brings the look as templates and `theme.json`;
+its manifest adds what templates cannot, such as `routes` for pages that are not
+content. A theme's `functions.php`, if it has one, still loads through the runtime.
 `wp minn info` lists the active set; `minn preflight` reports a replaced plugin as
 "provided by" its extension instead of "will not run".
 

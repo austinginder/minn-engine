@@ -6,7 +6,7 @@ the extension contract and its seams
 |---|---|---|---|
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 14 | Where the engine looks for the seams an extension registered. The |
-| [`Loader`](#loader) | final class | 129 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
+| [`Loader`](#loader) | final class | 154 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
 | [`Manifest`](#manifest) | final readonly class | 78 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 27 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 79 | The engine's side of the seams: what the loader collected, called at the |
@@ -53,8 +53,10 @@ The engine side of the seams, if any.
 
 `final class Minn\Extension\Loader` · `public/minn/src/Minn/Extension/Loader.php`
 
-Finds extensions under wp-content/plugins and wp-content/mu-plugins,
-decides which are active, autoloads them, and asks each to register.
+Finds extensions under wp-content/plugins and wp-content/mu-plugins, and
+in the active theme (a theme folder with a minn.json is an extension too,
+active because it is the theme: the child, then its parent), decides
+which are active, autoloads them, and asks each to register.
 An extension that throws is logged and skipped; the page still renders.
 
 Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Ops\InstalledSoftware`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
@@ -96,7 +98,7 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 
 Registers every active extension, each on seams of its own; one that throws adds nothing.
 
-Internals: `autoload()` (private, line 132)
+Internals: `themeDirs()` (private, line 62), `autoload()` (private, line 159)
 
 
 ## Manifest

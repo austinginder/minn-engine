@@ -44636,8 +44636,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Loader.php",
-            "lines": 129,
-            "doc": "Finds extensions under wp-content/plugins and wp-content/mu-plugins,\ndecides which are active, autoloads them, and asks each to register.\nAn extension that throws is logged and skipped; the page still renders.",
+            "lines": 154,
+            "doc": "Finds extensions under wp-content/plugins and wp-content/mu-plugins, and\nin the active theme (a theme folder with a minn.json is an extension too,\nactive because it is the theme: the child, then its parent), decides\nwhich are active, autoloads them, and asks each to register.\nAn extension that throws is logged and skipped; the page still renders.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -44679,8 +44679,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 27
+                "line": 27,
+                "end": 29
             },
             "cases": [],
             "constants": [],
@@ -44734,8 +44734,8 @@
                         "@return list<Manifest> every extension on disk"
                     ],
                     "params": [],
-                    "line": 34,
-                    "end": 47
+                    "line": 36,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -44746,8 +44746,8 @@
                     "doc": "Forgets the cached activation list after an option write.",
                     "shapes": [],
                     "params": [],
-                    "line": 50,
-                    "end": 53
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -44760,8 +44760,8 @@
                         "@return list<Manifest> the extensions this site has switched on"
                     ],
                     "params": [],
-                    "line": 60,
-                    "end": 80
+                    "line": 86,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -44774,8 +44774,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 87,
-                    "end": 99
+                    "line": 114,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -44788,8 +44788,8 @@
                         "@return array<string, string> plugin file => extension slug"
                     ],
                     "params": [],
-                    "line": 102,
-                    "end": 111
+                    "line": 129,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -44808,8 +44808,22 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 130
+                    "line": 141,
+                    "end": 157
+                },
+                {
+                    "routes": [],
+                    "name": "themeDirs",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "themeDirs(): array",
+                    "doc": "The active theme's folders, child first, that carry a minn.json.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 62,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -44828,8 +44842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 145
+                    "line": 159,
+                    "end": 172
                 }
             ]
         },

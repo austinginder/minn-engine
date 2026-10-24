@@ -80,6 +80,22 @@ wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
 check(!str_contains(fetch("$ENGINE/$slug/"), 'seam-probe'), 'an extension not activated does nothing');
 check(!str_contains(fetch("$ENGINE/seam-probe/hello-there/"), 'seam-route'), 'an inactive extension\'s routes do not answer');
 
+// 1b. A theme with a minn.json is an extension too, active while it is the theme (child first, then parent).
+$themeLink = minn_test_site_root() . '/public/wp-content/themes/minn-test-theme';
+@unlink($themeLink);
+symlink("$ROOT/tests/fixtures/themes/minn-test-theme", $themeLink);
+register_shutdown_function(static function () use ($themeLink): void {
+    wp('option update stylesheet twentytwentyfive');
+    @unlink($themeLink);
+});
+check(!str_contains(fetch("$ENGINE/"), 'name="seam-theme"'), 'a theme extension does nothing while its theme is not active');
+wp('option update stylesheet minn-test-theme');
+$themed = fetch("$ENGINE/");
+wp('option update stylesheet twentytwentyfive');
+check(str_contains($themed, '<meta name="seam-theme" content="minn-test-theme">'), 'the active theme\'s minn.json registers, with no plugin switch', substr($themed, 0, 300));
+check(str_contains($themed, 'wp-block-group') && str_contains($themed, '</html>'), 'the child theme still renders its parent\'s templates');
+check(!str_contains(fetch("$ENGINE/"), 'name="seam-theme"'), 'switching the theme away switches its extension off');
+
 // 2. Manifest discovery and status.
 $status = trim((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . ' && wp minn info 2>&1'));
 check(str_contains($status, 'Extensions: minn-block-visibility'), 'wp minn info lists the active extensions', $status);

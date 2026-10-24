@@ -11,8 +11,10 @@ use Minn\Support\Serialized;
 use Throwable;
 
 /**
- * Finds extensions under wp-content/plugins and wp-content/mu-plugins,
- * decides which are active, autoloads them, and asks each to register.
+ * Finds extensions under wp-content/plugins and wp-content/mu-plugins, and
+ * in the active theme (a theme folder with a minn.json is an extension too,
+ * active because it is the theme: the child, then its parent), decides
+ * which are active, autoloads them, and asks each to register.
  * An extension that throws is logged and skipped; the page still renders.
  */
 final class Loader
@@ -42,8 +44,32 @@ final class Loader
                     }
                 }
             }
+            foreach ($this->themeDirs() as $dir) {
+                $manifest = Manifest::read($dir);
+                if ($manifest !== null) {
+                    $this->found[] = $manifest;
+                }
+            }
         }
         return $this->found;
+    }
+
+    /**
+     * The active theme's folders, child first, that carry a minn.json.
+     *
+     * @return list<string>
+     */
+    private function themeDirs(): array
+    {
+        $dirs = [];
+        foreach (['stylesheet', 'template'] as $option) {
+            $slug = (string) ($this->site->option($option) ?? '');
+            $dir = "{$this->contentDir}/themes/{$slug}";
+            if (preg_match('/^[A-Za-z0-9._-]+$/', $slug) === 1 && !in_array($dir, $dirs, true) && is_file("{$dir}/minn.json")) {
+                $dirs[] = $dir;
+            }
+        }
+        return $dirs;
     }
 
     /** Forgets the cached activation list after an option write. */
@@ -72,7 +98,8 @@ final class Loader
             }
             $byReplacement = array_intersect($manifest->replaces, $plugins) !== [];
             $byOwnFolder = array_filter($plugins, static fn (string $p) => str_starts_with($p, $manifest->slug . '/')) !== [];
-            if ($byReplacement || $byOwnFolder || in_array($manifest->slug, $own, true) || str_contains($manifest->dir, '/mu-plugins/')) {
+            $isTheme = str_starts_with($manifest->dir, "{$this->contentDir}/themes/");
+            if ($byReplacement || $byOwnFolder || in_array($manifest->slug, $own, true) || str_contains($manifest->dir, '/mu-plugins/') || $isTheme) {
                 $this->active[] = $manifest;
             }
         }

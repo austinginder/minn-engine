@@ -140,7 +140,9 @@ the reference counts across the whole response.
 ## Your first extension
 
 An extension replaces a WordPress plugin on Minn. It is a folder under
-`wp-content/plugins/` with a manifest and one class.
+`wp-content/plugins/` with a manifest and one class. A theme can be one too:
+put the same `minn.json` and class in a theme folder and it is on while that
+theme is active.
 
 ```json
 {

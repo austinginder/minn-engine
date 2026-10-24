@@ -1,0 +1,7 @@
+{
+  "name": "Minn Test Theme (fixture)",
+  "version": "0.1.0",
+  "license": "MIT",
+  "autoload": {"Minn\\Ext\\TestTheme\\": "src/"},
+  "extension": "Minn\\Ext\\TestTheme\\Extension"
+}
