@@ -9,7 +9,7 @@
         "fixed": 99
     },
     "sql": {
-        "measured": "2026-10-22",
+        "measured": "2026-10-24",
         "pages": {
             "/": [
                 26,
@@ -274,7 +274,7 @@
         "measured": "2026-10-23",
         "suites": 98,
         "green": 98,
-        "checks": 31094,
+        "checks": 31124,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -303,12 +303,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 125,
-            "lines": 2204,
-            "of": 192801
+            "stretches": 123,
+            "lines": 2189,
+            "of": 192873
         },
         "engine": {
-            "of": 116619,
+            "of": 116691,
             "php": {
                 "strict": {
                     "window": 40,
@@ -317,8 +317,8 @@
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 73,
-                    "lines": 314
+                    "stretches": 71,
+                    "lines": 306
                 }
             },
             "assets": {
@@ -347,10 +347,10 @@
         "delegates": 3566,
         "logicFunctions": 1773,
         "logicMethods": 1970,
-        "logicLines": 29232,
+        "logicLines": 29229,
         "kept": 0,
         "review": {
-            "doubts": 3,
+            "doubts": 0,
             "reviewed": 3126,
             "stale": 0,
             "verdicts": {
@@ -378,7 +378,7 @@
     },
     "behaviour": {
         "sideEffects": {
-            "probes": 411,
+            "probes": 412,
             "differing": 0,
             "rows": 0
         },
@@ -394,5 +394,12 @@
             "passedBoth": 289,
             "setAsideMultisite": 58
         }
+    },
+    "fixtures": {
+        "wordpress": "7.1.3",
+        "rows": 10997,
+        "differing": 0,
+        "measured": "2026-10-24",
+        "current": true
     }
 }
