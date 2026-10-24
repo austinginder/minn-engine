@@ -5,12 +5,12 @@ the extension contract and its seams
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
-| [`Extensions`](#extensions) | final class | 14 | Where the engine looks for the seams an extension registered. The |
+| [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 154 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
 | [`Manifest`](#manifest) | final readonly class | 78 | minn.json, read as data. A folder under wp-content/plugins (or |
-| [`Registrations`](#registrations) | final readonly class | 27 | Everything the extensions registered for this request, handed from Seams to the runner once. |
-| [`SeamRunner`](#seamrunner) | final readonly class | 79 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 191 | Where an extension can take part in a request: nine typed registrations, |
+| [`Registrations`](#registrations) | final readonly class | 37 | Everything the extensions registered for this request, handed from Seams to the runner once. |
+| [`SeamRunner`](#seamrunner) | final readonly class | 106 | The engine's side of the seams: what the loader collected, called at the |
+| [`Seams`](#seams) | final class | 239 | Where an extension can take part in a request: twelve typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 
 ## Extension
@@ -35,18 +35,26 @@ Registers the extension's seams.
 Where the engine looks for the seams an extension registered. The
 request's runtime holds them, so nothing here keeps state of its own
 and a request cannot inherit the extensions of the one before it.
-Before the front has loaded any (REST and the command line never do)
-there are none.
+Before the front or a REST request has loaded any (the command line
+never does) there are none.
 
-Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 ### static `set(Minn\Extension\Seams $seams): void`
 
 Installs the seams for this request.
 
+### static `setBlocks(Minn\Extension\Seams $seams): void`
+
+Installs only the extensions' blocks, for a REST request: its answers
+(content.rendered, the editor's previews) draw them, while the filters
+and the rest stay with the themed front.
+
 ### static `runner(): ?Minn\Extension\SeamRunner`
 
 The engine side of the seams, if any.
+
+Internals: `install()` (private, line 42), `typeArgs()` (private, line 66)
 
 
 ## Loader
@@ -172,7 +180,7 @@ Everything the extensions registered for this request, handed from Seams to the 
 Used by: `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`
 
 ```php
-__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ))
+__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ), array $blocks = array ( ), array $editorStyles = array ( ))
 ```
 - `@param list<Closure> $blockGates`
 - `@param list<Closure> $blockFilters`
@@ -183,6 +191,8 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 - `@param list<string> $bodyClasses`
 - `@param list<Closure> $documentFilters`
 - `@param list<object> $routes controllers with #[Route] methods`
+- `@param array<string, array{metadata: array<string, mixed>, render: Closure}> $blocks`
+- `@param list<string> $editorStyles`
 
 - readonly `array $blockGates`
 - readonly `array $blockFilters`
@@ -194,6 +204,12 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 - readonly `array $documentFilters`
 - readonly `?Closure $title`
 - readonly `array $routes`
+- readonly `array $blocks`
+- readonly `array $editorStyles`
+
+### `onlyBlocks(): self`
+
+Only the blocks and what previews them, for a request that draws content but is no themed page (REST).
 
 
 ## SeamRunner
@@ -202,7 +218,7 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 
 The engine's side of the seams: what the loader collected, called at the
 right moment and in registration order. An extension never sees this
-class; it sees Seams, which is only the eight registrations.
+class; it sees Seams, which is only the registrations.
 
 Used by: `Minn\Extension\Extensions`, `Minn\Extension\Seams`, `Minn\Runtime\Runtime`
 
@@ -247,12 +263,28 @@ The body classes the extensions add.
 
 The whole document through every document filter.
 
+### `renderBlock(string $name, array $attributes, string $content): ?string`
+
+An extension's block drawn from its attributes and rendered inner blocks; null for a name no extension registered.
+
+### `editorStyles(): array`
+
+The stylesheets the editor's previews load for the extensions, each once.
+
+- `@return list<string>`
+
+### `blockTypes(): array`
+
+Every extension block's block.json, by name.
+
+- `@return array<string, array<string, mixed>>`
+
 
 ## Seams
 
 `final class Minn\Extension\Seams` · `public/minn/src/Minn/Extension/Seams.php`
 
-Where an extension can take part in a request: nine typed registrations,
+Where an extension can take part in a request: twelve typed registrations,
 the request they run in, and the outgoing HTTP its minn.json asks for.
 This is the whole surface an extension sees. Each extension registers on
 its own (forExtension), and what it registered joins the request's once
@@ -326,6 +358,25 @@ attributes, as the engine's own do: each method takes the Request and
 the captures it names and returns a Response. They are asked after the
 engine's own routes and before the themed front, so an extension can
 add pages but never take over one the engine answers.
+
+### `block(string $metadata, Closure $render): void`
+
+A block of the extension's own. Its block.json (a folder holding one,
+or the file, relative to the extension's folder) is the schema editors
+read: name, title, attributes with their types and defaults, parent.
+$render draws the block from its attributes (defaults filled in) and
+its rendered inner blocks. The engine registers it as a dynamic block,
+so it renders on the front, in REST answers and in the editor's
+previews, and Minn Admin edits its attributes with a form. A file
+that is missing or names no block throws, which skips the extension.
+
+- `@param Closure(array<string, mixed>, string, Seams): string $render`
+
+### `editorStyles(string ...$hrefs): void`
+
+Stylesheets the editor's block previews load, after the theme's own:
+what an extension's blocks are drawn against when the theme's
+style.css is not all of it. URLs, absolute or from the site root.
 
 ### `frontBar(string $document, ?Minn\Content\PostRecord $post = NULL): string`
 

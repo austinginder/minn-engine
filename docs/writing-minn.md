@@ -180,9 +180,9 @@ final class Extension implements MinnExtension
 }
 ```
 
-`Seams` is everything you can touch: ten registrations (`gateBlocks`,
+`Seams` is everything you can touch: twelve registrations (`gateBlocks`,
 `filterBlocks`, `shortcode`, `filterContent`, `head`, `footer`, `bodyClass`,
-`title`, `filterDocument`, `routes`), the request you run in (`db`, `site`, `request`,
+`title`, `filterDocument`, `routes`, `block`, `editorStyles`), the request you run in (`db`, `site`, `request`,
 `reader`), and the outgoing HTTP your manifest asks for (`http`, below). There are no hook names, no globals, and no priority numbers: seams
 run in registration order.
 
@@ -208,6 +208,32 @@ final class Pages
         return Response::html('<p>' . Html::esc($slug) . '</p>');
     }
 }
+```
+
+An extension can bring blocks of its own with `block`: a `block.json` for
+the schema and a closure that draws it. Words belong in attributes, so an
+editor changes them with a form instead of raw HTML. The engine registers the
+block type from the file, which is what lets Minn Admin build that form,
+offer the block in its inserter and preview it; a parent block gets its
+children already rendered as `$content`. When the blocks are drawn against
+stylesheets beyond the theme's `style.css`, name them with `editorStyles` so
+the editor's previews look like the page.
+
+```json
+{
+  "apiVersion": 3,
+  "name": "acme/stat",
+  "title": "Stat",
+  "attributes": {
+    "value": {"type": "string", "default": "0"},
+    "label": {"type": "string", "default": "Label"}
+  }
+}
+```
+
+```php
+$minn->block('blocks/stat', static fn (array $a, string $content): string =>
+    '<p class="acme-stat"><strong>' . Html::esc($a['value']) . '</strong> ' . Html::esc($a['label']) . '</p>');
 ```
 
 Prove it the way `tests/extensions.test.php` proves the fixture extension:

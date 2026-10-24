@@ -19,6 +19,8 @@ final readonly class Registrations
      * @param list<string> $bodyClasses
      * @param list<Closure> $documentFilters
      * @param list<object> $routes controllers with #[Route] methods
+     * @param array<string, array{metadata: array<string, mixed>, render: Closure}> $blocks
+     * @param list<string> $editorStyles
      */
     public function __construct(
         public array $blockGates,
@@ -31,6 +33,14 @@ final readonly class Registrations
         public array $documentFilters,
         public ?Closure $title,
         public array $routes = [],
+        public array $blocks = [],
+        public array $editorStyles = [],
     ) {
+    }
+
+    /** Only the blocks and what previews them, for a request that draws content but is no themed page (REST). */
+    public function onlyBlocks(): self
+    {
+        return new self([], [], [], [], [], [], [], [], null, [], $this->blocks, $this->editorStyles);
     }
 }

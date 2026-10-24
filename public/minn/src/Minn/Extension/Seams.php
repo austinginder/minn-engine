@@ -14,9 +14,10 @@ use Minn\Front\AdminBar;
 use Minn\Front\Resolution;
 use Minn\Http;
 use Minn\Http\Request;
+use Minn\Json;
 
 /**
- * Where an extension can take part in a request: nine typed registrations,
+ * Where an extension can take part in a request: twelve typed registrations,
  * the request they run in, and the outgoing HTTP its minn.json asks for.
  * This is the whole surface an extension sees. Each extension registers on
  * its own (forExtension), and what it registered joins the request's once
@@ -45,8 +46,14 @@ final class Seams
     private ?Closure $title = null;
     /** @var list<object> controllers whose #[Route] methods answer paths */
     private array $routes = [];
+    /** @var array<string, array{metadata: array<string, mixed>, render: Closure}> blocks of the extension's own, by name */
+    private array $blocks = [];
+    /** @var list<string> stylesheets the editor's previews load */
+    private array $editorStyles = [];
     /** The Minn bar for a signed-in editor on this request, or null. */
     private ?AdminBar $bar = null;
+    /** The registering extension's folder, which its block.json paths are read from. */
+    private string $dir = '';
 
     /** Outgoing HTTP, bound to the hosts the extension's needs.http lists; a client that throws when it asked for none. */
     public readonly Http $http;
@@ -73,6 +80,7 @@ final class Seams
             : new Http(within: $manifest->http);
         $own = new self($this->db, $this->site, $this->request, $this->reader, $http);
         $own->bar = $this->bar;
+        $own->dir = $manifest->dir;
         return $own;
     }
 
@@ -103,6 +111,11 @@ final class Seams
         array_push($this->documentFilters, ...$extension->documentFilters);
         $this->title = $extension->title ?? $this->title;
         array_push($this->routes, ...$extension->routes);
+        array_push($this->editorStyles, ...$extension->editorStyles);
+        foreach ($extension->blocks as $name => $block) {
+            $render = $block['render'];
+            $this->blocks[$name] = ['metadata' => $block['metadata'], 'render' => static fn (array $attributes, string $content): mixed => $render($attributes, $content, $extension)];
+        }
     }
 
     /** Decides whether a block renders at all; the first gate to answer false wins. */
@@ -172,6 +185,40 @@ final class Seams
     }
 
     /**
+     * A block of the extension's own. Its block.json (a folder holding one,
+     * or the file, relative to the extension's folder) is the schema editors
+     * read: name, title, attributes with their types and defaults, parent.
+     * $render draws the block from its attributes (defaults filled in) and
+     * its rendered inner blocks. The engine registers it as a dynamic block,
+     * so it renders on the front, in REST answers and in the editor's
+     * previews, and Minn Admin edits its attributes with a form. A file
+     * that is missing or names no block throws, which skips the extension.
+     *
+     * @param Closure(array<string, mixed>, string, Seams): string $render
+     */
+    public function block(string $metadata, Closure $render): void
+    {
+        $file = str_ends_with($metadata, '.json') ? $metadata : rtrim($metadata, '/') . '/block.json';
+        $path = str_starts_with($file, '/') ? $file : "{$this->dir}/{$file}";
+        $data = Json::file($path, or: null);
+        $name = is_array($data) && is_string($data['name'] ?? null) ? $data['name'] : '';
+        if (preg_match('#^[a-z0-9-]+/[a-z0-9-]+$#', $name) !== 1) {
+            throw new \InvalidArgumentException("{$path} is not a block.json with a namespaced name");
+        }
+        $this->blocks[$name] = ['metadata' => $data, 'render' => $render];
+    }
+
+    /**
+     * Stylesheets the editor's block previews load, after the theme's own:
+     * what an extension's blocks are drawn against when the theme's
+     * style.css is not all of it. URLs, absolute or from the site root.
+     */
+    public function editorStyles(string ...$hrefs): void
+    {
+        array_push($this->editorStyles, ...$hrefs);
+    }
+
+    /**
      * A whole HTML document an extension built, with the Minn bar a signed-in
      * editor sees on themed pages: its stylesheet before </head> and the bar
      * before </body>. Name the post the page shows and the bar's Edit opens
@@ -211,6 +258,8 @@ final class Seams
             $this->documentFilters,
             $this->title,
             $this->routes,
+            $this->blocks,
+            $this->editorStyles,
         );
     }
 }

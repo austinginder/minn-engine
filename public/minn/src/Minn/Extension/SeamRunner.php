@@ -11,7 +11,7 @@ use Minn\Blocks\Block;
 /**
  * The engine's side of the seams: what the loader collected, called at the
  * right moment and in registration order. An extension never sees this
- * class; it sees Seams, which is only the eight registrations.
+ * class; it sees Seams, which is only the registrations.
  */
 final readonly class SeamRunner
 {
@@ -90,5 +90,32 @@ final readonly class SeamRunner
             $html = $filter($html);
         }
         return $html;
+    }
+
+    /** An extension's block drawn from its attributes and rendered inner blocks; null for a name no extension registered. */
+    public function renderBlock(string $name, array $attributes, string $content): ?string
+    {
+        $block = $this->registered->blocks[$name] ?? null;
+        return $block === null ? null : (string) ($block['render'])($attributes, $content);
+    }
+
+    /**
+     * The stylesheets the editor's previews load for the extensions, each once.
+     *
+     * @return list<string>
+     */
+    public function editorStyles(): array
+    {
+        return array_values(array_unique($this->registered->editorStyles));
+    }
+
+    /**
+     * Every extension block's block.json, by name.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function blockTypes(): array
+    {
+        return array_map(static fn (array $block): array => $block['metadata'], $this->registered->blocks);
     }
 }

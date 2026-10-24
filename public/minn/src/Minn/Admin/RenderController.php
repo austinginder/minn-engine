@@ -8,6 +8,7 @@ use Minn\Content\Blocks;
 use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -55,7 +56,7 @@ final readonly class RenderController
         return Reply::answer($request, ['rendered' => $rendered, 'styles' => $this->styles()]);
     }
 
-    /** The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline. */
+    /** The stylesheets previews are scoped under: the engine's own, the theme's, the extensions' (Seams::editorStyles), and theme.json inline. */
     #[Route(Method::Get, '/minn-admin/v1/editor-styles', policy: new Policy(Access::Floor))]
     public function editorStyles(Request $request): Response
     {
@@ -75,6 +76,9 @@ final readonly class RenderController
             if ($themeStyle !== null) {
                 $urls[] = $themeStyle;
             }
+        }
+        foreach (Extensions::runner()?->editorStyles() ?? [] as $href) {
+            $urls[] = str_starts_with($href, '/') && !str_starts_with($href, '//') ? $this->permalinks->url($href) : $href;
         }
         return ['urls' => $urls, 'inline' => $inline];
     }

@@ -1,0 +1,11 @@
+{
+  "apiVersion": 3,
+  "name": "minn-test/seam-card",
+  "title": "Seam card",
+  "category": "text",
+  "attributes": {
+    "label": {"type": "string", "default": "unlabelled"},
+    "tone": {"type": "string", "enum": ["calm", "loud"], "default": "calm"}
+  },
+  "supports": {"html": false}
+}

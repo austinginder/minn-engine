@@ -32,7 +32,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`PackagesController`](#packagescontroller) | final readonly class | 119 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 133 | A person's own settings in minn-admin/v1: their appearance, the views |
-| [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
+| [`RenderController`](#rendercontroller) | final readonly class | 55 | The editor's island previews: block markup rendered by the same |
 | [`ScreenOptions`](#screenoptions) | final class | 27 | Which screen option a save keeps for itself, as set_screen_options tells |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SiteController`](#sitecontroller) | final readonly class | 90 | The small Settings-view routes of minn-admin/v1: the site logo, the |
@@ -1128,9 +1128,9 @@ Renders blocks for the editor's preview.
 
 Route: `GET /minn-admin/v1/editor-styles (floor edit_posts)`
 
-The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline.
+The stylesheets previews are scoped under: the engine's own, the theme's, the extensions' (Seams::editorStyles), and theme.json inline.
 
-Internals: `styles()` (private, line 66)
+Internals: `styles()` (private, line 67)
 
 
 ## ScreenOptions

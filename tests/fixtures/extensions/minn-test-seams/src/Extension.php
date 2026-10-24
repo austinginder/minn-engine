@@ -21,5 +21,7 @@ final class Extension implements MinnExtension
         $minn->footer(static fn (Seams $s): string => '<!-- seam:footer reader-' . $s->reader->userId . ' -->' . "\n");
         $minn->bodyClass('seam-body');
         $minn->routes(new Routes($minn));
+        $minn->editorStyles('/seam-probe/editor.css');
+        $minn->block('blocks/seam-card', static fn (array $attrs, string $content, Seams $s): string => '<div class="seam-card is-' . htmlspecialchars((string) $attrs['tone']) . '" data-label="' . htmlspecialchars((string) $attrs['label']) . '" data-reader="' . $s->reader->userId . '">' . $content . '</div>');
     }
 }

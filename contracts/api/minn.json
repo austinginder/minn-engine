@@ -6009,7 +6009,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/RenderController.php",
-            "lines": 52,
+            "lines": 55,
             "doc": "The editor's island previews: block markup rendered by the same\nrenderer the public site uses, with the stylesheets that site loads\n(the engine's block stylesheet, the theme's, and the theme.json rules)\nso a preview looks like the page will.",
             "implements": [],
             "extends": null,
@@ -6018,6 +6018,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
+                "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
@@ -6084,8 +6085,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 41
+                "line": 34,
+                "end": 42
             },
             "cases": [],
             "constants": [],
@@ -6165,8 +6166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 56
+                    "line": 46,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -6176,7 +6177,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "editorStyles(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline.",
+                    "doc": "The stylesheets previews are scoped under: the engine's own, the theme's, the extensions' (Seams::editorStyles), and theme.json inline.",
                     "shapes": [],
                     "params": [
                         {
@@ -6187,8 +6188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -6201,8 +6202,8 @@
                         "@return array{urls: list<string>, inline: string}"
                     ],
                     "params": [],
-                    "line": 66,
-                    "end": 80
+                    "line": 67,
+                    "end": 84
                 }
             ]
         },
@@ -44067,7 +44068,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 365,
+            "lines": 369,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44297,7 +44298,7 @@
                         }
                     ],
                     "line": 147,
-                    "end": 182
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -44323,8 +44324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 205
+                    "line": 195,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -44350,8 +44351,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 235
+                    "line": 218,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -44377,8 +44378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 279
+                    "line": 254,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -44397,8 +44398,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 286
+                    "line": 286,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -44424,8 +44425,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 357
+                    "line": 292,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -44521,8 +44522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 434
+                    "line": 364,
+                    "end": 438
                 }
             ]
         },
@@ -44575,16 +44576,18 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Extensions.php",
-            "lines": 14,
-            "doc": "Where the engine looks for the seams an extension registered. The\nrequest's runtime holds them, so nothing here keeps state of its own\nand a request cannot inherit the extensions of the one before it.\nBefore the front has loaded any (REST and the command line never do)\nthere are none.",
+            "lines": 70,
+            "doc": "Where the engine looks for the seams an extension registered. The\nrequest's runtime holds them, so nothing here keeps state of its own\nand a request cannot inherit the extensions of the one before it.\nBefore the front or a REST request has loaded any (the command line\nnever does) there are none.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Extension\\SeamRunner",
                 "Minn\\Extension\\Seams",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Admin\\RenderController",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Engine",
@@ -44613,8 +44616,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 22
+                    "line": 20,
+                    "end": 23
+                },
+                {
+                    "routes": [],
+                    "name": "setBlocks",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setBlocks(Minn\\Extension\\Seams $seams): void",
+                    "doc": "Installs only the extensions' blocks, for a REST request: its answers\n(content.rendered, the editor's previews) draw them, while the filters\nand the rest stay with the themed front.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "seams",
+                            "type": "Minn\\Extension\\Seams",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -44625,8 +44648,51 @@
                     "doc": "The engine side of the seams, if any.",
                     "shapes": [],
                     "params": [],
-                    "line": 25,
-                    "end": 28
+                    "line": 82,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "install",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "install(Minn\\Extension\\SeamRunner $runner): void",
+                    "doc": "The runner, and each extension block registered as a dynamic block\ntype, so the block-type registry (wp/v2/block-types, Minn Admin's\ninspector and inserter) lists it and the renderer draws it. The\ncallback asks the runner of the request it renders in, so a type\nregistered once never holds an earlier request's extension.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "runner",
+                            "type": "Minn\\Extension\\SeamRunner",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "typeArgs",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "typeArgs(array $metadata): array",
+                    "doc": "A block.json's keys as a block type's properties: the camelCase keys\nbecome the snake_case properties they fill, and the keys that only\nname files for a build step (scripts, styles, render) are left out.",
+                    "shapes": [
+                        "@param array<string, mixed> $metadata",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "metadata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 79
                 }
             ]
         },
@@ -45147,7 +45213,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Registrations.php",
-            "lines": 27,
+            "lines": 37,
             "doc": "Everything the extensions registered for this request, handed from Seams to the runner once.",
             "implements": [],
             "extends": null,
@@ -45157,7 +45223,7 @@
                 "Minn\\Extension\\Seams"
             ],
             "constructor": {
-                "signature": "__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ))",
+                "signature": "__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ), array $blocks = array ( ), array $editorStyles = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param list<Closure> $blockGates",
@@ -45168,7 +45234,9 @@
                     "@param list<Closure> $footer",
                     "@param list<string> $bodyClasses",
                     "@param list<Closure> $documentFilters",
-                    "@param list<object> $routes controllers with #[Route] methods"
+                    "@param list<object> $routes controllers with #[Route] methods",
+                    "@param array<string, array{metadata: array<string, mixed>, render: Closure}> $blocks",
+                    "@param list<string> $editorStyles"
                 ],
                 "params": [
                     {
@@ -45240,11 +45308,25 @@
                         "shape": "list<object>",
                         "default": "array ( )",
                         "doc": "controllers with #[Route] methods"
+                    },
+                    {
+                        "name": "blocks",
+                        "type": "array",
+                        "shape": "array<string, array{metadata: array<string, mixed>, render: Closure}>",
+                        "default": "array ( )",
+                        "doc": ""
+                    },
+                    {
+                        "name": "editorStyles",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 35
+                "line": 25,
+                "end": 39
             },
             "cases": [],
             "constants": [],
@@ -45338,9 +45420,40 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "blocks",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "editorStyles",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
-            "methods": []
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "onlyBlocks",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "onlyBlocks(): self",
+                    "doc": "Only the blocks and what previews them, for a request that draws content but is no themed page (REST).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 42,
+                    "end": 45
+                }
+            ]
         },
         {
             "name": "Minn\\Extension\\SeamRunner",
@@ -45348,8 +45461,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/SeamRunner.php",
-            "lines": 79,
-            "doc": "The engine's side of the seams: what the loader collected, called at the\nright moment and in registration order. An extension never sees this\nclass; it sees Seams, which is only the eight registrations.",
+            "lines": 106,
+            "doc": "The engine's side of the seams: what the loader collected, called at the\nright moment and in registration order. An extension never sees this\nclass; it sees Seams, which is only the registrations.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -45562,6 +45675,68 @@
                     ],
                     "line": 87,
                     "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "renderBlock",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "renderBlock(string $name, array $attributes, string $content): ?string",
+                    "doc": "An extension's block drawn from its attributes and rendered inner blocks; null for a name no extension registered.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "editorStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "editorStyles(): array",
+                    "doc": "The stylesheets the editor's previews load for the extensions, each once.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 107,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "blockTypes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockTypes(): array",
+                    "doc": "Every extension block's block.json, by name.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 117,
+                    "end": 120
                 }
             ]
         },
@@ -45571,8 +45746,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Seams.php",
-            "lines": 191,
-            "doc": "Where an extension can take part in a request: nine typed registrations,\nthe request they run in, and the outgoing HTTP its minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
+            "lines": 239,
+            "doc": "Where an extension can take part in a request: twelve typed registrations,\nthe request they run in, and the outgoing HTTP its minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -45587,7 +45762,8 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\Resolution",
                 "Minn\\Http",
-                "Minn\\Http\\Request"
+                "Minn\\Http\\Request",
+                "Minn\\Json"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -45639,8 +45815,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 54,
-                "end": 62
+                "line": 61,
+                "end": 69
             },
             "cases": [],
             "constants": [],
@@ -45736,11 +45912,38 @@
                     "promoted": false
                 },
                 {
+                    "name": "blocks",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "editorStyles",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "bar",
                     "type": "?Minn\\Front\\AdminBar",
                     "readonly": false,
                     "static": false,
                     "doc": "The Minn bar for a signed-in editor on this request, or null.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "dir",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The registering extension's folder, which its block.json paths are read from.",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -45808,8 +46011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 77
+                    "line": 76,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -45828,8 +46031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 106
+                    "line": 92,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -45848,8 +46051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -45868,8 +46071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 118
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -45895,8 +46098,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 124
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -45915,8 +46118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -45935,8 +46138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -45955,8 +46158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -45975,8 +46178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 148
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -45995,8 +46198,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 154
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -46015,8 +46218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 160
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -46035,8 +46238,57 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 182,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "block",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "block(string $metadata, Closure $render): void",
+                    "doc": "A block of the extension's own. Its block.json (a folder holding one,\nor the file, relative to the extension's folder) is the schema editors\nread: name, title, attributes with their types and defaults, parent.\n$render draws the block from its attributes (defaults filled in) and\nits rendered inner blocks. The engine registers it as a dynamic block,\nso it renders on the front, in REST answers and in the editor's\npreviews, and Minn Admin edits its attributes with a form. A file\nthat is missing or names no block throws, which skips the extension.",
+                    "shapes": [
+                        "@param Closure(array<string, mixed>, string, Seams): string $render"
+                    ],
+                    "params": [
+                        {
+                            "name": "metadata",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "render",
+                            "type": "Closure",
+                            "shape": "Closure(array<string, mixed>, string, Seams): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 199,
+                    "end": 209
+                },
+                {
+                    "routes": [],
+                    "name": "editorStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "editorStyles(string ...$hrefs): void",
+                    "doc": "Stylesheets the editor's block previews load, after the theme's own:\nwhat an extension's blocks are drawn against when the theme's\nstyle.css is not all of it. URLs, absolute or from the site root.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hrefs",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -46062,8 +46314,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 192
+                    "line": 227,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -46082,8 +46334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 198
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -46094,8 +46346,8 @@
                     "doc": "What was registered, for the engine's runner. Extensions have no reason to call this.",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 215
+                    "line": 248,
+                    "end": 264
                 }
             ]
         },
@@ -77835,6 +78087,7 @@
                 "Minn\\Content\\PluginState",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
+                "Minn\\Extension\\Seams",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\FrontController",
                 "Minn\\Html",
@@ -145673,6 +145926,7 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Users",
                 "Minn\\Engine",
+                "Minn\\Extension\\Extensions",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\EntryScriptsController",
                 "Minn\\Front\\FeedTags",

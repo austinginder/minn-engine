@@ -870,7 +870,7 @@
             "pattern": "/minn-admin/v1/editor-styles",
             "name": "Minn\\Admin\\RenderController::editorStyles",
             "handler": "Minn\\Admin\\RenderController::editorStyles",
-            "summary": "The stylesheets previews are scoped under: the engine's own, the theme's, and theme.json inline.",
+            "summary": "The stylesheets previews are scoped under: the engine's own, the theme's, the extensions' (Seams::editorStyles), and theme.json inline.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",

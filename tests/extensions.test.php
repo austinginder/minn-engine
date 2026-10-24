@@ -76,7 +76,19 @@ check(str_contains($routed, '<p class="seam-route" data-name="hello-there">reade
 check(!str_contains($routed, 'minn-cornerbar'), 'a signed-out reader gets an extension page without the Minn bar');
 check(!str_contains(fetch("$ENGINE/minn-admin/login"), 'seam-shadow'), 'an engine route keeps its path: the route seam comes after the engine');
 check(!str_contains(fetch("$ENGINE/seam-probe/UPPER/"), 'seam-route'), 'a path the capture refuses falls through to the front');
+$cards = $make('zz seam blocks', '<!-- wp:minn-test/seam-card {"tone":"loud","label":"a \"quoted\" one"} --><!-- wp:paragraph --><p>inside the card</p><!-- /wp:paragraph --><!-- /wp:minn-test/seam-card --><!-- wp:minn-test/seam-card /-->');
+$cardPage = fetch("$ENGINE/$cards/");
+check(str_contains($cardPage, '<div class="seam-card is-loud" data-label="a &quot;quoted&quot; one" data-reader="0">') && str_contains($cardPage, 'inside the card</p></div>'), 'an extension block renders from its attributes around its inner blocks', $cardPage);
+check(str_contains($cardPage, '<div class="seam-card is-calm" data-label="unlabelled" data-reader="0"></div>'), 'a block with no attributes renders with its block.json defaults');
+$cardRest = (array) json_decode(fetch("$ENGINE/wp-json/wp/v2/posts?slug=$cards&_fields=content"), true);
+check(str_contains((string) ($cardRest[0]['content']['rendered'] ?? ''), 'class="seam-card is-loud"'), 'REST content.rendered draws the extension block too', json_encode($cardRest));
+$m = (array) json_decode((string) shell_exec('wp --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . ' 2 2>/dev/null'), true);
+$cardType = (array) json_decode(fetch("$ENGINE/wp-json/wp/v2/block-types/minn-test/seam-card", ['Cookie: ' . $m['cookie_name'] . '=' . $m['cookie'] . '; wordpress_logged_in_' . md5($ENGINE) . '=' . $m['cookie'], 'X-WP-Nonce: ' . $m['nonce']]), true);
+check(($cardType['title'] ?? '') === 'Seam card' && ($cardType['is_dynamic'] ?? false) === true && ($cardType['attributes']['tone']['enum'] ?? null) === ['calm', 'loud'], 'the block type is registered from its block.json: title, dynamic, attribute schema', json_encode($cardType));
+$editorStyles = (array) json_decode(fetch("$ENGINE/wp-json/minn-admin/v1/editor-styles", ['Cookie: ' . $m['cookie_name'] . '=' . $m['cookie'] . '; wordpress_logged_in_' . md5($ENGINE) . '=' . $m['cookie'], 'X-WP-Nonce: ' . $m['nonce']]), true);
+check(in_array("$ENGINE/seam-probe/editor.css", (array) ($editorStyles['urls'] ?? []), true), 'editorStyles adds a stylesheet to the editor previews, as a site URL', json_encode($editorStyles));
 wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
+check(!str_contains(fetch("$ENGINE/$cards/"), 'seam-card'), 'an inactive extension\'s block draws nothing');
 check(!str_contains(fetch("$ENGINE/$slug/"), 'seam-probe'), 'an extension not activated does nothing');
 check(!str_contains(fetch("$ENGINE/seam-probe/hello-there/"), 'seam-route'), 'an inactive extension\'s routes do not answer');
 
