@@ -10,7 +10,7 @@ the extension contract and its seams
 | [`Manifest`](#manifest) | final readonly class | 78 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 27 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 79 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 161 | Where an extension can take part in a request: nine typed registrations, |
+| [`Seams`](#seams) | final class | 191 | Where an extension can take part in a request: nine typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 
 ## Extension
@@ -324,6 +324,17 @@ attributes, as the engine's own do: each method takes the Request and
 the captures it names and returns a Response. They are asked after the
 engine's own routes and before the themed front, so an extension can
 add pages but never take over one the engine answers.
+
+### `frontBar(string $document, ?Minn\Content\PostRecord $post = NULL): string`
+
+A whole HTML document an extension built, with the Minn bar a signed-in
+editor sees on themed pages: its stylesheet before </head> and the bar
+before </body>. Name the post the page shows and the bar's Edit opens
+it. Anyone else gets the document unchanged.
+
+### `useFrontBar(?Minn\Front\AdminBar $bar): void`
+
+The engine hands over this request's Minn bar before extensions register. Extensions have no reason to call this.
 
 ### `registrations(): Minn\Extension\Registrations`
 

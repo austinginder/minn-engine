@@ -187,7 +187,8 @@ run in registration order.
 An extension can answer paths of its own with `routes`: hand it controllers
 written exactly like the engine's (above), and they are asked after every
 engine route and before the themed front. A page the engine already answers
-stays the engine's.
+stays the engine's. A page you build is yours whole, so pass it through
+`$minn->frontBar($html)` to give signed-in editors the Minn bar.
 
 ```php
 $minn->routes(new Pages($minn));

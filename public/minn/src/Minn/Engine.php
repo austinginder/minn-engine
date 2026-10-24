@@ -365,12 +365,14 @@ final readonly class Engine
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, $runtime->reader);
         $loader = new Loader(ABSPATH . 'wp-content', $site);
-        $loader->register($seams);
-        Extensions::set($seams);
         $appearance = new Appearance($users);
         $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), $loader->declaredTypes()), $capabilities);
         $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);
         $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
+        // The bar is known before extensions register, so their own pages can carry it (Seams::frontBar).
+        $seams->useFrontBar($bar);
+        $loader->register($seams);
+        Extensions::set($seams);
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage(), $bar);
         // A block theme's own PHP templates (a hybrid, a child's page.php) render through the classic renderer when the hierarchy picks one.
         $templateTheme = $classicTheme ?? ($theme === null ? null : \Minn\Theme\ClassicTheme::ofBlockTheme($theme));

@@ -8,7 +8,10 @@ use Closure;
 use Minn\Blocks\Block;
 use Minn\Content\Reader;
 use Minn\Content\Site;
+use Minn\Content\PostRecord;
 use Minn\Db;
+use Minn\Front\AdminBar;
+use Minn\Front\Resolution;
 use Minn\Http;
 use Minn\Http\Request;
 
@@ -42,6 +45,8 @@ final class Seams
     private ?Closure $title = null;
     /** @var list<object> controllers whose #[Route] methods answer paths */
     private array $routes = [];
+    /** The Minn bar for a signed-in editor on this request, or null. */
+    private ?AdminBar $bar = null;
 
     /** Outgoing HTTP, bound to the hosts the extension's needs.http lists; a client that throws when it asked for none. */
     public readonly Http $http;
@@ -66,7 +71,9 @@ final class Seams
         $http = $manifest->http === null
             ? Http::refused("{$manifest->slug} did not ask for http: add \"needs\": {\"http\": [\"https://api.example.com/\"]} to its minn.json.")
             : new Http(within: $manifest->http);
-        return new self($this->db, $this->site, $this->request, $this->reader, $http);
+        $own = new self($this->db, $this->site, $this->request, $this->reader, $http);
+        $own->bar = $this->bar;
+        return $own;
     }
 
     /**
@@ -162,6 +169,32 @@ final class Seams
     public function routes(object ...$controllers): void
     {
         array_push($this->routes, ...$controllers);
+    }
+
+    /**
+     * A whole HTML document an extension built, with the Minn bar a signed-in
+     * editor sees on themed pages: its stylesheet before </head> and the bar
+     * before </body>. Name the post the page shows and the bar's Edit opens
+     * it. Anyone else gets the document unchanged.
+     */
+    public function frontBar(string $document, ?PostRecord $post = null): string
+    {
+        if ($this->bar === null) {
+            return $document;
+        }
+        $head = stripos($document, '</head>');
+        if ($head !== false) {
+            $document = substr($document, 0, $head) . $this->bar->head() . substr($document, $head);
+        }
+        $markup = $this->bar->render($post === null ? Resolution::home() : Resolution::single($post));
+        $body = strripos($document, '</body>');
+        return $body === false ? $document . $markup : substr($document, 0, $body) . $markup . substr($document, $body);
+    }
+
+    /** The engine hands over this request's Minn bar before extensions register. Extensions have no reason to call this. */
+    public function useFrontBar(?AdminBar $bar): void
+    {
+        $this->bar = $bar;
     }
 
     /** What was registered, for the engine's runner. Extensions have no reason to call this. */

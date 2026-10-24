@@ -65,7 +65,7 @@ the edit_posts gate; the app's per-person opt-in does not apply.
 
 - const `SITE_APPEARANCE` = `'minn_admin_site_appearance'` — Where the app keeps the site's default look: its scheme and its mode (dark, light or system).
 
-Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Auth\Authenticated $session, Minn\Auth\Capabilities $capabilities, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Admin\App $app, Minn\Admin\Appearance $appearance, Minn\Admin\AdminTypes $types)
@@ -1235,7 +1235,7 @@ the record behind it, the page number for paginated views, and the query
 vars of the rewrite rule the address matched (what the request parse
 hands plugins). Redirects carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`

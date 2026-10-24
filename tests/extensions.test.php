@@ -73,6 +73,7 @@ $feed = fetch("$ENGINE/feed/");
 check(str_contains($feed, 'data-name="n"') && str_contains($feed, 'seam:content'), 'shortcodes and content filters run for feeds too');
 $routed = fetch("$ENGINE/seam-probe/hello-there/");
 check(str_contains($routed, '<p class="seam-route" data-name="hello-there">reader-0</p>'), 'the route seam answers its path, with the capture and the reader', $routed);
+check(!str_contains($routed, 'minn-cornerbar'), 'a signed-out reader gets an extension page without the Minn bar');
 check(!str_contains(fetch("$ENGINE/minn-admin/login"), 'seam-shadow'), 'an engine route keeps its path: the route seam comes after the engine');
 check(!str_contains(fetch("$ENGINE/seam-probe/UPPER/"), 'seam-route'), 'a path the capture refuses falls through to the front');
 wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
@@ -112,6 +113,11 @@ check(!str_contains($onDesktop, 'members-only') && str_contains($onDesktop, 'gue
 $mint = (array) json_decode((string) shell_exec('wp --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . ' 2 2>/dev/null'), true);
 $signedIn = fetch("$ENGINE/$slug/", ['Cookie: ' . $mint['cookie_name'] . '=' . $mint['cookie'] . '; wordpress_logged_in_' . md5($ENGINE) . '=' . $mint['cookie']]);
 check(str_contains($signedIn, 'members-only') && !str_contains($signedIn, 'guests-only'), 'role rules for a signed-in reader');
+wp("option update minn_active_extensions '[\"minn-block-visibility\",\"minn-test-seams\"]'");
+$editorPage = fetch("$ENGINE/seam-probe/hello-there/", ['Cookie: ' . $mint['cookie_name'] . '=' . $mint['cookie'] . '; wordpress_logged_in_' . md5($ENGINE) . '=' . $mint['cookie']]);
+wp("option update minn_active_extensions '[\"minn-block-visibility\"]'");
+check(str_contains($editorPage, 'reader-2</p>') && str_contains($editorPage, 'id="minn-cornerbar"') && str_contains($editorPage, 'id="minn-admin-bar-css"'), 'frontBar gives a signed-in editor the Minn bar on an extension page', substr($editorPage, 0, 300));
+check(strpos($editorPage, 'id="minn-admin-bar-css"') < strpos($editorPage, '</head>') && strpos($editorPage, 'id="minn-cornerbar"') < strpos($editorPage, '</body>'), 'the bar stylesheet sits in the head and the bar before the body closes');
 check(!str_contains($onDesktop, 'expired-schedule'), 'a schedule that has ended hides the block');
 check(str_contains($onDesktop, 'disabled-set'), 'a disabled control set is ignored');
 

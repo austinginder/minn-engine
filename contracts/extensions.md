@@ -68,6 +68,8 @@ registrations, each a typed closure, called in registration order:
 | `filterDocument` | `(string $html): string` | the whole themed document before it is sent (what an output buffer did on the reference) |
 | `routes` | `object ...$controllers` | controllers whose public methods carry `#[Route]`, as the engine's own do (`Request` and the captures in, `Response` out, a `Policy` each); asked after every engine route and before the themed front, so an extension adds pages but never takes over one the engine answers; a path its pattern refuses falls through to the front |
 
+An extension page is a whole document the extension built, so the engine adds nothing to it. `$minn->frontBar($html, ?PostRecord $post)` gives it the Minn bar a signed-in editor sees on themed pages (the bar's stylesheet before `</head>`, the bar before `</body>`; with a post named, the bar's Edit opens it) and returns anyone else's document unchanged. The bar is settled before extensions register.
+
 A manifest may add `"covers"`: what part of the replaced plugin the extension
 provides when it is not all of it; preflight prints it and lights AMBER instead of
 GREEN for that plugin. `"shortcodes"` and `"blocks"` name the content tokens

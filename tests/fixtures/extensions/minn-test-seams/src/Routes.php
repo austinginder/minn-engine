@@ -24,7 +24,7 @@ final class Routes
     #[Route(Method::Get, '/seam-probe/{name:[a-z-]+}/', policy: new Policy(Access::Public))]
     public function probe(Request $request, string $name): Response
     {
-        return Response::html('<!doctype html><title>seam route</title><p class="seam-route" data-name="' . Html::attr($name) . '">reader-' . $this->minn->reader->userId . '</p>');
+        return Response::html($this->minn->frontBar('<!doctype html><html><head><title>seam route</title></head><body><p class="seam-route" data-name="' . Html::attr($name) . '">reader-' . $this->minn->reader->userId . '</p></body></html>'));
     }
 
     /** A path the engine already answers: the engine's route must win. */
