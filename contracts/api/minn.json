@@ -68261,6 +68261,7 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontWritesController",
@@ -68354,6 +68355,7 @@
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\FontArgs",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\InstalledThemesController",
@@ -71296,6 +71298,7 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontCollectionsController",
@@ -71836,6 +71839,7 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontWritesController",
@@ -72701,6 +72705,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\ExistingPost",
@@ -73535,6 +73540,7 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontCollectionsController",
@@ -74001,6 +74007,7 @@
                 "Minn\\Http"
             ],
             "usedBy": [
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\TemplateRevisionsController"
@@ -74132,6 +74139,7 @@
                 "Minn\\Rest\\Catalogue",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontWritesController",
@@ -74411,6 +74419,7 @@
                 "Minn\\Http\\Router",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\SiteHealthController",
@@ -104035,6 +104044,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\EngineRoutes",
@@ -108853,6 +108863,343 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\DeclaredRevisionsController",
+            "short": "DeclaredRevisionsController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/DeclaredRevisionsController.php",
+            "lines": 58,
+            "doc": "wp/v2 revisions and autosaves under a post type plugin code or an\nextension registered, at its rest_base (RevisableTypes says which take\nwhich). The {base} declines any other base, so the next route may take\nit; the answers, and the parent's checks, are RevisionsController's.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\RevisionArgs",
+                "Minn\\Http\\Route",
+                "Minn\\Http\\RouteMiss",
+                "Minn\\Rest\\RevisableTypes",
+                "Minn\\Rest\\RevisionsController"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\RevisionsController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\RevisionsController $revisions)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "revisions",
+                        "type": "Minn\\Rest\\RevisionsController",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 25,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "revisions",
+                    "type": "Minn\\Rest\\RevisionsController",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/{base:[a-z0-9_-]+}/{parent:[\\d]+}/revisions (declared type {base})"
+                    ],
+                    "name": "revisions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revisions(Minn\\Http\\Request $request, string $base, string $parent): Minn\\Http\\Response",
+                    "doc": "Every revision of the parent.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/{base:[a-z0-9_-]+}/{parent:[\\d]+}/revisions/{id:[\\d]+} (declared type {base})"
+                    ],
+                    "name": "revision",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revision(Minn\\Http\\Request $request, string $base, string $parent, string $id): Minn\\Http\\Response",
+                    "doc": "One revision of the parent.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 41
+                },
+                {
+                    "routes": [
+                        "DELETE /wp/v2/{base:[a-z0-9_-]+}/{parent:[\\d]+}/revisions/{id:[\\d]+} (declared type {base})"
+                    ],
+                    "name": "deleteRevision",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "deleteRevision(Minn\\Http\\Request $request, string $base, string $parent, string $id): Minn\\Http\\Response",
+                    "doc": "Deletes one revision of the parent.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 48
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}/autosaves (declared type {base})"
+                    ],
+                    "name": "autosaves",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "autosaves(Minn\\Http\\Request $request, string $base, string $id): Minn\\Http\\Response",
+                    "doc": "The parent's autosaves.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/{base:[a-z0-9_-]+}/{parent:[\\d]+}/autosaves/{id:[\\d]+} (declared type {base})"
+                    ],
+                    "name": "autosave",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "autosave(Minn\\Http\\Request $request, string $base, string $parent, string $id): Minn\\Http\\Response",
+                    "doc": "The parent's newest autosave.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 62
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}/autosaves (declared type {base})"
+                    ],
+                    "name": "createAutosave",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "createAutosave(Minn\\Http\\Request $request, string $base, string $id): Minn\\Http\\Response",
+                    "doc": "Saves the caller's autosave of the parent.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "revisable",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "revisable(string $base): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "autosaving",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "autosaving(string $base): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 79
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\DeclaredTermsController",
             "short": "DeclaredTermsController",
             "namespace": "Minn\\Rest",
@@ -109543,12 +109890,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/EngineRoutes.php",
-            "lines": 66,
+            "lines": 70,
             "doc": "The engine's own REST routes in the reference's regex form, for the\nindex and for the runtime's server, whose route table plugin code reads\nto learn what the site answers (a missing /wp/v2/comments there reads as\n\"comments are off\").",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Http\\Router"
+                "Minn\\Http\\Router",
+                "Minn\\Rest\\RevisableTypes"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
@@ -109618,7 +109966,7 @@
                         }
                     ],
                     "line": 47,
-                    "end": 79
+                    "end": 83
                 }
             ]
         },
@@ -122084,6 +122432,111 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\RevisableTypes",
+            "short": "RevisableTypes",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/RevisableTypes.php",
+            "lines": 32,
+            "doc": "The post types plugin code or an extension registered that answer\nrevisions and autosaves routes at their rest_base, as the reference\nregisters those controllers per type shown in REST under wp/v2:\nautosaves for any type but attachments, revisions for a type that\nsupports them.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\DeclaredRevisionsController",
+                "Minn\\Rest\\EngineRoutes",
+                "Minn\\Rest\\RevisionsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "typeOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "typeOf(string $base): ?string",
+                    "doc": "The registered post type a REST base names under wp/v2, or null. Asked only inside a REST request, where the runtime has booted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "revisable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "revisable(string $base): bool",
+                    "doc": "Whether a base's type answers the revisions routes: it supports revisions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "autosaving",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "autosaving(string $base): bool",
+                    "doc": "Whether a base's type answers the autosaves routes: any type but attachments.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "autosavingType",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "autosavingType(string $base): ?string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 46
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\RevisionCollection",
             "short": "RevisionCollection",
             "namespace": "Minn\\Rest",
@@ -122381,7 +122834,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RevisionsController.php",
-            "lines": 299,
+            "lines": 306,
             "doc": "wp/v2 revisions under posts, pages, patterns and navigation menus, and\nautosaves under those and menu items (probes rest-revisions,\nrest-autosaves). A revision carries the fields its parent's type\nsupports: a navigation menu's its title and content, a menu item's its\ntitle alone.",
             "implements": [],
             "extends": null,
@@ -122406,11 +122859,13 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
+                "Minn\\Rest\\DeclaredRevisionsController",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RevisableTypes",
                 "Minn\\Rest\\RevisionCollection",
                 "Minn\\Runtime\\Autosaves",
                 "Minn\\Runtime\\PostEvents",
@@ -122419,7 +122874,8 @@
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\DeclaredRevisionsController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Content\\Revisions $revisions, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller, ?Minn\\Front\\Permalinks $permalinks = NULL)",
@@ -122770,7 +123226,7 @@
                         }
                     ],
                     "line": 159,
-                    "end": 179
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -122796,8 +123252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 240
+                    "line": 209,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -122843,8 +123299,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 200
+                    "line": 188,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -122863,8 +123319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 205
+                    "line": 203,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -122900,8 +123356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 264
+                    "line": 251,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -122927,8 +123383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 276
+                    "line": 268,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -122947,8 +123403,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 297
+                    "line": 284,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -122974,8 +123430,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 313
+                    "line": 301,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -123001,8 +123457,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 325
+                    "line": 317,
+                    "end": 326
+                },
+                {
+                    "routes": [],
+                    "name": "typeOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "typeOf(string $base): string",
+                    "doc": "The post type a base names: a built-in one's, or a registered type's (DeclaredRevisionsController).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 329,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -123028,8 +123504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 335
+                    "line": 335,
+                    "end": 342
                 }
             ]
         },
@@ -170330,6 +170806,7 @@
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\RevisableTypes",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",

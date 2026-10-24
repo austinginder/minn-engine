@@ -125,7 +125,7 @@ final readonly class Api
             new SettingsController(new Settings($s->site()), $caller, new LiveSettings($s->schema())),
             new CommentsController($s->comments(), $s->posts(), $s->commentObject(), $caller, $s->users()),
             new GlobalStylesController($s->userStyles(), $s->themeStyles(), new GlobalStylesObject($s->revisions(), $s->url(), $caller), $s->revisions(), $caller),
-            new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller, $s->permalinks()),
+            $revisions = new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller, $s->permalinks()),
             new MediaController($s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller, $postsController),
             new MenusController($s->url(), new MenuLists($postsController, $s->menus(), $menuObject, $itemObject, $caller)),
             new FontsController($s->posts(), new FontObject($s->url())),
@@ -143,7 +143,7 @@ final readonly class Api
             $controllers[] = new TemplateRevisionsController($templates, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $s->revisions(), $s->url(), $caller);
             $controllers[] = new TemplatesController($templates, $templateWriter, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $caller);
         }
-        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite), new DeclaredTermsController($terms)];
+        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite), new DeclaredRevisionsController($revisions), new DeclaredTermsController($terms)];
     }
 
     /** Who is making this request. */

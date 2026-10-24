@@ -90,7 +90,7 @@ the facade's `register_post_type` and `register_taxonomy`
 (`Runtime\DeclaredTypes`, taxonomies first so a term's address under a
 type's prefix reads as the term). So they take a plugin's defaults, rewrite
 rules, archive, template hierarchy (`single-{type}`, `archive-{type}`,
-`taxonomy-{taxonomy}`), REST shape at `wp/v2/{rest_base}` and admin rows. A
+`taxonomy-{taxonomy}`), REST shape at `wp/v2/{rest_base}` (with `/revisions` when the type supports them and `/autosaves`, as for any type plugin code registers: `Rest\DeclaredRevisionsController`, `Rest\RevisableTypes`) and admin rows. A
 type's row: `slug`, `name` (the plural label), `singular`, `rest_base`,
 `hierarchical`, `has_archive` (true, or the archive's path), `rewrite` (a
 slug, or `{slug, with_front}`, or false), `supports` (default title, editor,

@@ -22,9 +22,10 @@ the wp/v2 surface: shapes and controllers
 | [`CommentsController`](#commentscontroller) | final readonly class | 318 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
+| [`DeclaredRevisionsController`](#declaredrevisionscontroller) | final readonly class | 58 | wp/v2 revisions and autosaves under a post type plugin code or an |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
 | [`Embed`](#embed) | final class | 264 | The _embed decoration and the embed context. Every embeddable link in an |
-| [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
+| [`EngineRoutes`](#engineroutes) | final class | 70 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`FontArgs`](#fontargs) | final class | 70 | The font library's parameters as the reference's REST index lists them |
@@ -72,8 +73,9 @@ the wp/v2 surface: shapes and controllers
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 296 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
+| [`RevisableTypes`](#revisabletypes) | final class | 32 | The post types plugin code or an extension registered that answer |
 | [`RevisionCollection`](#revisioncollection) | final class | 177 | A revisions list as the reference answers it (probe of the posts, |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 299 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 306 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 144 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 80 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
@@ -968,6 +970,61 @@ Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+} (declared type {base})`
 Trashes or deletes a post of a declared type.
 
 Internals: `slug()` (private, line 68)
+
+
+## DeclaredRevisionsController
+
+`final readonly class Minn\Rest\DeclaredRevisionsController` · `public/minn/src/Minn/Rest/DeclaredRevisionsController.php`
+
+wp/v2 revisions and autosaves under a post type plugin code or an
+extension registered, at its rest_base (RevisableTypes says which take
+which). The {base} declines any other base, so the next route may take
+it; the answers, and the parent's checks, are RevisionsController's.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\RevisionsController`
+
+```php
+__construct(Minn\Rest\RevisionsController $revisions)
+```
+
+
+### `revisions(Minn\Http\Request $request, string $base, string $parent): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{parent:[\d]+}/revisions (declared type {base})`
+
+Every revision of the parent.
+
+### `revision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{parent:[\d]+}/revisions/{id:[\d]+} (declared type {base})`
+
+One revision of the parent.
+
+### `deleteRevision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{parent:[\d]+}/revisions/{id:[\d]+} (declared type {base})`
+
+Deletes one revision of the parent.
+
+### `autosaves(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}/autosaves (declared type {base})`
+
+The parent's autosaves.
+
+### `autosave(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{parent:[\d]+}/autosaves/{id:[\d]+} (declared type {base})`
+
+The parent's newest autosave.
+
+### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}/autosaves (declared type {base})`
+
+Saves the caller's autosave of the parent.
+
+Internals: `revisable()` (private, line 71), `autosaving()` (private, line 76)
 
 
 ## DeclaredTermsController
@@ -3123,6 +3180,33 @@ The URL of a REST route, pretty or plain as the site is set.
 The curies entry every wp/v2 _links block ends with.
 
 
+## RevisableTypes
+
+`final class Minn\Rest\RevisableTypes` · `public/minn/src/Minn/Rest/RevisableTypes.php`
+
+The post types plugin code or an extension registered that answer
+revisions and autosaves routes at their rest_base, as the reference
+registers those controllers per type shown in REST under wp/v2:
+autosaves for any type but attachments, revisions for a type that
+supports them.
+
+Used by: `Minn\Rest\DeclaredRevisionsController`, `Minn\Rest\EngineRoutes`, `Minn\Rest\RevisionsController`
+
+### static `typeOf(string $base): ?string`
+
+The registered post type a REST base names under wp/v2, or null. Asked only inside a REST request, where the runtime has booted.
+
+### static `revisable(string $base): bool`
+
+Whether a base's type answers the revisions routes: it supports revisions.
+
+### static `autosaving(string $base): bool`
+
+Whether a base's type answers the autosaves routes: any type but attachments.
+
+Internals: `autosavingType()` (private, line 42)
+
+
 ## RevisionCollection
 
 `final class Minn\Rest\RevisionCollection` · `public/minn/src/Minn/Rest/RevisionCollection.php`
@@ -3178,7 +3262,7 @@ title alone.
 - const `FIELDS` = `array (   'wp_navigation' =>    array (     0 => 'title',     1 => 'content',   ),   'nav_menu_item' =>    array (     0 => 'title',   ), )` — The fields a revision carries by its parent's type; any other carries title, content and excerpt.
 - const `DELETE_REFUSAL` = `'Sorry, you are not allowed to delete revisions of this post.'`
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredRevisionsController`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Revisions $revisions, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, ?Minn\Front\Permalinks $permalinks = NULL)
@@ -3227,7 +3311,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike), in the view, edit or embed shape.
 
-Internals: `selected()` (private, line 81), `draftObject()` (private, line 187), `clean()` (private, line 202), `embedded()` (private, line 250), `withPreviewLink()` (private, line 267), `previewLink()` (private, line 283), `meta()` (private, line 300), `requireParent()` (private, line 316), `parentOf()` (private, line 328)
+Internals: `selected()` (private, line 81), `draftObject()` (private, line 188), `clean()` (private, line 203), `embedded()` (private, line 251), `withPreviewLink()` (private, line 268), `previewLink()` (private, line 284), `meta()` (private, line 301), `requireParent()` (private, line 317), `typeOf()` (private, line 329), `parentOf()` (private, line 335)
 
 
 ## RouteArgs

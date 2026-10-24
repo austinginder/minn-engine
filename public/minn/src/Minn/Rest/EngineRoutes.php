@@ -49,6 +49,10 @@ final class EngineRoutes
         if (str_contains($pattern, '{base:[')) {
             $routes = [];
             foreach ($declaredBases as $base) {
+                // Revisions and autosaves list under the types that take them, never under a taxonomy's base.
+                if ((str_contains($pattern, '/revisions') && !RevisableTypes::revisable((string) $base)) || (str_contains($pattern, '/autosaves') && !RevisableTypes::autosaving((string) $base))) {
+                    continue;
+                }
                 array_push($routes, ...self::forms((string) preg_replace('/\{base:\[[^}]+\}/', $base, $pattern)));
             }
             return $routes;

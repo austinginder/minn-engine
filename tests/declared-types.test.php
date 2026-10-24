@@ -195,6 +195,19 @@ foreach ( array( 'the entry' => '/zz-wiki/zz-musicblocks/', 'the archive' => '/z
 	$detail = $rh['status'] !== $eh['status'] ? "status {$rh['status']} vs {$eh['status']}" : ( $rt !== $et ? "title '$rt' vs '$et'" : ( $rc !== $ec ? "body class '$rc' vs '$ec'" : theme_first_diff( $ebody, $rbody ) ) );
 	check( $rh['status'] === $eh['status'] && $rt === $et && $rc === $ec && $rbody === $ebody && $rbody !== '', "front: {$label} ({$path}) answers as the reference: {$eh['status']}, {$et}", $detail );
 }
+// Revisions and autosaves under a declared type, at its rest_base, as WordPress registers them per type.
+foreach ( array( 'engine' => $ENGINE, 'reference' => $REF ) as $side => $base_url ) {
+	[ , $idx ] = dt_fetch( $base_url, 'rest_route=/', null );
+	$routes = $idx['routes'] ?? array();
+	check( isset( $routes['/wp/v2/zz-entry/(?P<parent>[\d]+)/revisions'], $routes['/wp/v2/zz-entry/(?P<id>[\d]+)/autosaves'] ) && ! isset( $routes['/wp/v2/zz-topic/(?P<parent>[\d]+)/revisions'] ), "{$side}: the index lists revisions and autosaves under the declared type, never under its taxonomy", implode( ' ', array_filter( array_keys( $routes ), static fn ( $r ) => str_contains( $r, 'zz-' ) ) ) );
+}
+dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid ), $admin, 'POST', json_encode( array( 'content' => '<!-- wp:paragraph --><p>Every tune, again.</p><!-- /wp:paragraph -->' ) ) );
+dt_parity( 'the entry\'s revisions as the reference lists them', 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid . '/revisions' ) . '&context=edit', $admin );
+dt_parity( 'the entry\'s autosaves as the reference lists them (none yet)', 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid . '/autosaves' ) . '&context=edit', $admin );
+[ $st, $auto ] = dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid . '/autosaves' ), $admin, 'POST', json_encode( array( 'title' => 'Zz Musicblocks', 'content' => '<!-- wp:paragraph --><p>Every tune, autosaved.</p><!-- /wp:paragraph -->' ) ) );
+check( 200 === $st && ( $auto['parent'] ?? 0 ) === $eid, 'the engine saves an autosave of a published entry', json_encode( $auto ) );
+dt_parity( 'the autosave read back as the reference reads it', 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid . '/autosaves' ) . '&context=edit', $admin );
+dt_parity( 'a revisions route under a taxonomy\'s base answers as the reference does', 'rest_route=' . rawurlencode( '/wp/v2/zz-topic/' . $tid . '/revisions' ), $admin );
 dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid ) . '&force=true', $admin, 'DELETE' );
 dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-topic/' . $tid ) . '&force=true', $admin, 'DELETE' );
 

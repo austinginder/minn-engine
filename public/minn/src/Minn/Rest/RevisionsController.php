@@ -161,7 +161,8 @@ final readonly class RevisionsController
         $userId = $this->requireParent((int) $id, $base);
         $body = $request->json();
         // A field the parent's type lacks is left out; a menu item keeps no field of an autosave at all (probe rest-autosaves).
-        $allowed = self::TYPES[$base] === 'nav_menu_item' ? [] : self::FIELDS[self::TYPES[$base]] ?? ['title', 'content', 'excerpt'];
+        $type = self::typeOf($base);
+        $allowed = $type === 'nav_menu_item' ? [] : self::FIELDS[$type] ?? ['title', 'content', 'excerpt'];
         $fields = [];
         foreach (array_intersect($allowed, array_keys($body)) as $key) {
             $fields['post_' . $key] = $this->clean(PostsWriteController::field($body[$key]));
@@ -324,11 +325,17 @@ final readonly class RevisionsController
         return $userId;
     }
 
+    /** The post type a base names: a built-in one's, or a registered type's (DeclaredRevisionsController). */
+    private static function typeOf(string $base): string
+    {
+        return self::TYPES[$base] ?? RevisableTypes::typeOf($base) ?? 'post';
+    }
+
     /** The parent, of the type the route's base names, or rest_post_invalid_parent. */
     private function parentOf(int $parentId, string $base): PostRecord
     {
         $post = $this->posts->find($parentId);
-        if ($post === null || $post->type !== (self::TYPES[$base] ?? 'post')) {
+        if ($post === null || $post->type !== self::typeOf($base)) {
             throw new RestError('rest_post_invalid_parent', 'Invalid post parent ID.', 404);
         }
         return $post;
