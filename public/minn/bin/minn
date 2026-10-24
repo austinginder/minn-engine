@@ -4,13 +4,14 @@
 declare(strict_types=1);
 
 /**
- * The engine's own command: preflight, install, eject, status, update.
+ * The engine's own command: preflight, install, eject, status, update, login.
  *
  *   php minn/bin/minn preflight /path/to/webroot
  *   php minn/bin/minn install   /path/to/webroot [--park=/path/to/wp-parked] [--force]
  *   php minn/bin/minn eject     /path/to/webroot
  *   php minn/bin/minn status    /path/to/webroot
  *   php minn/bin/minn update    [--check]
+ *   php minn/bin/minn login     /path/to/webroot [<user>] [--to=<path>] [--format=json]
  */
 
 require_once dirname(__DIR__) . '/src/Minn/Autoloader.php';

@@ -11,7 +11,8 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 372 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 391 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`LoginLink`](#loginlink) | final class | 73 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 200 | Options, read and written straight to the options table. Serialized |
@@ -22,7 +23,7 @@ the wp verbs the engine answers itself
 | [`Runtime`](#runtime) | final class | 98 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 332 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
-| [`UserCommand`](#usercommand) | final class | 180 | Users: the list and get views, and the one-time login link. The list and |
+| [`UserCommand`](#usercommand) | final class | 164 | Users: the list and get views, and the one-time login link. The list and |
 
 ## AssetUpdate
 
@@ -347,6 +348,14 @@ from a web request, where there is no STDOUT.
 
 What the site will and will not get; the worst light decides install. The report lands in the output.
 
+### `login(string $root, array $argv, array $options): int`
+
+A one-time sign-in link (LoginLink), for the user named after the
+webroot or the first administrator.
+
+- `@param list<string> $argv`
+- `@param array<string, string|true> $options`
+
 ### `update(array $options): int`
 
 Replaces this engine with the latest release from the Minn update service; --check only says whether there is one.
@@ -384,7 +393,34 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 119), `inside()` (private, line 334), `move()` (private, line 343), `copyTree()` (private, line 366), `version()` (private, line 385), `say()` (private, line 390)
+Internals: `help()` (private, line 120), `inside()` (private, line 353), `move()` (private, line 362), `copyTree()` (private, line 385), `version()` (private, line 404), `say()` (private, line 409)
+
+
+## LoginLink
+
+`final class Minn\Cli\LoginLink` · `public/minn/src/Minn/Cli/LoginLink.php`
+
+`minn login <webroot> [<user>]`: the one-time sign-in link, minted by the
+engine alone. wp-config.php is read as text, never run, so neither
+WP-CLI, the WordPress runtime nor the site's plugins take part, and the
+link works whatever MINN_WP_API says. With no user named it signs in the
+first administrator by login. The link opens the engine's own sign-in
+page (`wp user login` keeps wp-login.php, the address hosting tools
+expect); --to lands somewhere other than the admin.
+
+Used by: `Minn\Cli\Installer`
+
+
+### static `run(string $root, ?string $who, array $options): array`
+
+Mints a link for a webroot and hands back the exit code and what to
+print: the address alone, or with --format=json the address, the user,
+their roles and when the link expires.
+
+- `@param array<string, string|true> $options`
+- `@return array{code: int, lines: list<string>}`
+
+Internals: `mint()` (private, line 62), `firstAdministrator()` (private, line 89)
 
 
 ## MaintenanceCommand
@@ -881,7 +917,7 @@ types in the database). Every finding is a light; the worst decides.
 
 - const `AREAS` = `array (   'admin' => 'wp-admin',   'editor' => 'editor',   'customizer' => 'Customizer',   'xmlrpc' => 'XML-RPC',   'omitted' => 'left out', )` — What the dead-end areas are, as a report says them.
 
-Used by: `Minn\Cli\Installer`
+Used by: `Minn\Cli\Installer`, `Minn\Cli\LoginLink`
 
 ```php
 __construct(string $engineDir = '')
@@ -904,7 +940,11 @@ Same line Theme::active / ClassicTheme::active draw: a block template
 index (child or parent) is a block theme; otherwise a parent index.php
 is a classic theme.
 
-Internals: `readConfig()` (private, line 106), `moved()` (private, line 149), `env()` (private, line 175), `optionReader()` (private, line 186), `preflightTheme()` (private, line 198), `preflightPlugins()` (private, line 237), `preflightPlugin()` (private, line 306), `some()` (private, line 338), `surveyContent()` (private, line 352), `surveyMarkup()` (private, line 361), `surveyMenus()` (private, line 402), `surveyTables()` (private, line 429), `surveyTypes()` (private, line 448), `light()` (private, line 470), `say()` (private, line 479)
+### static `readConfig(string $file): array`
+
+The database constants, WP_HOME and the prefix, read from the file as text: nothing in it runs.
+
+Internals: `moved()` (private, line 149), `env()` (private, line 175), `optionReader()` (private, line 186), `preflightTheme()` (private, line 198), `preflightPlugins()` (private, line 237), `preflightPlugin()` (private, line 306), `some()` (private, line 338), `surveyContent()` (private, line 352), `surveyMarkup()` (private, line 361), `surveyMenus()` (private, line 402), `surveyTables()` (private, line 429), `surveyTypes()` (private, line 448), `light()` (private, line 470), `say()` (private, line 479)
 
 
 ## RewriteCommand
@@ -1278,12 +1318,13 @@ options:
 Prints a one-time login link for a user.
 
 The link signs the user in at wp-login.php once, within fifteen
-minutes, and then expires (the contract of the captaincore helper).
+minutes, and then expires (the contract of the captaincore helper;
+`minn login` mints the same link without WP-CLI).
 
 ## OPTIONS
 
 <user>
 : User ID, user email, or user login.
 
-Internals: `find()` (private, line 153), `ownList()` (private, line 173), `item()` (private, line 186)
+Internals: `find()` (private, line 144), `ownList()` (private, line 157), `item()` (private, line 170)
 

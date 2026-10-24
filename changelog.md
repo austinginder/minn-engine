@@ -2,6 +2,10 @@
 
 ## **v0.2.0** - Unreleased
 
+### Added
+
+* **`minn login` prints a one-time sign-in link without WP-CLI.** `php minn/bin/minn login <webroot> [<user>]` signs in the user named, or the first administrator, through Minn's own sign-in page, and works whatever `MINN_WP_API` is set to. `--to=<path>` lands somewhere other than the admin, and `--format=json` adds the user, their roles and when the link expires. Cove uses it for `cove login`.
+
 ### Fixed
 
 * **Sites on nginx reach every WordPress entry point.** Hosts such as Kinsta run a request for a `.php` file only when the file exists, so after an install `wp-cron.php` (the host's own cron), `wp-comments-post.php`, `wp-admin/admin-ajax.php`, `wp-admin/admin-post.php` and the rest answered 404 before Minn saw them. The install now lays a small file under each of those names that hands the request to Minn, an update lays any that are missing, and eject removes them before WordPress's own come back.
@@ -23,6 +27,8 @@
 * **Mail addresses with accented or other non-ASCII letters** are accepted by PHPMailer once one has been added, as WordPress accepts them.
 
 ### Security
+
+* **Five wrong guesses burn a one-time sign-in link.** A link minted by the CaptainCore helper carries only seven characters, and Minn accepts those links too. Minn now forgets a user's link after five wrong tries, from any mix of addresses, as the helper does on WordPress.
 
 * **Database quoting follows the connection's character set.** On a site whose `DB_CHARSET` is a multibyte one (gbk, big5, sjis), a crafted search could close a quoted value; Minn now quotes on the connection the query runs on, a database drop-in's own included.
 

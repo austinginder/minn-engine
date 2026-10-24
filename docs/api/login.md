@@ -4,10 +4,11 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 557 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 540 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 263 | The sign-in page markup. |
 | [`LoginHooks`](#loginhooks) | final readonly class | 149 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
+| [`OneTimeLink`](#onetimelink) | final readonly class | 61 | The one-time sign-in link hosting tools mint (the captaincore helper's |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -52,7 +53,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `page()` (private, line 71), `landingFor()` (private, line 133), `asked()` (private, line 140), `checkEmail()` (private, line 147), `signInNotices()` (private, line 158), `lostPassword()` (private, line 164), `retrieve()` (private, line 195), `openResetLink()` (private, line 215), `resetSession()` (private, line 232), `savePassword()` (private, line 247), `register()` (private, line 282), `validateReset()` (private, line 307), `parts()` (private, line 322), `tokenLogin()` (private, line 334), `submitted()` (private, line 377), `adminEmail()` (private, line 426), `withTestCookie()` (private, line 451), `testCookies()` (private, line 460), `safeRedirect()` (private, line 472), `logout()` (private, line 493), `confirmLogOut()` (private, line 527), `action()` (private, line 542), `actionUrl()` (private, line 554), `siteName()` (private, line 564), `base()` (private, line 570), `tooManyAttempts()` (private, line 576), `render()` (private, line 584)
+Internals: `page()` (private, line 71), `landingFor()` (private, line 133), `asked()` (private, line 140), `checkEmail()` (private, line 147), `signInNotices()` (private, line 158), `lostPassword()` (private, line 164), `retrieve()` (private, line 195), `openResetLink()` (private, line 215), `resetSession()` (private, line 232), `savePassword()` (private, line 247), `register()` (private, line 282), `validateReset()` (private, line 307), `parts()` (private, line 322), `tokenLogin()` (private, line 334), `submitted()` (private, line 360), `adminEmail()` (private, line 409), `withTestCookie()` (private, line 434), `testCookies()` (private, line 443), `safeRedirect()` (private, line 455), `logout()` (private, line 476), `confirmLogOut()` (private, line 510), `action()` (private, line 525), `actionUrl()` (private, line 537), `siteName()` (private, line 547), `base()` (private, line 553), `tooManyAttempts()` (private, line 559), `render()` (private, line 567)
 
 
 ## LoginForm
@@ -283,6 +284,45 @@ through login_errors and login_messages.
 - `@return array{errors: string, messages: string}`
 
 Internals: `words()` (private, line 130)
+
+
+## OneTimeLink
+
+`final readonly class Minn\Login\OneTimeLink` · `public/minn/src/Minn/Login/OneTimeLink.php`
+
+The one-time sign-in link hosting tools mint (the captaincore helper's
+contract, which Cove and CaptainCore share): a token in the user's meta,
+good once, for fifteen minutes. `wp user login` and `minn login` mint it;
+the sign-in page spends it. Five wrong guesses at one user's token burn
+it, as the helper's own validator does, because a helper-minted token is
+only seven hex characters and reaches the engine too.
+
+- const `TOKEN` = `'cove_login_token'`
+- const `MINTED` = `'cove_login_token_time'`
+- const `MISSES` = `'cove_login_token_misses'`
+- const `LIFETIME` = `900` — Seconds a token stays good after it is minted.
+- const `MISS_LIMIT` = `5` — Wrong guesses at one token before it is burnt.
+
+Used by: `Minn\Cli\LoginLink`, `Minn\Cli\UserCommand`, `Minn\Login\LoginController`
+
+```php
+__construct(Minn\Content\Users $users)
+```
+
+
+### `mint(Minn\Content\UserRecord $user): string`
+
+Mints a fresh token for the user and hands back the link's query
+string. The token is 128 bits, stored raw (the helper's format, which
+it compares verbatim when a hide-login plugin keeps the engine's page
+from answering); a database read yields the link, which the window
+and the single use bound.
+
+### `redeem(Minn\Content\UserRecord $user, string $provided): bool`
+
+Whether the token given is the user's live one; a match is spent, a miss counted, a stale token cleared.
+
+Internals: `clear()` (private, line 72)
 
 
 ## ServeLogin

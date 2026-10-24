@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 145 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 326 |  |
+| [`Users`](#users) | final readonly class | 342 |  |
 
 ## Autop
 
@@ -2251,7 +2251,7 @@ spelling in row(); here they are $user->login, ->email, ->displayName.
 Array access is the migration bridge, read-only; new code reads the
 properties.
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\SignIn`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolution`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\SignIn`, `Minn\Cli\LoginLink`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolution`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\OneTimeLink`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\UserWrites`
 
 - readonly `int $id`
 - readonly `string $login`
@@ -2311,7 +2311,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Front\FrontParts`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\LoginLink`, `Minn\Cli\Runtime`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Front\FrontParts`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\OneTimeLink`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\UserWrites`
 
 ```php
 __construct(Minn\Db $db)
@@ -2335,6 +2335,12 @@ The user with this login, or null.
 ### `findByEmail(string $email): ?Minn\Content\UserRecord`
 
 The user with this email, or null.
+
+### `identify(string $identifier): ?Minn\Content\UserRecord`
+
+The user an identifier names, as WP-CLI's user fetcher reads one: a
+number is an id, an address an email or else a login (logins can be
+addresses), anything else a login.
 
 ### `findBySlug(string $nicename): ?Minn\Content\UserRecord`
 
@@ -2467,5 +2473,5 @@ rather than an upsert. The value is the stored form: a string that
 reads as serialized is revived on the way through the meta API, so a
 caller with text from outside passes it through Options::toStorage.
 
-Internals: `record()` (private, line 23), `refreshCount()` (private, line 111), `writeAccount()` (private, line 123)
+Internals: `record()` (private, line 24), `refreshCount()` (private, line 128), `writeAccount()` (private, line 140)
 

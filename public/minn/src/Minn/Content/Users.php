@@ -10,6 +10,7 @@ use Minn\Db;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MetaData;
 use Minn\Runtime\Options;
+use Minn\Support\Email;
 use Minn\Support\Kses;
 use Minn\Support\Slashes;
 
@@ -47,6 +48,22 @@ final readonly class Users
     public function findByEmail(string $email): ?UserRecord
     {
         return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE user_email = ? LIMIT 1", [$email]));
+    }
+
+    /**
+     * The user an identifier names, as WP-CLI's user fetcher reads one: a
+     * number is an id, an address an email or else a login (logins can be
+     * addresses), anything else a login.
+     */
+    public function identify(string $identifier): ?UserRecord
+    {
+        if (is_numeric($identifier)) {
+            return ctype_digit($identifier) ? $this->find((int) $identifier) : null;
+        }
+        if (Email::check($identifier) === null) {
+            return $this->findByEmail($identifier) ?? $this->findByLogin($identifier);
+        }
+        return $this->findByLogin($identifier);
     }
 
     /** The user with this nicename, or null. */

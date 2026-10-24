@@ -10223,6 +10223,7 @@
                 "Minn\\Admin\\LanguageController",
                 "Minn\\Admin\\Notifications",
                 "Minn\\Admin\\UploadsSize",
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Reader",
                 "Minn\\Context",
@@ -26306,11 +26307,12 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 372,
+            "lines": 391,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\Preflight",
                 "Minn\\Json",
                 "Minn\\Ops\\EngineUpdate",
@@ -26468,7 +26470,7 @@
                         }
                     ],
                     "line": 81,
-                    "end": 106
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -26487,8 +26489,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 117
+                    "line": 110,
+                    "end": 118
+                },
+                {
+                    "routes": [],
+                    "name": "login",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "login(string $root, array $argv, array $options): int",
+                    "doc": "A one-time sign-in link (LoginLink), for the user named after the\nwebroot or the first administrator.",
+                    "shapes": [
+                        "@param list<string> $argv",
+                        "@param array<string, string|true> $options"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "argv",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, string|true>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -26507,8 +26546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 151
+                    "line": 146,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -26527,8 +26566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 165
+                    "line": 173,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -26556,8 +26595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 227
+                    "line": 192,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -26585,8 +26624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 294
+                    "line": 257,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -26605,8 +26644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 306
+                    "line": 316,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -26627,8 +26666,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 326
+                    "line": 335,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -26639,8 +26678,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 124
+                    "line": 120,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -26659,8 +26698,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 340
+                    "line": 353,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -26686,8 +26725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 364
+                    "line": 362,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -26713,8 +26752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 383
+                    "line": 385,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -26725,8 +26764,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 385,
-                    "end": 388
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -26745,8 +26784,183 @@
                             "doc": ""
                         }
                     ],
-                    "line": 390,
-                    "end": 393
+                    "line": 409,
+                    "end": 412
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Cli\\LoginLink",
+            "short": "LoginLink",
+            "namespace": "Minn\\Cli",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Cli/LoginLink.php",
+            "lines": 73,
+            "doc": "`minn login <webroot> [<user>]`: the one-time sign-in link, minted by the\nengine alone. wp-config.php is read as text, never run, so neither\nWP-CLI, the WordPress runtime nor the site's plugins take part, and the\nlink works whatever MINN_WP_API says. With no user named it signs in the\nfirst administrator by login. The link opens the engine's own sign-in\npage (`wp user login` keeps wp-login.php, the address hosting tools\nexpect); --to lands somewhere other than the admin.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Cli\\Preflight",
+                "Minn\\Content\\UserRecord",
+                "Minn\\Content\\Users",
+                "Minn\\Db",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Json",
+                "Minn\\Login\\OneTimeLink"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\Installer"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Front\\Permalinks $permalinks)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "users",
+                        "type": "Minn\\Content\\Users",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "capabilities",
+                        "type": "Minn\\Auth\\Capabilities",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 31,
+                "end": 33
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "lines",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "users",
+                    "type": "Minn\\Content\\Users",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "capabilities",
+                    "type": "Minn\\Auth\\Capabilities",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "run(string $root, ?string $who, array $options): array",
+                    "doc": "Mints a link for a webroot and hands back the exit code and what to\nprint: the address alone, or with --format=json the address, the user,\ntheir roles and when the link expires.",
+                    "shapes": [
+                        "@param array<string, string|true> $options",
+                        "@return array{code: int, lines: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "who",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, string|true>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "mint",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "mint(?string $who, array $options): int",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string|true> $options"
+                    ],
+                    "params": [
+                        {
+                            "name": "who",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, string|true>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "firstAdministrator",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "firstAdministrator(): ?Minn\\Content\\UserRecord",
+                    "doc": "The first user by login holding the administrator role, as `wp user list --role=administrator` lists them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 89,
+                    "end": 97
                 }
             ]
         },
@@ -28220,7 +28434,8 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Cli\\Installer"
+                "Minn\\Cli\\Installer",
+                "Minn\\Cli\\LoginLink"
             ],
             "constructor": {
                 "signature": "__construct(string $engineDir = '')",
@@ -28343,7 +28558,7 @@
                     "routes": [],
                     "name": "readConfig",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "readConfig(string $file): array",
                     "doc": "The database constants, WP_HOME and the prefix, read from the file as text: nothing in it runs.",
                     "shapes": [],
@@ -29583,7 +29798,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/UserCommand.php",
-            "lines": 180,
+            "lines": 164,
             "doc": "Users: the list and get views, and the one-time login link. The list and\nget verbs take WP-CLI's bundled synopsis (Commands); a list the engine\ndoes not answer itself (query arguments, users without a role, fields\nbeyond the record's own) goes back to the bundled command.",
             "implements": [],
             "extends": null,
@@ -29592,7 +29807,7 @@
                 "Minn\\Cli\\Commands",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\UserRecord",
-                "Minn\\Support\\Email"
+                "Minn\\Login\\OneTimeLink"
             ],
             "usedBy": [
                 "Minn\\Cli\\Commands"
@@ -29675,7 +29890,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "login(array $args, array $assocArgs): void",
-                    "doc": "Prints a one-time login link for a user.\n\nThe link signs the user in at wp-login.php once, within fifteen\nminutes, and then expires (the contract of the captaincore helper).\n\n## OPTIONS\n\n<user>\n: User ID, user email, or user login.",
+                    "doc": "Prints a one-time login link for a user.\n\nThe link signs the user in at wp-login.php once, within fifteen\nminutes, and then expires (the contract of the captaincore helper;\n`minn login` mints the same link without WP-CLI).\n\n## OPTIONS\n\n<user>\n: User ID, user email, or user login.",
                     "shapes": [],
                     "params": [
                         {
@@ -29693,8 +29908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 145
+                    "line": 132,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -29702,7 +29917,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "find(string $identifier): ?Minn\\Content\\UserRecord",
-                    "doc": "A user by the identifier WP-CLI's user fetcher takes: a number is an\nid (warned about when a login is the same number), an address an\nemail or else a login (logins can be addresses), anything else a\nlogin; WP_CLI_FORCE_USER_LOGIN reads every identifier as a login.",
+                    "doc": "A user by the identifier WP-CLI's user fetcher takes (Users::identify),\nwarned about when an id and a login are the same number;\nWP_CLI_FORCE_USER_LOGIN reads every identifier as a login.",
                     "shapes": [],
                     "params": [
                         {
@@ -29713,8 +29928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 170
+                    "line": 144,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -29733,8 +29948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 183
+                    "line": 157,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -29769,8 +29984,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 196
+                    "line": 170,
+                    "end": 180
                 }
             ]
         },
@@ -41596,6 +41811,7 @@
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\SignIn",
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\UserCommand",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\AdminBar",
@@ -41605,6 +41821,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
+                "Minn\\Login\\OneTimeLink",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
@@ -41986,7 +42203,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 326,
+            "lines": 342,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -42001,6 +42218,7 @@
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Email",
                 "Minn\\Support\\Kses",
                 "Minn\\Support\\Slashes"
             ],
@@ -42024,12 +42242,14 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Engine",
                 "Minn\\Front\\FrontParts",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
+                "Minn\\Login\\OneTimeLink",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\PostObject",
@@ -42054,8 +42274,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 20
+                "line": 19,
+                "end": 21
             },
             "cases": [],
             "constants": [],
@@ -42090,8 +42310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -42110,8 +42330,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -42130,8 +42350,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -42150,8 +42370,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "identify",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "identify(string $identifier): ?Minn\\Content\\UserRecord",
+                    "doc": "The user an identifier names, as WP-CLI's user fetcher reads one: a\nnumber is an id, an address an email or else a login (logins can be\naddresses), anything else a login.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "identifier",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -42170,8 +42410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -42197,8 +42437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 69
+                    "line": 76,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -42219,8 +42459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 94
+                    "line": 106,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -42253,8 +42493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 105
+                    "line": 118,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -42275,8 +42515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 153
+                    "line": 156,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -42298,8 +42538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 178
+                    "line": 179,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -42310,8 +42550,8 @@
                     "doc": "Recounts the accounts into user_count, quietly.",
                     "shapes": [],
                     "params": [],
-                    "line": 181,
-                    "end": 184
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -42330,8 +42570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -42352,8 +42592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 202
+                    "line": 214,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -42381,8 +42621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 217
+                    "line": 227,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -42401,8 +42641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 225
+                    "line": 237,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -42423,8 +42663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 231
+                    "line": 245,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -42450,8 +42690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 237
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -42470,8 +42710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -42482,8 +42722,8 @@
                     "doc": "How many users the site has.",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 253
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -42511,8 +42751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 267
+                    "line": 277,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -42538,8 +42778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 277
+                    "line": 287,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -42560,8 +42800,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 292
+                    "line": 303,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -42589,8 +42829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 301
+                    "line": 312,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -42616,8 +42856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 319
+                    "line": 325,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -42650,8 +42890,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 340
+                    "line": 345,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -42672,8 +42912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 26
+                    "line": 24,
+                    "end": 27
                 },
                 {
                     "routes": [],
@@ -42684,8 +42924,8 @@
                     "doc": "The user_count option, which the reference keeps current as accounts\ncome and go. A site without the row is left without it.",
                     "shapes": [],
                     "params": [],
-                    "line": 111,
-                    "end": 115
+                    "line": 128,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -42706,8 +42946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 136
+                    "line": 140,
+                    "end": 153
                 }
             ]
         },
@@ -43351,6 +43591,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\Comments",
@@ -52738,6 +52979,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\SiteIcon",
@@ -78505,6 +78747,7 @@
                 "Minn\\Blocks\\Parser",
                 "Minn\\Blocks\\Serializer",
                 "Minn\\Cli\\Installer",
+                "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Cli\\Preflight",
@@ -78802,7 +79045,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 557,
+            "lines": 540,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -78829,6 +79072,7 @@
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Login\\LoginNotices",
+                "Minn\\Login\\OneTimeLink",
                 "Minn\\Objects\\Errors",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\Handoff",
@@ -79015,8 +79259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 374
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -79360,7 +79604,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "tokenLogin(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The one-time login link `wp user login` prints (the captaincore\nhelper's contract): the token in user meta must match, be under\nfifteen minutes old, and is spent on use. Any failure reads the same\nso ids cannot be probed.",
+                    "doc": "The one-time login link `wp user login` and `minn login` print\n(OneTimeLink), on this page or wp-login.php: spent on use, then on to\nredirect_to when it names this site, else the admin. Any failure reads\nthe same so ids cannot be probed.",
                     "shapes": [],
                     "params": [
                         {
@@ -79372,7 +79616,7 @@
                         }
                     ],
                     "line": 334,
-                    "end": 365
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -79391,8 +79635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 418
+                    "line": 360,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -79418,8 +79662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 442
+                    "line": 409,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -79445,8 +79689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 451,
-                    "end": 457
+                    "line": 434,
+                    "end": 440
                 },
                 {
                     "routes": [],
@@ -79467,8 +79711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 460,
-                    "end": 466
+                    "line": 443,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -79487,8 +79731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 472,
-                    "end": 486
+                    "line": 455,
+                    "end": 469
                 },
                 {
                     "routes": [],
@@ -79507,8 +79751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 493,
-                    "end": 520
+                    "line": 476,
+                    "end": 503
                 },
                 {
                     "routes": [],
@@ -79534,8 +79778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 527,
-                    "end": 535
+                    "line": 510,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -79554,8 +79798,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 542,
-                    "end": 551
+                    "line": 525,
+                    "end": 534
                 },
                 {
                     "routes": [],
@@ -79588,8 +79832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 554,
-                    "end": 561
+                    "line": 537,
+                    "end": 544
                 },
                 {
                     "routes": [],
@@ -79600,8 +79844,8 @@
                     "doc": "The site's name, as the sign-in pages head themselves (\"Site\" when it has none).",
                     "shapes": [],
                     "params": [],
-                    "line": 564,
-                    "end": 567
+                    "line": 547,
+                    "end": 550
                 },
                 {
                     "routes": [],
@@ -79620,8 +79864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 570,
-                    "end": 573
+                    "line": 553,
+                    "end": 556
                 },
                 {
                     "routes": [],
@@ -79647,8 +79891,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 576,
-                    "end": 581
+                    "line": 559,
+                    "end": 564
                 },
                 {
                     "routes": [],
@@ -79681,8 +79925,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 584,
-                    "end": 597
+                    "line": 567,
+                    "end": 580
                 }
             ]
         },
@@ -80905,6 +81149,156 @@
                     ],
                     "line": 130,
                     "end": 133
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Login\\OneTimeLink",
+            "short": "OneTimeLink",
+            "namespace": "Minn\\Login",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Login/OneTimeLink.php",
+            "lines": 61,
+            "doc": "The one-time sign-in link hosting tools mint (the captaincore helper's\ncontract, which Cove and CaptainCore share): a token in the user's meta,\ngood once, for fifteen minutes. `wp user login` and `minn login` mint it;\nthe sign-in page spends it. Five wrong guesses at one user's token burn\nit, as the helper's own validator does, because a helper-minted token is\nonly seven hex characters and reaches the engine too.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\UserRecord",
+                "Minn\\Content\\Users"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\LoginLink",
+                "Minn\\Cli\\UserCommand",
+                "Minn\\Login\\LoginController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Users $users)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "users",
+                        "type": "Minn\\Content\\Users",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 28,
+                "end": 30
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "TOKEN",
+                    "value": "'cove_login_token'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MINTED",
+                    "value": "'cove_login_token_time'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MISSES",
+                    "value": "'cove_login_token_misses'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "LIFETIME",
+                    "value": "900",
+                    "doc": "Seconds a token stays good after it is minted.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MISS_LIMIT",
+                    "value": "5",
+                    "doc": "Wrong guesses at one token before it is burnt.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "users",
+                    "type": "Minn\\Content\\Users",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "mint",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mint(Minn\\Content\\UserRecord $user): string",
+                    "doc": "Mints a fresh token for the user and hands back the link's query\nstring. The token is 128 bits, stored raw (the helper's format, which\nit compares verbatim when a hide-login plugin keeps the engine's page\nfrom answering); a database read yields the link, which the window\nand the single use bound.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "redeem",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "redeem(Minn\\Content\\UserRecord $user, string $provided): bool",
+                    "doc": "Whether the token given is the user's live one; a match is spent, a miss counted, a stale token cleared.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "provided",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "clear",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "clear(int $userId): void",
+                    "doc": "Forgets the user's token, its mint time and its miss count.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 77
                 }
             ]
         },
@@ -187184,7 +187578,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Cli\\UserCommand",
+                "Minn\\Content\\Users",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Support\\Sanitize"
             ],

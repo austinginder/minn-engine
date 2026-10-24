@@ -103,7 +103,7 @@ final class Preflight
     }
 
     /** The database constants, WP_HOME and the prefix, read from the file as text: nothing in it runs. */
-    private static function readConfig(string $file): array
+    public static function readConfig(string $file): array
     {
         $source = (string) file_get_contents($file);
         // Docker official image: extra defines (WP_HOME among them) come from an environment variable.

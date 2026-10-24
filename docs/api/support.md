@@ -126,7 +126,7 @@ why it gave up.
 
 - const `LOCAL_CHARACTER` = `'a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~\\.-'`
 
-Used by: `Minn\Cli\UserCommand`, `Minn\Rest\CommentsController`, `Minn\Support\Sanitize`
+Used by: `Minn\Content\Users`, `Minn\Rest\CommentsController`, `Minn\Support\Sanitize`
 
 ### static `check(string $email): ?string`
 

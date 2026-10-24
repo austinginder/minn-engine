@@ -96,6 +96,7 @@ final class Installer
                 'eject' => $self->eject($root, $options),
                 'status' => $self->status($root),
                 'update' => $self->update($options),
+                'login' => $self->login($root, $argv, $options),
                 default => $self->help(),
             };
         } catch (Throwable $e) {
@@ -120,7 +121,25 @@ final class Installer
     {
         $this->say("Usage: minn <preflight|install|eject|status> <webroot> [--park=<dir>] [--force]");
         $this->say("       minn update [--check]   replace this engine with the latest release");
+        $this->say("       minn login <webroot> [<user>] [--to=<path>] [--format=json]   a one-time sign-in link");
         return 0;
+    }
+
+    /**
+     * A one-time sign-in link (LoginLink), for the user named after the
+     * webroot or the first administrator.
+     *
+     * @param list<string> $argv
+     * @param array<string, string|true> $options
+     */
+    public function login(string $root, array $argv, array $options): int
+    {
+        $positional = array_values(array_filter(array_slice($argv, 1), static fn (string $arg): bool => !str_starts_with($arg, '--')));
+        ['code' => $code, 'lines' => $lines] = LoginLink::run($root, $positional[1] ?? null, $options);
+        foreach ($lines as $line) {
+            $this->say($line);
+        }
+        return $code;
     }
 
     /** Replaces this engine with the latest release from the Minn update service; --check only says whether there is one. */

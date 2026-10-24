@@ -326,10 +326,10 @@ final readonly class LoginController
     }
 
     /**
-     * The one-time login link `wp user login` prints (the captaincore
-     * helper's contract): the token in user meta must match, be under
-     * fifteen minutes old, and is spent on use. Any failure reads the same
-     * so ids cannot be probed.
+     * The one-time login link `wp user login` and `minn login` print
+     * (OneTimeLink), on this page or wp-login.php: spent on use, then on to
+     * redirect_to when it names this site, else the admin. Any failure reads
+     * the same so ids cannot be probed.
      */
     private function tokenLogin(Request $request): Response
     {
@@ -339,29 +339,12 @@ final readonly class LoginController
             return $this->tooManyAttempts($request, $wait);
         }
         $user = $this->users->find((int) $request->query('user_id', '0'));
-        if ($user === null) {
+        if ($user === null || !(new OneTimeLink($this->users))->redeem($user, (string) $request->query(OneTimeLink::TOKEN, ''))) {
             $this->signIn->recordFailure($request->remoteAddress);
             return Response::html($error, 403);
         }
-        $id = $user->id;
-        $token = (string) ($this->users->meta($id, 'cove_login_token') ?? '');
-        $minted = (int) ($this->users->meta($id, 'cove_login_token_time') ?? 0);
-        if ($token === '' || time() - $minted > 15 * 60) {
-            $this->users->deleteMeta($id, 'cove_login_token');
-            $this->users->deleteMeta($id, 'cove_login_token_time');
-            $this->signIn->recordFailure($request->remoteAddress);
-            return Response::html($error, 403);
-        }
-        // The meta holds the raw token (the helper mu-plugin's own format);
-        // a hash is still accepted for a link minted before the change.
-        $provided = (string) $request->query('cove_login_token', '');
-        if (!hash_equals($token, $provided) && !hash_equals($token, hash('sha256', $provided))) {
-            $this->signIn->recordFailure($request->remoteAddress);
-            return Response::html($error, 403);
-        }
-        $this->users->deleteMeta($id, 'cove_login_token');
-        $this->users->deleteMeta($id, 'cove_login_token_time');
-        return $this->signIn->remember(Response::redirect($this->permalinks->url('/minn-admin/'), 302), $user, $request);
+        $landing = $this->safeRedirect((string) $request->query('redirect_to', ''));
+        return $this->signIn->remember(Response::redirect($landing, 302), $user, $request);
     }
 
     /** Handles the posted form for each of those pages. */

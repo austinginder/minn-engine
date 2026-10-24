@@ -87,6 +87,16 @@ $check('a correct password is refused while throttled', $right['status'] === '42
 $token = $request("$ENGINE/wp-login.php?user_id=1&cove_login_token=0000000");
 $check('the one-time link is throttled too', $token['status'] === '429');
 $clearThrottle();
+// Five wrong guesses at one user's token burn it, whichever addresses they come from (the throttle is per address).
+exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . ' && wp user login 1 2>/dev/null', $minted);
+$live = (string) ($minted[0] ?? '');
+for ($guess = 0; $guess < 5; $guess++) {
+    $request("$ENGINE/wp-login.php?user_id=1&cove_login_token=0000000");
+    $clearThrottle();
+}
+$spent = $request("$ENGINE/wp-login.php?" . (string) parse_url($live, PHP_URL_QUERY));
+$check('five wrong guesses burn the live one-time link', $live !== '' && $spent['status'] === '403', $live . ' ' . $spent['status']);
+$clearThrottle();
 $after = $request("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')));
 $check('after the window clears, sign-in works again', $after['status'] === '302' && str_contains($after['headers']['set-cookie'] ?? '', 'wordpress_logged_in_'), $after['status']);
 // A successful sign-in does not reset the address's counter (one owned account must not

@@ -225,6 +225,25 @@ $bad = $head("$ENGINE/wp-login.php?user_id=1&cove_login_token=0000000");
 $check('a wrong token is refused', $bad['status'] === '403', json_encode($bad['status']));
 [$out, $code] = $run($ENGINE_DIR, 'user login nobody');
 $check('user login for an unknown user errors', $code === 1 && $out === 'Error: User not found: nobody', $out);
+
+// The same link from the engine's own command: no WP-CLI, wp-config.php read as text, the engine's sign-in page.
+$minn = static function (string $args) use ($ENGINE_DIR): array {
+    exec(PHP_BINARY . ' ' . escapeshellarg(dirname(__DIR__) . '/public/minn/bin/minn') . ' login ' . escapeshellarg($ENGINE_DIR) . ' ' . $args . ' 2>&1', $lines, $code);
+    return [implode("\n", $lines), $code];
+};
+[$url, $code] = $minn('');
+$check('minn login links the first administrator to the engine\'s sign-in page', $code === 0 && preg_match('#^https://minn\.localhost/minn-admin/login\?user_id=1&cove_login_token=[0-9a-f]{32}$#', $url) === 1, $url);
+$headers = $head($url);
+$check('the minn login link signs in: 302 into the admin', $headers['status'] === '302' && str_ends_with($headers['location'] ?? '', '/minn-admin/') && str_contains($headers['set-cookie'] ?? '', 'wordpress_logged_in_'), json_encode($headers));
+[$out, $code] = $minn('editor --to=/minn-admin/content --format=json');
+$made = json_decode($out, true);
+$check('minn login --format=json names the user, their roles and the expiry', $code === 0 && ($made['user'] ?? '') === 'editor' && ($made['roles'] ?? []) === ['editor'] && abs(($made['expires'] ?? 0) - time() - 900) < 5, $out);
+$headers = $head((string) ($made['url'] ?? ''));
+$check('a --to link lands on that page', $headers['status'] === '302' && str_ends_with($headers['location'] ?? '', '/minn-admin/content'), json_encode($headers));
+[$out, $code] = $minn('admin --to=//elsewhere.invalid/');
+$check('minn login refuses a --to that leaves the site', $code === 1 && str_starts_with($out, 'Error: --to is a path on the site'), $out);
+[$out, $code] = $minn('nobody');
+$check('minn login for an unknown user errors', $code === 1 && $out === 'Error: User not found: nobody', $out);
 [$out, $code] = $run($ENGINE_DIR, 'minn version');
 $check('wp minn version answers', $code === 0 && preg_match('/^\d+\.\d+\.\d+$/', $out) === 1, $out);
 

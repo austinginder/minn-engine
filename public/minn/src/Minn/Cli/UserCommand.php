@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Cli;
 
 use Minn\Content\UserRecord;
-use Minn\Support\Email;
+use Minn\Login\OneTimeLink;
 use WP_CLI;
 use WP_CLI\Formatter;
 
@@ -119,7 +119,8 @@ final class UserCommand
      * Prints a one-time login link for a user.
      *
      * The link signs the user in at wp-login.php once, within fifteen
-     * minutes, and then expires (the contract of the captaincore helper).
+     * minutes, and then expires (the contract of the captaincore helper;
+     * `minn login` mints the same link without WP-CLI).
      *
      * ## OPTIONS
      *
@@ -132,23 +133,13 @@ final class UserCommand
     {
         $runtime = Runtime::boot();
         $user = self::find($args[0]) ?? WP_CLI::error("User not found: {$args[0]}");
-        // 128 bits: the helper compares the stored value to the link verbatim, whatever its length (audit Low: 28 bits before).
-        $token = bin2hex(random_bytes(16));
-        // Stored raw, the captaincore-helper mu-plugin's own format: with a
-        // hide-login plugin standing $pagenow the helper validates this token
-        // itself, and it compares the stored value to the link verbatim. The
-        // trade-off (a database read yields the link) is bounded by the
-        // 15-minute single-use window and matches every real Cove site.
-        $runtime->users->setMeta($user->id, 'cove_login_token', $token);
-        $runtime->users->setMeta($user->id, 'cove_login_token_time', (string) time());
-        WP_CLI::log($runtime->permalinks->url('/wp-login.php') . '?user_id=' . $user->id . '&cove_login_token=' . $token);
+        WP_CLI::log($runtime->permalinks->url('/wp-login.php') . '?' . (new OneTimeLink($runtime->users))->mint($user));
     }
 
     /**
-     * A user by the identifier WP-CLI's user fetcher takes: a number is an
-     * id (warned about when a login is the same number), an address an
-     * email or else a login (logins can be addresses), anything else a
-     * login; WP_CLI_FORCE_USER_LOGIN reads every identifier as a login.
+     * A user by the identifier WP-CLI's user fetcher takes (Users::identify),
+     * warned about when an id and a login are the same number;
+     * WP_CLI_FORCE_USER_LOGIN reads every identifier as a login.
      */
     private static function find(string $identifier): ?UserRecord
     {
@@ -156,17 +147,10 @@ final class UserCommand
         if (getenv('WP_CLI_FORCE_USER_LOGIN')) {
             return $users->findByLogin($identifier);
         }
-        if (is_numeric($identifier)) {
-            $user = ctype_digit($identifier) ? $users->find((int) $identifier) : null;
-            if ($user !== null && $users->findByLogin($identifier) !== null) {
-                WP_CLI::warning(sprintf("Ambiguous user match detected (both ID and user_login exist for identifier '%d'). WP-CLI will default to the ID, but you can force user_login instead with WP_CLI_FORCE_USER_LOGIN=1.", (int) $identifier));
-            }
-            return $user;
+        if (ctype_digit($identifier) && $users->find((int) $identifier) !== null && $users->findByLogin($identifier) !== null) {
+            WP_CLI::warning(sprintf("Ambiguous user match detected (both ID and user_login exist for identifier '%d'). WP-CLI will default to the ID, but you can force user_login instead with WP_CLI_FORCE_USER_LOGIN=1.", (int) $identifier));
         }
-        if (Email::check($identifier) === null) {
-            return $users->findByEmail($identifier) ?? $users->findByLogin($identifier);
-        }
-        return $users->findByLogin($identifier);
+        return $users->identify($identifier);
     }
 
     /** Whether the engine answers this list itself: only a role (not "none") and the record's own fields asked for. */

@@ -40,7 +40,12 @@ php minn/bin/minn install   /path/to/public [--park=/path/to/wp-parked] [--force
 php minn/bin/minn status    /path/to/public
 php minn/bin/minn eject     /path/to/public
 php minn/bin/minn update    [--check]
+php minn/bin/minn login     /path/to/public [<user>] [--to=<path>] [--format=json]
 ```
+
+`login` prints a one-time sign-in link, for the user named or the first
+administrator. It reads `wp-config.php` as text and talks to the database
+itself, so it needs no WP-CLI and works whatever `MINN_WP_API` says.
 
 The four verbs also run through WP-CLI once `minn/cli.php` is loaded: on a
 WordPress site `wp --require=/path/to/minn/cli.php minn preflight`; on an
