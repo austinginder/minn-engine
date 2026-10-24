@@ -1414,7 +1414,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/AppController.php",
-            "lines": 150,
+            "lines": 180,
             "doc": "Serves Minn Admin from the engine: the path-routed shell (every\nsub-path renders the same page) and the app's assets. The nonce refresh\napp.js asks admin-ajax.php for is the reference's own rest-nonce action\n(Runtime\\AjaxController).",
             "implements": [],
             "extends": null,
@@ -1664,7 +1664,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "render(array $boot): string",
-                    "doc": "The shell reproduces the structure of Minn Admin's own template.php\n(an MIT file): pre-paint theme, inline window.MINN, mount point, app.js.",
+                    "doc": "The shell reproduces the structure of Minn Admin's own template.php\n(an MIT file): pre-paint theme, inline window.MINN, the colour scheme\npainted before app.js (a 'site' scheme takes the site default's\npalette), mount point, app.js.",
                     "shapes": [],
                     "params": [
                         {
@@ -1675,8 +1675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 176
+                    "line": 131,
+                    "end": 206
                 }
             ]
         },
@@ -1686,11 +1686,12 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Appearance.php",
-            "lines": 82,
-            "doc": "A person's Minn Admin appearance: the colour scheme and its custom\ntoken maps, stored where the app stores them (user meta\nminn_admin_appearance, a serialized array) so the choice survives an\neject. The two WordPress-era switches, \"Minn is the default admin\" and\n\"Minn admin bar on the site\", are always on here: there is no other\nadmin and no other bar, so the engine reports them true and ignores\nwrites to them.",
+            "lines": 121,
+            "doc": "A person's Minn Admin appearance: the colour scheme and its custom\ntoken maps, stored where the app stores them (user meta\nminn_admin_appearance, a serialized array) so the choice survives an\neject. The two WordPress-era switches, \"Minn is the default admin\" and\n\"Minn admin bar on the site\", are always on here: there is no other\nadmin and no other bar, so the engine reports them true and ignores\nwrites to them.\n\nA person who never chose a scheme follows the site's default (scheme\n'site'): the palette and starting mode an administrator sets under\nSettings → Appearance, kept in the minn_admin_site_appearance option.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
                 "Minn\\Support\\Serialized"
             ],
@@ -1702,7 +1703,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Users $users)",
+                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Content\\Site $site)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -1712,11 +1713,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 42,
-                "end": 44
+                "line": 50,
+                "end": 52
             },
             "cases": [],
             "constants": [
@@ -1724,6 +1732,12 @@
                     "name": "META",
                     "value": "'minn_admin_appearance'",
                     "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SITE_OPTION",
+                    "value": "'minn_admin_site_appearance'",
+                    "doc": "The option holding the site's default palette and mode.",
                     "visibility": "public"
                 },
                 {
@@ -1754,6 +1768,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -1776,8 +1799,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 55
+                    "line": 59,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "effective",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "effective(int $userId): array",
+                    "doc": "What a user sees: their record, with a 'site' scheme swapped for the\nsite default's palette.",
+                    "shapes": [
+                        "@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "site",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "site(): array",
+                    "doc": "The site's default: a palette (never 'site' itself) and the mode a\ndevice starts in until its person picks one ('system' follows it).",
+                    "shapes": [
+                        "@return array{scheme: string, custom: array, mode: string}"
+                    ],
+                    "params": [],
+                    "line": 88,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -1803,8 +1862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 68
+                    "line": 102,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -1823,8 +1882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 89
+                    "line": 115,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -1843,8 +1902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 99
+                    "line": 136,
+                    "end": 143
                 }
             ]
         },
@@ -1854,7 +1913,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 257,
+            "lines": 259,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -2089,7 +2148,7 @@
                         }
                     ],
                     "line": 48,
-                    "end": 98
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -2102,8 +2161,8 @@
                         "@return array<string, mixed>|null"
                     ],
                     "params": [],
-                    "line": 218,
-                    "end": 231
+                    "line": 220,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -2131,8 +2190,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 115
+                    "line": 103,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -2145,8 +2204,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 118,
-                    "end": 136
+                    "line": 120,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -2167,8 +2226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 147
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -2196,8 +2255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 206
+                    "line": 158,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -2208,8 +2267,8 @@
                     "doc": "The reference serves the app shell from the home query, so the global\npost is the newest post while the payload is built; the comments\nfeature check reads it through the comments_open filter (a site that\ncloses comments on old posts reports the feature off when its newest\npost is old).",
                     "shapes": [],
                     "params": [],
-                    "line": 240,
-                    "end": 251
+                    "line": 242,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -2220,8 +2279,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 258,
-                    "end": 277
+                    "line": 260,
+                    "end": 279
                 }
             ]
         },
@@ -38979,6 +39038,7 @@
             "usedBy": [
                 "Minn\\Admin\\ActivityChart",
                 "Minn\\Admin\\App",
+                "Minn\\Admin\\Appearance",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\Dashboard",
                 "Minn\\Admin\\LanguageController",
@@ -47726,7 +47786,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/AdminBar.php",
-            "lines": 364,
+            "lines": 359,
             "doc": "The Minn bar on the public site: the same server-rendered chrome the\napp ships (assets/js/bar.js and assets/css/bar.css from the bundle),\nbuilt here for a signed-in reader who can edit. There is no other bar\nand no other admin on the engine, so it is on for everyone who passes\nthe edit_posts gate; the app's per-person opt-in does not apply.",
             "implements": [],
             "extends": null,
@@ -47744,8 +47804,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
-                "Minn\\Json",
-                "Minn\\Support\\Serialized"
+                "Minn\\Json"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -47809,18 +47868,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 41,
-                "end": 56
+                "line": 37,
+                "end": 52
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "SITE_APPEARANCE",
-                    "value": "'minn_admin_site_appearance'",
-                    "doc": "Where the app keeps the site's default look: its scheme and its mode (dark, light or system).",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "key",
@@ -47955,8 +48007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 65
+                    "line": 55,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -47967,8 +48019,8 @@
                     "doc": "The stylesheet link for the head.",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 77
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -47987,8 +48039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 109
+                    "line": 76,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -48007,8 +48059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -48041,8 +48093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 165
+                    "line": 107,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -48061,8 +48113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 183
+                    "line": 164,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -48090,8 +48142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 212
+                    "line": 182,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -48110,8 +48162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 226
+                    "line": 211,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -48122,8 +48174,8 @@
                     "doc": "The notifications menu; bar.js fills the items.",
                     "shapes": [],
                     "params": [],
-                    "line": 229,
-                    "end": 239
+                    "line": 225,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -48142,8 +48194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 252
+                    "line": 238,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -48156,8 +48208,8 @@
                         "@return array{tone: string, label: string, title: string, sub: string, fix: ?array}|null"
                     ],
                     "params": [],
-                    "line": 260,
-                    "end": 274
+                    "line": 256,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -48168,8 +48220,8 @@
                     "doc": "The site's default mode the app keeps (dark, light or system), for a reader who never chose one.",
                     "shapes": [],
                     "params": [],
-                    "line": 277,
-                    "end": 282
+                    "line": 273,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -48190,8 +48242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 301
+                    "line": 279,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -48224,8 +48276,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 325
+                    "line": 297,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -48236,8 +48288,8 @@
                     "doc": "post type slug => editor route base, for the palette's content results.",
                     "shapes": [],
                     "params": [],
-                    "line": 328,
-                    "end": 335
+                    "line": 322,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -48256,8 +48308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 354
+                    "line": 331,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -48268,8 +48320,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 356,
-                    "end": 359
+                    "line": 350,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -48288,8 +48340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 364
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -48308,8 +48360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 369
+                    "line": 360,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -48328,8 +48380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 374
+                    "line": 365,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -48340,8 +48392,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 376,
-                    "end": 379
+                    "line": 370,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -48388,8 +48440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 389
+                    "line": 375,
+                    "end": 383
                 }
             ]
         },
@@ -190831,7 +190883,6 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Terms",
                 "Minn\\Extension\\Loader",
-                "Minn\\Front\\AdminBar",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\MediaObject",

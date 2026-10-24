@@ -124,7 +124,9 @@ final readonly class AppController
 
     /**
      * The shell reproduces the structure of Minn Admin's own template.php
-     * (an MIT file): pre-paint theme, inline window.MINN, mount point, app.js.
+     * (an MIT file): pre-paint theme, inline window.MINN, the colour scheme
+     * painted before app.js (a 'site' scheme takes the site default's
+     * palette), mount point, app.js.
      */
     private function render(array $boot): string
     {
@@ -133,6 +135,8 @@ final readonly class AppController
         $jsVersion = Html::esc($this->app->assetVersion('assets/js/app.js'));
         $path = Html::attr($this->app->path());
         $json = Json::encode($boot, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        // A device with no saved choice starts in the site's default mode; nothing is saved until the person picks.
+        $siteMode = Json::encode((string) ($boot['siteAppearance']['mode'] ?? 'system'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         $lang = Html::attr(str_replace('_', '-', (string) ($boot['locale'] ?? 'en_US')));
         $dir = !empty($boot['rtl']) ? 'rtl' : 'ltr';
 
@@ -148,23 +152,49 @@ final readonly class AppController
         <link rel="stylesheet" href="{$path}/assets/css/app.css?ver={$cssVersion}">
         <script>
         try {
-        \tvar stored = localStorage.getItem( 'minn-theme' );
-        \tif ( ! stored ) { localStorage.setItem( 'minn-theme', 'system' ); stored = 'system'; }
-        \tvar follow = stored === 'system';
+        \tvar siteMode = {$siteMode};
+        \tvar stored = localStorage.getItem( 'minn-theme' ) || siteMode;
+        \tvar follow = stored !== 'light' && stored !== 'dark';
         \tif ( follow && window.matchMedia ) {
         \t\tvar mq = window.matchMedia( '(prefers-color-scheme: light)' );
         \t\tdocument.documentElement.setAttribute( 'data-theme', mq.matches ? 'light' : 'dark' );
         \t\tmq.addEventListener( 'change', function ( e ) {
-        \t\t\tif ( localStorage.getItem( 'minn-theme' ) === 'system' ) {
+        \t\t\tvar pref = localStorage.getItem( 'minn-theme' ) || siteMode;
+        \t\t\tif ( pref !== 'light' && pref !== 'dark' ) {
         \t\t\t\tdocument.documentElement.setAttribute( 'data-theme', e.matches ? 'light' : 'dark' );
         \t\t\t\tdocument.dispatchEvent( new CustomEvent( 'minn-theme-change' ) );
         \t\t\t}
         \t\t} );
-        \t} else if ( stored === 'light' || stored === 'dark' ) {
+        \t} else {
         \t\tdocument.documentElement.setAttribute( 'data-theme', stored );
         \t}
         } catch ( e ) {}
         window.MINN = {$json};
+        (function () {
+        \ttry {
+        \t\tvar ap = ( window.MINN.user && window.MINN.user.appearance ) || { scheme: 'site' };
+        \t\tif ( ap.scheme === 'site' ) {
+        \t\t\tvar site = window.MINN.siteAppearance || {};
+        \t\t\tap = { scheme: site.scheme || 'minn', custom: site.custom, font: ap.font };
+        \t\t}
+        \t\tvar root = document.documentElement;
+        \t\troot.setAttribute( 'data-scheme', ap.scheme || 'minn' );
+        \t\troot.setAttribute( 'data-font', ap.font === 'wordpress' ? 'wordpress' : 'minn' );
+        \t\tif ( ap.scheme !== 'custom' ) {
+        \t\t\treturn;
+        \t\t}
+        \t\tvar mode = root.getAttribute( 'data-theme' ) || 'dark';
+        \t\tvar tokens = ( ap.custom && ap.custom[ mode ] ) || {};
+        \t\tvar vars = { bg: '--bg', bg2: '--bg2', panel: '--panel', panel2: '--panel2', hover: '--hover', border: '--border', border2: '--border2', text: '--text', text2: '--text2', text3: '--text3', accent: '--accent', accent2: '--accent2', accentFg: '--accent-fg' };
+        \t\tfor ( var k in vars ) {
+        \t\t\tif ( tokens[ k ] ) root.style.setProperty( vars[ k ], tokens[ k ] );
+        \t\t}
+        \t\tvar m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec( tokens.accent || '' );
+        \t\tif ( m ) {
+        \t\t\troot.style.setProperty( '--accent-soft', 'rgba(' + parseInt( m[1], 16 ) + ',' + parseInt( m[2], 16 ) + ',' + parseInt( m[3], 16 ) + ',' + ( mode === 'light' ? 0.10 : 0.15 ) + ')' );
+        \t\t}
+        \t} catch ( e ) {}
+        })();
         </script>
         </head>
         <body>

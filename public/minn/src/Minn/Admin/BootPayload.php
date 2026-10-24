@@ -67,6 +67,8 @@ final readonly class BootPayload
             'version' => $this->app->version(),
             'engine' => 'Minn Engine/' . $this->engineVersion,
             'user' => $this->userSlice($session, $role),
+            // The site's default palette and starting mode: what a 'site' scheme paints.
+            'siteAppearance' => $this->appearance->site(),
             'site' => $this->siteSlice(),
             'gmtOffset' => (float) ($this->site->option('gmt_offset') ?? 0),
             'locale' => $locale,

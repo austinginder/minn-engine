@@ -473,6 +473,24 @@ check( $corner_key !== $bar_key( (string) @file_get_contents( "$ENGINE/hello-wor
 check( (bool) preg_match( '/<div id="minn-bar-root" data-minn-theme="dark" data-minn-scheme="[a-z]+" data-minn-font="(minn|wordpress)">/', $html ), 'the bar root carries the reader\'s scheme and font' );
 check( str_contains( $html, 'var r=document.currentScript&&document.currentScript.parentNode' ) && ! str_contains( $html, 'getElementById("minn-bar-root")' ), 'the pre-paint scripts find the bar by their own place, not by id' );
 check( str_contains( $html, '<span class="minn-bar-edit-wrap"><a class="minn-bar-btn minn-bar-edit"' ), 'the Edit button sits in its wrap' );
+// The site default (Settings → Appearance): a person on scheme 'site' sees its palette in the bar and the app, and a device that never chose a mode starts in its mode.
+$wp_ref = '/opt/homebrew/bin/wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' );
+$site_before = trim( (string) shell_exec( "{$wp_ref} option get minn_admin_site_appearance --format=json 2>/dev/null" ) );
+[ , $ap_before ] = as_fetch( $ENGINE, '/minn-admin/v1/me/appearance', $admin );
+register_shutdown_function( static function () use ( $wp_ref, $site_before, $ENGINE, $admin, $ap_before ): void {
+	shell_exec( '' === $site_before ? "{$wp_ref} option delete minn_admin_site_appearance >/dev/null 2>&1" : "{$wp_ref} option update minn_admin_site_appearance " . escapeshellarg( $site_before ) . ' --format=json >/dev/null 2>&1' );
+	as_fetch( $ENGINE, '/minn-admin/v1/me/appearance', $admin, 'POST', json_encode( array( 'scheme' => $ap_before['scheme'] ?? 'site' ) ) );
+} );
+[ $s ] = as_fetch( $REF, '/minn-admin/v1/site-appearance', $admin, 'POST', '{"scheme":"custom","custom":{"dark":{"accent":"#eea05c"},"light":{"accent":"#e58b3f"}},"mode":"light"}' );
+[ , $b ] = as_fetch( $ENGINE, '/minn-admin/v1/me/appearance', $admin, 'POST', '{"scheme":"site"}' );
+check( 200 === $s && 'site' === ( $b['scheme'] ?? '' ), 'a person can follow the site default', "status $s " . json_encode( $b['scheme'] ?? null ) );
+$site_html = (string) @file_get_contents( "$ENGINE/hello-world/", false, $ctx );
+check( str_contains( $site_html, 'data-minn-scheme="custom"' ) && str_contains( $site_html, '#minn-bar-root[data-minn-theme="dark"]{' ) && str_contains( $site_html, '--accent:#eea05c;' ) && str_contains( $site_html, 'if(!t){t="light";}' ), 'the bar paints the site default\'s palette and starts in its mode' );
+$shell = (string) @file_get_contents( "$ENGINE/minn-admin/", false, $ctx );
+preg_match( '/window\.MINN = (\{.*?\});\n/s', $shell, $boot );
+$boot = json_decode( $boot[1] ?? '{}', true );
+check( 'custom' === ( $boot['siteAppearance']['scheme'] ?? '' ) && '#e58b3f' === ( $boot['siteAppearance']['custom']['light']['accent'] ?? '' ) && 'light' === ( $boot['siteAppearance']['mode'] ?? '' ) && 'site' === ( $boot['user']['appearance']['scheme'] ?? '' ), 'the app boots with the site default beside the person\'s choice', json_encode( $boot['siteAppearance'] ?? null ) );
+check( str_contains( $shell, 'var siteMode = "light";' ) && str_contains( $shell, "if ( ap.scheme === 'site' )" ) && ! str_contains( $shell, "localStorage.setItem( 'minn-theme'" ), 'the shell paints the site default before app.js and saves no mode for the device' );
 // A status chip still ghosts, and its fix asks before it acts, with no id a label in post content could click.
 [ , $settings ] = as_fetch( $ENGINE, '/wp/v2/settings', $admin );
 $was_public     = (int) ( $settings['blog_public'] ?? 1 );

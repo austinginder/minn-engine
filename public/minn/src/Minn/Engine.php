@@ -369,7 +369,7 @@ final readonly class Engine
         Plugins::load($runtime);
         $seams = new Seams($db, $site, $request, $runtime->reader);
         $loader = new Loader(ABSPATH . 'wp-content', $site);
-        $appearance = new Appearance($users);
+        $appearance = new Appearance($users, $site);
         $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), $loader->declaredTypes()), $capabilities);
         $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);
         $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);

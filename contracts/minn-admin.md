@@ -123,8 +123,12 @@ keeps in `minn_admin_site_appearance`. The status fix asks, then confirms
 (`data-barfix`), with no id a label in post content could click. The
 engine's copy fell behind the plugin's here once and the bar went inert
 on every Minn site; the suites now check the key pair and that a menu opens.
-Still owed: the per-person "site" scheme, which follows the site's default
-scheme.
+A person who never chose a scheme, or chose "site", follows the site's
+default palette from the same option (`Appearance::effective`): the bar
+paints it, the boot payload carries it as `siteAppearance` (scheme, custom
+tokens, mode), and the app shell paints it before `app.js` loads, as the
+plugin's `template.php` does. The shell saves no light or dark choice for
+the device, so a later site default still reaches it.
 
 ## Stale writes (Minn Admin 0.46)
 

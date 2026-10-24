@@ -15,7 +15,6 @@ use Minn\Content\UserRecord;
 use Minn\Json;
 use Minn\Html;
 use Minn\I18n\Gettext;
-use Minn\Support\Serialized;
 
 /**
  * The Minn bar on the public site: the same server-rendered chrome the
@@ -26,9 +25,6 @@ use Minn\Support\Serialized;
  */
 final readonly class AdminBar
 {
-    /** Where the app keeps the site's default look: its scheme and its mode (dark, light or system). */
-    private const SITE_APPEARANCE = 'minn_admin_site_appearance';
-
     /**
      * The key this request's corner carries and MINN_BAR repeats, so bar.js
      * binds to the bar printed here. The bar comes after the post content,
@@ -111,7 +107,7 @@ final readonly class AdminBar
     private function markup(?array $status, string $editUrl, string $editLabel): string
     {
         $user = $this->session->user;
-        $appearance = $this->appearance->read($this->session->id());
+        $appearance = $this->appearance->effective($this->session->id());
         $scheme = $appearance['scheme'];
         $siteName = html_entity_decode((string) ($this->site->option('blogname') ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $avatar = 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim($user->email))) . '?s=104&d=mm&r=g';
@@ -276,9 +272,7 @@ final readonly class AdminBar
     /** The site's default mode the app keeps (dark, light or system), for a reader who never chose one. */
     private function siteMode(): string
     {
-        $stored = Serialized::decode((string) ($this->site->option(self::SITE_APPEARANCE) ?? ''));
-        $mode = is_array($stored) ? ($stored['mode'] ?? '') : '';
-        return in_array($mode, ['dark', 'light'], true) ? $mode : 'system';
+        return $this->appearance->site()['mode'];
     }
 
     /** @return array{0: string, 1: string, 2: string} url (or ''), label, hint */

@@ -12,9 +12,9 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`AdminPlugin`](#adminplugin) | final class | 135 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
-| [`AppController`](#appcontroller) | final readonly class | 150 | Serves Minn Admin from the engine: the path-routed shell (every |
-| [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 257 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`AppController`](#appcontroller) | final readonly class | 180 | Serves Minn Admin from the engine: the path-routed shell (every |
+| [`Appearance`](#appearance) | final readonly class | 121 | A person's Minn Admin appearance: the colour scheme and its custom |
+| [`BootPayload`](#bootpayload) | final readonly class | 259 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`CodeEditor`](#codeeditor) | final class | 96 | The code editor's settings as wp_get_code_editor_settings gives them |
 | [`Dashboard`](#dashboard) | final readonly class | 274 | The overview payload: stat cards, the activity chart, and the recent |
@@ -397,7 +397,7 @@ Route: `GET /minn/admin/assets/{path*} (public)`
 
 One file of the app bundle, with its content type and caching headers.
 
-Internals: `offPage()` (private, line 67), `favicon()` (private, line 91), `render()` (private, line 129)
+Internals: `offPage()` (private, line 67), `favicon()` (private, line 91), `render()` (private, line 131)
 
 
 ## Appearance
@@ -412,7 +412,12 @@ eject. The two WordPress-era switches, "Minn is the default admin" and
 admin and no other bar, so the engine reports them true and ignores
 writes to them.
 
+A person who never chose a scheme follows the site's default (scheme
+'site'): the palette and starting mode an administrator sets under
+Settings → Appearance, kept in the minn_admin_site_appearance option.
+
 - const `META` = `'minn_admin_appearance'`
+- const `SITE_OPTION` = `'minn_admin_site_appearance'` — The option holding the site's default palette and mode.
 - const `SCHEMES` = `array (   0 => 'minn',   1 => 'ocean',   2 => 'forest',   3 => 'amber',   4 => 'rose',   5 => 'coral',   6 => 'teal',   7 => 'slate',   8 => 'dusk', )`
 - const `SLOTS` = `array (   0 => 'bg',   1 => 'bg2',   2 => 'panel',   3 => 'panel2',   4 => 'hover',   5 => 'border',   6 => 'border2',   7 => 'text',   8 => 'text2',   9 => 'text3',   10 => 'accent',   11 => 'accent2',   12 => 'accentFg', )` — Scheme slots in the order the app lists them.
 - const `BASE` = `array (   'dark' =>    array (     'bg' => '#0b0b0d',     'bg2' => '#101013',     'panel' => '#151518',     'panel2' => '#1b1b1f',     'hover' => '#202027',     'border' => '#242429',     'border2' => '#31313a',     'text' => '#ececed',     'text2' => '#9d9da7',     'text3' => '#63636d',     'accent' => '#6e62f5',     'accent2' => '#8a80f8',     'accentFg' => '#ffffff',   ),   'light' =>    array (     'bg' => '#f6f6f7',     'bg2' => '#ffffff',     'panel' => '#ffffff',     'panel2' => '#f4f4f6',     'hover' => '#eeeef1',     'border' => '#e7e7ea',     'border2' => '#dadade',     'text' => '#1a1a1f',     'text2' => '#5e5e69',     'text3' => '#9696a0',     'accent' => '#6a5ef2',     'accent2' => '#5a4ef0',     'accentFg' => '#ffffff',   ), )` — The app's own Minn tokens, the fill for incomplete custom maps.
@@ -420,7 +425,7 @@ writes to them.
 Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PreferencesController`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Users $users)
+__construct(Minn\Content\Users $users, Minn\Content\Site $site)
 ```
 
 
@@ -429,6 +434,20 @@ __construct(Minn\Content\Users $users)
 A user's saved appearance, normalised.
 
 - `@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}`
+
+### `effective(int $userId): array`
+
+What a user sees: their record, with a 'site' scheme swapped for the
+site default's palette.
+
+- `@return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}`
+
+### `site(): array`
+
+The site's default: a palette (never 'site' itself) and the mode a
+device starts in until its person picks one ('system' follows it).
+
+- `@return array{scheme: string, custom: array, mode: string}`
 
 ### `save(int $userId, array $raw): array`
 
@@ -479,7 +498,7 @@ plugin is not running as code.
 
 - `@return array<string, mixed>|null`
 
-Internals: `userSlice()` (private, line 101), `siteSlice()` (private, line 118), `commerce()` (private, line 144), `caps()` (private, line 156), `standHomeQuery()` (private, line 240), `adapterSlices()` (private, line 258)
+Internals: `userSlice()` (private, line 103), `siteSlice()` (private, line 120), `commerce()` (private, line 146), `caps()` (private, line 158), `standHomeQuery()` (private, line 242), `adapterSlices()` (private, line 260)
 
 
 ## BundleController

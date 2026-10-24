@@ -348,7 +348,7 @@ final class Services
     /** The app's per-user appearance. */
     public function appearance(): Appearance
     {
-        return $this->share(Appearance::class, fn () => new Appearance($this->users()));
+        return $this->share(Appearance::class, fn () => new Appearance($this->users(), $this->site()));
     }
 
     /** The app's per-user hidden views. */

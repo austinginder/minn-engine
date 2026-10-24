@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Support\Serialized;
 
@@ -15,10 +16,17 @@ use Minn\Support\Serialized;
  * "Minn admin bar on the site", are always on here: there is no other
  * admin and no other bar, so the engine reports them true and ignores
  * writes to them.
+ *
+ * A person who never chose a scheme follows the site's default (scheme
+ * 'site'): the palette and starting mode an administrator sets under
+ * Settings → Appearance, kept in the minn_admin_site_appearance option.
  */
 final readonly class Appearance
 {
     public const META = 'minn_admin_appearance';
+
+    /** The option holding the site's default palette and mode. */
+    public const SITE_OPTION = 'minn_admin_site_appearance';
 
     public const SCHEMES = ['minn', 'ocean', 'forest', 'amber', 'rose', 'coral', 'teal', 'slate', 'dusk'];
 
@@ -39,7 +47,7 @@ final readonly class Appearance
         ],
     ];
 
-    public function __construct(private Users $users)
+    public function __construct(private Users $users, private Site $site)
     {
     }
 
@@ -52,6 +60,42 @@ final readonly class Appearance
     {
         $stored = Serialized::decode((string) ($this->users->meta($userId, self::META) ?? ''));
         return self::normalise(is_array($stored) ? $stored : []);
+    }
+
+    /**
+     * What a user sees: their record, with a 'site' scheme swapped for the
+     * site default's palette.
+     *
+     * @return array{scheme: string, custom: array, defaultAdmin: bool, frontBar: bool, font: string}
+     */
+    public function effective(int $userId): array
+    {
+        $appearance = $this->read($userId);
+        if ($appearance['scheme'] === 'site') {
+            $site = $this->site();
+            $appearance['scheme'] = $site['scheme'];
+            $appearance['custom'] = $site['custom'];
+        }
+        return $appearance;
+    }
+
+    /**
+     * The site's default: a palette (never 'site' itself) and the mode a
+     * device starts in until its person picks one ('system' follows it).
+     *
+     * @return array{scheme: string, custom: array, mode: string}
+     */
+    public function site(): array
+    {
+        $stored = Serialized::decode((string) ($this->site->option(self::SITE_OPTION) ?? ''));
+        $stored = is_array($stored) ? $stored : [];
+        $norm = self::normalise($stored + ['scheme' => 'minn']);
+        $mode = $stored['mode'] ?? '';
+        return [
+            'scheme' => $norm['scheme'] === 'site' ? 'minn' : $norm['scheme'],
+            'custom' => $norm['custom'],
+            'mode' => in_array($mode, ['dark', 'light'], true) ? $mode : 'system',
+        ];
     }
 
     /** Merges the given keys over the stored map and writes it back; returns the normalised result. */
@@ -70,8 +114,8 @@ final readonly class Appearance
     /** The appearance with every field valid and every missing one defaulted. */
     public static function normalise(array $raw): array
     {
-        $scheme = strtolower(trim((string) ($raw['scheme'] ?? 'minn')));
-        if ($scheme !== 'custom' && !in_array($scheme, self::SCHEMES, true)) {
+        $scheme = strtolower(trim((string) ($raw['scheme'] ?? 'site')));
+        if ($scheme !== 'custom' && $scheme !== 'site' && !in_array($scheme, self::SCHEMES, true)) {
             $scheme = 'minn';
         }
         $customIn = is_array($raw['custom'] ?? null) ? $raw['custom'] : [];

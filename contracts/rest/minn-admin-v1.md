@@ -356,6 +356,9 @@ reference reads the engine's rewritten store (round trip in the suite).
 (`edit_users` for others) read and write the plugin's `minn_admin_appearance`
 user meta as a serialized array (decoded by `Serialized::decode`, never
 `unserialize`), so a scheme picked on either stack shows on the other.
+A record with no scheme reads as `site`, the site default (the
+`minn_admin_site_appearance` option, which the plugin's own
+`site-appearance` route writes).
 `defaultAdmin` and `frontBar` are always reported `true` and never written:
 the engine has no other admin and no other bar. The boot payload's
 `user.policy` is `{signin: 'minn', toolbar: 'minn'}` for the same reason.

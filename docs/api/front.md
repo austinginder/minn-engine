@@ -4,7 +4,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AdminBar`](#adminbar) | final readonly class | 364 | The Minn bar on the public site: the same server-rendered chrome the |
+| [`AdminBar`](#adminbar) | final readonly class | 359 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 97 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 63 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 70 | The engine's own static assets, served under a reserved path. |
@@ -63,8 +63,6 @@ built here for a signed-in reader who can edit. There is no other bar
 and no other admin on the engine, so it is on for everyone who passes
 the edit_posts gate; the app's per-person opt-in does not apply.
 
-- const `SITE_APPEARANCE` = `'minn_admin_site_appearance'` — Where the app keeps the site's default look: its scheme and its mode (dark, light or system).
-
 Used by: `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
@@ -84,7 +82,7 @@ The stylesheet link for the head.
 
 The bar markup, its config, and the script, for the end of the body.
 
-Internals: `t()` (private, line 68), `markup()` (private, line 111), `siteMenu()` (private, line 168), `statusMenu()` (private, line 186), `newMenu()` (private, line 215), `notificationsMenu()` (private, line 229), `userMenu()` (private, line 242), `status()` (private, line 260), `siteMode()` (private, line 277), `editTarget()` (private, line 285), `commands()` (private, line 303), `searchTypes()` (private, line 328), `customSchemeStyle()` (private, line 337), `appUrl()` (private, line 356), `appPath()` (private, line 361), `assetUrl()` (private, line 366), `icon()` (private, line 371), `gridIcon()` (private, line 376), `menuItem()` (private, line 381)
+Internals: `t()` (private, line 64), `markup()` (private, line 107), `siteMenu()` (private, line 164), `statusMenu()` (private, line 182), `newMenu()` (private, line 211), `notificationsMenu()` (private, line 225), `userMenu()` (private, line 238), `status()` (private, line 256), `siteMode()` (private, line 273), `editTarget()` (private, line 279), `commands()` (private, line 297), `searchTypes()` (private, line 322), `customSchemeStyle()` (private, line 331), `appUrl()` (private, line 350), `appPath()` (private, line 355), `assetUrl()` (private, line 360), `icon()` (private, line 365), `gridIcon()` (private, line 370), `menuItem()` (private, line 375)
 
 
 ## ArchiveAddresses
