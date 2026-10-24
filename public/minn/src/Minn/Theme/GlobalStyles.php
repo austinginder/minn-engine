@@ -134,13 +134,14 @@ final readonly class GlobalStyles
      */
     public function stylesheet(array $types): string
     {
-        ['variables' => $variables, 'base' => $base, 'presets' => $presets, 'blocks' => $blocks] = $this->parts();
+        ['variables' => $variables, 'base' => $base, 'presets' => $presets, 'blocks' => $blocks, 'gap' => $gap] = $this->parts();
         $out = in_array('variables', $types, true) ? $variables : '';
         if (in_array('styles', $types, true)) {
             $out .= $base;
             // The blocks in the reference's merged order: its own theme.json and the blocks' defaults (data/global-styles.json), then the theme's.
             $core = (array) Json::file(MINN_ENGINE_DIR . '/data/global-styles.json');
             $blocks = Theme::merge((array) ($core['styles']['blocks'] ?? []), $blocks);
+            $blocks = $gap ? $blocks : self::withoutGaps($blocks);
             $kept = StyleLayers::keptNodes(['blocks' => $blocks]);
             foreach ($kept === null ? $blocks : StyleLayers::keptBlocks($blocks, $kept) as $name => $blockStyles) {
                 $out .= self::blockStyles((string) $name, (array) $blockStyles);
@@ -149,7 +150,38 @@ final readonly class GlobalStyles
         return $out . (in_array('presets', $types, true) ? $presets : '');
     }
 
-    /** @return array{variables: string, base: string, presets: string, blocks: array<string, mixed>} */
+    /**
+     * Whether the theme turns block gaps on: settings.spacing.blockGap true,
+     * as appearanceTools sets it when the theme leaves it unset. Without it
+     * the reference prints no gap rules at all (the site's blocks, flow
+     * layouts, each block's own) and flex and grid fall back to a 0.5em gap
+     * (probe block-gap-support, contracts/front/theme.md).
+     *
+     * @param array<string, mixed> $settings
+     */
+    public static function gapSupported(array $settings): bool
+    {
+        $flag = $settings['spacing']['blockGap'] ?? null;
+        return $flag === true || ($flag === null && ($settings['appearanceTools'] ?? false) === true);
+    }
+
+    /**
+     * Block style nodes without their own block gaps, for a theme without gap support.
+     *
+     * @param array<string, mixed> $blocks
+     * @return array<string, mixed>
+     */
+    private static function withoutGaps(array $blocks): array
+    {
+        foreach ($blocks as $name => $node) {
+            if (is_array($node) && isset($node['spacing']) && is_array($node['spacing'])) {
+                unset($blocks[$name]['spacing']['blockGap']);
+            }
+        }
+        return $blocks;
+    }
+
+    /** @return array{variables: string, base: string, presets: string, blocks: array<string, mixed>, gap: bool} */
     private function parts(): array
     {
         $json = $this->json();
@@ -164,8 +196,9 @@ final readonly class GlobalStyles
         $layout = (array) ($settings['layout'] ?? []);
         $base = ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
         // The engine's own layout rules on the reference's class hooks; the global-padding rules exist only under root-padding-aware alignments.
+        $gap = self::gapSupported($settings);
         $base .= self::rootRules((bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false))
-            . self::blockGapRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')))
+            . ($gap ? self::blockGapRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px'))) : ':where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}')
             . self::layoutRules();
         $kept = StyleLayers::keptNodes($styles);
         $base .= $kept === null || in_array('styles', $kept, true) ? $this->rootStyles($styles) : '';
@@ -176,7 +209,7 @@ final readonly class GlobalStyles
             $blocks = StyleLayers::keptBlocks($blocks, $kept);
         }
         $base .= self::elementStyles($elements, '');
-        return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => $blocks];
+        return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => $gap ? $blocks : self::withoutGaps($blocks), 'gap' => $gap];
     }
 
 

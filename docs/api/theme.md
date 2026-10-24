@@ -18,7 +18,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FontNames`](#fontnames) | final class | 56 | The font library's names (probes fonts and font-writes): a font-family |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 113 | WordPress's front-end request steps around the main query, as WP::main |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 580 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
 | [`Hierarchy`](#hierarchy) | final class | 150 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 154 | Stands the main query for a themed page and runs the front-end steps |
@@ -530,6 +530,16 @@ not), the preset classes; in that order.
 
 - `@param list<string> $types`
 
+### static `gapSupported(array $settings): bool`
+
+Whether the theme turns block gaps on: settings.spacing.blockGap true,
+as appearanceTools sets it when the theme leaves it unset. Without it
+the reference prints no gap rules at all (the site's blocks, flow
+layouts, each block's own) and flex and grid fall back to a 0.5em gap
+(probe block-gap-support, contracts/front/theme.md).
+
+- `@param array<string, mixed> $settings`
+
 ### `fontFaces(): string`
 
 The @font-face rules for every family that declares font files
@@ -602,7 +612,7 @@ border, shadow, dimensions, outline.
 
 - `@return list<string>`
 
-Internals: `json()` (private, line 74), `parts()` (private, line 153), `fontUrl()` (private, line 195), `rootStyles()` (private, line 259), `blockCustomProperties()` (private, line 308), `withoutEmpty()` (private, line 410), `containerStyles()` (private, line 454), `ordered()` (private, line 549)
+Internals: `json()` (private, line 74), `withoutGaps()` (private, line 174), `parts()` (private, line 185), `fontUrl()` (private, line 228), `rootStyles()` (private, line 292), `blockCustomProperties()` (private, line 341), `withoutEmpty()` (private, line 443), `containerStyles()` (private, line 487), `ordered()` (private, line 582)
 
 
 ## HeadLinks

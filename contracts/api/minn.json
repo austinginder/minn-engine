@@ -195164,7 +195164,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 547,
+            "lines": 580,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
@@ -195311,7 +195311,29 @@
                         }
                     ],
                     "line": 135,
-                    "end": 150
+                    "end": 151
+                },
+                {
+                    "routes": [],
+                    "name": "gapSupported",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "gapSupported(array $settings): bool",
+                    "doc": "Whether the theme turns block gaps on: settings.spacing.blockGap true,\nas appearanceTools sets it when the theme leaves it unset. Without it\nthe reference prints no gap rules at all (the site's blocks, flow\nlayouts, each block's own) and flex and grid fall back to a 0.5em gap\n(probe block-gap-support, contracts/front/theme.md).",
+                    "shapes": [
+                        "@param array<string, mixed> $settings"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -195322,8 +195344,8 @@
                     "doc": "The @font-face rules for every family that declares font files\n(Theme\\FontFaces), with file:./ resolved against the theme that\ncarries the file. The page prints them through wp_print_font_faces on\nwp_head; the editor's styles read them here.",
                     "shapes": [],
                     "params": [],
-                    "line": 189,
-                    "end": 193
+                    "line": 222,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -195342,8 +195364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 223
+                    "line": 246,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -195362,8 +195384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 231
+                    "line": 259,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -195374,8 +195396,8 @@
                     "doc": "The layouts' own rules: alignments inside flow and constrained layouts, the content and wide sizes, flex and grid.",
                     "shapes": [],
                     "params": [],
-                    "line": 234,
-                    "end": 240
+                    "line": 267,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -195401,8 +195423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 252
+                    "line": 276,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -195428,8 +195450,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 305
+                    "line": 307,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -195462,8 +195484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 353
+                    "line": 361,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -195489,8 +195511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 359
+                    "line": 389,
+                    "end": 392
                 },
                 {
                     "routes": [],
@@ -195509,8 +195531,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 367
+                    "line": 395,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -195531,8 +195553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 373
+                    "line": 403,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -195562,8 +195584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 408
+                    "line": 416,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -195603,8 +195625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 451
+                    "line": 462,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -195632,8 +195654,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 469,
-                    "end": 539
+                    "line": 502,
+                    "end": 572
                 },
                 {
                     "routes": [],
@@ -195651,17 +195673,40 @@
                 },
                 {
                     "routes": [],
+                    "name": "withoutGaps",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withoutGaps(array $blocks): array",
+                    "doc": "Block style nodes without their own block gaps, for a theme without gap support.",
+                    "shapes": [
+                        "@param array<string, mixed> $blocks",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "blocks",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 174,
+                    "end": 182
+                },
+                {
+                    "routes": [],
                     "name": "parts",
                     "static": false,
                     "visibility": "private",
                     "signature": "parts(): array",
                     "doc": "",
                     "shapes": [
-                        "@return array{variables: string, base: string, presets: string, blocks: array<string, mixed>}"
+                        "@return array{variables: string, base: string, presets: string, blocks: array<string, mixed>, gap: bool}"
                     ],
                     "params": [],
-                    "line": 153,
-                    "end": 180
+                    "line": 185,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -195680,8 +195725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 210
+                    "line": 228,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -195700,8 +195745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 271
+                    "line": 292,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -195722,8 +195767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 320
+                    "line": 341,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -195742,8 +195787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 420
+                    "line": 443,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -195754,8 +195799,8 @@
                     "doc": "The page's block-support rules (layouts, element styles, and the rest), which the facade keeps in the style engine's block-supports store.",
                     "shapes": [],
                     "params": [],
-                    "line": 454,
-                    "end": 461
+                    "line": 487,
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -195777,8 +195822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 549,
-                    "end": 566
+                    "line": 582,
+                    "end": 599
                 }
             ]
         },

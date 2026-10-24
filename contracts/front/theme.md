@@ -242,6 +242,15 @@ element).
   print unconditionally. The block's own `css` text prints as written with the
   block selector prefixed without a space (`.wp-block-jetpack-slideshow.swiper-pagination`),
   and the root `styles.css` prints between the preset classes and the block styles.
+- **Block gaps print only when the theme turns them on** (probe block-gap-support,
+  2026-10-24: the reference with twentytwentyfive's theme.json filtered). Support is
+  `settings.spacing.blockGap: true`, or `appearanceTools` with blockGap left unset or
+  null. Without it the reference prints none of the gap rules: no
+  `:where(.wp-site-blocks) > *` margins, no `--wp--style--block-gap`, no flow-layout
+  margins, and no block's own gap (`wp-block-columns-is-layout-flow` and the rest);
+  flex and grid fall back to `gap: 0.5em` in their place. The front stylesheet printed
+  24px flow margins for every theme until then; a theme written for its own
+  stylesheets (Groddle) lost its element margins to them. Unit: `block-gap`.
 - **Block root selectors** come from the block's metadata: `p` for the paragraph,
   `.wp-block-list > li`, `.wp-block-button .wp-block-button__link`,
   `.wp-block-table > table`, `.wp-block-icon svg`.
