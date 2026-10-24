@@ -18588,6 +18588,17 @@ reference at 30 tokens (measure 18's sensitive figure, 306 lines to 314).
 
 Both are back at their 0.1.0 figures (2,189 and 306).
 
+## Two TypeErrors in every full run's log (2026-10-23)
+
+Each full run leaves two `TypeError: Cannot access offset of type array` lines from
+`WP_REST_Server::get_namespace_index` in the test site's error log. The rest-fuzz suite asks a namespace
+index with `?namespace[]=x`: a query argument names `namespace` ahead of the route's own, so the
+namespace arrives as an array. The reference fails on it for every namespace (a 500 with its fatal-error
+page, probed on `oembed/1.0`, `wp-abilities/v1`, `wp-site-health/v1`, `wp-block-editor/v1` and
+`minn-admin/v1`). The engine answers 500 too where the facade serves the index, and logs what it caught.
+Its own indexes answer 200. Neither is a warning from engine code (measure 24 counts only PHP warnings,
+notices and deprecations from `public/minn`), and matching the reference's fatal would gain nothing.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

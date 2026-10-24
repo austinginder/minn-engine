@@ -59,9 +59,9 @@ $check('plugin code cannot add, update, or delete the engine-owned options', add
 $enhanced = static function (string $html): ?string {
     return preg_match('/<!-- minn-test-enhance (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
 };
-[, $engineEnhanced] = minn_test_fetch($base . '/hello-world/?minn-test-enhance=1');
-[, $referenceEnhanced] = minn_test_fetch(minn_test_reference_url() . '/hello-world/?minn-test-enhance=1');
-$check('the template-enhancement buffer hands a plugin the whole page, as the reference\'s does', $enhanced($engineEnhanced) !== null && $enhanced($engineEnhanced) === $enhanced($referenceEnhanced), var_export([$enhanced($engineEnhanced), $enhanced($referenceEnhanced)], true));
+[$engineEnhancedHeaders, $engineEnhanced] = minn_test_fetch($base . '/hello-world/?minn-test-enhance=1');
+[$referenceEnhancedHeaders, $referenceEnhanced] = minn_test_fetch(minn_test_reference_url() . '/hello-world/?minn-test-enhance=1');
+$check('the template-enhancement buffer hands a plugin the whole page, as the reference\'s does', $enhanced($engineEnhanced) !== null && $enhanced($engineEnhanced) === $enhanced($referenceEnhanced), var_export([$engineEnhancedHeaders['status'] ?? null, $enhanced($engineEnhanced), $referenceEnhancedHeaders['status'] ?? null, $enhanced($referenceEnhanced)], true));
 // A plugin that needs the pluggable functions while it loads: requiring wp-includes/pluggable.php gets them
 // (Really Simple Security's key), and asking who is signed in before then hears nobody (All in One SEO).
 foreach (['minn-test-early-pluggable' => 'requiring wp-includes/pluggable.php while a plugin loads defines the pluggable functions', 'minn-test-early-user' => 'get_current_user_id() while a plugin loads is 0'] as $switch => $label) {
