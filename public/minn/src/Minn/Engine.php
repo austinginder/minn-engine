@@ -442,11 +442,13 @@ final readonly class Engine
      */
     private function withoutRuntime(Request $request, FrontParts $parts, \Closure $gate): ?Response
     {
-        if (Router::claims($request, ...self::FRONT_ROUTES)) {
+        $routes = $parts->registered()->registrations()->routes;
+        $router = (new Router($gate))->register(...$routes);
+        // The engine's own routes are read only when an extension's matches: a themed page skips the reflection.
+        if ($router->matching($request) === [] || Router::claims($request, ...self::FRONT_ROUTES)) {
             return null;
         }
-        $routes = $parts->registered()->registrations()->routes;
-        return $routes === [] ? null : (new Kernel((new Router($gate))->register(...$routes)))->handle($request);
+        return (new Kernel($router))->handle($request);
     }
 
     /**

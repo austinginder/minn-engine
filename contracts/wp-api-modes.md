@@ -90,9 +90,18 @@ Each mode is a trade, and the site owner makes it:
 ## Measured
 
 Taken on 2026-10-24 on a site whose pages are mostly an extension's built HTML
-files (one must-use plugin and Minn Admin active, PHP 8.3, warm OPcache, median
-of nine requests). An extension's built page took 16.5 ms under `on` and 4 ms
-under `auto` or `off`. Most of the 12 ms saved was plugin loading and the boot
-hooks (`init` alone was about 5 ms); loading the facade was 2 to 5 ms of it. A
-themed page took about 10% less, since only the plugins stay out. Every page
-compared byte for byte with `on`.
+files, with one must-use plugin and Minn Admin active (FrankenPHP, PHP 8.5,
+warm OPcache). Each page was requested 40 times in each mode, alternating `on`
+and `auto` request by request, so load drift touches both alike; the figures are
+the server's share of each request (time to first byte less connection and
+TLS), as medians, over two runs that agreed within a millisecond.
+
+- An extension's built page: about 20 ms under `on`, 3 to 5 ms under `auto`.
+  The time saved is plugin loading, the boot hooks (`init` alone is about 5 ms)
+  and the facade (2 to 5 ms).
+- A themed page, a post and the feed: 2.5 to 4.5 ms less, since only the plugins
+  stay out.
+- Every page was byte-identical in both modes.
+
+Comparing whole runs, one per mode, gave contradictory figures on the same
+machine, so measure by alternating.

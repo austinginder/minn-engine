@@ -44135,7 +44135,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 404,
+            "lines": 406,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44641,7 +44641,7 @@
                         }
                     ],
                     "line": 443,
-                    "end": 450
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -44674,8 +44674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 470
+                    "line": 458,
+                    "end": 472
                 }
             ]
         },
