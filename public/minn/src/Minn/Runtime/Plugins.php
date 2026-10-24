@@ -48,12 +48,16 @@ final class Plugins
      * Loads the active plugins as code and fires the boot hooks. Recovery
      * is armed for exactly this window: a failure here is one every
      * visitor would hit, so it may be recorded against its extension.
+     * Where the mode keeps the site's plugins out (MINN_WP_API, WpApiMode)
+     * no plugin or must-use plugin is included, Minn Admin's file aside where
+     * the mode asks for it; the theme's functions.php still loads, and the
+     * boot hooks still fire for the facade's own registrations.
      */
-    public static function load(Runtime $runtime): void
+    public static function load(Runtime $runtime, WpApiMode $mode = WpApiMode::On): void
     {
         Failure::armRecovery();
         try {
-            self::boot($runtime);
+            self::boot($runtime, $mode);
         } catch (\Minn\Login\ServeLogin $signal) {
             // A plugin asked for the sign-in page mid-boot; that is not a failure.
             Failure::disarmRecovery();
@@ -64,11 +68,14 @@ final class Plugins
         Failure::disarmRecovery();
     }
 
-    private static function boot(Runtime $runtime): void
+    private static function boot(Runtime $runtime, WpApiMode $mode): void
     {
+        // A runtime with no request (the CLI) loads everything, as 'on' does.
+        $plugins = $runtime->request === null || $mode->loadsPlugins($runtime->request);
+        $minnAdmin = $runtime->request === null || $mode->loadsMinnAdmin($runtime->request);
         $content = $runtime->contentDir();
         $hooks = Runtime::hooks();
-        foreach (glob($content . '/mu-plugins/*.php') ?: [] as $file) {
+        foreach ($plugins ? (glob($content . '/mu-plugins/*.php') ?: []) : [] as $file) {
             self::includeFile($file, basename($file), $runtime);
             $hooks->action('mu_plugin_loaded', [$file]);
         }
@@ -88,6 +95,9 @@ final class Plugins
         $paused = (new Recovery(new Site($runtime->db), $content))->pausedPlugins();
         foreach (is_array($active) ? $active : [] as $plugin) {
             $plugin = (string) $plugin;
+            if (!($plugin === self::MINN_ADMIN ? $minnAdmin : $plugins)) {
+                continue;
+            }
             // A file in the plugins folder or one folder in it, never a name that climbs out (..).
             if (!preg_match('#^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?\.php$#', $plugin) || preg_match('#(^|/)\.\.(/|$)#', $plugin)) {
                 continue;

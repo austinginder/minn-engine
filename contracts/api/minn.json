@@ -1029,8 +1029,8 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
@@ -1213,6 +1213,7 @@
                 "Minn\\Admin\\Translations",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
@@ -1698,8 +1699,8 @@
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\PreferencesController",
-                "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
@@ -9640,6 +9641,7 @@
                 "Minn\\Auth\\SignIn",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller"
@@ -10226,6 +10228,7 @@
                 "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\Runtime"
@@ -38338,6 +38341,7 @@
                 "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\CurrentUser",
@@ -39073,6 +39077,7 @@
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\FeedController",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Login\\LoginController",
                 "Minn\\Mail\\MailSettings",
@@ -42022,6 +42027,7 @@
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Engine",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -43365,6 +43371,7 @@
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\QueryMoves",
                 "Minn\\Front\\Renderer",
@@ -44128,16 +44135,14 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 369,
+            "lines": 404,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\AdminPlugin",
-                "Minn\\Admin\\AdminTypes",
                 "Minn\\Admin\\App",
                 "Minn\\Admin\\AppController",
-                "Minn\\Admin\\Appearance",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\HiddenIntegrations",
                 "Minn\\Admin\\Translations",
@@ -44163,12 +44168,12 @@
                 "Minn\\Extension\\Extensions",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Seams",
-                "Minn\\Front\\AdminBar",
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\EntryScriptsController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
@@ -44188,8 +44193,6 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Responses",
-                "Minn\\Rest\\RestUrl",
-                "Minn\\Rest\\Types",
                 "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CronEvents",
@@ -44201,6 +44204,7 @@
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\WpApiMode",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\ClassicTheme",
                 "Minn\\Theme\\EmbedRenderer",
@@ -44235,8 +44239,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 76,
-                "end": 81
+                "line": 73,
+                "end": 78
             },
             "cases": [],
             "constants": [
@@ -44250,6 +44254,12 @@
                     "name": "SCRIPTS_WITHOUT_REST",
                     "value": "array (   0 => '/wp-cron.php',   1 => '/wp-login.php',   2 => '/wp-comments-post.php',   3 => '/xmlrpc.php',   4 => '/wp-links-opml.php',   5 => '/wp-mail.php', )",
                     "doc": "The reference's entry scripts that never run the main query, so never answer ?rest_route=.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FRONT_ROUTES",
+                    "value": "array (   0 => 'Minn\\\\Front\\\\AssetsController',   1 => 'Minn\\\\Login\\\\LoginController',   2 => 'Minn\\\\Admin\\\\AppController',   3 => 'Minn\\\\Runtime\\\\AjaxController',   4 => 'Minn\\\\Runtime\\\\AdminActionController',   5 => 'Minn\\\\Front\\\\ProbeController',   6 => 'Minn\\\\Front\\\\SitemapController',   7 => 'Minn\\\\Front\\\\CommentPostController',   8 => 'Minn\\\\Front\\\\EntryScriptsController', )",
+                    "doc": "The engine's routes a public page meets ahead of the extensions' own, in the front pipeline's order.",
                     "visibility": "private"
                 }
             ],
@@ -44283,8 +44293,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 88,
-                    "end": 96
+                    "line": 85,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -44303,8 +44313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 124
+                    "line": 100,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -44323,8 +44333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 140
+                    "line": 127,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -44357,8 +44367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 186
+                    "line": 144,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -44384,8 +44394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 209
+                    "line": 194,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -44411,8 +44421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 239
+                    "line": 217,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -44438,8 +44448,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 283
+                    "line": 253,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -44458,8 +44468,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 290
+                    "line": 285,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -44485,15 +44495,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 361
+                    "line": 291,
+                    "end": 370
                 },
                 {
                     "routes": [],
                     "name": "frontPipeline",
                     "static": false,
                     "visibility": "private",
-                    "signature": "frontPipeline(Minn\\Context $context, Minn\\Http\\Request $request, Minn\\Runtime\\Runtime $runtime, Minn\\Content\\Users $users, Minn\\Auth\\Cookie $cookie, Minn\\Auth\\Authenticator $authenticator, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Resolver $resolver, Minn\\Front\\Permalinks $permalinks, ?Minn\\Theme\\Theme $theme, ?Minn\\Theme\\ClassicTheme $classicTheme): Minn\\Http\\Response",
+                    "signature": "frontPipeline(Minn\\Context $context, Minn\\Http\\Request $request, Minn\\Runtime\\Runtime $runtime, Minn\\Content\\Users $users, Minn\\Auth\\Cookie $cookie, Minn\\Auth\\Authenticator $authenticator, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Resolver $resolver, Minn\\Front\\Permalinks $permalinks, ?Minn\\Theme\\Theme $theme, ?Minn\\Theme\\ClassicTheme $classicTheme, Minn\\Runtime\\WpApiMode $mode, ?Minn\\Front\\FrontParts $parts): Minn\\Http\\Response",
                     "doc": "The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly.",
                     "shapes": [],
                     "params": [
@@ -44580,10 +44590,92 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "mode",
+                            "type": "Minn\\Runtime\\WpApiMode",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "?Minn\\Front\\FrontParts",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 438
+                    "line": 373,
+                    "end": 432
+                },
+                {
+                    "routes": [],
+                    "name": "withoutRuntime",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "withoutRuntime(Minn\\Http\\Request $request, Minn\\Front\\FrontParts $parts, Closure $gate): ?Minn\\Http\\Response",
+                    "doc": "A public page an extension route answers, with no runtime: no facade,\nno plugins, no boot hooks (MINN_WP_API 'auto' or 'off'). Null when an\nengine route claims the path or no extension route answers it; the\nrequest then boots as any other, on the same registered extensions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "Minn\\Front\\FrontParts",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gate",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 443,
+                    "end": 450
+                },
+                {
+                    "routes": [],
+                    "name": "frontGate",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "frontGate(Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Capabilities $capabilities, Minn\\Http\\Request $request): Closure",
+                    "doc": "The front's gate: its routes are public or judge their own session; a\npolicy that asks for more is refused outright rather than judged half-way.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "authenticator",
+                            "type": "Minn\\Auth\\Authenticator",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "capabilities",
+                            "type": "Minn\\Auth\\Capabilities",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 456,
+                    "end": 470
                 }
             ]
         },
@@ -44780,6 +44872,7 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Content\\PluginState",
                 "Minn\\Engine",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\Services"
@@ -45831,7 +45924,8 @@
                 "Minn\\Extension\\Extensions",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\SeamRunner",
-                "Minn\\Extension\\Shortcodes"
+                "Minn\\Extension\\Shortcodes",
+                "Minn\\Front\\FrontParts"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Http\\Request $request, Minn\\Content\\Reader $reader, ?Minn\\Http $http = NULL)",
@@ -47807,8 +47901,8 @@
                 "Minn\\Json"
             ],
             "usedBy": [
-                "Minn\\Engine",
                 "Minn\\Extension\\Seams",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -51808,6 +51902,254 @@
             ]
         },
         {
+            "name": "Minn\\Front\\FrontParts",
+            "short": "FrontParts",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/FrontParts.php",
+            "lines": 38,
+            "doc": "What the front builds before its routes: the extensions' seams for the\nrequest's reader, the Minn bar they may carry, and the admin's types and\nappearance the bar and the shell read. Built once a request, whether the\nruntime has booted or not (MINN_WP_API lets an extension route answer\nwithout it), and the extensions register on it once.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\AdminTypes",
+                "Minn\\Admin\\App",
+                "Minn\\Admin\\Appearance",
+                "Minn\\Auth\\Authenticated",
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Content\\Reader",
+                "Minn\\Content\\Site",
+                "Minn\\Content\\Users",
+                "Minn\\Db",
+                "Minn\\Extension\\Loader",
+                "Minn\\Extension\\Seams",
+                "Minn\\Front\\AdminBar",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Request",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\Types"
+            ],
+            "usedBy": [
+                "Minn\\Engine"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Extension\\Seams $seams, Minn\\Extension\\Loader $loader, Minn\\Admin\\Appearance $appearance, Minn\\Admin\\AdminTypes $adminTypes, bool $adminOff, ?Minn\\Front\\AdminBar $bar)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "seams",
+                        "type": "Minn\\Extension\\Seams",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "loader",
+                        "type": "Minn\\Extension\\Loader",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "appearance",
+                        "type": "Minn\\Admin\\Appearance",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "adminTypes",
+                        "type": "Minn\\Admin\\AdminTypes",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "adminOff",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "bar",
+                        "type": "?Minn\\Front\\AdminBar",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 33,
+                "end": 41
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "registered",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "seams",
+                    "type": "Minn\\Extension\\Seams",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "loader",
+                    "type": "Minn\\Extension\\Loader",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "appearance",
+                    "type": "Minn\\Admin\\Appearance",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "adminTypes",
+                    "type": "Minn\\Admin\\AdminTypes",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "adminOff",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "bar",
+                    "type": "?Minn\\Front\\AdminBar",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "build",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "build(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Http\\Request $request, Minn\\Content\\Reader $reader, Minn\\Auth\\Capabilities $capabilities, Minn\\Content\\Users $users, Minn\\Admin\\App $app, mixed $session, Minn\\Front\\Permalinks $permalinks, string $contentDir): self",
+                    "doc": "The parts for one request's reader: seams carrying the bar, nothing registered on them yet.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "Minn\\Db",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reader",
+                            "type": "Minn\\Content\\Reader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "capabilities",
+                            "type": "Minn\\Auth\\Capabilities",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "users",
+                            "type": "Minn\\Content\\Users",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "app",
+                            "type": "Minn\\Admin\\App",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "session",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "permalinks",
+                            "type": "Minn\\Front\\Permalinks",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "registered",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "registered(): Minn\\Extension\\Seams",
+                    "doc": "The seams with every active extension registered on them; the first call registers.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 58,
+                    "end": 65
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\Kind",
             "short": "Kind",
             "namespace": "Minn\\Front",
@@ -52403,6 +52745,7 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\AttachmentAddresses",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\QueryMoves",
                 "Minn\\Front\\Renderer",
@@ -70707,6 +71050,7 @@
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\WpApiMode",
                 "Minn\\Theme\\MainQueryBridge"
             ],
             "constructor": null,
@@ -72051,6 +72395,7 @@
                 "Minn\\Front\\EntryScriptsController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\QueryMoves",
                 "Minn\\Front\\Redirects",
@@ -72135,6 +72480,7 @@
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents",
+                "Minn\\Runtime\\WpApiMode",
                 "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FeedHeaders"
             ],
@@ -74172,7 +74518,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 291,
+            "lines": 313,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the check refuse a bad argument, has the gate judge the\nroute's policy, and invokes the method with the request plus the named\npattern captures. That order is the reference's: an invalid parameter is\nanswered before the caller is looked at. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
@@ -74367,6 +74713,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "claims",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "claims(Minn\\Http\\Request $request, string ...$classes): bool",
+                    "doc": "Whether a #[Route] on any of these classes matches the request's\nmethod and path, read from the classes alone: nothing is built,\njudged or dispatched.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "classes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 166
+                },
+                {
+                    "routes": [],
                     "name": "dispatch",
                     "static": false,
                     "visibility": "public",
@@ -74382,8 +74755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 170
+                    "line": 169,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -74455,8 +74828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 201
+                    "line": 206,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -74485,8 +74858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 221
+                    "line": 232,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -74529,8 +74902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 239
+                    "line": 249,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -74565,8 +74938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 270
+                    "line": 270,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -74608,8 +74981,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 289
+                    "line": 301,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -74628,8 +75001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 296
+                    "line": 314,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -74655,8 +75028,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 310
+                    "line": 325,
+                    "end": 332
                 }
             ]
         },
@@ -94795,7 +95168,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Diagnostics.php",
-            "lines": 408,
+            "lines": 429,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
@@ -94807,7 +95180,9 @@
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Logs",
-                "Minn\\Runtime\\CronTable"
+                "Minn\\Runtime\\CronTable",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\WpApiMode"
             ],
             "usedBy": [
                 "Minn\\Admin\\SystemController",
@@ -94869,8 +95244,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 32
+                "line": 24,
+                "end": 33
             },
             "cases": [],
             "constants": [
@@ -94964,8 +95339,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 56
+                    "line": 36,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -94976,8 +95351,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 204
+                    "line": 193,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -94988,8 +95363,8 @@
                     "doc": "The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 207,
-                    "end": 224
+                    "line": 229,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -95000,8 +95375,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 293
+                    "line": 296,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -95045,8 +95420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 99
+                    "line": 66,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -95074,8 +95449,22 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 120
+                    "line": 104,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "wpApi",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "wpApi(): array",
+                    "doc": "The MINN_WP_API row: which mode the site runs in, and what it keeps out.\nOff with plugins still active warns: they are switched on and never run.",
+                    "shapes": [
+                        "@return array{string, string} status, text"
+                    ],
+                    "params": [],
+                    "line": 131,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -95088,8 +95477,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 123,
-                    "end": 143
+                    "line": 145,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -95110,8 +95499,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 162
+                    "line": 168,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -95122,8 +95511,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 168
+                    "line": 186,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -95136,8 +95525,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 232,
-                    "end": 252
+                    "line": 254,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -95156,8 +95545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 271
+                    "line": 277,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -95168,8 +95557,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 295,
-                    "end": 307
+                    "line": 317,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -95182,8 +95571,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 310,
-                    "end": 325
+                    "line": 332,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -95196,8 +95585,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 328,
-                    "end": 333
+                    "line": 350,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -95210,8 +95599,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 336,
-                    "end": 372
+                    "line": 358,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -95251,8 +95640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 377
+                    "line": 396,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -95273,8 +95662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 380,
-                    "end": 387
+                    "line": 402,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -95293,8 +95682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 389,
-                    "end": 402
+                    "line": 411,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -95313,8 +95702,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 410
+                    "line": 426,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -95333,8 +95722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 412,
-                    "end": 425
+                    "line": 434,
+                    "end": 447
                 }
             ]
         },
@@ -121135,7 +121524,7 @@
                 "Minn\\Front\\Permalinks"
             ],
             "usedBy": [
-                "Minn\\Engine",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
@@ -130704,7 +131093,7 @@
             "usedBy": [
                 "Minn\\Admin\\AdminTypes",
                 "Minn\\Admin\\StructureController",
-                "Minn\\Engine",
+                "Minn\\Front\\FrontParts",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\DeclaredPostsController",
@@ -157613,7 +158002,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 277,
+            "lines": 287,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -157630,6 +158019,7 @@
                 "Minn\\Runtime\\SiteOptions",
                 "Minn\\Runtime\\Symbols",
                 "Minn\\Runtime\\Translations",
+                "Minn\\Runtime\\WpApiMode",
                 "Minn\\Support\\FileHeaders"
             ],
             "usedBy": [
@@ -157682,8 +158072,8 @@
                     "name": "load",
                     "static": true,
                     "visibility": "public",
-                    "signature": "load(Minn\\Runtime\\Runtime $runtime): void",
-                    "doc": "Loads the active plugins as code and fires the boot hooks. Recovery\nis armed for exactly this window: a failure here is one every\nvisitor would hit, so it may be recorded against its extension.",
+                    "signature": "load(Minn\\Runtime\\Runtime $runtime, Minn\\Runtime\\WpApiMode $mode = Minn\\Runtime\\WpApiMode::On): void",
+                    "doc": "Loads the active plugins as code and fires the boot hooks. Recovery\nis armed for exactly this window: a failure here is one every\nvisitor would hit, so it may be recorded against its extension.\nWhere the mode keeps the site's plugins out (MINN_WP_API, WpApiMode)\nno plugin or must-use plugin is included, Minn Admin's file aside where\nthe mode asks for it; the theme's functions.php still loads, and the\nboot hooks still fire for the facade's own registrations.",
                     "shapes": [],
                     "params": [
                         {
@@ -157692,10 +158082,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "mode",
+                            "type": "Minn\\Runtime\\WpApiMode",
+                            "shape": "",
+                            "default": "Minn\\Runtime\\WpApiMode::On",
+                            "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 65
+                    "line": 56,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -157714,8 +158111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 151
+                    "line": 151,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -157728,8 +158125,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 197,
-                    "end": 200
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -157742,8 +158139,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 207,
-                    "end": 210
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -157769,8 +158166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 238
+                    "line": 230,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -157789,15 +158186,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
                     "name": "boot",
                     "static": true,
                     "visibility": "private",
-                    "signature": "boot(Minn\\Runtime\\Runtime $runtime): void",
+                    "signature": "boot(Minn\\Runtime\\Runtime $runtime, Minn\\Runtime\\WpApiMode $mode): void",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -157807,10 +158204,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "mode",
+                            "type": "Minn\\Runtime\\WpApiMode",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 132
+                    "line": 71,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -157829,8 +158233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 176
+                    "line": 170,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -157856,8 +158260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 190
+                    "line": 193,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -157890,8 +158294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 269
+                    "line": 256,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -157924,8 +158328,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 287
+                    "line": 287,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -157944,8 +158348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 295
+                    "line": 300,
+                    "end": 305
                 }
             ]
         },
@@ -169237,6 +169641,7 @@
                 "Minn\\Media\\MediaModal",
                 "Minn\\Media\\Player",
                 "Minn\\Ops\\AutoUpdates",
+                "Minn\\Ops\\Diagnostics",
                 "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
@@ -184904,6 +185309,147 @@
                     ],
                     "line": 343,
                     "end": 347
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\WpApiMode",
+            "short": "WpApiMode",
+            "namespace": "Minn\\Runtime",
+            "kind": "enum",
+            "file": "public/minn/src/Minn/Runtime/WpApiMode.php",
+            "lines": 66,
+            "doc": "How much of the WordPress runtime a request gets, as the site declares it\nin `wp-config.php`:\n\ndefine('MINN_WP_API', 'on');    // the default: every request, as WordPress boots\ndefine('MINN_WP_API', 'auto');  // the site's plugins run everywhere but public pages\ndefine('MINN_WP_API', 'off');   // the site's plugins never run\n\nA public page is a GET or HEAD that is not REST, the admin (`/wp-admin/`,\n`/minn-admin/`) or one of WordPress's entry scripts (`wp-login.php`,\n`wp-cron.php`, `wp-comments-post.php`, `xmlrpc.php` and the rest). Under\n`auto` and `off` such a page loads no plugin or must-use plugin; an\nextension route answers it without the runtime at all, and a themed page\nstill boots the facade the renderer draws through, with the theme's\nfunctions.php (the theme is drawn as it is, its stylesheet among it). Minn\nAdmin's own plugin file is the admin's server half, so it loads on the\nadmin and REST in every mode. The drop-ins (`advanced-cache.php`,\n`object-cache.php`) are the host's and load wherever the facade does.\nWP-CLI is not a web request and always loads the plugins.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Ops\\Diagnostics",
+                "Minn\\Runtime\\Plugins"
+            ],
+            "constructor": null,
+            "cases": [
+                {
+                    "name": "On",
+                    "value": "on",
+                    "doc": ""
+                },
+                {
+                    "name": "Auto",
+                    "value": "auto",
+                    "doc": ""
+                },
+                {
+                    "name": "Off",
+                    "value": "off",
+                    "doc": ""
+                }
+            ],
+            "constants": [
+                {
+                    "name": "SCRIPT",
+                    "value": "'#^/(wp-[a-z-]+|xmlrpc)\\\\.php$#'",
+                    "doc": "WordPress's entry scripts at the webroot: each is a surface of its own, never a public page.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "configured",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "configured(): self",
+                    "doc": "What wp-config.php declared: on when nothing was, or something the engine does not know.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 40,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "loadsPlugins",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "loadsPlugins(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether the site's plugins and must-use plugins load for this request.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "loadsMinnAdmin",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "loadsMinnAdmin(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether Minn Admin's plugin file loads for this request (when it is active).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "sparesRuntime",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sparesRuntime(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether an extension route may answer this request before the runtime boots.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "publicPage",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "publicPage(Minn\\Http\\Request $request): bool",
+                    "doc": "A GET or HEAD for the site itself: not the admin, REST or an entry script.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 94
                 }
             ]
         },

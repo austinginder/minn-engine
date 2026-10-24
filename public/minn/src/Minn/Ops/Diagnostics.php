@@ -7,6 +7,7 @@ namespace Minn\Ops;
 use Minn\Content\Site;
 use Minn\Db;
 use Minn\Runtime\CronTable;
+use Minn\Runtime\WpApiMode;
 use Minn\Front\Permalinks;
 use Minn\Http\Request;
 use Minn\Mail\MailSettings;
@@ -74,6 +75,7 @@ final readonly class Diagnostics
             self::check('https', 'HTTPS', $request->secure ? 'pass' : 'warn', $request->secure ? 'Served over TLS' : 'This request is not over HTTPS'),
             self::check('memory', 'Memory limit', ($memory < 0 || $memory >= 256 * 1024 * 1024) ? 'pass' : ($memory >= 128 * 1024 * 1024 ? 'warn' : 'fail'), ini_get('memory_limit') . ' available to PHP'),
             self::check('opcache', 'OPcache', $opcacheOn ? 'pass' : 'warn', $opcacheOn ? 'Bytecode caching is on' : 'Not enabled; pages recompile each request'),
+            self::check('wp_api', 'WordPress runtime', ...$this->wpApi()),
             self::check('debug', 'Debug mode', $debugOn ? 'warn' : 'pass', $debugOn ? 'WP_DEBUG is on in wp-config.php' : 'Off'),
             self::check('uploads', 'Uploads writable', $uploadsWritable ? 'pass' : 'fail', $uploadsWritable ? 'The uploads directory accepts writes' : 'Uploads directory is not writable'),
             self::check(
@@ -112,11 +114,31 @@ final readonly class Diagnostics
             'Timezone' => (string) ($this->site->option('timezone_string') ?: self::offsetLabel((float) ($this->site->option('gmt_offset') ?? 0))),
             'Permalinks' => (string) ($this->site->option('permalink_structure') ?: 'Plain'),
             'Debug mode' => $debugOn ? ((defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) ? 'On + log' : 'On') : 'Off',
+            'WordPress runtime (MINN_WP_API)' => WpApiMode::configured()->value,
             'Mail transport' => $mail->transport,
             'Active theme' => $this->software->activeThemeLabel(),
             'Active extensions' => (string) $this->software->activeExtensionCount(),
             'Cron' => $cron['events'] === 0 ? 'nothing scheduled' : "{$cron['events']} scheduled post" . ($cron['events'] === 1 ? '' : 's') . ($cron['next'] !== null ? ', next ' . self::relative($cron['next']) : ''),
         ];
+    }
+
+    /**
+     * The MINN_WP_API row: which mode the site runs in, and what it keeps out.
+     * Off with plugins still active warns: they are switched on and never run.
+     *
+     * @return array{string, string} status, text
+     */
+    private function wpApi(): array
+    {
+        $listed = \Minn\Runtime\Runtime::options()->get('active_plugins');
+        $active = array_filter(is_array($listed) ? $listed : [], static fn (mixed $plugin): bool => $plugin !== 'minn-admin/minn-admin.php');
+        $count = count($active) + count(glob("{$this->webroot}/wp-content/mu-plugins/*.php") ?: []);
+        $plugins = $count === 1 ? '1 plugin' : "{$count} plugins";
+        return match (WpApiMode::configured()) {
+            WpApiMode::On => ['pass', 'on: every request boots the site\'s plugins, as WordPress does'],
+            WpApiMode::Auto => ['pass', $count === 0 ? 'auto: public pages skip the plugin boot' : "auto: {$plugins} run behind the pages, not on public pages; their scheduled events run on wp-cron.php"],
+            WpApiMode::Off => $count === 0 ? ['pass', 'off: no plugins run'] : ['warn', "off: {$plugins} active but never run"],
+        };
     }
 
     /** @return array<string, string> */

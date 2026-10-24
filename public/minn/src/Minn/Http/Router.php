@@ -143,6 +143,28 @@ final class Router
         return $out;
     }
 
+    /**
+     * Whether a #[Route] on any of these classes matches the request's
+     * method and path, read from the classes alone: nothing is built,
+     * judged or dispatched.
+     *
+     * @param class-string ...$classes
+     */
+    public static function claims(Request $request, string ...$classes): bool
+    {
+        foreach ($classes as $class) {
+            foreach ((new ReflectionClass($class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                foreach ($method->getAttributes(Route::class) as $attribute) {
+                    $route = $attribute->newInstance();
+                    if ($request->method->matches($route->method) && preg_match($route->regex(), $request->path) === 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /** Null when nothing matched, so the caller can fall through. */
     public function dispatch(Request $request): ?Response
     {

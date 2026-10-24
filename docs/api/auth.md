@@ -214,7 +214,7 @@ A session whose nonce did not verify.
 
 A validated session: the user row and the raw session token behind it.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
 
 ```php
 __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPassword = NULL)
@@ -337,7 +337,7 @@ The capability engine: a user's roles from {prefix}capabilities usermeta,
 what those roles and the user's own capabilities grant, and the meta-capability mapping for
 edit_post, delete_post, and read_post.
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Roles $roles)

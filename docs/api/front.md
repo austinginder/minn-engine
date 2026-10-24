@@ -21,6 +21,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 134 | The public site. One catch-all route: resolve the URL, then either |
+| [`FrontParts`](#frontparts) | final class | 38 | What the front builds before its routes: the extensions' seams for the |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`LinksOpml`](#linksopml) | final class | 47 | wp-links-opml.php: the site's links as an OPML outline, as the reference |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
@@ -63,7 +64,7 @@ built here for a signed-in reader who can edit. There is no other bar
 and no other admin on the engine, so it is on for everyone who passes
 the edit_posts gate; the app's per-person opt-in does not apply.
 
-Used by: `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Extension\Seams`, `Minn\Front\FrontParts`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Auth\Authenticated $session, Minn\Auth\Capabilities $capabilities, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Admin\App $app, Minn\Admin\Appearance $appearance, Minn\Admin\AdminTypes $types)
@@ -678,6 +679,34 @@ The public page for any path; when scheduled work is due, the run follows the re
 Internals: `page()` (private, line 87), `legacyPackOffer()` (private, line 128), `rendered()` (private, line 143)
 
 
+## FrontParts
+
+`final class Minn\Front\FrontParts` · `public/minn/src/Minn/Front/FrontParts.php`
+
+What the front builds before its routes: the extensions' seams for the
+request's reader, the Minn bar they may carry, and the admin's types and
+appearance the bar and the shell read. Built once a request, whether the
+runtime has booted or not (MINN_WP_API lets an extension route answer
+without it), and the extensions register on it once.
+
+Used by: `Minn\Engine`
+
+- readonly `Minn\Extension\Seams $seams`
+- readonly `Minn\Extension\Loader $loader`
+- readonly `Minn\Admin\Appearance $appearance`
+- readonly `Minn\Admin\AdminTypes $adminTypes`
+- readonly `bool $adminOff`
+- readonly `?Minn\Front\AdminBar $bar`
+
+### static `build(Minn\Db $db, Minn\Content\Site $site, Minn\Http\Request $request, Minn\Content\Reader $reader, Minn\Auth\Capabilities $capabilities, Minn\Content\Users $users, Minn\Admin\App $app, mixed $session, Minn\Front\Permalinks $permalinks, string $contentDir): self`
+
+The parts for one request's reader: seams carrying the bar, nothing registered on them yet.
+
+### `registered(): Minn\Extension\Seams`
+
+The seams with every active extension registered on them; the first call registers.
+
+
 ## Kind
 
 `enum Minn\Front\Kind` · `public/minn/src/Minn/Front/Kind.php`
@@ -818,7 +847,7 @@ other status keeps the query form, which is what the reference emits.
 
 - const `QUERY_ONLY` = `array (   0 => 'wp_pattern_category',   1 => 'wp_theme',   2 => 'wp_template_part_area', )` — Core taxonomies with no front-end archive: their terms link by query only.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\LegacyPack`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\FrontParts`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\LegacyPack`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)

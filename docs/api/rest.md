@@ -3101,7 +3101,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\FontWritesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Front\FrontParts`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\FontWritesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -4798,7 +4798,7 @@ Internals: `requireParent()` (private, line 159), `termsReadable()` (private, li
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Front\FrontParts`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))

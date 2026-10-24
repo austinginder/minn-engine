@@ -24,6 +24,9 @@ Planned layout:
 - `http.md`, `json.md` — the engine's own doors for outgoing requests and
   JSON: engine-defined APIs, with the reference's behaviour where a
   WordPress-shaped surface writes through them.
+- `wp-api-modes.md` — `MINN_WP_API`, the engine's own switch: how much of
+  the WordPress runtime (the facade, the plugins, the boot hooks) each request
+  gets under `on`, `auto` and `off`.
 - `round-trip.md` — the second definition of done: a real site's day of
   work on WordPress and on Minn, compared row by row, then handed back to
   WordPress (`tests/round-trip.test.php`).

@@ -67,7 +67,7 @@ active because it is the theme: the child, then its parent), decides
 which are active, autoloads them, and asks each to register.
 An extension that throws is logged and skipped; the page still renders.
 
-Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Ops\InstalledSoftware`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Front\FrontParts`, `Minn\Ops\InstalledSoftware`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)
@@ -291,7 +291,7 @@ its own (forExtension), and what it registered joins the request's once
 its register() returns (adopt). The engine calls what was registered
 through SeamRunner, at the right moment and in registration order.
 
-Used by: `Minn\Engine`, `Minn\Extension\Extension`, `Minn\Extension\Extensions`, `Minn\Extension\Loader`, `Minn\Extension\SeamRunner`, `Minn\Extension\Shortcodes`
+Used by: `Minn\Engine`, `Minn\Extension\Extension`, `Minn\Extension\Extensions`, `Minn\Extension\Loader`, `Minn\Extension\SeamRunner`, `Minn\Extension\Shortcodes`, `Minn\Front\FrontParts`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Http\Request $request, Minn\Content\Reader $reader, ?Minn\Http $http = NULL)

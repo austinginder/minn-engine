@@ -276,7 +276,7 @@ Admin-facing type facts (viewable, labels, supports, the edit gate) live
 beside, not inside, the wp/v2 registry, so the types route's payload
 stays byte-faithful.
 
-Used by: `Minn\Admin\V1Controller`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Api`
+Used by: `Minn\Admin\V1Controller`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Rest\Types $types, Minn\Auth\Capabilities $capabilities)
@@ -321,7 +321,7 @@ Admin is MIT, so reading its files is fine.
 
 - const `ASSET_TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript',   'woff2' => 'font/woff2',   'woff' => 'font/woff',   'svg' => 'image/svg+xml',   'png' => 'image/png',   'json' => 'application/json', )`
 
-Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\BundleController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\BundleController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Rest\Services`
 
 ```php
 __construct(string $dir, string $path = '/minn/admin')
@@ -422,7 +422,7 @@ Settings → Appearance, kept in the minn_admin_site_appearance option.
 - const `SLOTS` = `array (   0 => 'bg',   1 => 'bg2',   2 => 'panel',   3 => 'panel2',   4 => 'hover',   5 => 'border',   6 => 'border2',   7 => 'text',   8 => 'text2',   9 => 'text3',   10 => 'accent',   11 => 'accent2',   12 => 'accentFg', )` — Scheme slots in the order the app lists them.
 - const `BASE` = `array (   'dark' =>    array (     'bg' => '#0b0b0d',     'bg2' => '#101013',     'panel' => '#151518',     'panel2' => '#1b1b1f',     'hover' => '#202027',     'border' => '#242429',     'border2' => '#31313a',     'text' => '#ececed',     'text2' => '#9d9da7',     'text3' => '#63636d',     'accent' => '#6e62f5',     'accent2' => '#8a80f8',     'accentFg' => '#ffffff',   ),   'light' =>    array (     'bg' => '#f6f6f7',     'bg2' => '#ffffff',     'panel' => '#ffffff',     'panel2' => '#f4f4f6',     'hover' => '#eeeef1',     'border' => '#e7e7ea',     'border2' => '#dadade',     'text' => '#1a1a1f',     'text2' => '#5e5e69',     'text3' => '#9696a0',     'accent' => '#6a5ef2',     'accent2' => '#5a4ef0',     'accentFg' => '#ffffff',   ), )` — The app's own Minn tokens, the fill for incomplete custom maps.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PreferencesController`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PreferencesController`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users, Minn\Content\Site $site)

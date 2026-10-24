@@ -7,9 +7,7 @@ namespace Minn;
 use Minn\I18n\Gettext;
 use Minn\Content\PostRecord;
 use Minn\Admin\AdminPlugin;
-use Minn\Admin\AdminTypes;
 use Minn\Admin\App;
-use Minn\Admin\Appearance;
 use Minn\Admin\Translations;
 use Minn\Admin\AppController;
 use Minn\Admin\HiddenIntegrations;
@@ -26,7 +24,6 @@ use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\SiteIcon;
 use Minn\Content\Users;
-use Minn\Front\AdminBar;
 use Minn\Front\AssetsController;
 use Minn\Front\ProbeController;
 use Minn\Front\FrontController;
@@ -40,8 +37,6 @@ use Minn\Http\Router;
 use Minn\Login\LoginController;
 use Minn\Rest\Api;
 use Minn\Rest\Responses;
-use Minn\Rest\RestUrl;
-use Minn\Rest\Types;
 use Minn\Runtime\CronEvents;
 use Minn\Runtime\Handoff;
 use Minn\Theme\PageRenderer;
@@ -58,6 +53,8 @@ use Minn\Runtime\DebugMode;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Recovery;
 use Minn\Runtime\Options;
+use Minn\Runtime\WpApiMode;
+use Minn\Front\FrontParts;
 use Minn\Runtime\Runtime;
 use Minn\Extension\Loader;
 use Minn\Extension\Seams;
@@ -165,7 +162,9 @@ final readonly class Engine
         if ($session?->applicationPassword !== null) {
             $runtime->set('application_password_auth', ['user' => $session->id(), 'item' => $session->applicationPassword, 'password' => Authenticator::basicCredentials($context->request)[1] ?? '']);
         }
-        Plugins::load($runtime);
+        // MINN_WP_API: REST is never a public page, so 'auto' loads the site's plugins here and 'off' only Minn Admin's.
+        $mode = WpApiMode::configured();
+        Plugins::load($runtime, $mode);
         self::recheckNonce($api, $runtime);
         self::adoptSettledUser($api, $runtime);
         // The extensions register here too, and their blocks take part: REST answers and the editor's previews draw them.
@@ -336,6 +335,16 @@ final readonly class Engine
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, $context->themesDir());
+        // MINN_WP_API: under 'auto' and 'off' a public page an extension route answers needs no runtime at all.
+        $mode = WpApiMode::configured();
+        $parts = null;
+        if ($mode->sparesRuntime($request)) {
+            $parts = FrontParts::build($db, $site, $request, $reader, $capabilities, $users, $app, $session, $permalinks, ABSPATH . 'wp-content');
+            $spared = $this->withoutRuntime($request, $parts, self::frontGate($authenticator, $capabilities, $request));
+            if ($spared !== null) {
+                return $spared;
+            }
+        }
         // The WordPress runtime: the site's plugins load as code, then the
         // lifecycle actions fire, before the engine's own extensions register.
         $runtime = Runtime::boot(new Runtime($context, isAdmin: \Minn\Runtime\AjaxController::claims($request) || \Minn\Runtime\AdminActionController::claims($request)));
@@ -351,7 +360,7 @@ final readonly class Engine
             $runtime->set('classic_theme', $classicTheme->stylesheet);
         }
         try {
-            return $this->frontPipeline($context, $request, $runtime, $users, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
+            return $this->frontPipeline($context, $request, $runtime, $users, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme, $mode, $parts);
         } catch (\Minn\Login\ServeLogin) {
             // A hide-login plugin require'd wp-login.php mid-request: the
             // current request gets the sign-in surface, whatever its path.
@@ -361,22 +370,20 @@ final readonly class Engine
     }
 
     /** The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly. */
-    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): Response
+    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme, WpApiMode $mode, ?FrontParts $parts): Response
     {
         $db = $context->db;
         $site = $context->site;
         $capabilities = $context->capabilities;
-        Plugins::load($runtime);
-        $seams = new Seams($db, $site, $request, $runtime->reader);
-        $loader = new Loader(ABSPATH . 'wp-content', $site);
-        $appearance = new Appearance($users, $site);
-        $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), $loader->declaredTypes()), $capabilities);
-        $adminOff = App::switchedOff(ABSPATH . 'wp-content', $site);
-        $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
-        // The bar is known before extensions register, so their own pages can carry it (Seams::frontBar).
-        $seams->useFrontBar($bar);
-        $loader->register($seams);
+        $plugins = $mode->loadsPlugins($request);
+        Plugins::load($runtime, $mode);
+        // The parts a spared page built before the boot stand, unless plugin code named another reader since.
+        if ($parts === null || $parts->seams->reader->userId !== $runtime->reader->userId) {
+            $parts = FrontParts::build($db, $site, $request, $runtime->reader, $capabilities, $users, $app, $session, $permalinks, ABSPATH . 'wp-content');
+        }
+        $seams = $parts->registered();
         Extensions::set($seams);
+        [$appearance, $adminOff, $bar] = [$parts->appearance, $parts->adminOff, $parts->bar];
         $pages = $theme === null ? null : PageRenderer::create($db, $theme, $permalinks, $resolver->perPage(), $bar);
         // A block theme's own PHP templates (a hybrid, a child's page.php) render through the classic renderer when the hierarchy picks one.
         $templateTheme = $classicTheme ?? ($theme === null ? null : \Minn\Theme\ClassicTheme::ofBlockTheme($theme));
@@ -389,7 +396,8 @@ final readonly class Engine
         // the response of a front request that found something due. The
         // reference fires them in a request of their own where DOING_CRON is
         // set, and a callback may ask for it.
-        $fireDueEvents = static function (): int {
+        // Without the site's plugins (MINN_WP_API) their callbacks are not there, so the events wait for a request that has them.
+        $fireDueEvents = !$plugins ? null : static function (): int {
             if (!\function_exists('wp_cron')) {
                 return 0;
             }
@@ -404,9 +412,50 @@ final readonly class Engine
         $sitemapController = new \Minn\Front\SitemapController($notFound, $bridge, $themed);
         $front = new FrontController($resolver, $bridge, new Renderer($db, $permalinks), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));
 
-        // The front's routes are public or judge their own session; a policy that asks
-        // for more is refused outright rather than judged half-way.
-        $gate = static function (\Minn\Http\Policy $policy) use ($authenticator, $capabilities, $request): void {
+        $router = (new Router(self::frontGate($authenticator, $capabilities, $request)))->register(...[
+            new AssetsController($this->engineDir . '/assets'),
+            // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
+            new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users)),
+            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $siteIcon = new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $siteIcon, $adminOff),
+            new \Minn\Runtime\AjaxController(),
+            new \Minn\Runtime\AdminActionController($cookie, $permalinks),
+            new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
+            $sitemapController,
+            new CommentPostController(),
+            new EntryScriptsController($resolver, $bridge),
+            // An extension's own pages: after every engine route (FRONT_ROUTES), before the themed front's catch-all.
+            ...$seams->registrations()->routes,
+            $front,
+        ]);
+        $response = (new Kernel($router))->handle($request);
+        return $response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404);
+    }
+
+    /** The engine's routes a public page meets ahead of the extensions' own, in the front pipeline's order. */
+    private const FRONT_ROUTES = [AssetsController::class, LoginController::class, AppController::class, AjaxController::class, \Minn\Runtime\AdminActionController::class, ProbeController::class, \Minn\Front\SitemapController::class, CommentPostController::class, EntryScriptsController::class];
+
+    /**
+     * A public page an extension route answers, with no runtime: no facade,
+     * no plugins, no boot hooks (MINN_WP_API 'auto' or 'off'). Null when an
+     * engine route claims the path or no extension route answers it; the
+     * request then boots as any other, on the same registered extensions.
+     */
+    private function withoutRuntime(Request $request, FrontParts $parts, \Closure $gate): ?Response
+    {
+        if (Router::claims($request, ...self::FRONT_ROUTES)) {
+            return null;
+        }
+        $routes = $parts->registered()->registrations()->routes;
+        return $routes === [] ? null : (new Kernel((new Router($gate))->register(...$routes)))->handle($request);
+    }
+
+    /**
+     * The front's gate: its routes are public or judge their own session; a
+     * policy that asks for more is refused outright rather than judged half-way.
+     */
+    private static function frontGate(Authenticator $authenticator, Capabilities $capabilities, Request $request): \Closure
+    {
+        return static function (\Minn\Http\Policy $policy) use ($authenticator, $capabilities, $request): void {
             $session = $authenticator->session($request->cookies);
             $userId = $session instanceof Authenticated ? $session->id() : 0;
             if ($userId === 0) {
@@ -418,22 +467,5 @@ final readonly class Engine
                 }
             }
         };
-        $router = (new Router($gate))->register(...[
-            new AssetsController($this->engineDir . '/assets'),
-            // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
-            new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users)),
-            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $siteIcon = new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $siteIcon, $adminOff),
-            new \Minn\Runtime\AjaxController(),
-            new \Minn\Runtime\AdminActionController($cookie, $permalinks),
-            new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
-            $sitemapController,
-            new CommentPostController(),
-            new EntryScriptsController($resolver, $bridge),
-            // An extension's own pages: after every engine route, before the themed front's catch-all.
-            ...$seams->registrations()->routes,
-            $front,
-        ]);
-        $response = (new Kernel($router))->handle($request);
-        return $response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404);
     }
 }
