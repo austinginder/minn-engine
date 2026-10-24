@@ -103,6 +103,9 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
     return $object;
 }
 
+// The engine registers the types and taxonomies extensions declare through these (Runtime\DeclaredTypes).
+Minn\Runtime\DeclaredTypes::bind(static fn (...$args) => register_post_type(...$args), static fn (...$args) => register_taxonomy(...$args));
+
 /**
  * @internal A taxonomy's default term, settled as it registers (probes
  * taxonomy-default-term, taxonomy-blocks-user-doubts): a term of that name is

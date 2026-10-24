@@ -32,7 +32,12 @@ final class Types
      */
     public function all(): array
     {
-        return Runtime::booted() ? $this->core() + $this->registered() : $this->core();
+        if (!Runtime::booted()) {
+            return $this->core();
+        }
+        // A declared type is registered on init like a plugin's (DeclaredTypes), so the registry's row stands for it.
+        $registered = $this->registered();
+        return array_diff_key($this->core(), $registered) + $registered;
     }
 
     /** The built-in types and the ones extensions declare. @return array<string, array> */

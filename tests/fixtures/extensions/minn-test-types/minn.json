@@ -3,15 +3,48 @@
   "version": "0.1.0",
   "license": "MIT",
   "replaces": [],
-  "autoload": {"Minn\\Ext\\TestTypes\\": "src/"},
+  "autoload": {
+    "Minn\\Ext\\TestTypes\\": "src/"
+  },
   "extension": "Minn\\Ext\\TestTypes\\Extension",
   "types": [
     {
       "slug": "zz_note",
       "name": "Notes",
+      "singular": "Note",
       "rest_base": "zz-note",
       "hierarchical": false,
-      "taxonomies": ["category", "post_tag"]
+      "taxonomies": [
+        "category",
+        "post_tag"
+      ]
+    },
+    {
+      "slug": "zz_entry",
+      "name": "Entries",
+      "singular": "Entry",
+      "rest_base": "zz-entry",
+      "has_archive": "zz-wiki",
+      "rewrite": {
+        "slug": "zz-wiki",
+        "with_front": false
+      }
+    }
+  ],
+  "taxonomies": [
+    {
+      "slug": "zz_topic",
+      "name": "Topics",
+      "singular": "Topic",
+      "types": [
+        "zz_entry"
+      ],
+      "rest_base": "zz-topic",
+      "hierarchical": true,
+      "rewrite": {
+        "slug": "zz-wiki/topic",
+        "with_front": false
+      }
     }
   ]
 }

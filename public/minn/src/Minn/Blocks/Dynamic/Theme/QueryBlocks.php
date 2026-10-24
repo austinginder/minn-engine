@@ -250,7 +250,8 @@ final class QueryBlocks
         $prefix = (bool) $block->attr('showPrefix', true);
         [$label, $name] = \Minn\Theme\ArchiveTitle::parts($resolution, (string) ($this->site->option('date_format') ?? ''));
         $text = match ($resolution->kind) {
-            Kind::PostTypeArchive => Html::esc($this->archiveTitle($record)),
+            // A post type archive is prefixed `Archives:` like the others (probe: declared-types' zz-wiki archive).
+            Kind::PostTypeArchive => $prefix ? \Minn\Theme\ArchiveTitle::compose(\Minn\I18n\Gettext::inContext('Archives:', 'post type archive title prefix'), Html::esc($this->archiveTitle($record))) : Html::esc($this->archiveTitle($record)),
             Kind::Search => sprintf(\Minn\I18n\Gettext::text('Search results for: &#8220;%s&#8221;'), Html::esc((string) $resolution->search)),
             default => $name === '' ? '' : ($prefix ? \Minn\Theme\ArchiveTitle::compose($label, $name) : $name),
         };

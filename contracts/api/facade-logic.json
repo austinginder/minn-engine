@@ -13514,13 +13514,13 @@
         },
         "_minn_category_list_body": {
             "file": "taxonomy.php",
-            "line": 759,
+            "line": 762,
             "statements": 6,
             "lines": 14
         },
         "_minn_category_list_row": {
             "file": "taxonomy.php",
-            "line": 990,
+            "line": 993,
             "statements": 3,
             "lines": 10
         },
@@ -13658,7 +13658,7 @@
         },
         "_minn_default_term": {
             "file": "taxonomy.php",
-            "line": 111,
+            "line": 114,
             "statements": 3,
             "lines": 7
         },
@@ -13916,7 +13916,7 @@
         },
         "_minn_menus": {
             "file": "taxonomy.php",
-            "line": 1005,
+            "line": 1008,
             "statements": 2,
             "lines": 9
         },
@@ -14300,19 +14300,19 @@
         },
         "_minn_tag_cloud_row": {
             "file": "taxonomy.php",
-            "line": 842,
+            "line": 845,
             "statements": 3,
             "lines": 3
         },
         "_minn_term_lookup": {
             "file": "taxonomy.php",
-            "line": 204,
+            "line": 207,
             "statements": 5,
             "lines": 7
         },
         "_minn_term_numbers": {
             "file": "taxonomy.php",
-            "line": 173,
+            "line": 176,
             "statements": 2,
             "lines": 4
         },
@@ -14486,7 +14486,7 @@
         },
         "_nav_menu_item_id_use_once": {
             "file": "taxonomy.php",
-            "line": 1318,
+            "line": 1321,
             "statements": 5,
             "lines": 7
         },
@@ -14720,7 +14720,7 @@
         },
         "_update_term_count_on_transition_post_status": {
             "file": "taxonomy.php",
-            "line": 679,
+            "line": 682,
             "statements": 2,
             "lines": 13
         },
@@ -14888,13 +14888,13 @@
         },
         "_wp_delete_post_menu_item": {
             "file": "taxonomy.php",
-            "line": 1108,
+            "line": 1111,
             "statements": 1,
             "lines": 3
         },
         "_wp_delete_tax_menu_item": {
             "file": "taxonomy.php",
-            "line": 1292,
+            "line": 1295,
             "statements": 1,
             "lines": 3
         },
@@ -15146,7 +15146,7 @@
         },
         "_wp_reset_invalid_menu_item_parent": {
             "file": "taxonomy.php",
-            "line": 1038,
+            "line": 1041,
             "statements": 2,
             "lines": 4
         },
@@ -15818,7 +15818,7 @@
         },
         "category_exists": {
             "file": "taxonomy.php",
-            "line": 397,
+            "line": 400,
             "statements": 2,
             "lines": 2
         },
@@ -15998,7 +15998,7 @@
         },
         "create_initial_taxonomies": {
             "file": "taxonomy.php",
-            "line": 1337,
+            "line": 1340,
             "statements": 2,
             "lines": 15
         },
@@ -16346,7 +16346,7 @@
         },
         "get_all_category_ids": {
             "file": "taxonomy.php",
-            "line": 1208,
+            "line": 1211,
             "statements": 2,
             "lines": 2
         },
@@ -16568,31 +16568,31 @@
         },
         "get_cat_ID": {
             "file": "taxonomy.php",
-            "line": 256,
+            "line": 259,
             "statements": 2,
             "lines": 2
         },
         "get_cat_name": {
             "file": "taxonomy.php",
-            "line": 262,
+            "line": 265,
             "statements": 2,
             "lines": 2
         },
         "get_category": {
             "file": "taxonomy.php",
-            "line": 233,
+            "line": 236,
             "statements": 3,
             "lines": 5
         },
         "get_category_by_path": {
             "file": "taxonomy.php",
-            "line": 1226,
+            "line": 1229,
             "statements": 6,
             "lines": 13
         },
         "get_category_by_slug": {
             "file": "taxonomy.php",
-            "line": 247,
+            "line": 250,
             "statements": 3,
             "lines": 5
         },
@@ -17024,7 +17024,7 @@
         },
         "get_objects_in_term": {
             "file": "taxonomy.php",
-            "line": 507,
+            "line": 510,
             "statements": 4,
             "lines": 8
         },
@@ -17228,7 +17228,7 @@
         },
         "get_post_taxonomies": {
             "file": "taxonomy.php",
-            "line": 519,
+            "line": 522,
             "statements": 2,
             "lines": 2
         },
@@ -17426,7 +17426,7 @@
         },
         "get_tag_link": {
             "file": "taxonomy.php",
-            "line": 293,
+            "line": 296,
             "statements": 2,
             "lines": 2
         },
@@ -17438,13 +17438,13 @@
         },
         "get_tags": {
             "file": "taxonomy.php",
-            "line": 226,
+            "line": 229,
             "statements": 3,
             "lines": 3
         },
         "get_taxonomy_labels": {
             "file": "taxonomy.php",
-            "line": 165,
+            "line": 168,
             "statements": 3,
             "lines": 3
         },
@@ -17468,19 +17468,19 @@
         },
         "get_term_parents_list": {
             "file": "taxonomy.php",
-            "line": 899,
+            "line": 902,
             "statements": 8,
             "lines": 19
         },
         "get_term_to_edit": {
             "file": "taxonomy.php",
-            "line": 583,
+            "line": 586,
             "statements": 3,
             "lines": 5
         },
         "get_terms_to_edit": {
             "file": "taxonomy.php",
-            "line": 481,
+            "line": 484,
             "statements": 6,
             "lines": 12
         },
@@ -17600,13 +17600,13 @@
         },
         "get_the_category_by_ID": {
             "file": "taxonomy.php",
-            "line": 709,
+            "line": 712,
             "statements": 2,
             "lines": 2
         },
         "get_the_category_list": {
             "file": "taxonomy.php",
-            "line": 972,
+            "line": 975,
             "statements": 5,
             "lines": 9
         },
@@ -17714,7 +17714,7 @@
         },
         "get_the_term_list": {
             "file": "taxonomy.php",
-            "line": 940,
+            "line": 943,
             "statements": 7,
             "lines": 17
         },
@@ -17924,13 +17924,13 @@
         },
         "has_term": {
             "file": "taxonomy.php",
-            "line": 334,
+            "line": 337,
             "statements": 7,
             "lines": 19
         },
         "has_term_meta": {
             "file": "taxonomy.php",
-            "line": 1150,
+            "line": 1153,
             "statements": 2,
             "lines": 2
         },
@@ -18164,7 +18164,7 @@
         },
         "is_term_publicly_viewable": {
             "file": "taxonomy.php",
-            "line": 1136,
+            "line": 1139,
             "statements": 2,
             "lines": 2
         },
@@ -18704,7 +18704,7 @@
         },
         "register_taxonomy_for_object_type": {
             "file": "taxonomy.php",
-            "line": 138,
+            "line": 141,
             "statements": 4,
             "lines": 6
         },
@@ -19352,13 +19352,13 @@
         },
         "term_description": {
             "file": "taxonomy.php",
-            "line": 593,
+            "line": 596,
             "statements": 2,
             "lines": 2
         },
         "term_is_ancestor_of": {
             "file": "taxonomy.php",
-            "line": 1068,
+            "line": 1071,
             "statements": 3,
             "lines": 3
         },
@@ -19532,19 +19532,19 @@
         },
         "the_tags": {
             "file": "taxonomy.php",
-            "line": 929,
+            "line": 932,
             "statements": 2,
             "lines": 2
         },
         "the_taxonomies": {
             "file": "taxonomy.php",
-            "line": 1143,
+            "line": 1146,
             "statements": 2,
             "lines": 2
         },
         "the_terms": {
             "file": "taxonomy.php",
-            "line": 1180,
+            "line": 1183,
             "statements": 3,
             "lines": 5
         },
@@ -19670,13 +19670,13 @@
         },
         "unregister_taxonomy": {
             "file": "taxonomy.php",
-            "line": 122,
+            "line": 125,
             "statements": 8,
             "lines": 12
         },
         "unregister_taxonomy_for_object_type": {
             "file": "taxonomy.php",
-            "line": 148,
+            "line": 151,
             "statements": 4,
             "lines": 8
         },
@@ -19700,7 +19700,7 @@
         },
         "update_menu_item_cache": {
             "file": "taxonomy.php",
-            "line": 1300,
+            "line": 1303,
             "statements": 5,
             "lines": 13
         },
@@ -19856,13 +19856,13 @@
         },
         "walk_category_dropdown_tree": {
             "file": "taxonomy.php",
-            "line": 785,
+            "line": 788,
             "statements": 2,
             "lines": 2
         },
         "walk_category_tree": {
             "file": "taxonomy.php",
-            "line": 778,
+            "line": 781,
             "statements": 2,
             "lines": 2
         },
@@ -20318,13 +20318,13 @@
         },
         "wp_create_categories": {
             "file": "taxonomy.php",
-            "line": 417,
+            "line": 420,
             "statements": 4,
             "lines": 11
         },
         "wp_create_category": {
             "file": "taxonomy.php",
-            "line": 410,
+            "line": 413,
             "statements": 2,
             "lines": 2
         },
@@ -20414,7 +20414,7 @@
         },
         "wp_delete_nav_menu": {
             "file": "taxonomy.php",
-            "line": 1030,
+            "line": 1033,
             "statements": 2,
             "lines": 2
         },
@@ -20468,7 +20468,7 @@
         },
         "wp_dropdown_categories": {
             "file": "taxonomy.php",
-            "line": 856,
+            "line": 859,
             "statements": 13,
             "lines": 26
         },
@@ -20762,7 +20762,7 @@
         },
         "wp_generate_tag_cloud": {
             "file": "taxonomy.php",
-            "line": 817,
+            "line": 820,
             "statements": 9,
             "lines": 13
         },
@@ -20810,7 +20810,7 @@
         },
         "wp_get_associated_nav_menu_items": {
             "file": "taxonomy.php",
-            "line": 1285,
+            "line": 1288,
             "statements": 2,
             "lines": 2
         },
@@ -21254,19 +21254,19 @@
         },
         "wp_get_split_term": {
             "file": "taxonomy.php",
-            "line": 1122,
+            "line": 1125,
             "statements": 2,
             "lines": 2
         },
         "wp_get_split_terms": {
             "file": "taxonomy.php",
-            "line": 1129,
+            "line": 1132,
             "statements": 2,
             "lines": 2
         },
         "wp_get_term_taxonomy_parent_id": {
             "file": "taxonomy.php",
-            "line": 1190,
+            "line": 1193,
             "statements": 2,
             "lines": 2
         },
@@ -21500,7 +21500,7 @@
         },
         "wp_insert_category": {
             "file": "taxonomy.php",
-            "line": 437,
+            "line": 440,
             "statements": 10,
             "lines": 16
         },
@@ -21728,7 +21728,7 @@
         },
         "wp_list_categories": {
             "file": "taxonomy.php",
-            "line": 733,
+            "line": 736,
             "statements": 12,
             "lines": 21
         },
@@ -21950,7 +21950,7 @@
         },
         "wp_nav_menu_remove_menu_item_has_children_class": {
             "file": "taxonomy.php",
-            "line": 1330,
+            "line": 1333,
             "statements": 2,
             "lines": 2
         },
@@ -23114,7 +23114,7 @@
         },
         "wp_tag_cloud": {
             "file": "taxonomy.php",
-            "line": 798,
+            "line": 801,
             "statements": 8,
             "lines": 15
         },
@@ -23228,7 +23228,7 @@
         },
         "wp_update_category": {
             "file": "taxonomy.php",
-            "line": 458,
+            "line": 461,
             "statements": 5,
             "lines": 7
         },

@@ -18325,7 +18325,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 382,
+            "lines": 383,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, query-total.",
             "implements": [],
             "extends": null,
@@ -18708,7 +18708,7 @@
                         }
                     ],
                     "line": 245,
-                    "end": 263
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -18734,8 +18734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 276
+                    "line": 266,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -18761,8 +18761,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 358
+                    "line": 287,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -18781,8 +18781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 373
+                    "line": 362,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -18824,8 +18824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 404
+                    "line": 383,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -18844,8 +18844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 407,
-                    "end": 411
+                    "line": 408,
+                    "end": 412
                 }
             ]
         },
@@ -19192,8 +19192,10 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Styles",
                 "Minn\\Blocks\\Wrapper",
+                "Minn\\Content\\Autop",
                 "Minn\\Content\\TermRecord",
                 "Minn\\Content\\Terms",
+                "Minn\\Content\\Texturize",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Html"
@@ -19335,7 +19337,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "description(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "The description as written for a term in context; a term archive's as a paragraph, the way term_description gives it.",
+                    "doc": "The description as written for a term in context; a term archive's through term_description's filters (texturized, then paragraphed).",
                     "shapes": [],
                     "params": [
                         {
@@ -30001,6 +30003,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Widgets\\TextWidgets"
             ],
@@ -41399,6 +41402,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\Excerpt",
@@ -45095,7 +45099,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Loader.php",
-            "lines": 154,
+            "lines": 173,
             "doc": "Finds extensions under wp-content/plugins and wp-content/mu-plugins, and\nin the active theme (a theme folder with a minn.json is an extension too,\nactive because it is the theme: the child, then its parent), decides\nwhich are active, autoloads them, and asks each to register.\nAn extension that throws is logged and skipped; the page still renders.",
             "implements": [],
             "extends": null,
@@ -45116,7 +45120,8 @@
                 "Minn\\Front\\FrontParts",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Rest\\PluginsController",
-                "Minn\\Rest\\Services"
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\Plugins"
             ],
             "constructor": {
                 "signature": "__construct(string $contentDir, Minn\\Content\\Site $site)",
@@ -45239,6 +45244,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "declaredTaxonomies",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "declaredTaxonomies(): array",
+                    "doc": "Extra taxonomies declared by active extensions, keyed by slug.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 133,
+                    "end": 145
+                },
+                {
+                    "routes": [],
                     "name": "replacements",
                     "static": false,
                     "visibility": "public",
@@ -45248,8 +45267,8 @@
                         "@return array<string, string> plugin file => extension slug"
                     ],
                     "params": [],
-                    "line": 129,
-                    "end": 138
+                    "line": 148,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -45268,8 +45287,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 157
+                    "line": 160,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -45302,8 +45321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 172
+                    "line": 178,
+                    "end": 191
                 }
             ]
         },
@@ -45313,8 +45332,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Manifest.php",
-            "lines": 78,
-            "doc": "minn.json, read as data. A folder under wp-content/plugins (or\nmu-plugins) with this file is an extension; the same folder may also be\na WordPress plugin, in which case the two share a name and a version.\n\n{\n\"name\": \"Block Visibility for Minn\",\n\"version\": \"1.0.0\",\n\"license\": \"MIT\",\n\"replaces\": [\"block-visibility/block-visibility.php\"],\n\"autoload\": {\"Minn\\\\Ext\\\\BlockVisibility\\\\\": \"src/\"},\n\"extension\": \"Minn\\\\Ext\\\\BlockVisibility\\\\Extension\",\n\"shortcodes\": [\"example_tag\"],\n\"blocks\": [\"vendor/block\"],\n\"types\": [{\"slug\": \"zz_note\", \"name\": \"Notes\", \"rest_base\": \"zz-note\"}],\n\"needs\": {\"http\": [\"https://api.example.com/\"]}\n}\n\n\"replaces\" names the WordPress plugin files whose behaviour this\nextension stands in for; the extension is active whenever one of them is\nin active_plugins, or when its own folder is listed there, or when it is\nnamed in the minn_active_extensions option. \"shortcodes\" and \"blocks\"\nare the content tokens preflight treats as provided instead of missing.\n\"types\" are extra post types the engine should serve on wp/v2.\n\"needs\" says what the extension reaches outside the process: \"http\" is\nthe URL prefixes its $minn->http may request (true for any public host).",
+            "lines": 81,
+            "doc": "minn.json, read as data. A folder under wp-content/plugins (or\nmu-plugins) with this file is an extension; the same folder may also be\na WordPress plugin, in which case the two share a name and a version.\n\n{\n\"name\": \"Block Visibility for Minn\",\n\"version\": \"1.0.0\",\n\"license\": \"MIT\",\n\"replaces\": [\"block-visibility/block-visibility.php\"],\n\"autoload\": {\"Minn\\\\Ext\\\\BlockVisibility\\\\\": \"src/\"},\n\"extension\": \"Minn\\\\Ext\\\\BlockVisibility\\\\Extension\",\n\"shortcodes\": [\"example_tag\"],\n\"blocks\": [\"vendor/block\"],\n\"types\": [{\"slug\": \"zz_note\", \"name\": \"Notes\", \"rest_base\": \"zz-note\"}],\n\"taxonomies\": [{\"slug\": \"zz_topic\", \"name\": \"Topics\", \"types\": [\"zz_note\"]}],\n\"needs\": {\"http\": [\"https://api.example.com/\"]}\n}\n\n\"replaces\" names the WordPress plugin files whose behaviour this\nextension stands in for; the extension is active whenever one of them is\nin active_plugins, or when its own folder is listed there, or when it is\nnamed in the minn_active_extensions option. \"shortcodes\" and \"blocks\"\nare the content tokens preflight treats as provided instead of missing.\n\"types\" are extra post types and \"taxonomies\" extra taxonomies, each\nregistered on init as a plugin registers its own (DeclaredTypes).\n\"needs\" says what the extension reaches outside the process: \"http\" is\nthe URL prefixes its $minn->http may request (true for any public host).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -45329,14 +45348,15 @@
                 "Minn\\Rest\\PluginsController"
             ],
             "constructor": {
-                "signature": "__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), ?array $http = NULL)",
+                "signature": "__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), array $taxonomies = array ( ), ?array $http = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $replaces",
                     "@param array<string, string> $autoload namespace prefix => directory",
                     "@param list<string> $shortcodes",
                     "@param list<string> $blocks",
-                    "@param list<array<string, mixed>> $types"
+                    "@param list<array<string, mixed>> $types",
+                    "@param list<array<string, mixed>> $taxonomies"
                 ],
                 "params": [
                     {
@@ -45424,6 +45444,13 @@
                         "doc": ""
                     },
                     {
+                        "name": "taxonomies",
+                        "type": "array",
+                        "shape": "list<array<string, mixed>>",
+                        "default": "array ( )",
+                        "doc": ""
+                    },
+                    {
                         "name": "http",
                         "type": "?array",
                         "shape": "",
@@ -45432,8 +45459,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 45,
-                "end": 62
+                "line": 48,
+                "end": 66
             },
             "cases": [],
             "constants": [],
@@ -45547,6 +45574,15 @@
                     "promoted": true
                 },
                 {
+                    "name": "taxonomies",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
                     "name": "http",
                     "type": "?array",
                     "readonly": true,
@@ -45574,8 +45610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 90
+                    "line": 69,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -45596,8 +45632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 112
+                    "line": 105,
+                    "end": 117
                 }
             ]
         },
@@ -131474,7 +131510,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Types.php",
-            "lines": 190,
+            "lines": 195,
             "doc": "The engine's registry of built-in post types, seeded from the observed\ncontract (src/data/types.json) with _links attached at runtime.",
             "implements": [],
             "extends": null,
@@ -131569,7 +131605,7 @@
                     ],
                     "params": [],
                     "line": 33,
-                    "end": 36
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -131588,8 +131624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -131608,8 +131644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 132
+                    "line": 129,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -131622,8 +131658,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 135,
-                    "end": 142
+                    "line": 140,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -131636,8 +131672,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 150,
-                    "end": 159
+                    "line": 155,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -131656,8 +131692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -131670,8 +131706,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 174,
-                    "end": 180
+                    "line": 179,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -131690,8 +131726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 203
+                    "line": 199,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -131704,8 +131740,8 @@
                         "@return array<string, array>"
                     ],
                     "params": [],
-                    "line": 39,
-                    "end": 71
+                    "line": 44,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -131718,8 +131754,8 @@
                         "@return array<string, array>"
                     ],
                     "params": [],
-                    "line": 80,
-                    "end": 115
+                    "line": 85,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -131732,8 +131768,8 @@
                         "@return array<string, array> the registered types under wp/v2"
                     ],
                     "params": [],
-                    "line": 183,
-                    "end": 191
+                    "line": 188,
+                    "end": 196
                 }
             ]
         },
@@ -145294,6 +145330,229 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\DeclaredTypes",
+            "short": "DeclaredTypes",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/DeclaredTypes.php",
+            "lines": 129,
+            "doc": "The post types and taxonomies active extensions declare in minn.json\n(\"types\", \"taxonomies\"), registered on init as a plugin registers its\nown: through the facade's registration, so each takes the same\ndefaults, rewrite rules, archive, template hierarchy, REST shape and\nadmin row a plugin's would. The WordPress layer binds those two\nregistrations as it loads (bind). A change to the declared set drops the stored\nrewrite rules, as a plugin flushes them when it starts registering a\ntype, so the next request makes them again with the new addresses.\n\nA type's row: slug, name (the plural label), singular, rest_base,\nhierarchical, has_archive (true, or the archive's path), rewrite (a slug,\nor {slug, with_front}), supports, taxonomies, description, icon. A\ntaxonomy's: slug, name, singular, types (the post types it groups),\nrest_base, hierarchical, rewrite.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Plugins"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SETTLED",
+                    "value": "'minn_declared_types'",
+                    "doc": "The declared set the stored rewrite rules were made with, as a hash.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SUPPORTS",
+                    "value": "array (   0 => 'title',   1 => 'editor',   2 => 'author',   3 => 'thumbnail',   4 => 'excerpt',   5 => 'custom-fields',   6 => 'comments',   7 => 'revisions', )",
+                    "doc": "What a declared type supports when its row names nothing.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "registrars",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "bind",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bind(Closure $postType, Closure $taxonomy): void",
+                    "doc": "The WordPress layer's registrations (register_post_type, register_taxonomy), bound as it loads.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postType",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "onInit",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "onInit(array $types, array $taxonomies): void",
+                    "doc": "Registers the declared set on init, at a plugin's priority, and drops\nthe stored rewrite rules when the set changed since they were made.",
+                    "shapes": [
+                        "@param array<string, array<string, mixed>> $types slug => row",
+                        "@param array<string, array<string, mixed>> $taxonomies slug => row"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": "slug => row"
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": "slug => row"
+                        }
+                    ],
+                    "line": 47,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "typeArgs",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "typeArgs(string $slug, array $row): array",
+                    "doc": "A type's registration arguments from its row.",
+                    "shapes": [
+                        "@param array<string, mixed> $row",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyArgs",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "taxonomyArgs(string $slug, array $row): array",
+                    "doc": "A taxonomy's registration arguments from its row.",
+                    "shapes": [
+                        "@param array<string, mixed> $row",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "common",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "common(string $slug, array $row): array",
+                    "doc": "What types and taxonomies share: labels, public and in REST, the base,\nthe hierarchy, and a rewrite when the row names one.",
+                    "shapes": [
+                        "@param array<string, mixed> $row",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "settle(array $types, array $taxonomies): void",
+                    "doc": "Drops the stored rewrite rules when the declared set is not the one\nthey were made with, and records the new set. An empty set on a site\nthat never declared anything writes nothing.",
+                    "shapes": [
+                        "@param array<string, array<string, mixed>> $types",
+                        "@param array<string, array<string, mixed>> $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 136,
+                    "end": 150
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Deferrals",
             "short": "Deferrals",
             "namespace": "Minn\\Runtime",
@@ -158396,16 +158655,18 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 287,
+            "lines": 290,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
+                "Minn\\Extension\\Loader",
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\ServeLogin",
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\DeclaredTypes",
                 "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Recovery",
@@ -158505,8 +158766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 161
+                    "line": 154,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -158519,8 +158780,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 207,
-                    "end": 210
+                    "line": 210,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -158533,8 +158794,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 217,
-                    "end": 220
+                    "line": 220,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -158560,8 +158821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 248
+                    "line": 233,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -158580,8 +158841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 254
+                    "line": 254,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -158608,7 +158869,7 @@
                         }
                     ],
                     "line": 71,
-                    "end": 142
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -158627,8 +158888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 186
+                    "line": 173,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -158654,8 +158915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 200
+                    "line": 196,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -158688,8 +158949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 279
+                    "line": 259,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -158722,8 +158983,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 297
+                    "line": 290,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -158742,8 +159003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 305
+                    "line": 303,
+                    "end": 308
                 }
             ]
         },
@@ -170115,6 +170376,7 @@
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\DeclaredTypes",
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\DeprecatedUserMeta",
                 "Minn\\Runtime\\DocumentTitle",

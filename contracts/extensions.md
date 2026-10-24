@@ -84,11 +84,26 @@ provides when it is not all of it; preflight prints it and lights AMBER instead 
 GREEN for that plugin. `"shortcodes"` and `"blocks"` name the content tokens
 the extension actually renders; preflight treats those as provided and still
 AMBERs any other shortcode or third-party block in the site's content.
-`"types"` lists extra post types (`slug`, `name`, `rest_base`, optional
-`hierarchical` and `taxonomies`). The engine merges them into `wp/v2/types`
-and serves `wp/v2/{rest_base}` like posts (no sticky/format). Pretty
-permalinks are `/{slug}/{post_name}/`. Front URL resolution for those
-types is not wired yet. Preflight GREENS extra post types a manifest
+`"types"` lists extra post types and `"taxonomies"` extra taxonomies, and
+the engine registers each on `init` as a plugin registers its own, through
+the facade's `register_post_type` and `register_taxonomy`
+(`Runtime\DeclaredTypes`, taxonomies first so a term's address under a
+type's prefix reads as the term). So they take a plugin's defaults, rewrite
+rules, archive, template hierarchy (`single-{type}`, `archive-{type}`,
+`taxonomy-{taxonomy}`), REST shape at `wp/v2/{rest_base}` and admin rows. A
+type's row: `slug`, `name` (the plural label), `singular`, `rest_base`,
+`hierarchical`, `has_archive` (true, or the archive's path), `rewrite` (a
+slug, or `{slug, with_front}`, or false), `supports` (default title, editor,
+author, thumbnail, excerpt, custom-fields, comments, revisions),
+`taxonomies`, `description`, `icon`. A taxonomy's: `slug`, `name`,
+`singular`, `types`, `rest_base`, `hierarchical`, `rewrite`. Without a
+rewrite, pretty permalinks are `/{slug}/{post_name}/`. A change to the
+declared set drops the stored rewrite rules (option `rewrite_rules`) so the
+next request makes them again; option `minn_declared_types` holds the set's
+hash. The declared-types suite compares the rules, REST answers and pages
+(an entry, the archive, a term page, a missing entry) with a WordPress
+plugin registering the same; `tests/unit/declared-types.php` pins the
+row-to-arguments mapping. Preflight GREENS extra post types a manifest
 declares.
 
 Not yet seams (next ports decide their shape): REST controllers under `/wp-json/`, cron

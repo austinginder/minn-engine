@@ -64,7 +64,7 @@ final readonly class TermBlocks
         return Wrapper::open('div', 'wp-block-term-count', $block) . $open . (int) $term['count'] . $close . '</div>';
     }
 
-    /** The description as written for a term in context; a term archive's as a paragraph, the way term_description gives it. */
+    /** The description as written for a term in context; a term archive's through term_description's filters (texturized, then paragraphed). */
     private function description(Block $block, Renderer $renderer): string
     {
         [$term, $fromContext] = $this->term($renderer);
@@ -73,7 +73,7 @@ final readonly class TermBlocks
             return '';
         }
         $classes = implode(' ', ['wp-block-term-description', ...Styles::classes($block->attrs)]);
-        return '<div class="' . Html::attr($classes) . '">' . ($fromContext ? $description : '<p>' . Html::esc($description) . '</p>') . '</div>';
+        return '<div class="' . Html::attr($classes) . '">' . ($fromContext ? $description : \Minn\Content\Autop::apply(\Minn\Content\Texturize::html($description))) . '</div>';
     }
 
     /** @return array{?TermRecord, bool} the term, and whether the block's context named it */

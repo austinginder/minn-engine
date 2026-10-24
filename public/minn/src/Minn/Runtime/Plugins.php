@@ -137,6 +137,9 @@ final class Plugins
         CurrentUser::settle($runtime);
         // The built-in types and taxonomies take their labels in the site's language, as the reference registers them again on init.
         Runtime::registry()->translateBuiltIns();
+        // The types and taxonomies extensions declare register on init, as a plugin's do.
+        $declared = new \Minn\Extension\Loader($content, new Site($runtime->db));
+        DeclaredTypes::onInit($declared->declaredTypes(), $declared->declaredTaxonomies());
         $hooks->action('init', []);
         $hooks->action('wp_loaded', []);
     }

@@ -21,6 +21,7 @@ use Minn\Json;
  *     "shortcodes": ["example_tag"],
  *     "blocks": ["vendor/block"],
  *     "types": [{"slug": "zz_note", "name": "Notes", "rest_base": "zz-note"}],
+ *     "taxonomies": [{"slug": "zz_topic", "name": "Topics", "types": ["zz_note"]}],
  *     "needs": {"http": ["https://api.example.com/"]}
  *   }
  *
@@ -29,7 +30,8 @@ use Minn\Json;
  * in active_plugins, or when its own folder is listed there, or when it is
  * named in the minn_active_extensions option. "shortcodes" and "blocks"
  * are the content tokens preflight treats as provided instead of missing.
- * "types" are extra post types the engine should serve on wp/v2.
+ * "types" are extra post types and "taxonomies" extra taxonomies, each
+ * registered on init as a plugin registers its own (DeclaredTypes).
  * "needs" says what the extension reaches outside the process: "http" is
  * the URL prefixes its $minn->http may request (true for any public host).
  */
@@ -41,6 +43,7 @@ final readonly class Manifest
      * @param list<string> $shortcodes
      * @param list<string> $blocks
      * @param list<array<string, mixed>> $types
+     * @param list<array<string, mixed>> $taxonomies
      */
     public function __construct(
         public string $slug,
@@ -56,6 +59,7 @@ final readonly class Manifest
         public array $shortcodes = [],
         public array $blocks = [],
         public array $types = [],
+        public array $taxonomies = [],
         /** @var list<string>|null needs.http: the URL prefixes granted, [] for any public host, null when not asked */
         public ?array $http = null,
     ) {
@@ -85,6 +89,7 @@ final readonly class Manifest
             array_values(array_map('strval', (array) ($data['shortcodes'] ?? []))),
             array_values(array_map('strval', (array) ($data['blocks'] ?? []))),
             array_values(array_filter((array) ($data['types'] ?? []), static fn ($row) => is_array($row))),
+            array_values(array_filter((array) ($data['taxonomies'] ?? []), static fn ($row) => is_array($row))),
             self::http(is_array($data['needs'] ?? null) ? ($data['needs']['http'] ?? null) : null),
         );
     }

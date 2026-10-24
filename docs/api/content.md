@@ -80,7 +80,7 @@ held newline keeps the block rules from reaching past it.
 - const `HELD_NEWLINE` = `' <> '` — A newline inside a tag, comment or CDATA section while paragraphs are made.
 - const `RAW_NEWLINE` = `''` — A newline inside script, style, svg or math while line breaks are added.
 
-Used by: `Minn\Theme\ClassicContent`, `Minn\Widgets\TextWidgets`
+Used by: `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Theme\ClassicContent`, `Minn\Widgets\TextWidgets`
 
 ### static `apply(string $text, bool $lineBreaks = true): string`
 
@@ -2159,7 +2159,7 @@ texturize battery post; anything beyond it is a documented gap.
 
 - const `SKIP` = `array (   0 => 'pre',   1 => 'code',   2 => 'kbd',   3 => 'style',   4 => 'script',   5 => 'tt', )`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`, `Minn\Theme\ThemeHeaders`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`, `Minn\Theme\ThemeHeaders`
 
 
 ### static `enabled(): bool`

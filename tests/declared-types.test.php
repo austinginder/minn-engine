@@ -108,7 +108,7 @@ $previous = dt_wp( 'option get minn_active_extensions' );
 register_shutdown_function( static function () use ( $previous ): void {
 	dt_wp( 'plugin deactivate minn-test-types' );
 	dt_wp( 'option update minn_active_extensions ' . escapeshellarg( $previous !== '' ? $previous : '[]' ) );
-	foreach ( preg_split( '/\s+/', dt_wp( 'post list --post_type=zz_note --format=ids' ) ) ?: array() as $id ) {
+	foreach ( preg_split( '/\s+/', dt_wp( 'post list --post_type=zz_note,zz_entry --format=ids' ) ) ?: array() as $id ) {
 		if ( (int) $id > 0 ) {
 			dt_wp( 'post delete ' . (int) $id . ' --force' );
 		}
@@ -153,6 +153,50 @@ dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-note/' . $nid ) . '&
 dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-note/' . $wid ) . '&force=true', $admin, 'DELETE' );
 [ $st ] = dt_fetch( $REF, 'rest_route=' . rawurlencode( '/wp/v2/zz-note/' . $nid ), $admin );
 check( 404 === $st, 'force-delete removes the note on WordPress too' );
+
+// The front: a declared type with an archive under its own prefix, and a hierarchical taxonomy beside it,
+// answer as a plugin's registrations do on the reference. Both stacks share the site's stored rewrite rules.
+dt_wp( 'option delete rewrite_rules' );
+minn_test_fetch( "$ENGINE/zz-wiki/" );
+$engine_rules = dt_wp( 'option get rewrite_rules --format=json' );
+dt_wp( 'rewrite flush' );
+$ref_rules = dt_wp( 'option get rewrite_rules --format=json' );
+$wiki_rules = array_filter( (array) json_decode( $engine_rules, true ), static fn ( $q, $r ) => str_starts_with( (string) $r, 'zz-wiki' ), ARRAY_FILTER_USE_BOTH );
+check( $engine_rules !== '' && $engine_rules === $ref_rules, 'the engine makes and stores the same rewrite rules as WordPress, the declared ones among them (' . count( $wiki_rules ) . ' under zz-wiki/)', (string) minn_test_diff( json_decode( $ref_rules, true ), json_decode( $engine_rules, true ) ) );
+$keys = array_keys( $wiki_rules );
+check( array_search( 'zz-wiki/topic/(.+?)/?$', $keys, true ) < array_search( 'zz-wiki/([^/]+)(?:/([0-9]+))?/?$', $keys, true ), 'the taxonomy\'s rules come before the type\'s, so zz-wiki/topic/… is a term', implode( ' ', array_slice( $keys, 0, 8 ) ) );
+
+[ $st, $topic ] = dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-topic' ), $admin, 'POST', json_encode( array( 'name' => 'Zz Music', 'description' => 'Tunes.' ) ) );
+check( 201 === $st && ( $topic['taxonomy'] ?? '' ) === 'zz_topic', 'the engine creates a zz_topic term over REST', json_encode( $topic ) );
+$tid = (int) ( $topic['id'] ?? 0 );
+[ $st, $entry ] = dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-entry' ), $admin, 'POST', json_encode( array( 'title' => 'Zz Musicblocks', 'status' => 'publish', 'content' => '<!-- wp:paragraph --><p>Every tune.</p><!-- /wp:paragraph -->', 'zz-topic' => array( $tid ) ) ) );
+check( 201 === $st && in_array( $tid, (array) ( $entry['zz-topic'] ?? array() ), true ), 'the engine creates a zz_entry in that topic', json_encode( $entry ) );
+$eid = (int) ( $entry['id'] ?? 0 );
+check( str_ends_with( (string) ( $entry['link'] ?? '' ), '/zz-wiki/zz-musicblocks/' ), 'an entry\'s link is under the declared prefix', (string) ( $entry['link'] ?? '' ) );
+dt_parity( 'the entry read back as the reference reads it', 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid ) );
+dt_parity( 'the term read back as the reference reads it', 'rest_route=' . rawurlencode( '/wp/v2/zz-topic/' . $tid ) );
+dt_parity( 'the taxonomy as the reference describes it', 'rest_route=' . rawurlencode( '/wp/v2/taxonomies/zz_topic' ) );
+// Pages are compared as the theme suites compare them: status, title, body classes, and the body (theme_body).
+$theme_src = (string) file_get_contents( __DIR__ . '/theme.test.php' );
+foreach ( array( 'theme_body', 'theme_first_diff' ) as $fn ) {
+	preg_match( '/function ' . $fn . '.*?\n}\n/s', $theme_src, $m );
+	eval( $m[0] );
+}
+$page_of = static function ( string $html, string $host ) use ( $ENGINE ): array {
+	preg_match( '/<title>(.*?)<\/title>/s', $html, $t );
+	preg_match( '/<body class="([^"]*)"/', $html, $b );
+	return array( $t[1] ?? '', $b[1] ?? '', theme_body( $html, $host, $ENGINE ) );
+};
+foreach ( array( 'the entry' => '/zz-wiki/zz-musicblocks/', 'the archive' => '/zz-wiki/', 'the topic' => '/zz-wiki/topic/zz-music/', 'an entry that is not there' => '/zz-wiki/zz-nothing/' ) as $label => $path ) {
+	[ $rh, $rb ] = minn_test_fetch( $REF . $path );
+	[ $eh, $eb ] = minn_test_fetch( $ENGINE . $path );
+	[ $rt, $rc, $rbody ] = $page_of( $rb, $REF );
+	[ $et, $ec, $ebody ] = $page_of( $eb, $ENGINE );
+	$detail = $rh['status'] !== $eh['status'] ? "status {$rh['status']} vs {$eh['status']}" : ( $rt !== $et ? "title '$rt' vs '$et'" : ( $rc !== $ec ? "body class '$rc' vs '$ec'" : theme_first_diff( $ebody, $rbody ) ) );
+	check( $rh['status'] === $eh['status'] && $rt === $et && $rc === $ec && $rbody === $ebody && $rbody !== '', "front: {$label} ({$path}) answers as the reference: {$eh['status']}, {$et}", $detail );
+}
+dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-entry/' . $eid ) . '&force=true', $admin, 'DELETE' );
+dt_fetch( $ENGINE, 'rest_route=' . rawurlencode( '/wp/v2/zz-topic/' . $tid ) . '&force=true', $admin, 'DELETE' );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

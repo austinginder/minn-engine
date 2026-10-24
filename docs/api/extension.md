@@ -6,8 +6,8 @@ the extension contract and its seams
 |---|---|---|---|
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
-| [`Loader`](#loader) | final class | 154 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
-| [`Manifest`](#manifest) | final readonly class | 78 | minn.json, read as data. A folder under wp-content/plugins (or |
+| [`Loader`](#loader) | final class | 173 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
+| [`Manifest`](#manifest) | final readonly class | 81 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 37 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 106 | The engine's side of the seams: what the loader collected, called at the |
 | [`Seams`](#seams) | final class | 239 | Where an extension can take part in a request: twelve typed registrations, |
@@ -67,7 +67,7 @@ active because it is the theme: the child, then its parent), decides
 which are active, autoloads them, and asks each to register.
 An extension that throws is logged and skipped; the page still renders.
 
-Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Front\FrontParts`, `Minn\Ops\InstalledSoftware`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Content\PluginState`, `Minn\Engine`, `Minn\Front\FrontParts`, `Minn\Ops\InstalledSoftware`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`, `Minn\Runtime\Plugins`
 
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)
@@ -96,6 +96,12 @@ Extra post types declared by active extensions, keyed by slug.
 
 - `@return array<string, array<string, mixed>>`
 
+### `declaredTaxonomies(): array`
+
+Extra taxonomies declared by active extensions, keyed by slug.
+
+- `@return array<string, array<string, mixed>>`
+
 ### `replacements(): array`
 
 Which active WordPress plugin files an extension stands in for. @return array<string, string> plugin file => extension slug
@@ -106,7 +112,7 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 
 Registers every active extension, each on seams of its own; one that throws adds nothing.
 
-Internals: `themeDirs()` (private, line 62), `autoload()` (private, line 159)
+Internals: `themeDirs()` (private, line 62), `autoload()` (private, line 178)
 
 
 ## Manifest
@@ -127,6 +133,7 @@ a WordPress plugin, in which case the two share a name and a version.
 "shortcodes": ["example_tag"],
 "blocks": ["vendor/block"],
 "types": [{"slug": "zz_note", "name": "Notes", "rest_base": "zz-note"}],
+"taxonomies": [{"slug": "zz_topic", "name": "Topics", "types": ["zz_note"]}],
 "needs": {"http": ["https://api.example.com/"]}
 }
 
@@ -135,20 +142,22 @@ extension stands in for; the extension is active whenever one of them is
 in active_plugins, or when its own folder is listed there, or when it is
 named in the minn_active_extensions option. "shortcodes" and "blocks"
 are the content tokens preflight treats as provided instead of missing.
-"types" are extra post types the engine should serve on wp/v2.
+"types" are extra post types and "taxonomies" extra taxonomies, each
+registered on init as a plugin registers its own (DeclaredTypes).
 "needs" says what the extension reaches outside the process: "http" is
 the URL prefixes its $minn->http may request (true for any public host).
 
 Used by: `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`
 
 ```php
-__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), ?array $http = NULL)
+__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), array $taxonomies = array ( ), ?array $http = NULL)
 ```
 - `@param list<string> $replaces`
 - `@param array<string, string> $autoload namespace prefix => directory`
 - `@param list<string> $shortcodes`
 - `@param list<string> $blocks`
 - `@param list<array<string, mixed>> $types`
+- `@param list<array<string, mixed>> $taxonomies`
 
 - readonly `string $slug`
 - readonly `string $dir`
@@ -162,13 +171,14 @@ __construct(string $slug, string $dir, string $name, string $version, string $li
 - readonly `array $shortcodes`
 - readonly `array $blocks`
 - readonly `array $types`
+- readonly `array $taxonomies`
 - readonly `?array $http`
 
 ### static `read(string $dir): ?self`
 
 A folder's minn.json, or null when there is none.
 
-Internals: `http()` (private, line 100)
+Internals: `http()` (private, line 105)
 
 
 ## Registrations

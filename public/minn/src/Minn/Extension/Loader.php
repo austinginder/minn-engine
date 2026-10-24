@@ -125,6 +125,25 @@ final class Loader
         return $out;
     }
 
+    /**
+     * Extra taxonomies declared by active extensions, keyed by slug.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function declaredTaxonomies(): array
+    {
+        $out = [];
+        foreach ($this->active() as $manifest) {
+            foreach ($manifest->taxonomies as $row) {
+                $slug = (string) ($row['slug'] ?? '');
+                if ($slug !== '') {
+                    $out[$slug] = $row;
+                }
+            }
+        }
+        return $out;
+    }
+
     /** Which active WordPress plugin files an extension stands in for. @return array<string, string> plugin file => extension slug */
     public function replacements(): array
     {

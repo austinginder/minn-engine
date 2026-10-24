@@ -105,7 +105,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 193 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 190 | The engine's registry of built-in post types, seeded from the observed |
+| [`Types`](#types) | final class | 195 | The engine's registry of built-in post types, seeded from the observed |
 | [`UrlDetails`](#urldetails) | final class | 64 | A page's details as the editor's link previews read them (probe |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
@@ -4849,7 +4849,7 @@ as the reference's post search handler takes them.
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 39), `registered()` (private, line 80), `servedRegistered()` (private, line 183)
+Internals: `core()` (private, line 44), `registered()` (private, line 85), `servedRegistered()` (private, line 188)
 
 
 ## UrlDetails
