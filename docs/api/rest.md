@@ -61,9 +61,9 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 567 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 574 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 264 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 555 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 135 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -2588,7 +2588,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 114), `navigationView()` (private, line 125), `blockView()` (private, line 155), `viewFields()` (private, line 187), `viewTerms()` (private, line 242), `typeFields()` (private, line 258), `classList()` (private, line 287), `format()` (private, line 309), `termLinks()` (private, line 353), `editFields()` (private, line 372), `allow()` (private, line 555), `gmt()` (private, line 574)
+Internals: `meta()` (private, line 114), `navigationView()` (private, line 125), `blockView()` (private, line 155), `viewFields()` (private, line 187), `viewTerms()` (private, line 242), `template()` (private, line 252), `typeFields()` (private, line 265), `classList()` (private, line 294), `format()` (private, line 316), `termLinks()` (private, line 360), `editFields()` (private, line 379), `allow()` (private, line 562), `gmt()` (private, line 581)
 
 
 ## PostsController
@@ -2679,7 +2679,7 @@ edit-context object the reference returns.
 Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\NavigationController`, `Minn\Rest\RevisionsController`
 
 ```php
-__construct(Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Site $site, Minn\Rest\PostObject $object, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+__construct(Minn\Content\Posts $posts, Minn\Content\PostWriter $writer, Minn\Content\Site $site, Minn\Rest\PostObject $object, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, ?Minn\Theme\TemplateIndex $templates = NULL)
 ```
 
 
@@ -2729,7 +2729,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `takes()` (private, line 146), `hasParent()` (private, line 152), `hasOrder()` (private, line 158), `events()` (private, line 164), `newColumns()` (private, line 175), `writeNewPost()` (private, line 209), `checkAssignTerms()` (private, line 238), `rememberOld()` (private, line 346), `floatingDate()` (private, line 360), `scheduledIfFuture()` (private, line 374), `askedDate()` (private, line 396), `updatedDate()` (private, line 414), `fieldColumns()` (private, line 427), `statusColumns()` (private, line 471), `checkStickyChange()` (private, line 507), `checkStickyPasswordConflict()` (private, line 519), `validStatus()` (private, line 539), `clean()` (private, line 548)
+Internals: `takes()` (private, line 148), `hasParent()` (private, line 154), `hasOrder()` (private, line 160), `events()` (private, line 166), `newColumns()` (private, line 177), `writeNewPost()` (private, line 211), `checkAssignTerms()` (private, line 240), `rememberOld()` (private, line 348), `floatingDate()` (private, line 362), `scheduledIfFuture()` (private, line 376), `askedDate()` (private, line 398), `updatedDate()` (private, line 416), `fieldColumns()` (private, line 429), `statusColumns()` (private, line 473), `checkStickyChange()` (private, line 509), `checkBody()` (private, line 521), `checkTemplate()` (private, line 534), `checkStickyPasswordConflict()` (private, line 547), `validStatus()` (private, line 567), `clean()` (private, line 576)
 
 
 ## RegisteredFields

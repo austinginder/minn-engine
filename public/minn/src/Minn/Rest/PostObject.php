@@ -248,6 +248,13 @@ final readonly class PostObject
         ];
     }
 
+    /** The custom template a post names (_wp_page_template), '' for none; the classic editor's 'default' is none. */
+    private function template(PostRecord $p): string
+    {
+        $template = (string) ($this->posts->meta($p->id, '_wp_page_template') ?? '');
+        return $template === 'default' ? '' : $template;
+    }
+
     /**
      * Pages carry parent and menu_order first; posts carry their term ids,
      * and only the post type has sticky and format, among the shared fields.
@@ -263,7 +270,7 @@ final readonly class PostObject
             'comment_status' => $p->commentStatus,
             'ping_status' => $p->pingStatus,
             ...($post ? ['sticky' => in_array($p->id, Serialized::intList($this->db->option('sticky_posts')), true)] : []),
-            'template' => '',
+            'template' => $this->template($p),
             ...($post ? ['format' => self::format($terms['post_format'])] : []),
             'meta' => $this->meta($p, 'view'),
         ];

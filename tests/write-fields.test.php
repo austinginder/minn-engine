@@ -185,6 +185,22 @@ $gid = $ids[] = (int) ( $b['id'] ?? 0 );
 $d = minn_test_diff( wf_norm( $back ), wf_norm( $b ) );
 check( 200 === $st && null === $d, 'WordPress reads the child page identically', (string) $d );
 
+// 6b. The template field: a custom template the type may use, '' to clear it, anything else refused with the names allowed (twentytwentyfive declares page-no-title for pages).
+[ $st, $b ] = wf_fetch( $ENGINE, $QG . '%2F' . $gid, $admin, 'POST', '{"template":"page-no-title"}' );
+check( 200 === $st && 'page-no-title' === ( $b['template'] ?? '' ), 'engine sets a page template', json_encode( $b['template'] ?? $b ) );
+[ $st, $back ] = wf_fetch( $REF, $QG . '%2F' . $gid . '&context=edit', $admin );
+$d = minn_test_diff( wf_norm( $back ), wf_norm( $b ) );
+check( 200 === $st && null === $d, 'WordPress reads the engine-written template identically', (string) $d );
+wf_parity( 'an unknown template is refused identically', $QG . '%2F' . $gid, $admin, 'POST', '{"template":"nope"}' );
+wf_parity( 'default is not a template name', $QG . '%2F' . $gid, $admin, 'POST', '{"template":"default"}' );
+wf_parity( 'a template that is not a string is refused identically', $QG . '%2F' . $gid, $admin, 'POST', '{"template":5}' );
+wf_parity( 'a page template is refused for a post', $QP . '%2F' . $xid, $admin, 'POST', '{"template":"page-no-title"}' );
+[ $st, $b ] = wf_fetch( $ENGINE, $QG . '%2F' . $gid, $admin, 'POST', '{"template":""}' );
+[ , $back ] = wf_fetch( $REF, $QG . '%2F' . $gid . '&context=edit', $admin );
+check( 200 === $st && '' === ( $b['template'] ?? null ) && '' === ( $back['template'] ?? null ), 'an empty template clears the choice on both stacks' );
+shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " && wp post meta update $gid _wp_page_template default >/dev/null 2>&1" );
+wf_parity( 'the classic editor\'s default reads as no template', $QG . '%2F' . $gid . '&context=edit', $admin );
+
 // 7. Clean up through the engine, fixture state confirmed by the suites that follow.
 foreach ( array_merge( $ids, array( $mid ) ) as $cleanup_id ) {
 	$route = $cleanup_id === $mid ? $QM : ( $cleanup_id === $gid ? $QG : $QP );

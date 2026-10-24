@@ -210,6 +210,31 @@ final class TemplateIndex
         return $record->author > 0 ? 'user' : 'site';
     }
 
+    /**
+     * The custom templates a post of a type may name in its template field,
+     * in the order the reference lists them when it refuses one: saved
+     * custom templates the theme does not declare, which every type may
+     * use, then those the theme declares for the type (pages, when one
+     * names no types). Probe template-field in contracts/rest/write-fields.md.
+     *
+     * @return list<string>
+     */
+    public function customFor(string $postType): array
+    {
+        $out = [];
+        foreach ($this->all(self::TEMPLATE) as $record) {
+            if (!self::isCustom($record->slug)) {
+                continue;
+            }
+            $declared = $this->theme->customTemplate($record->slug);
+            $types = $declared !== null ? array_map('strval', (array) ($declared['postTypes'] ?? ['page'])) : ($record->hasThemeFile ? [] : [$postType]);
+            if (in_array($postType, $types, true)) {
+                $out[] = $record->slug;
+            }
+        }
+        return $out;
+    }
+
     /** A slug the reference does not name in its default template types is a custom template. */
     public static function isCustom(string $slug): bool
     {

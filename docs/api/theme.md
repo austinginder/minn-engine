@@ -35,7 +35,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Teaser`](#teaser) | enum | 5 | What a post's full text does with the part before its more tag |
 | [`TemplateBuffer`](#templatebuffer) | final class | 34 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 343 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 368 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
@@ -1165,7 +1165,7 @@ be restored by deleting the row.
 - const `TEMPLATE` = `'wp_template'`
 - const `PART` = `'wp_template_part'`
 
-Used by: `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\TemplateWriter`
+Used by: `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\TemplateWriter`
 
 ```php
 __construct(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Content\Site $site, ?Minn\Runtime\BlockTemplates $registered = NULL)
@@ -1237,6 +1237,16 @@ when nobody is recorded.
 
 theme when a file backs it, plugin when one registered it, user when someone saved it, else site.
 
+### `customFor(string $postType): array`
+
+The custom templates a post of a type may name in its template field,
+in the order the reference lists them when it refuses one: saved
+custom templates the theme does not declare, which every type may
+use, then those the theme declares for the type (pages, when one
+names no types). Probe template-field in contracts/rest/write-fields.md.
+
+- `@return list<string>`
+
 ### static `isCustom(string $slug): bool`
 
 A slug the reference does not name in its default template types is a custom template.
@@ -1254,7 +1264,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 241), `pluginRows()` (private, line 256), `fromRow()` (private, line 265), `fromFile()` (private, line 296), `fromPlugin()` (private, line 318), `fileTitle()` (private, line 343), `savedArea()` (private, line 352)
+Internals: `savedRows()` (private, line 266), `pluginRows()` (private, line 281), `fromRow()` (private, line 290), `fromFile()` (private, line 321), `fromPlugin()` (private, line 343), `fileTitle()` (private, line 368), `savedArea()` (private, line 377)
 
 
 ## TemplatePartTheme

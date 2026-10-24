@@ -84,7 +84,7 @@ final readonly class Api
         $terms = new TermsController($s->db(), $s->terms(), $s->site(), $s->termObject(), $caller);
         $postsController = new PostsController($s->db(), $s->posts(), $s->postObject(), $caller);
         [$menuObject, $itemObject] = [new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller)];
-        $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
+        $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller, $s->templates());
         $controllers = [
             new IndexController($s->site(), $s->permalinks(), $s->url(), new RouteCatalogue($router, $s->types(), $s->url()), $caller),
             new V1Controller($s->db(), $s->notifications(), $s->coreStatus(), new AdminTypes($s->types(), $s->capabilities()), $caller),
@@ -370,7 +370,7 @@ final readonly class Api
         if ($as !== null) {
             RuntimeRoutes::adopt($request, $as);
         }
-        $writes = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $s->caller());
+        $writes = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $s->caller(), $s->templates());
         try {
             return match ($verb) {
                 'create' => $writes->serveCreate($request, $type, $base),

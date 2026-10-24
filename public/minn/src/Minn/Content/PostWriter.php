@@ -349,6 +349,10 @@ final readonly class PostWriter
         if (isset($body['format']) && $type === 'post') {
             $this->setFormat($id, (string) $body['format']);
         }
+        // The custom template a REST write names, '' to clear it (PostsWriteController checked the name).
+        if (array_key_exists('template', $body) && is_string($body['template'])) {
+            $this->setMeta($id, '_wp_page_template', $body['template']);
+        }
         if (isset($body['featured_media'])) {
             $media = (int) $body['featured_media'];
             if ($media > 0) {

@@ -121,9 +121,8 @@ counts unchanged.
 
 ## Known gaps
 
-- `author`, `featured_media`, `comment_status`, `sticky`, `template`,
-  `format`, `meta`, and `date` are not yet writable (only the core content
-  fields and terms are).
+- The extended fields below are writable since milestone 15 (`template`
+  since 2026-10-24); see that section for what is still owed.
 - Scheduling (`future` with a `date`) sets the status but not the cron event.
 - No revision rows are written on update.
 - Slug uniqueness is a simple `-2`/`-3` suffix and does not yet honor the
@@ -133,7 +132,7 @@ counts unchanged.
 
 ## Extended write fields (milestone 15)
 
-Suite: `tests/write-fields.test.php` (18 checks, WordPress read-back on
+Suite: `tests/write-fields.test.php` (26 checks, WordPress read-back on
 every write).
 
 - **Scheduling**: an explicit `date` is site-local; `status: publish` with
@@ -166,3 +165,15 @@ every write).
   `edit_post`, DELETE with `delete_post` (the earlier suites stripped
   `_links` and missed this).
 - `meta.footnotes`, `comment_status`/`ping_status` round-trip.
+- **Template** (probe template-field, 2026-10-24): `_wp_page_template`
+  meta, read back as `template` on posts and pages (the classic editor's
+  `default` reads as `""`). A write must name a custom template the type
+  may use, or be `""`, which stores an empty value. The allowed names are
+  the saved custom templates the theme does not declare (any type), then the
+  theme's `customTemplates` that name the type (pages when they name none).
+  Anything else, `default`, a `.html` name or a number included, is
+  `400 rest_invalid_param` with `params.template` "template is not one of
+  {names joined by ", "}." and a `details.template.code` of
+  `rest_invalid_param`. Still owed: a classic theme's PHP page templates are
+  not listed, so there a name is kept as given; a single post's custom
+  template is not yet used on the front (pages' is).

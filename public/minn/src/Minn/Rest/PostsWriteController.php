@@ -25,6 +25,7 @@ use Minn\RestError;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
+use Minn\Theme\TemplateIndex;
 
 /**
  * wp/v2 posts and pages, write side: create, update, trash, and force
@@ -43,6 +44,7 @@ final readonly class PostsWriteController
         private PostObject $object,
         private RestUrl $url,
         private Caller $caller,
+        private ?TemplateIndex $templates = null,
     ) {
     }
 
@@ -70,7 +72,7 @@ final readonly class PostsWriteController
         $this->checkAssignTerms($request->json(), $type);
 
         $body = $request->json();
-        self::checkMeta($body);
+        $this->checkBody($body, $type);
         $status = self::validStatus((string) ($body['status'] ?? 'draft'));
         $this->checkStickyPasswordConflict($body, null);
         $author = $userId;
@@ -261,7 +263,7 @@ final readonly class PostsWriteController
         $this->checkAssignTerms($request->json(), $type);
 
         $body = $this->scheduledIfFuture($request->json(), $post);
-        self::checkMeta($body);
+        $this->checkBody($body, $type);
         // The status is a parameter, checked before the caller is judged on sticky (rest-sticky).
         if (isset($body['status'])) {
             self::validStatus((string) $body['status']);
@@ -512,6 +514,32 @@ final readonly class PostsWriteController
         $current = $post !== null && $this->writer->isSticky($post->id);
         if ((bool) $body['sticky'] !== $current && !$this->caller->can(TypeCapabilities::editOthers($type))) {
             throw new RestError('rest_cannot_assign_sticky', 'Sorry, you are not allowed to make posts sticky.', 403);
+        }
+    }
+
+    /** The body's meta and template, checked before anything is written. */
+    private function checkBody(array $body, string $type): void
+    {
+        self::checkMeta($body);
+        $this->checkTemplate($body, $type);
+    }
+
+    /**
+     * A template field must name a custom template the type's posts may use
+     * (TemplateIndex::customFor), or be '' to clear the choice; anything else
+     * is refused with the names allowed, as the reference refuses it. Under a
+     * classic theme the engine does not list PHP page templates yet, so a
+     * name is kept as given.
+     */
+    private function checkTemplate(array $body, string $type): void
+    {
+        if (!array_key_exists('template', $body) || $body['template'] === '' || ($this->templates === null && is_string($body['template']))) {
+            return;
+        }
+        $allowed = $this->templates?->customFor($type) ?? [];
+        if (!is_string($body['template']) || !in_array($body['template'], $allowed, true)) {
+            $message = 'template is not one of ' . implode(', ', $allowed) . '.';
+            throw RestError::invalidParam('template', $message, 'rest_invalid_param');
         }
     }
 
