@@ -484,11 +484,14 @@ final class Runtime
      * The pluggable functions, once the plugins have had their chance to
      * define their own: each is defined only where no plugin did. The plugin
      * loader calls this before plugins_loaded; a boot that loads no plugins
-     * calls it straight away.
+     * calls it straight away. They are declared from the webroot's
+     * wp-includes/pluggable.php, where the reference declares them, when the
+     * copy there is this engine's (Pluggables).
      */
     public static function loadPluggables(): void
     {
-        require_once self::current()->engineDir . '/wp-api/pluggable.php';
+        $runtime = self::current();
+        require_once Pluggables::file($runtime->absPath, $runtime->engineDir);
     }
 
     /** Fresh per-request state, for suites. */

@@ -93,6 +93,7 @@ the WordPress runtime plugins load against
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 37 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 71 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
+| [`Pluggables`](#pluggables) | final class | 40 | Where the pluggable functions are declared. The reference declares them in |
 | [`PluginActivation`](#pluginactivation) | final class | 70 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginCall`](#plugincall) | final class | 12 | Calls code a plugin, theme or drop-in registered (a hook callback, a |
 | [`PluginFiles`](#pluginfiles) | final class | 122 | A plugin's files as WordPress's plugin functions know them: where a |
@@ -133,7 +134,7 @@ the WordPress runtime plugins load against
 | [`RequestHeaders`](#requestheaders) | final class | 106 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 390 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`RewriteStructs`](#rewritestructs) | final class | 113 | The rewrite object's state and the structures it builds links and rules |
-| [`Runtime`](#runtime) | final class | 490 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 493 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`SafeUrls`](#safeurls) | final class | 22 | Whether an address is one the site may fetch (wp_http_validate_url): an |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 490 | The script modules registry: registrations with typed dependencies, the |
@@ -5132,6 +5133,39 @@ could not use (an array or an object fills as '').
 Internals: `filled()` (private, line 50), `quoted()` (private, line 78), `text()` (private, line 83)
 
 
+## Pluggables
+
+`final class Minn\Runtime\Pluggables` · `public/minn/src/Minn/Runtime/Pluggables.php`
+
+Where the pluggable functions are declared. The reference declares them in
+wp-includes/pluggable.php, and code that asks where one lives (a mail
+plugin reading ReflectionFunction('wp_mail')->getFileName() to decide
+whether it may take over mail, as SandyWP's mail helper and FluentSMTP do)
+stands aside when it finds them anywhere else. So an install lays the
+engine's own wp-api/pluggable.php at that path, whole, behind a header
+that hands over to the engine's copy when the laid one is not the running
+engine's (an engine updated past it, a checkout edited since): a laid copy
+never declares anything the engine running would not (Austin, 2026-10-24).
+
+- const `LAID` = `'wp-includes/pluggable.php'` — Where the reference declares the pluggable functions, from the webroot.
+- const `HEADER` = `'<?php // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not // the running engine\'s leaves the declaring to the engine\'s own. if (defined(\'MINN_ENGINE_DIR\') && !\\Minn\\Runtime\\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {     require_once MINN_ENGINE_DIR . \'/wp-api/pluggable.php\';     return; } '`
+
+Used by: `Minn\Ops\ShapeFiles`, `Minn\Runtime\Runtime`
+
+
+### static `laid(string $engineDir): string`
+
+The file an install lays at wp-includes/pluggable.php for an engine: the header, then the engine's own file after its opening tag.
+
+### static `current(string $file, string $engineDir): bool`
+
+Whether the file at $file is the copy this engine lays.
+
+### static `file(string $root, string $engineDir): string`
+
+The file that declares the pluggable functions for this webroot: the laid copy when it is the engine's, else the engine's own.
+
+
 ## PluginActivation
 
 `final class Minn\Runtime\PluginActivation` · `public/minn/src/Minn/Runtime/PluginActivation.php`
@@ -7691,7 +7725,9 @@ Defines the facade functions once; safe to call again.
 The pluggable functions, once the plugins have had their chance to
 define their own: each is defined only where no plugin did. The plugin
 loader calls this before plugins_loaded; a boot that loads no plugins
-calls it straight away.
+calls it straight away. They are declared from the webroot's
+wp-includes/pluggable.php, where the reference declares them, when the
+copy there is this engine's (Pluggables).
 
 ### static `reset(): void`
 

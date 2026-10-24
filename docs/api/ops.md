@@ -20,7 +20,7 @@
 | [`Packages`](#packages) | final readonly class | 484 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 87 | Whether a newer Minn is out, asked of the Minn update service at most |
-| [`ShapeFiles`](#shapefiles) | final class | 152 | The files an install lays at the webroot for tooling to find: the shape |
+| [`ShapeFiles`](#shapefiles) | final class | 156 | The files an install lays at the webroot for tooling to find: the shape |
 | [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 456 | Update offers for the site's plugins and themes from the directory, asked |
 | [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
@@ -787,7 +787,8 @@ a shape file under each of WordPress's request entry points
 host that runs only PHP files present on disk (nginx) still reaches the
 engine, and one file for each of the reference's wp-includes and
 wp-admin/includes files, an empty placeholder or, where layout/ ships one,
-the engine's loader. An engine update lays them again from the new engine:
+the engine's loader (wp-includes/pluggable.php is the engine's pluggable
+functions themselves, Runtime\Pluggables). An engine update lays them again from the new engine:
 a file still as the replaced engine wrote it is replaced, a missing one is
 written, and one the site changed is left alone.
 
@@ -821,7 +822,7 @@ deletes before WordPress's own come back from the park.
 
 The empty placeholder for one of the reference's files.
 
-Internals: `boots()` (private, line 93), `wanted()` (private, line 99), `entryFiles()` (private, line 115), `layMissing()` (private, line 133), `referenceFiles()` (private, line 146), `stale()` (private, line 161), `write()` (private, line 167)
+Internals: `boots()` (private, line 95), `wanted()` (private, line 101), `entryFiles()` (private, line 117), `layMissing()` (private, line 135), `referenceFiles()` (private, line 148), `stale()` (private, line 167), `write()` (private, line 173)
 
 
 ## Unzip

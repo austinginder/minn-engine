@@ -18639,6 +18639,22 @@ mode). Still left under `open_basedir`, about 10 ms each: the facade's files, lo
 (`Runtime::loadFacade`, the lazy facade the 0.1.0 audit named), and the pattern headers read once (the reference keeps
 them in its `wp_theme_files_patterns-*` transient, which the facade already fills). Kinsta's figure needs the host.
 
+## The pluggable functions where the reference declares them (2026-10-24)
+
+The field test's SandyWP site sent no mail on Minn: its mail helper, like FluentSMTP, decides whether it may take
+over mail by asking where `wp_mail` lives (`ReflectionFunction('wp_mail')->getFileName()`) and stands aside unless
+it is `wp-includes/pluggable.php`; the engine declared it in `minn/wp-api/pluggable.php`, and PHP's own `mail()` was
+`/bin/false` there. Austin's call (2026-10-24): declare them from that file. A required file's functions belong to the
+file they are written in, so a loader there could not do it: an install now lays the engine's `wp-api/pluggable.php`
+at `wp-includes/pluggable.php` whole, behind a header of its own, in place of the loader it laid
+(`Runtime\Pluggables::laid`, through `Ops\ShapeFiles`, so an update lays it again where it is still as the replaced
+engine left it). `Runtime::loadPluggables` declares them from the laid copy when it is the running engine's, byte for
+byte, and from the engine's own file when not; the header does the same for a plugin that requires the file early
+(Really Simple Security), so a copy an engine moved past, or a checkout edited since, never declares anything the
+running engine would not. On the test site `wp_mail` and `wp_hash_password` now report
+`wp-includes/pluggable.php`, over HTTP and under WP-CLI (unit `pluggables`; runtime, mail, cli, install and layout
+suites green).
+
 ## Recovery asks the site itself (2026-10-24)
 
 Two of Austin's calls on the register (2026-10-24) change how a boot failure pauses an extension:
@@ -18843,7 +18859,7 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | `wp-links-opml.php`, `wp-mail.php`, `wp-signup.php`, `wp-activate.php`, `wp-trackback.php` answered the engine's 404 | done | `Front\EntryScriptsController`, probes suite, five hook-parity scenarios |
 | 18310 | The 0.1.0 field test (10-23) | an array `link_cat` on `wp-links-opml.php` fatals on the reference (TypeError, 500) | accepted | the engine lists every category; a fatal is no contract |
 | 18310 | The 0.1.0 field test (10-23) | recovery never pauses a plugin whose hook fatals inside engine code | done | Austin 2026-10-24: blame the first plugin frame. `Recovery::blameFailure` takes the throwing file, then the trace's files innermost first (recovery suite, a hook that fails inside `Minn\Json::decode`) |
-| 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | austin | declare the pluggable functions from the webroot's `wp-includes/pluggable.php`, or accept |
+| 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | done | Austin 2026-10-24: declare them from that file. An install lays the engine's wp-api/pluggable.php there whole, behind a header that hands over to the engine's own copy when the laid one is not the running engine's (`Runtime\Pluggables`, "The pluggable functions where the reference declares them") |
 | 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host. Locally (2026-10-23, "Theme files read once a request"): one request per process, `open_basedir` took Minn from 145% to 209% of WordPress; theme files read once brings it to 175%. Left: the facade's files loaded whole, the pattern headers, and the host's own measure |
 | 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | accepted | Austin 2026-10-24: left out. wp-mail.php answers as a site with no mail server configured, on every site |
 | 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | done | transients live in the object cache while installing (and with a persistent cache), cookie constants after the must-use plugins; the core block stylesheet list stays the reference's own; "Transients in the object cache, the theme's folder walks, and the site's locale (2026-10-23)" |

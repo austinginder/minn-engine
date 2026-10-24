@@ -97805,12 +97805,13 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/ShapeFiles.php",
-            "lines": 152,
-            "doc": "The files an install lays at the webroot for tooling to find: the shape\nfiles from layout/ (index.php, wp-settings.php, version.php and the rest),\na shape file under each of WordPress's request entry points\n(data/entry-files.json: wp-cron.php, wp-admin/admin-ajax.php, ...), so a\nhost that runs only PHP files present on disk (nginx) still reaches the\nengine, and one file for each of the reference's wp-includes and\nwp-admin/includes files, an empty placeholder or, where layout/ ships one,\nthe engine's loader. An engine update lays them again from the new engine:\na file still as the replaced engine wrote it is replaced, a missing one is\nwritten, and one the site changed is left alone.",
+            "lines": 156,
+            "doc": "The files an install lays at the webroot for tooling to find: the shape\nfiles from layout/ (index.php, wp-settings.php, version.php and the rest),\na shape file under each of WordPress's request entry points\n(data/entry-files.json: wp-cron.php, wp-admin/admin-ajax.php, ...), so a\nhost that runs only PHP files present on disk (nginx) still reaches the\nengine, and one file for each of the reference's wp-includes and\nwp-admin/includes files, an empty placeholder or, where layout/ ships one,\nthe engine's loader (wp-includes/pluggable.php is the engine's pluggable\nfunctions themselves, Runtime\\Pluggables). An engine update lays them again from the new engine:\na file still as the replaced engine wrote it is replaced, a missing one is\nwritten, and one the site changed is left alone.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Json"
+                "Minn\\Json",
+                "Minn\\Runtime\\Pluggables"
             ],
             "usedBy": [
                 "Minn\\Cli\\Installer",
@@ -97854,8 +97855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 44
+                    "line": 35,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -97888,8 +97889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 66
+                    "line": 53,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -97917,8 +97918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 84
+                    "line": 77,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -97937,8 +97938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -97957,8 +97958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -97979,8 +97980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 108
+                    "line": 101,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -98001,8 +98002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 130
+                    "line": 117,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -98030,8 +98031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 143
+                    "line": 135,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -98052,8 +98053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 158
+                    "line": 148,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -98088,8 +98089,8 @@
                             "doc": "what an engine wrote there before"
                         }
                     ],
-                    "line": 161,
-                    "end": 165
+                    "line": 167,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -98115,8 +98116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 171
+                    "line": 173,
+                    "end": 177
                 }
             ]
         },
@@ -156204,6 +156205,125 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\Pluggables",
+            "short": "Pluggables",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Pluggables.php",
+            "lines": 40,
+            "doc": "Where the pluggable functions are declared. The reference declares them in\nwp-includes/pluggable.php, and code that asks where one lives (a mail\nplugin reading ReflectionFunction('wp_mail')->getFileName() to decide\nwhether it may take over mail, as SandyWP's mail helper and FluentSMTP do)\nstands aside when it finds them anywhere else. So an install lays the\nengine's own wp-api/pluggable.php at that path, whole, behind a header\nthat hands over to the engine's copy when the laid one is not the running\nengine's (an engine updated past it, a checkout edited since): a laid copy\nnever declares anything the engine running would not (Austin, 2026-10-24).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Ops\\ShapeFiles",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LAID",
+                    "value": "'wp-includes/pluggable.php'",
+                    "doc": "Where the reference declares the pluggable functions, from the webroot.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "HEADER",
+                    "value": "'<?php // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not // the running engine\\'s leaves the declaring to the engine\\'s own. if (defined(\\'MINN_ENGINE_DIR\\') && !\\\\Minn\\\\Runtime\\\\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {     require_once MINN_ENGINE_DIR . \\'/wp-api/pluggable.php\\';     return; } '",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "current",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "laid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "laid(string $engineDir): string",
+                    "doc": "The file an install lays at wp-includes/pluggable.php for an engine: the header, then the engine's own file after its opening tag.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "current",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "current(string $file, string $engineDir): bool",
+                    "doc": "Whether the file at $file is the copy this engine lays.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "file",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "file(string $root, string $engineDir): string",
+                    "doc": "The file that declares the pluggable functions for this webroot: the laid copy when it is the engine's, else the engine's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 56
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PluginActivation",
             "short": "PluginActivation",
             "namespace": "Minn\\Runtime",
@@ -168478,7 +168598,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 490,
+            "lines": 493,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -168507,6 +168627,7 @@
                 "Minn\\Runtime\\ObjectCache",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\OutputFloor",
+                "Minn\\Runtime\\Pluggables",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\ScriptModules",
@@ -169658,11 +169779,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "loadPluggables(): void",
-                    "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
+                    "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away. They are declared from the webroot's\nwp-includes/pluggable.php, where the reference declares them, when the\ncopy there is this engine's (Pluggables).",
                     "shapes": [],
                     "params": [],
-                    "line": 489,
-                    "end": 492
+                    "line": 491,
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -169673,8 +169794,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 495,
-                    "end": 512
+                    "line": 498,
+                    "end": 515
                 },
                 {
                     "routes": [],

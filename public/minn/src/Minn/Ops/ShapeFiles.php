@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Ops;
 
 use Minn\Json;
+use Minn\Runtime\Pluggables;
 
 /**
  * The files an install lays at the webroot for tooling to find: the shape
@@ -14,7 +15,8 @@ use Minn\Json;
  * host that runs only PHP files present on disk (nginx) still reaches the
  * engine, and one file for each of the reference's wp-includes and
  * wp-admin/includes files, an empty placeholder or, where layout/ ships one,
- * the engine's loader. An engine update lays them again from the new engine:
+ * the engine's loader (wp-includes/pluggable.php is the engine's pluggable
+ * functions themselves, Runtime\Pluggables). An engine update lays them again from the new engine:
  * a file still as the replaced engine wrote it is replaced, a missing one is
  * written, and one the site changed is left alone.
  */
@@ -152,7 +154,11 @@ final class ShapeFiles
                 continue;
             }
             $loader = "{$engineDir}/layout/{$file}";
-            $files[$file] = is_file($loader) ? (string) file_get_contents($loader) : self::placeholder($file);
+            $files[$file] = match (true) {
+                $file === Pluggables::LAID => Pluggables::laid($engineDir),
+                is_file($loader) => (string) file_get_contents($loader),
+                default => self::placeholder($file),
+            };
         }
         return $files;
     }
