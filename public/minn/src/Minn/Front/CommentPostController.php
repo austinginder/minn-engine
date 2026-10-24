@@ -61,13 +61,8 @@ final readonly class CommentPostController
             $location = QueryArgs::add(['unapproved' => $comment->comment_ID, 'moderation-hash' => Handoff::hash($comment->comment_date_gmt)], $location);
         }
         Handoff::safeRedirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));
-        $sent = (array) Runtime::current()->get('redirect', []);
-        if ((string) ($sent['location'] ?? '') === '') {
-            // A plugin cancelled the redirect: the page is blank, and the address asked for is never sent.
-            return new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
-        }
-        $response = Response::redirect((string) $sent['location'], (int) ($sent['status'] ?? 302));
-        return is_string($sent['by'] ?? null) ? $response->withHeader('X-Redirect-By', (string) $sent['by']) : $response;
+        // A plugin that cancelled the redirect leaves a blank page, and the address asked for is never sent.
+        return RecordedRedirect::response();
     }
 
     /** The reference's plain refusal page: the message and a way back. */

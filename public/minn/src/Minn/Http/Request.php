@@ -263,29 +263,41 @@ final readonly class Request
     /** Basic credentials from an Authorization header into PHP_AUTH_USER and PHP_AUTH_PW, when PHP did not set them (wp_populate_basic_auth_from_authorization_header). */
     public static function basicAuthFromHeader(): void
     {
-        if (isset($_SERVER['PHP_AUTH_USER']) || isset($_SERVER['PHP_AUTH_PW'])) {
-            return;
-        }
-        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
-        if (!is_string($header) || !str_starts_with(strtolower($header), 'basic ')) {
-            return;
-        }
-        $decoded = base64_decode(substr($header, 6), true);
-        if (is_string($decoded) && str_contains($decoded, ':')) {
-            [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']] = explode(':', $decoded, 2);
+        $credentials = self::basicCredentials($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? null);
+        $unset = !isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW']);
+        if ($unset && $credentials !== null) {
+            [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']] = $credentials;
         }
     }
 
-    /** A request URI from the script name, the path info (or its original) and the query string. */
+    /**
+     * The user and password a Basic Authorization header carries (split at
+     * the first colon), or null for any other header or one that does not
+     * decode.
+     *
+     * @return array{0: string, 1: string}|null
+     */
+    private static function basicCredentials(mixed $header): ?array
+    {
+        if (!is_string($header) || strncasecmp($header, 'basic ', 6) !== 0) {
+            return null;
+        }
+        $decoded = base64_decode(substr($header, 6), true);
+        return is_string($decoded) && str_contains($decoded, ':') ? explode(':', $decoded, 2) : null;
+    }
+
+    /** A request URI from the script name, the path info (or its original, which fills it in) and the query string. */
     private static function uriFromParts(): string
     {
-        if (!isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO'])) {
-            $_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+        if (isset($_SERVER['ORIG_PATH_INFO'])) {
+            $_SERVER['PATH_INFO'] ??= $_SERVER['ORIG_PATH_INFO'];
         }
-        $uri = '';
-        if (isset($_SERVER['PATH_INFO'])) {
-            $uri = $_SERVER['PATH_INFO'] === ($_SERVER['SCRIPT_NAME'] ?? null) ? (string) $_SERVER['PATH_INFO'] : ($_SERVER['SCRIPT_NAME'] ?? '') . $_SERVER['PATH_INFO'];
+        $query = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+        $path = $_SERVER['PATH_INFO'] ?? null;
+        if ($path === null) {
+            return $query;
         }
-        return $uri . (empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING']);
+        $script = $_SERVER['SCRIPT_NAME'] ?? '';
+        return ($path === $script ? '' : $script) . $path . $query;
     }
 }

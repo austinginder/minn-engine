@@ -49617,11 +49617,12 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/CommentPostController.php",
-            "lines": 56,
+            "lines": 51,
             "doc": "wp-comments-post.php: the comment form's target. The reference's\nanswers, captured: 302 to the comment's anchor (with unapproved and\nmoderation-hash when held), plain pages with 200 for a missing field,\n403 when comments are closed, 409 for a duplicate, 429 for posting too\nquickly, and 405 for anything but POST.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Front\\RecordedRedirect",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -49684,7 +49685,7 @@
                         }
                     ],
                     "line": 49,
-                    "end": 71
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -49710,8 +49711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 82
+                    "line": 69,
+                    "end": 77
                 }
             ]
         },
@@ -49893,12 +49894,13 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/EntryScriptsController.php",
-            "lines": 72,
+            "lines": 67,
             "doc": "The reference's other stand-alone scripts at the webroot, answered as it\nanswers them (contracts/front/probes.md, \"Entry scripts\"): the links\nOPML and post by email load the site and nothing more; signup,\nactivation and trackback run the main query on their own address first,\nwhich finds nothing, as the reference's do.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Front\\LinksOpml",
+                "Minn\\Front\\RecordedRedirect",
                 "Minn\\Front\\Resolver",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
@@ -50029,7 +50031,7 @@
                         }
                     ],
                     "line": 59,
-                    "end": 69
+                    "end": 64
                 },
                 {
                     "routes": [
@@ -50050,8 +50052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 80
+                    "line": 68,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -50077,8 +50079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 98
+                    "line": 78,
+                    "end": 93
                 }
             ]
         },
@@ -53634,6 +53636,43 @@
                     ],
                     "line": 177,
                     "end": 181
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\RecordedRedirect",
+            "short": "RecordedRedirect",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/RecordedRedirect.php",
+            "lines": 13,
+            "doc": "The redirect the runtime recorded for this request (wp_redirect and its\nsafe variant record it, the reference exits after sending it), as the\nresponse the engine sends: the location under its status with the\nX-Redirect-By a caller named, or a blank page when a plugin's filter\nemptied the location.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\EntryScriptsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "response",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "response(): Minn\\Http\\Response",
+                    "doc": "The recorded redirect as a response, or a blank page when there is no location left to send.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 20,
+                    "end": 28
                 }
             ]
         },
@@ -71545,7 +71584,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Request.php",
-            "lines": 279,
+            "lines": 291,
             "doc": "An immutable picture of the incoming request. Built once from the PHP\nglobals at the edge; handlers only ever see this object.",
             "implements": [],
             "extends": null,
@@ -72241,7 +72280,29 @@
                     "shapes": [],
                     "params": [],
                     "line": 264,
-                    "end": 277
+                    "end": 271
+                },
+                {
+                    "routes": [],
+                    "name": "basicCredentials",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "basicCredentials(mixed $header): ?array",
+                    "doc": "The user and password a Basic Authorization header carries (split at\nthe first colon), or null for any other header or one that does not\ndecode.",
+                    "shapes": [
+                        "@return array{0: string, 1: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "header",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 280,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -72249,11 +72310,11 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "uriFromParts(): string",
-                    "doc": "A request URI from the script name, the path info (or its original) and the query string.",
+                    "doc": "A request URI from the script name, the path info (or its original, which fills it in) and the query string.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 290
+                    "line": 290,
+                    "end": 302
                 }
             ]
         },
@@ -72406,6 +72467,7 @@
                 "Minn\\Front\\Maintenance",
                 "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\RecordedRedirect",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Envelope",
                 "Minn\\Http\\Failure",
@@ -168402,6 +168464,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\QueryMoves",
+                "Minn\\Front\\RecordedRedirect",
                 "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\RuleRoutes",

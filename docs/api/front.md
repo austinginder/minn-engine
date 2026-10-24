@@ -12,10 +12,10 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
-| [`CommentPostController`](#commentpostcontroller) | final readonly class | 56 | wp-comments-post.php: the comment form's target. The reference's |
+| [`CommentPostController`](#commentpostcontroller) | final readonly class | 51 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
-| [`EntryScriptsController`](#entryscriptscontroller) | final readonly class | 72 | The reference's other stand-alone scripts at the webroot, answered as it |
+| [`EntryScriptsController`](#entryscriptscontroller) | final readonly class | 67 | The reference's other stand-alone scripts at the webroot, answered as it |
 | [`FeedController`](#feedcontroller) | final readonly class | 63 | The feeds, wherever a request asks for one: the feed var of the rule its |
 | [`FeedTags`](#feedtags) | final class | 197 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
@@ -33,6 +33,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PrintedResponse`](#printedresponse) | final class | 42 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 72 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`QueryMoves`](#querymoves) | final readonly class | 154 | Where the root's archive query forms move under pretty permalinks, as |
+| [`RecordedRedirect`](#recordedredirect) | final class | 13 | The redirect the runtime recorded for this request (wp_redirect and its |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 90 | The interim public theme: one clean template until the block-theme |
 | [`RequestParse`](#requestparse) | final class | 68 | The query vars the reference's request parse sets for an address |
@@ -369,7 +370,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `submit()` (private, line 49), `refusal()` (private, line 74)
+Internals: `submit()` (private, line 49), `refusal()` (private, line 69)
 
 
 ## CustomLogo
@@ -477,7 +478,7 @@ Route: `* /wp-trackback.php (public)`
 
 wp-trackback.php asked directly: the address names no post, so the answer is the reference's "need an ID".
 
-Internals: `stopped()` (private, line 83)
+Internals: `stopped()` (private, line 78)
 
 
 ## FeedController
@@ -1111,6 +1112,23 @@ number read the way the reference reads it (02, -2 and 2x are 2); 0
 when it asks for none (absent, 0, not a number, not one value).
 
 Internals: `date()` (private, line 83), `author()` (private, line 97), `feed()` (private, line 114), `term()` (private, line 132), `oneTerm()` (private, line 145), `lastSlug()` (private, line 177)
+
+
+## RecordedRedirect
+
+`final class Minn\Front\RecordedRedirect` · `public/minn/src/Minn/Front/RecordedRedirect.php`
+
+The redirect the runtime recorded for this request (wp_redirect and its
+safe variant record it, the reference exits after sending it), as the
+response the engine sends: the location under its status with the
+X-Redirect-By a caller named, or a blank page when a plugin's filter
+emptied the location.
+
+Used by: `Minn\Front\CommentPostController`, `Minn\Front\EntryScriptsController`
+
+### static `response(): Minn\Http\Response`
+
+The recorded redirect as a response, or a blank page when there is no location left to send.
 
 
 ## Redirects

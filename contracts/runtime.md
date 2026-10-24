@@ -18571,6 +18571,23 @@ Measure 31's three open doubts, each settled by measuring both stacks; all three
   answered from every file whatever the locale. `I18n\TextDomains` now keeps each file's locales
   and their turns, and the locale lookups are made in (probe translation-locales).
 
+## Two tracked measures back where 0.1.0 left them (2026-10-23)
+
+A tracked measure may stay short of its target but never moves the wrong way between releases. Since
+v0.1.0 two had: duplicated code (measure 23, 2,189 lines to 2,204) and engine passages shared with the
+reference at 30 tokens (measure 18's sensitive figure, 306 lines to 314).
+
+- **Duplicated**: the wp-signup redirect (`EntryScriptsController::signup`) repeated the comment form's
+  last step, the redirect the runtime recorded turned into the response (blank when a plugin emptied
+  the location). Both now ask `Front\RecordedRedirect::response()`.
+- **Shared with the reference**: the server variables made whole at boot (`Http\Request::fixServerVars`)
+  read like the reference's in two places. Basic credentials are now read by `basicCredentials()` and
+  set only when neither variable is set; the URI from its parts fills the path info in from its
+  original and returns early without one. 300,000 random server arrays give the same variables and
+  `PHP_SELF` global as before.
+
+Both are back at their 0.1.0 figures (2,189 and 306).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

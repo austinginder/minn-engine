@@ -60,12 +60,7 @@ final readonly class EntryScriptsController
     {
         $this->bridge->run($this->resolver->resolve($request));
         Handoff::redirect(SiteUrls::registration());
-        $sent = (array) Runtime::current()->get('redirect', []);
-        if ((string) ($sent['location'] ?? '') === '') {
-            return new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
-        }
-        $response = Response::redirect((string) $sent['location'], (int) ($sent['status'] ?? 302));
-        return is_string($sent['by'] ?? null) ? $response->withHeader('X-Redirect-By', (string) $sent['by']) : $response;
+        return RecordedRedirect::response();
     }
 
     /** wp-trackback.php asked directly: the address names no post, so the answer is the reference's "need an ID". */
