@@ -17664,12 +17664,6 @@
                 "why": "pairs get_plugins with the update_plugins transient's offers",
                 "body": "4ae3a6213650"
             },
-            "get_plugins": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\PluginFiles",
-                "why": "finds the plugins' main files one level deep and sorts them by name; the engine's plugin files",
-                "body": "36540524d8ed"
-            },
             "plugins_url": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PluginFiles",

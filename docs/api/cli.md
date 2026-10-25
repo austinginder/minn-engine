@@ -11,7 +11,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 391 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 403 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`LoginLink`](#loginlink) | final class | 73 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
@@ -324,6 +324,7 @@ prints nothing, and it names the webroot it belongs to.
 - const `LEGACY_PUBLISHED` = `array (   0 => 'minn-admin-asset',   1 => 'minn-engine',   2 => 'wp-includes/js/jquery', )` — Leftover webroot copies from an earlier installer that published
 assets outside minn/. Eject still deletes them.
 - const `SKIP` = `array (   0 => '.git',   1 => 'node_modules',   2 => 'tests',   3 => 'docs',   4 => '.DS_Store',   5 => '.install.json', )` — Development-only trees inside the engine or the admin bundle that never ship.
+- const `OPTIONS` = `array (   'preflight' =>    array (   ),   'install' =>    array (     0 => 'park',     1 => 'force',   ),   'eject' =>    array (     0 => 'park',   ),   'status' =>    array (   ),   'update' =>    array (     0 => 'check',   ),   'login' =>    array (     0 => 'to',     1 => 'format',   ), )` — The options each command reads; any other option refuses the command before it does anything.
 
 Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\Preflight`
 
@@ -393,7 +394,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 120), `inside()` (private, line 353), `move()` (private, line 362), `copyTree()` (private, line 385), `version()` (private, line 404), `say()` (private, line 409)
+Internals: `help()` (private, line 132), `inside()` (private, line 365), `move()` (private, line 374), `copyTree()` (private, line 397), `version()` (private, line 416), `say()` (private, line 421)
 
 
 ## LoginLink

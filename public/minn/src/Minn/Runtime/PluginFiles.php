@@ -20,6 +20,9 @@ final class PluginFiles
     /** The headers a plugin's main file may carry, by field. */
     private const HEADERS = ['Name' => 'Plugin Name', 'PluginURI' => 'Plugin URI', 'Version' => 'Version', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'Network' => 'Network', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI', 'RequiresPlugins' => 'Requires Plugins'];
 
+    /** @var array<string, list<string>> each plugins folder as named and as it really is, once a process */
+    private static array $roots = [];
+
     /**
      * Where a plugin's folder really is, noted under the folder as given
      * (wp_register_plugin_realpath); a file not on disk notes an empty
@@ -51,14 +54,67 @@ final class PluginFiles
             }
         }
         foreach ([WP_PLUGIN_DIR, WPMU_PLUGIN_DIR] as $dir) {
-            $dir = Paths::normalize($dir);
-            foreach (array_unique([$dir, Paths::normalize((string) (realpath($dir) ?: $dir))]) as $root) {
+            foreach (self::roots($dir) as $root) {
                 if (str_starts_with($file, $root . '/')) {
                     return trim(substr($file, strlen($root)), '/');
                 }
             }
         }
         return ltrim($file, '/');
+    }
+
+    /**
+     * A plugins folder as named and as it really is, resolved once a process:
+     * plugin_basename runs for every plugin URL and hook a plugin registers,
+     * and under open_basedir each realpath checks the whole path again.
+     *
+     * @return list<string>
+     */
+    private static function roots(string $dir): array
+    {
+        if (!isset(self::$roots[$dir])) {
+            $named = Paths::normalize($dir);
+            self::$roots[$dir] = array_values(array_unique([$named, Paths::normalize((string) (realpath($dir) ?: $dir))]));
+        }
+        return self::$roots[$dir];
+    }
+
+    /**
+     * The plugins in the plugins folder, or in a folder of it named from the
+     * plugins folder on ("/name"), each by its file relative to the folder
+     * read and in name order (get_plugins). The reference keeps each folder's
+     * list for the rest of the request in the 'plugins' cache group (probe
+     * plugin-list-cache): a later call answers the kept list, even one a
+     * plugin set there, until wp_clean_plugins_cache, and a folder that is
+     * not there answers nothing and keeps nothing.
+     *
+     * @return array<string, mixed>
+     */
+    public static function all(mixed $folder = ''): array
+    {
+        $folder = (string) $folder;
+        $kept = Handoff::cacheGet('plugins', 'plugins');
+        $kept = is_array($kept) ? $kept : [];
+        if (isset($kept[$folder])) {
+            return (array) $kept[$folder];
+        }
+        $root = rtrim(WP_PLUGIN_DIR . $folder, '/');
+        if (!is_dir($root)) {
+            return [];
+        }
+        $out = [];
+        foreach (array_merge(glob($root . '/*.php') ?: [], glob($root . '/*/*.php') ?: []) as $file) {
+            $data = self::data($file, false, false);
+            if ($data['Name'] !== '') {
+                $out[substr($file, strlen($root) + 1)] = $data;
+            }
+        }
+        // By name, as the reference lists them (probe plugin-data); a tie keeps file order.
+        ksort($out);
+        uasort($out, static fn (array $a, array $b): int => strnatcasecmp($a['Name'], $b['Name']));
+        $kept[$folder] = $out;
+        Handoff::cacheSet('plugins', $kept, 'plugins');
+        return $out;
     }
 
     /**

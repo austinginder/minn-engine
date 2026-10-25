@@ -26309,7 +26309,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 391,
+            "lines": 403,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -26340,8 +26340,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 56,
-                "end": 58
+                "line": 58,
+                "end": 60
             },
             "cases": [],
             "constants": [
@@ -26392,6 +26392,12 @@
                     "value": "array (   0 => '.git',   1 => 'node_modules',   2 => 'tests',   3 => 'docs',   4 => '.DS_Store',   5 => '.install.json', )",
                     "doc": "Development-only trees inside the engine or the admin bundle that never ship.",
                     "visibility": "private"
+                },
+                {
+                    "name": "OPTIONS",
+                    "value": "array (   'preflight' =>    array (   ),   'install' =>    array (     0 => 'park',     1 => 'force',   ),   'eject' =>    array (     0 => 'park',   ),   'status' =>    array (   ),   'update' =>    array (     0 => 'check',   ),   'login' =>    array (     0 => 'to',     1 => 'format',   ), )",
+                    "doc": "The options each command reads; any other option refuses the command before it does anything.",
+                    "visibility": "private"
                 }
             ],
             "properties": [
@@ -26441,8 +26447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 71
+                    "line": 68,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -26471,8 +26477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 107
+                    "line": 83,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -26491,8 +26497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 122,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -26528,8 +26534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 143
+                    "line": 147,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -26548,8 +26554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 170
+                    "line": 158,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -26568,8 +26574,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 184
+                    "line": 185,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -26597,8 +26603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 246
+                    "line": 204,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -26626,8 +26632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 313
+                    "line": 269,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -26646,8 +26652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 325
+                    "line": 328,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -26668,8 +26674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 345
+                    "line": 347,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -26680,8 +26686,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 126
+                    "line": 132,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -26700,8 +26706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 359
+                    "line": 365,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -26727,8 +26733,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 383
+                    "line": 374,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -26754,8 +26760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 402
+                    "line": 397,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -26766,8 +26772,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 404,
-                    "end": 407
+                    "line": 416,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -26786,8 +26792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 412
+                    "line": 421,
+                    "end": 424
                 }
             ]
         },
@@ -147669,6 +147675,7 @@
                 "Minn\\Runtime\\NavigationFallback",
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Pages",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\PostCaches",
@@ -158537,7 +158544,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PluginFiles.php",
-            "lines": 122,
+            "lines": 178,
             "doc": "A plugin's files as WordPress's plugin functions know them: where a\nplugin folder really is (a symlinked one noted), a plugin file's name\nunder the plugins folder, its headers as read and as the plugin screens\nshow them, and whether it can be uninstalled.",
             "implements": [],
             "extends": null,
@@ -158545,6 +158552,7 @@
                 "Minn\\Content\\Texturize",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\FileHeaders",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Translations",
@@ -158566,7 +158574,17 @@
                     "visibility": "private"
                 }
             ],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "roots",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -158585,8 +158603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 40
+                    "line": 31,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -158605,8 +158623,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 62
+                    "line": 46,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(mixed $folder = ''): array",
+                    "doc": "The plugins in the plugins folder, or in a folder of it named from the\nplugins folder on (\"/name\"), each by its file relative to the folder\nread and in name order (get_plugins). The reference keeps each folder's\nlist for the rest of the request in the 'plugins' cache group (probe\nplugin-list-cache): a later call answers the kept list, even one a\nplugin set there, until wp_clean_plugins_cache, and a folder that is\nnot there answers nothing and keeps nothing.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "folder",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -158641,8 +158681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 82
+                    "line": 127,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -158685,8 +158725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 131
+                    "line": 152,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -158705,8 +158745,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 138
+                    "line": 190,
+                    "end": 194
+                },
+                {
+                    "routes": [],
+                    "name": "roots",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "roots(string $dir): array",
+                    "doc": "A plugins folder as named and as it really is, resolved once a process:\nplugin_basename runs for every plugin URL and hook a plugin registers,\nand under open_basedir each realpath checks the whole path again.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 80
                 }
             ]
         },

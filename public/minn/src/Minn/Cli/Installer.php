@@ -49,6 +49,8 @@ final class Installer
     private const LEGACY_PUBLISHED = ['minn-admin-asset', 'minn-engine', 'wp-includes/js/jquery'];
     /** Development-only trees inside the engine or the admin bundle that never ship. */
     private const SKIP = ['.git', 'node_modules', 'tests', 'docs', '.DS_Store', self::LEGACY_RECORD];
+    /** The options each command reads; any other option refuses the command before it does anything. */
+    private const OPTIONS = ['preflight' => [], 'install' => ['park', 'force'], 'eject' => ['park'], 'status' => [], 'update' => ['check'], 'login' => ['to', 'format']];
 
     /** @var list<string> */
     private array $lines = [];
@@ -89,6 +91,16 @@ final class Installer
             }
         }
         $self = new self($engineDir);
+        // Asking for help, or an option the command does not read, runs nothing: `minn install --help` once installed.
+        if (in_array('--help', $argv, true) || in_array('-h', $argv, true)) {
+            return ['code' => $self->help(), 'lines' => $self->lines];
+        }
+        $unknown = isset(self::OPTIONS[$command]) ? array_diff(array_keys($options), self::OPTIONS[$command]) : [];
+        if ($unknown !== []) {
+            $self->say("minn {$command} does not take --" . implode(', --', $unknown) . '; nothing was changed.');
+            $self->help();
+            return ['code' => 1, 'lines' => $self->lines];
+        }
         try {
             $code = match ($command) {
                 'preflight' => $self->preflight($root) === 'RED' ? 1 : 0,

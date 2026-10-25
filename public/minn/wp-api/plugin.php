@@ -136,21 +136,9 @@ function get_mu_plugins()
     return $out;
 }
 
-/** The plugins in the plugins folder, or in one folder of it, keyed relative to the folder read (probe upgrader). */
 function get_plugins($plugin_folder = '')
 {
-    $out = [];
-    $root = WP_PLUGIN_DIR . ($plugin_folder !== '' ? '/' . trim((string) $plugin_folder, '/') : '');
-    foreach (array_merge(glob($root . '/*.php') ?: [], glob($root . '/*/*.php') ?: []) as $file) {
-        $data = get_plugin_data($file, false, false);
-        if ($data['Name'] !== '') {
-            $out[substr($file, strlen($root) + 1)] = $data;
-        }
-    }
-    // By name, as the reference lists them (probe plugin-data); a tie keeps file order.
-    ksort($out);
-    uasort($out, static fn (array $a, array $b): int => strnatcasecmp($a['Name'], $b['Name']));
-    return $out;
+    return Minn\Runtime\PluginFiles::all($plugin_folder);
 }
 
 function wp_get_active_and_valid_plugins()

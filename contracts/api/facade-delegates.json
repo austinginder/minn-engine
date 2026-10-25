@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1664
+        "delegates": 1665
     },
     "functions": {
         "__": {
@@ -2151,6 +2151,10 @@
         "get_plugin_data": {
             "file": "plugin.php",
             "statement": "return Minn\\Runtime\\PluginFiles::data($plugin_file, $markup, $translate);"
+        },
+        "get_plugins": {
+            "file": "plugin.php",
+            "statement": "return Minn\\Runtime\\PluginFiles::all($plugin_folder);"
         },
         "get_post": {
             "file": "post.php",

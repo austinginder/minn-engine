@@ -485,7 +485,8 @@
         "probe:transient-stores",
         "probe:theme-scans",
         "probe:locale-reads",
-        "probe:translation-locales"
+        "probe:translation-locales",
+        "probe:plugin-list-cache"
     ],
     "hooks": {
         "_get_page_link": {
@@ -779,6 +780,7 @@
             "probe:module-tags": "not fired",
             "probe:mpeg-in-wave": "not fired",
             "probe:object-cache": "not fired",
+            "probe:plugin-list-cache": "not fired",
             "probe:plugin-symbols3": "not fired",
             "probe:plugins-api": "not fired",
             "probe:pomo-streams": "not fired",
@@ -6623,6 +6625,7 @@
             "probe:mpeg-in-wave": "not fired",
             "probe:multisite-classes": "not fired",
             "probe:object-cache": "not fired",
+            "probe:plugin-list-cache": "not fired",
             "probe:plugin-symbols3": "not fired",
             "probe:plugins-api": "not fired",
             "probe:pomo-streams": "not fired",
@@ -11840,6 +11843,7 @@
             "probe:module-tags": "not fired",
             "probe:mpeg-in-wave": "not fired",
             "probe:object-cache": "not fired",
+            "probe:plugin-list-cache": "not fired",
             "probe:plugin-symbols3": "not fired",
             "probe:plugins-api": "not fired",
             "probe:pomo-streams": "not fired",
@@ -11915,6 +11919,7 @@
             "probe:module-tags": "not fired",
             "probe:mpeg-in-wave": "not fired",
             "probe:object-cache": "not fired",
+            "probe:plugin-list-cache": "not fired",
             "probe:plugin-symbols3": "not fired",
             "probe:plugins-api": "not fired",
             "probe:pomo-streams": "not fired",
@@ -12387,6 +12392,7 @@
             "probe:module-tags": "not fired",
             "probe:mpeg-in-wave": "not fired",
             "probe:object-cache": "not fired",
+            "probe:plugin-list-cache": "not fired",
             "probe:plugin-symbols3": "not fired",
             "probe:plugins-api": "not fired",
             "probe:pomo-streams": "not fired",
@@ -18178,6 +18184,7 @@
             "probe:placeholders-admin": "not fired",
             "probe:pluggable-remaining": "not fired",
             "probe:plugin-dependencies": "not fired",
+            "probe:plugin-list-cache": "not fired",
             "probe:plugin-queue3": "not fired",
             "probe:plugin-queue4": "not fired",
             "probe:plugin-queue5": "not fired",

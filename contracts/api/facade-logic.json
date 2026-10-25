@@ -3,10 +3,10 @@
     "summary": {
         "functions": 3495,
         "methods": 3812,
-        "delegates": 3567,
-        "logicFunctions": 1773,
+        "delegates": 3568,
+        "logicFunctions": 1772,
         "logicMethods": 1967,
-        "logicLines": 29209,
+        "logicLines": 29198,
         "kept": 0
     },
     "byFile": {
@@ -266,10 +266,6 @@
             "logic": 12,
             "lines": 130
         },
-        "plugin.php": {
-            "logic": 12,
-            "lines": 126
-        },
         "classes/WP_REST_Widget_Types_Controller.php": {
             "logic": 12,
             "lines": 124
@@ -289,6 +285,10 @@
         "classes/WP_HTML_Processor.php": {
             "logic": 16,
             "lines": 116
+        },
+        "plugin.php": {
+            "logic": 11,
+            "lines": 115
         },
         "simplepie/Item.php": {
             "logic": 17,
@@ -13000,7 +13000,7 @@
         },
         "_get_plugin_from_callback": {
             "file": "plugin.php",
-            "line": 275,
+            "line": 263,
             "statements": 7,
             "lines": 17
         },
@@ -13252,7 +13252,7 @@
         },
         "_minn_bind_hook_globals": {
             "file": "plugin.php",
-            "line": 197,
+            "line": 185,
             "statements": 15,
             "lines": 27
         },
@@ -14890,7 +14890,7 @@
         },
         "_wp_filter_build_unique_id": {
             "file": "plugin.php",
-            "line": 170,
+            "line": 158,
             "statements": 4,
             "lines": 8
         },
@@ -15208,7 +15208,7 @@
         },
         "add_allowed_options": {
             "file": "plugin.php",
-            "line": 252,
+            "line": 240,
             "statements": 2,
             "lines": 6
         },
@@ -15268,7 +15268,7 @@
         },
         "add_option_whitelist": {
             "file": "plugin.php",
-            "line": 262,
+            "line": 250,
             "statements": 2,
             "lines": 2
         },
@@ -16780,7 +16780,7 @@
         },
         "get_dropins": {
             "file": "plugin.php",
-            "line": 183,
+            "line": 171,
             "statements": 4,
             "lines": 9
         },
@@ -17098,15 +17098,9 @@
         },
         "get_plugin_updates": {
             "file": "plugin.php",
-            "line": 235,
+            "line": 223,
             "statements": 4,
             "lines": 8
-        },
-        "get_plugins": {
-            "file": "plugin.php",
-            "line": 140,
-            "statements": 6,
-            "lines": 11
         },
         "get_post_class": {
             "file": "post.php",
@@ -20764,7 +20758,7 @@
         },
         "wp_get_active_and_valid_plugins": {
             "file": "plugin.php",
-            "line": 156,
+            "line": 144,
             "statements": 3,
             "lines": 8
         },

@@ -18717,6 +18717,45 @@ fails inside `Minn\Json::decode` blamed on its plugin) and the security-sweep su
 header, or on a path, pause nothing; a forged token pauses nothing; a plugin failing on every request is paused after
 the first). Post by email over POP3 is left out (accepted).
 
+## The plugin list kept for the request, measured on Kinsta (2026-10-24)
+
+The register's Kinsta row, profiled on the host (Austin's Kinsta test site, PHP 8.3 FPM, the site's own
+`open_basedir`, Blocksy with fifteen plugins). Server time, median of twenty requests each, from a wrapper around
+`index.php` that logs when PHP finishes (Kinsta's page cache bypassed), WordPress first, then Minn at HEAD, then
+with the change below:
+
+| | WordPress | Minn before | Minn after | after ÷ WordPress |
+|---|---|---|---|---|
+| `/` | 139.7 ms | 401.9 ms | 210.9 ms | 151% |
+| `/about/` | 144.1 ms | 434.8 ms | 229.4 ms | 159% |
+| `/feed/` | 120.2 ms | 394.4 ms | 174.2 ms | 145% |
+| `/wp-json/wp/v2/pages?per_page=1` | 128.8 ms | 376.9 ms | 182.2 ms | 141% |
+| `/?s=about` | 141.9 ms | 434.1 ms | 208.4 ms | 147% |
+
+Marks on the boot hooks put the gap between `init` and `wp_loaded` (about 250 ms on Minn, 56 on WordPress), and a
+sampling profile of the same request under CLI with the site's `open_basedir` named the cause: Search & Filter asks
+`get_plugins()` once for each integration it knows (`Dependants::is_plugin_installed`), and the engine read every
+plugin file's headers again each time, a quarter of the request. The reference keeps each folder's list for the rest
+of the request in the `plugins` cache group, under the key `plugins` (probe plugin-list-cache): a later call answers
+the kept list, even one a plugin set there by hand and unsorted, until `wp_clean_plugins_cache` clears it; the folder
+is joined to the plugins folder as given (`'/name'`), and one that is not there answers nothing and keeps nothing
+(the reference's `@opendir` leaves its warning in `error_get_last`, so its shutdown asks `wp_should_handle_php_error`;
+the engine checks the folder first). `get_mu_plugins` keeps nothing. `Runtime\PluginFiles::all` is the reference's
+list now, kept through `Handoff::cacheGet` / `cacheSet` so an object-cache drop-in holds it as it holds the
+reference's, and `get_plugins` is its delegate. `PluginFiles::basename` (plugin_basename, run for every plugin URL
+and hook) resolves the two plugins folders once a process instead of on every call.
+
+What is left of the gap on that site, about 70 ms: the facade's 291 files loaded whole before the must-use plugins
+(26 ms more than WordPress's boot to that point), Minn Admin loaded as code on every request (WordPress does not run
+it there), the symbol gate's fingerprint of each plugin folder (a listing and a file time per top-level file), and
+the classic theme's templates (wp_loaded to wp_footer, 43 ms against 18). Each is a design choice rather than a
+difference from the reference: a lazy facade changes what `class_exists($name, false)` and `get_declared_classes()`
+answer, and the gate's fingerprint is what lets it trust a folder without reading it.
+
+The field test also found `php minn/bin/minn install --help` installed (the installer read no options it did not
+know): asking for help prints the usage, and an option a command does not read refuses the command before anything
+changes (install suite).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18895,7 +18934,8 @@ rows that are `open` or `austin`.
 | 18310 | The 0.1.0 field test (10-23) | an array `link_cat` on `wp-links-opml.php` fatals on the reference (TypeError, 500) | accepted | the engine lists every category; a fatal is no contract |
 | 18310 | The 0.1.0 field test (10-23) | recovery never pauses a plugin whose hook fatals inside engine code | done | Austin 2026-10-24: blame the first plugin frame. `Recovery::blameFailure` takes the throwing file, then the trace's files innermost first (recovery suite, a hook that fails inside `Minn\Json::decode`) |
 | 18310 | The 0.1.0 field test (10-23) | `wp_mail` is declared outside `wp-includes/pluggable.php`, so code that checks where it lives (SandyWP, FluentSMTP) stands aside | done | Austin 2026-10-24: declare them from that file. An install lays the engine's wp-api/pluggable.php there whole, behind a header that hands over to the engine's own copy when the laid one is not the running engine's (`Runtime\Pluggables`, "The pluggable functions where the reference declares them") |
-| 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | open | profile under `open_basedir` on the host. Locally (2026-10-23, "Theme files read once a request"): one request per process, `open_basedir` took Minn from 145% to 209% of WordPress; theme files read once brings it to 175%. Left: the facade's files loaded whole, the pattern headers, and the host's own measure |
+| 18310 | The 0.1.0 field test (10-23) | server time on Kinsta is 3.5 to 4 times WordPress's (locally about 125%) | done | profiled on the host 2026-10-24: a plugin asking `get_plugins()` in a loop read every header each time; the list is kept for the request as the reference keeps it, 141% to 159% of WordPress there now (was 288% to 328%); what is left is design, not difference: "The plugin list kept for the request, measured on Kinsta (2026-10-24)" |
+| 18310 | The Kinsta profiling (10-24) | `minn install --help` installed | done | help prints the usage, an unknown option refuses the command (install suite) |
 | 18310 | The 0.1.0 field test (10-23) | post by email over POP3 with a configured mail server | accepted | Austin 2026-10-24: left out. wp-mail.php answers as a site with no mail server configured, on every site |
 | 18310 | The 0.1.0 field test (10-23) | `http:activate`: the reference refreshes the theme's pattern-files transient while installing | done | transients live in the object cache while installing (and with a persistent cache), cookie constants after the must-use plugins; the core block stylesheet list stays the reference's own; "Transients in the object cache, the theme's folder walks, and the site's locale (2026-10-23)" |
 | 18310 | The 0.1.0 field test (10-23) | transients written to the options table under a persistent object cache, where the reference keeps them in the cache | done | `Runtime\Transients::cached`; probe transient-stores |

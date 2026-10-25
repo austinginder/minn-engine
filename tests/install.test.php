@@ -111,6 +111,11 @@ $check('preflight reports no extra post types on the engine site', str_contains(
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject refuses a WordPress webroot', $code === 1 && str_contains($out, 'not installed'), $out);
 
+[$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --help');
+$check('install --help prints the usage and installs nothing (the field test installed with it)', $code === 0 && str_starts_with($out, 'Usage: minn') && $tree($WEBROOT) === $before, $out);
+[$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --yes');
+$check('an option install does not read refuses it before anything changes', $code === 1 && str_contains($out, 'does not take --yes') && $tree($WEBROOT) === $before, $out);
+
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=/dev/null/wp-parked');
 $check('a park folder that cannot be made is refused with the way out, and no PHP warning', $code === 1 && str_contains($out, 'cannot create /dev/null/wp-parked') && str_contains($out, '--park=<dir>') && !str_contains($out, 'Warning') && $tree($WEBROOT) === $before, $out);
 $readConfig = new ReflectionMethod(Minn\Cli\Preflight::class, 'readConfig');

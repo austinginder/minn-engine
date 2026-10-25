@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 707,
-        "composes": 2059,
+        "composes": 2058,
         "leaf": 953,
-        "noop": 3271,
+        "noop": 3272,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8678,
-        "minnMethods": 1564,
+        "minnMethods": 1565,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -49820,12 +49820,12 @@
         },
         "get_plugins": {
             "file": "plugin.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_plugin_data"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PluginFiles::all"
             ],
+            "composes": [],
             "deadend": "admin"
         },
         "get_post": {
