@@ -244,14 +244,14 @@
         },
         "facadeLogicCeiling": {
             "label": "Facade functions and methods holding logic",
-            "ceiling": 3743,
+            "ceiling": 3739,
             "started": 3865,
             "since": "db6aa5a6",
             "rose": false
         },
         "facadeLogicLinesCeiling": {
             "label": "Lines of logic in the facade",
-            "ceiling": 29232,
+            "ceiling": 29198,
             "started": 30383,
             "since": "db6aa5a6",
             "rose": false
@@ -265,29 +265,29 @@
         }
     },
     "open": {
-        "done": 146,
+        "done": 149,
         "accepted": 31,
-        "austin": 1,
-        "open": 1
+        "open": 0,
+        "austin": 0
     },
     "run": {
         "measured": "2026-10-24",
-        "suites": 98,
-        "green": 98,
-        "checks": 31161,
+        "suites": 99,
+        "green": 99,
+        "checks": 31392,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
     },
     "gate": {
         "deadEndCalls": 0,
-        "deadEndsByHand": 68,
+        "deadEndsByHand": 67,
         "deadEndsByHandAreas": {
             "customizer": 20,
-            "admin": 41,
+            "admin": 40,
             "editor": 7
         },
-        "deadEndsByHandProven": 179,
+        "deadEndsByHandProven": 180,
         "floor": {
             "version": "8.3",
             "newest": "8.5",
@@ -305,10 +305,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 193080
+            "of": 194391
         },
         "engine": {
-            "of": 116898,
+            "of": 118242,
             "php": {
                 "strict": {
                     "window": 40,
@@ -335,7 +335,7 @@
             "sequences": 20
         },
         "facade": {
-            "of": 76182,
+            "of": 76149,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -343,19 +343,19 @@
     },
     "facadeLogic": {
         "functions": 3495,
-        "methods": 3814,
-        "delegates": 3566,
-        "logicFunctions": 1773,
-        "logicMethods": 1970,
-        "logicLines": 29229,
+        "methods": 3812,
+        "delegates": 3568,
+        "logicFunctions": 1772,
+        "logicMethods": 1967,
+        "logicLines": 29198,
         "kept": 0,
         "review": {
             "doubts": 0,
-            "reviewed": 3126,
+            "reviewed": 3125,
             "stale": 0,
             "verdicts": {
                 "delegate": 147,
-                "move": 1472,
+                "move": 1471,
                 "keep": 1493,
                 "remove": 14
             },
@@ -373,7 +373,7 @@
                 "globals": 170,
                 "refs": 27
             },
-            "unreviewed": 617
+            "unreviewed": 614
         }
     },
     "behaviour": {
@@ -385,7 +385,7 @@
         "restFuzz": {
             "routes": 201,
             "requests": 14607,
-            "differences": 262
+            "differences": 213
         },
         "cliFeatures": {
             "scenarios": 335,
@@ -397,9 +397,9 @@
     },
     "fixtures": {
         "wordpress": "7.1.3",
-        "rows": 10997,
+        "rows": 11015,
         "differing": 0,
-        "measured": "2026-10-24",
+        "measured": "2026-10-25",
         "current": true
     }
 }

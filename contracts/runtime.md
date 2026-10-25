@@ -18756,6 +18756,24 @@ The field test also found `php minn/bin/minn install --help` installed (the inst
 know): asking for help prints the usage, and an option a command does not read refuses the command before anything
 changes (install suite).
 
+## CaptainCore operates a Minn site (2026-10-24)
+
+The last of measure 28's four hosting tools, run from the CaptainCore server against Austin's Kinsta test site
+while it ran the engine at 918ba024 (an unsigned build laid by hand, reporting 0.1.0):
+
+- `captaincore sync-data`: read WordPress 7.1.3, the fourteen plugins and must-use plugins with their states, both
+  themes, the users, PHP's memory limit, and synced them to the manager.
+- `captaincore quicksave generate --force`: copied the site's plugins and themes, committed the quicksave, captured
+  the front page (screenshot and markup), ran its database and loose-file scans (clean) and backed the quicksave up.
+- `captaincore backup generate`: dumped the database through the site's WP-CLI, took a restic snapshot of the
+  webroot with it, and its verify passed.
+- `captaincore db-scan --full`: read the options, posts and comments; nothing found.
+- `captaincore screenshot` fails with "no such file or directory" on that site and on a WordPress site alike
+  (CaptainCore's own; the quicksave's capture took the screenshot).
+
+The core checksums read "fail" (20 files extra, 1 missing, 95 modified): the build reports 0.1.0 and its files
+are not 0.1.0's. A released engine's files are its release's, so the check passes on one.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
