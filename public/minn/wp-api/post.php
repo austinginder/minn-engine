@@ -2103,9 +2103,10 @@ function create_initial_post_types()
                 $args === true ? $supports[] = $feature : $supports[$feature] = is_array($args) && array_is_list($args) && count($args) === 1 ? $args[0] : $args;
             }
             $object = register_post_type($name, ['capabilities' => (array) ($row['cap'] ?? []), 'supports' => $supports === [] ? false : $supports] + $row);
-            // Posts and pages take their labels from the defaults, not from labels of their own, so they name no single-item template.
+            // Posts and pages take their labels from the defaults, not from labels of their own, so they name no single-item template,
+            // however many times they are registered again.
             if (!isset($row['labels']['template_name']) && $object instanceof WP_Post_Type) {
-                unset($object->labels->template_name);
+                Runtime::registry()->unnameTemplate($object);
             }
             // What registering adds that the type does not keep (global styles' autosave) is taken off again.
             foreach (array_keys(array_diff_key(get_all_post_type_supports($name), $kept)) as $feature) {

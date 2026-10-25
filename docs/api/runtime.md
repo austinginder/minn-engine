@@ -78,7 +78,7 @@ the WordPress runtime plugins load against
 | [`MetaKeys`](#metakeys) | final class | 187 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 133 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
-| [`NavMenuItems`](#navmenuitems) | final class | 161 | Classic menu items as the reference serves them to walkers and plugins |
+| [`NavMenuItems`](#navmenuitems) | final class | 170 | Classic menu items as the reference serves them to walkers and plugins |
 | [`NavigationFallback`](#navigationfallback) | final class | 104 | The navigation menu a navigation block falls back to |
 | [`Notices`](#notices) | final class | 96 | The debugging notices plugins and the engine raise: a deprecated function, |
 | [`OEmbed`](#oembed) | final class | 131 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
@@ -131,7 +131,7 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 188 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 108 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 523 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 531 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 106 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 390 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`RewriteStructs`](#rewritestructs) | final class | 113 | The rewrite object's state and the structures it builds links and rules |
@@ -4438,7 +4438,9 @@ strings), kept when already set; then by its kind the label, address
 and title of what it points at (a post's title through the_title, every
 time, the item's own title winning when it has one; a post or term
 gone, or a post trashed, marks it _invalid; a post not published is
-labelled by its status); its title attribute and description through
+labelled by its status; a post or term item left without a title reads
+"#<object id> (no title)", and an archive item for a type not registered
+has the address false); its title attribute and description through
 their filters. A post or term of another kind is dressed as a would-be
 item, as the admin's boxes use it: id 0, its own title, address and
 parent. wp_get_nav_menu_items reads a menu's items through get_posts,
@@ -4463,7 +4465,7 @@ wp_get_nav_menu_items for a menu found.
 - `@param array<string, mixed> $args`
 - `@return array<int, object>`
 
-Internals: `menuItem()` (private, line 75), `pointsAtPost()` (private, line 98), `pointsAtTerm()` (private, line 115), `pointsAtArchive()` (private, line 129), `custom()` (private, line 141), `post()` (private, line 149), `term()` (private, line 168)
+Internals: `menuItem()` (private, line 77), `pointsAtPost()` (private, line 100), `pointsAtTerm()` (private, line 118), `pointsAtArchive()` (private, line 134), `untitled()` (private, line 146), `custom()` (private, line 152), `post()` (private, line 160), `term()` (private, line 179)
 
 
 ## NavigationFallback
@@ -7279,6 +7281,10 @@ the old one's place, as on the reference.
 
 - `@return array<string, mixed>`
 
+### `unnameTemplate(Minn\Objects\PostType $object): void`
+
+Takes the single-item template's name off a type registered again, its row with it, so the next registration names none either.
+
 ### `labels(array $labels, ?string $label, string $base, string $name): array`
 
 A type's labels from its own (probe post-remaining): the labels of its
@@ -7374,7 +7380,7 @@ Attaches a taxonomy to a post type.
 
 ### `removeObjectType(string $taxonomy, string $type): bool`
 
-Detaches a taxonomy from a post type.
+Detaches a taxonomy from a post type, the other types keeping their keys (a type attached later takes the next one).
 
 ### `registerStatus(string $name, array $args): array`
 
@@ -7382,7 +7388,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `rowOf()` (private, line 240), `objectFrom()` (private, line 262), `derivedLabels()` (private, line 325)
+Internals: `rowOf()` (private, line 247), `objectFrom()` (private, line 269), `derivedLabels()` (private, line 332)
 
 
 ## RequestHeaders

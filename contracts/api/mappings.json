@@ -44365,7 +44365,7 @@
         },
         "create_initial_post_types": {
             "file": "post.php",
-            "lines": 26,
+            "lines": 27,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"

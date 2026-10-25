@@ -12970,7 +12970,7 @@
         },
         "_get_custom_object_labels": {
             "file": "post.php",
-            "line": 2276,
+            "line": 2277,
             "statements": 4,
             "lines": 4
         },
@@ -14494,7 +14494,7 @@
         },
         "_page_traverse_name": {
             "file": "post.php",
-            "line": 2286,
+            "line": 2287,
             "statements": 1,
             "lines": 4
         },
@@ -14536,7 +14536,7 @@
         },
         "_post_type_meta_capabilities": {
             "file": "post.php",
-            "line": 2295,
+            "line": 2296,
             "statements": 2,
             "lines": 6
         },
@@ -14554,7 +14554,7 @@
         },
         "_prime_post_parent_id_caches": {
             "file": "post.php",
-            "line": 2306,
+            "line": 2307,
             "statements": 4,
             "lines": 8
         },
@@ -14968,7 +14968,7 @@
         },
         "_wp_get_post_revision_version": {
             "file": "post.php",
-            "line": 2224,
+            "line": 2225,
             "statements": 3,
             "lines": 5
         },
@@ -15832,7 +15832,7 @@
         },
         "clean_attachment_cache": {
             "file": "post.php",
-            "line": 2158,
+            "line": 2159,
             "statements": 5,
             "lines": 9
         },
@@ -16426,7 +16426,7 @@
         },
         "get_available_post_mime_types": {
             "file": "post.php",
-            "line": 2331,
+            "line": 2332,
             "statements": 4,
             "lines": 6
         },
@@ -16810,7 +16810,7 @@
         },
         "get_enclosed": {
             "file": "post.php",
-            "line": 2342,
+            "line": 2343,
             "statements": 3,
             "lines": 5
         },
@@ -17032,7 +17032,7 @@
         },
         "get_page_hierarchy": {
             "file": "post.php",
-            "line": 2240,
+            "line": 2241,
             "statements": 6,
             "lines": 13
         },
@@ -17182,7 +17182,7 @@
         },
         "get_post_parent": {
             "file": "post.php",
-            "line": 2145,
+            "line": 2146,
             "statements": 2,
             "lines": 2
         },
@@ -17284,7 +17284,7 @@
         },
         "get_pung": {
             "file": "post.php",
-            "line": 2210,
+            "line": 2211,
             "statements": 2,
             "lines": 2
         },
@@ -17494,7 +17494,7 @@
         },
         "get_the_author_email": {
             "file": "post.php",
-            "line": 2179,
+            "line": 2180,
             "statements": 2,
             "lines": 2
         },
@@ -17620,7 +17620,7 @@
         },
         "get_the_modified_author": {
             "file": "post.php",
-            "line": 2193,
+            "line": 2194,
             "statements": 4,
             "lines": 6
         },
@@ -17740,7 +17740,7 @@
         },
         "get_to_ping": {
             "file": "post.php",
-            "line": 2217,
+            "line": 2218,
             "statements": 2,
             "lines": 2
         },
@@ -18076,7 +18076,7 @@
         },
         "is_post_embeddable": {
             "file": "post.php",
-            "line": 2358,
+            "line": 2359,
             "statements": 3,
             "lines": 5
         },
@@ -19378,7 +19378,7 @@
         },
         "the_author_email": {
             "file": "post.php",
-            "line": 2186,
+            "line": 2187,
             "statements": 2,
             "lines": 2
         },
@@ -19690,7 +19690,7 @@
         },
         "update_post_parent_caches": {
             "file": "post.php",
-            "line": 2319,
+            "line": 2320,
             "statements": 2,
             "lines": 7
         },
@@ -20374,7 +20374,7 @@
         },
         "wp_delete_auto_drafts": {
             "file": "post.php",
-            "line": 2380,
+            "line": 2381,
             "statements": 2,
             "lines": 4
         },
@@ -22600,7 +22600,7 @@
         },
         "wp_resolve_post_date": {
             "file": "post.php",
-            "line": 2124,
+            "line": 2125,
             "statements": 3,
             "lines": 5
         },

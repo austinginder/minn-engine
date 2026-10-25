@@ -155011,8 +155011,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/NavMenuItems.php",
-            "lines": 161,
-            "doc": "Classic menu items as the reference serves them to walkers and plugins\n(probe nav-menu-items). wp_setup_nav_menu_item dresses a nav_menu_item\npost with the fields walkers read: its _menu_item_* meta (ids as\nstrings), kept when already set; then by its kind the label, address\nand title of what it points at (a post's title through the_title, every\ntime, the item's own title winning when it has one; a post or term\ngone, or a post trashed, marks it _invalid; a post not published is\nlabelled by its status); its title attribute and description through\ntheir filters. A post or term of another kind is dressed as a would-be\nitem, as the admin's boxes use it: id 0, its own title, address and\nparent. wp_get_nav_menu_items reads a menu's items through get_posts,\nsets each up, drops the invalid ones outside the admin, and for ARRAY_A\noutput sorts them by the output key and numbers that key from 1, all\nbefore its filter.",
+            "lines": 170,
+            "doc": "Classic menu items as the reference serves them to walkers and plugins\n(probe nav-menu-items). wp_setup_nav_menu_item dresses a nav_menu_item\npost with the fields walkers read: its _menu_item_* meta (ids as\nstrings), kept when already set; then by its kind the label, address\nand title of what it points at (a post's title through the_title, every\ntime, the item's own title winning when it has one; a post or term\ngone, or a post trashed, marks it _invalid; a post not published is\nlabelled by its status; a post or term item left without a title reads\n\"#<object id> (no title)\", and an archive item for a type not registered\nhas the address false); its title attribute and description through\ntheir filters. A post or term of another kind is dressed as a would-be\nitem, as the admin's boxes use it: id 0, its own title, address and\nparent. wp_get_nav_menu_items reads a menu's items through get_posts,\nsets each up, drops the invalid ones outside the admin, and for ARRAY_A\noutput sorts them by the output key and numbers that key from 1, all\nbefore its filter.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -155055,8 +155055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 35
+                    "line": 33,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -155075,8 +155075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 46
+                    "line": 40,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -155105,8 +155105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 72
+                    "line": 56,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -155125,8 +155125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 95
+                    "line": 77,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -155145,8 +155145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 112
+                    "line": 100,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -155165,8 +155165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 126
+                    "line": 118,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -155185,8 +155185,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 138
+                    "line": 134,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "untitled",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "untitled(object $item): string",
+                    "doc": "The title a post or term item falls back to when it has none, translated whether it is needed or not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -155212,8 +155232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 146
+                    "line": 152,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -155232,8 +155252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 165
+                    "line": 160,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -155252,8 +155272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 187
+                    "line": 179,
+                    "end": 198
                 }
             ]
         },
@@ -169195,7 +169215,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 523,
+            "lines": 531,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -169536,6 +169556,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "unnameTemplate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unnameTemplate(Minn\\Objects\\PostType $object): void",
+                    "doc": "Takes the single-item template's name off a type registered again, its row with it, so the next registration names none either.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "Minn\\Objects\\PostType",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 235,
+                    "end": 239
+                },
+                {
+                    "routes": [],
                     "name": "labels",
                     "static": false,
                     "visibility": "public",
@@ -169575,8 +169615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 296
+                    "line": 294,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -169619,8 +169659,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 314
+                    "line": 314,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -169656,8 +169696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 379
+                    "line": 357,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -169676,8 +169716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 389
+                    "line": 389,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -169712,8 +169752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 401
+                    "line": 405,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -169726,8 +169766,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 409,
-                    "end": 412
+                    "line": 416,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -169753,8 +169793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 418
+                    "line": 422,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -169773,8 +169813,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 424
+                    "line": 428,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -169795,8 +169835,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 431,
-                    "end": 434
+                    "line": 438,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -169824,8 +169864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 443,
-                    "end": 451
+                    "line": 450,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -169846,8 +169886,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 465
+                    "line": 466,
+                    "end": 472
                 },
                 {
                     "routes": [],
@@ -169858,8 +169898,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 468,
-                    "end": 471
+                    "line": 475,
+                    "end": 478
                 },
                 {
                     "routes": [],
@@ -169878,8 +169918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 481
+                    "line": 481,
+                    "end": 488
                 },
                 {
                     "routes": [],
@@ -169905,8 +169945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 484,
-                    "end": 497
+                    "line": 491,
+                    "end": 504
                 },
                 {
                     "routes": [],
@@ -169914,7 +169954,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "removeObjectType(string $taxonomy, string $type): bool",
-                    "doc": "Detaches a taxonomy from a post type.",
+                    "doc": "Detaches a taxonomy from a post type, the other types keeping their keys (a type attached later takes the next one).",
                     "shapes": [],
                     "params": [
                         {
@@ -169932,8 +169972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 500,
-                    "end": 510
+                    "line": 507,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -169961,8 +170001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 517,
-                    "end": 539
+                    "line": 525,
+                    "end": 547
                 },
                 {
                     "routes": [],
@@ -169991,8 +170031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 249
+                    "line": 247,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -170020,8 +170060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 271
+                    "line": 269,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -170057,8 +170097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 340
+                    "line": 332,
+                    "end": 347
                 }
             ]
         },

@@ -18774,6 +18774,30 @@ while it ran the engine at 918ba024 (an unsigned build laid by hand, reporting 0
 The core checksums read "fail" (20 files extra, 1 missing, 95 modified): the build reports 0.1.0 and its files
 are not 0.1.0's. A released engine's files are its release's, so the check passes on one.
 
+## Two leftover probes compared, and menu items without a title (2026-10-25)
+
+Two probes written in early October and never registered (plugin-symbols4,
+type-objects) now run against fixtures, with nav-menu-untitled beside them.
+What they found, each observed on the reference:
+
+- A post or term menu item left without a title (its own empty, and the
+  object's title or name empty or the object gone) reads `#<object id> (no
+  title)`, translated from `#%d (no title)`; the string is asked for every
+  post and term item. A post type archive item keeps an empty title, and its
+  address is `false` when the type is not registered. Custom links keep
+  their own title. `Runtime\NavMenuItems`.
+- Taking a type off a taxonomy (`unregister_taxonomy_for_object_type`)
+  removes its key from `object_type` and renumbers nothing; a type put back
+  takes the next key. REST's `types` is a list either way.
+  `Registry::removeObjectType`.
+- `create_initial_post_types` run a second time gave posts and pages a
+  single-item template name: the label was taken off the object but stayed
+  in the registry's row. `Registry::unnameTemplate` takes it off both.
+- Probe context: WP-CLI has run `init` on the reference and then takes kses
+  off content saves, so plugin-symbols4 runs `init` itself and removes the
+  kses filters (the sitemap's robots line is added on `init`); its posts'
+  gallery ids and dates are masked.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

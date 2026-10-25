@@ -231,6 +231,13 @@ final class Registry
         return $this->postTypes[$name];
     }
 
+    /** Takes the single-item template's name off a type registered again, its row with it, so the next registration names none either. */
+    public function unnameTemplate(PostType $object): void
+    {
+        unset($object->labels->template_name);
+        $this->adoptPostType($object);
+    }
+
     /**
      * An object's properties as a row, its labels and capabilities as arrays.
      *
@@ -496,13 +503,14 @@ final class Registry
         return true;
     }
 
-    /** Detaches a taxonomy from a post type. */
+    /** Detaches a taxonomy from a post type, the other types keeping their keys (a type attached later takes the next one). */
     public function removeObjectType(string $taxonomy, string $type): bool
     {
-        if (!isset($this->taxonomies[$taxonomy]) || !in_array($type, $this->taxonomies[$taxonomy]['object_type'], true)) {
+        $key = isset($this->taxonomies[$taxonomy]) ? array_search($type, $this->taxonomies[$taxonomy]['object_type'], true) : false;
+        if ($key === false) {
             return false;
         }
-        $this->taxonomies[$taxonomy]['object_type'] = array_values(array_diff($this->taxonomies[$taxonomy]['object_type'], [$type]));
+        unset($this->taxonomies[$taxonomy]['object_type'][$key]);
         if (isset($this->taxonomyObjects[$taxonomy])) {
             $this->taxonomyObjects[$taxonomy]->object_type = $this->taxonomies[$taxonomy]['object_type'];
         }

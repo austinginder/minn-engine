@@ -17,7 +17,9 @@ use Minn\Support\Text;
  * and title of what it points at (a post's title through the_title, every
  * time, the item's own title winning when it has one; a post or term
  * gone, or a post trashed, marks it _invalid; a post not published is
- * labelled by its status); its title attribute and description through
+ * labelled by its status; a post or term item left without a title reads
+ * "#<object id> (no title)", and an archive item for a type not registered
+ * has the address false); its title attribute and description through
  * their filters. A post or term of another kind is dressed as a would-be
  * item, as the admin's boxes use it: id 0, its own title, address and
  * parent. wp_get_nav_menu_items reads a menu's items through get_posts,
@@ -107,8 +109,9 @@ final class NavMenuItems
             $item->_invalid = true;
         }
         $item->url = $original ? (string) PostLinks::permalink($original) : '';
-        $title = $original ? Runtime::hooks()->filter('the_title', [$original->post_title, $original->ID]) : '';
-        $item->title = (string) $item->post_title === '' ? (string) $title : (string) $item->post_title;
+        $untitled = self::untitled($item);
+        $title = $original ? (string) Runtime::hooks()->filter('the_title', [$original->post_title, $original->ID]) : '';
+        $item->title = (string) $item->post_title === '' ? ($title === '' ? $untitled : $title) : (string) $item->post_title;
     }
 
     /** An item for a term: the taxonomy's name, the term's address and name. */
@@ -122,7 +125,9 @@ final class NavMenuItems
             $item->_invalid = true;
         }
         $item->url = is_string($link) ? $link : '';
-        $item->title = (string) $item->post_title === '' ? ($term instanceof Term ? $term->name : '') : (string) $item->post_title;
+        $untitled = self::untitled($item);
+        $name = $term instanceof Term ? (string) $term->name : '';
+        $item->title = (string) $item->post_title === '' ? ($name === '' ? $untitled : $name) : (string) $item->post_title;
     }
 
     /** An item for a post type's archive: the archives label, the archive's address. */
@@ -133,8 +138,14 @@ final class NavMenuItems
         if (!$type) {
             $item->_invalid = true;
         }
-        $item->url = $type ? (string) ArchiveLinks::archive((string) $item->object) : '';
+        $item->url = $type ? (string) ArchiveLinks::archive((string) $item->object) : false;
         $item->title = (string) $item->post_title === '' ? ($type ? (string) $type->labels->archives : '') : (string) $item->post_title;
+    }
+
+    /** The title a post or term item falls back to when it has none, translated whether it is needed or not. */
+    private static function untitled(object $item): string
+    {
+        return sprintf(Gettext::text('#%d (no title)'), (int) $item->object_id);
     }
 
     /** A custom link: its own title and stored address. */
