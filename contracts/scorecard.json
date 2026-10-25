@@ -55,10 +55,10 @@
         "files": 0
     },
     "coverage": {
-        "measured": "2026-10-23",
-        "percent": 88.4,
-        "lines": 40780,
-        "covered": 36068,
+        "measured": "2026-10-25",
+        "percent": 89.6,
+        "lines": 41485,
+        "covered": 37179,
         "parts": [
             "unit",
             "probes",

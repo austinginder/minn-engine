@@ -1,19 +1,19 @@
 {
-    "measured": "2026-10-23",
+    "measured": "2026-10-25",
     "parts": [
         "unit",
         "probes",
         "http",
         "suites"
     ],
-    "lines": 40780,
-    "covered": 36068,
-    "percent": 88.4,
+    "lines": 41485,
+    "covered": 37179,
+    "percent": 89.6,
     "byPart": {
-        "unit": 13.5,
-        "probes": 68.8,
-        "http": 36,
-        "suites": 85
+        "unit": 14.1,
+        "probes": 68.2,
+        "http": 36.8,
+        "suites": 87.5
     },
     "files": {
         "Admin/ActivityChart.php": [
@@ -49,16 +49,16 @@
             32
         ],
         "Admin/AppController.php": [
-            35,
-            47
+            42,
+            49
         ],
         "Admin/Appearance.php": [
-            17,
-            26
+            37,
+            39
         ],
         "Admin/BootPayload.php": [
-            95,
-            113
+            97,
+            114
         ],
         "Admin/BundleController.php": [
             8,
@@ -93,7 +93,7 @@
             21
         ],
         "Admin/LanguageController.php": [
-            16,
+            29,
             40
         ],
         "Admin/LegacyPackController.php": [
@@ -117,7 +117,7 @@
             64
         ],
         "Admin/PackagesController.php": [
-            8,
+            22,
             44
         ],
         "Admin/PostListMarkup.php": [
@@ -125,19 +125,19 @@
             13
         ],
         "Admin/PreferencesController.php": [
-            7,
+            13,
             34
         ],
         "Admin/RenderController.php": [
-            12,
-            19
+            21,
+            21
         ],
         "Admin/ScreenOptions.php": [
             2,
             2
         ],
         "Admin/SessionsController.php": [
-            21,
+            28,
             33
         ],
         "Admin/SiteController.php": [
@@ -157,7 +157,7 @@
             16
         ],
         "Admin/SystemController.php": [
-            7,
+            8,
             12
         ],
         "Admin/ThemesController.php": [
@@ -165,7 +165,7 @@
             51
         ],
         "Admin/Translations.php": [
-            39,
+            74,
             107
         ],
         "Admin/UpdatesController.php": [
@@ -209,8 +209,8 @@
             112
         ],
         "Auth/Cookie.php": [
-            34,
-            39
+            37,
+            40
         ],
         "Auth/FastHash.php": [
             3,
@@ -249,7 +249,7 @@
             27
         ],
         "Auth/Sessions.php": [
-            38,
+            44,
             71
         ],
         "Auth/SignIn.php": [
@@ -277,7 +277,7 @@
             16
         ],
         "Blocks/BlockName.php": [
-            5,
+            4,
             7
         ],
         "Blocks/BlockStream.php": [
@@ -325,8 +325,8 @@
             33
         ],
         "Blocks/Dynamic/SyncedPattern.php": [
-            16,
-            16
+            19,
+            19
         ],
         "Blocks/Dynamic/TagCloud.php": [
             19,
@@ -349,8 +349,8 @@
             160
         ],
         "Blocks/Dynamic/Theme/QueryBlocks.php": [
-            168,
-            173
+            186,
+            189
         ],
         "Blocks/Dynamic/Theme/Structure.php": [
             77,
@@ -385,11 +385,11 @@
             58
         ],
         "Blocks/RenderState.php": [
-            97,
-            105
+            104,
+            112
         ],
         "Blocks/Renderer.php": [
-            181,
+            180,
             198
         ],
         "Blocks/Selector.php": [
@@ -449,15 +449,19 @@
             19
         ],
         "Cli/Installer.php": [
-            129,
-            174
+            144,
+            193
+        ],
+        "Cli/LoginLink.php": [
+            0,
+            35
         ],
         "Cli/MaintenanceCommand.php": [
             20,
             20
         ],
         "Cli/MinnCommand.php": [
-            56,
+            58,
             97
         ],
         "Cli/OptionCommand.php": [
@@ -493,8 +497,8 @@
             96
         ],
         "Cli/UserCommand.php": [
-            11,
-            50
+            7,
+            42
         ],
         "Content/Autop.php": [
             72,
@@ -581,7 +585,7 @@
             8
         ],
         "Content/PluginState.php": [
-            17,
+            22,
             24
         ],
         "Content/PostClasses.php": [
@@ -601,8 +605,8 @@
             6
         ],
         "Content/PostWriter.php": [
-            125,
-            151
+            127,
+            153
         ],
         "Content/Posts.php": [
             176,
@@ -661,8 +665,8 @@
             22
         ],
         "Content/Users.php": [
-            67,
-            95
+            72,
+            100
         ],
         "Context.php": [
             5,
@@ -673,40 +677,40 @@
             78
         ],
         "Db.php": [
-            129,
-            133
+            130,
+            134
         ],
         "Engine.php": [
-            135,
-            147
+            152,
+            173
         ],
         "Extension/Extension.php": [
             0,
             0
         ],
         "Extension/Extensions.php": [
+            19,
+            21
+        ],
+        "Extension/Loader.php": [
+            54,
+            67
+        ],
+        "Extension/Manifest.php": [
+            27,
+            28
+        ],
+        "Extension/Registrations.php": [
             2,
             2
         ],
-        "Extension/Loader.php": [
-            36,
-            48
-        ],
-        "Extension/Manifest.php": [
-            25,
-            27
-        ],
-        "Extension/Registrations.php": [
-            1,
-            1
-        ],
         "Extension/SeamRunner.php": [
-            20,
-            21
+            25,
+            25
         ],
         "Extension/Seams.php": [
-            38,
-            39
+            67,
+            68
         ],
         "Extension/Shortcodes.php": [
             20,
@@ -745,11 +749,11 @@
             65
         ],
         "Front/AdminBar.php": [
-            146,
-            181
+            178,
+            179
         ],
         "Front/ArchiveAddresses.php": [
-            22,
+            25,
             28
         ],
         "Front/Archives.php": [
@@ -761,7 +765,7 @@
             17
         ],
         "Front/AttachmentAddresses.php": [
-            24,
+            29,
             31
         ],
         "Front/Calendar.php": [
@@ -777,23 +781,27 @@
             15
         ],
         "Front/CommentPostController.php": [
-            21,
-            22
+            17,
+            18
         ],
         "Front/CustomLogo.php": [
             16,
             16
         ],
         "Front/EmbedCard.php": [
-            28,
+            45,
             46
         ],
+        "Front/EntryScriptsController.php": [
+            22,
+            23
+        ],
         "Front/FeedController.php": [
-            25,
+            26,
             26
         ],
         "Front/FeedTags.php": [
-            85,
+            86,
             91
         ],
         "Front/FeedTemplates.php": [
@@ -805,19 +813,27 @@
             15
         ],
         "Front/FrontController.php": [
-            48,
+            49,
             53
+        ],
+        "Front/FrontParts.php": [
+            13,
+            13
         ],
         "Front/Kind.php": [
             0,
             0
+        ],
+        "Front/LinksOpml.php": [
+            21,
+            21
         ],
         "Front/ListingLinks.php": [
             7,
             7
         ],
         "Front/Maintenance.php": [
-            3,
+            12,
             13
         ],
         "Front/PageLinks.php": [
@@ -829,7 +845,7 @@
             32
         ],
         "Front/Permalinks.php": [
-            88,
+            93,
             102
         ],
         "Front/PostEmbed.php": [
@@ -849,8 +865,12 @@
             18
         ],
         "Front/QueryMoves.php": [
-            51,
-            52
+            63,
+            64
+        ],
+        "Front/RecordedRedirect.php": [
+            5,
+            5
         ],
         "Front/Redirects.php": [
             3,
@@ -861,23 +881,23 @@
             36
         ],
         "Front/RequestParse.php": [
-            22,
+            24,
             24
         ],
         "Front/Resolution.php": [
-            13,
+            16,
             16
         ],
         "Front/Resolver.php": [
-            131,
-            141
+            141,
+            144
         ],
         "Front/ResourceHints.php": [
             23,
             25
         ],
         "Front/RuleRoutes.php": [
-            52,
+            61,
             62
         ],
         "Front/RuleTable.php": [
@@ -893,11 +913,11 @@
             57
         ],
         "Front/SitemapController.php": [
-            10,
+            12,
             13
         ],
         "Front/SitemapRequest.php": [
-            37,
+            43,
             43
         ],
         "Front/SitemapXml.php": [
@@ -1029,8 +1049,8 @@
             62
         ],
         "Http/Destination.php": [
-            37,
-            39
+            43,
+            45
         ],
         "Http/DiePage.php": [
             7,
@@ -1049,8 +1069,8 @@
             18
         ],
         "Http/Failure.php": [
-            36,
-            62
+            42,
+            63
         ],
         "Http/Fake.php": [
             28,
@@ -1117,8 +1137,8 @@
             0
         ],
         "Http/Request.php": [
-            64,
-            74
+            88,
+            101
         ],
         "Http/RequestFailed.php": [
             2,
@@ -1153,8 +1173,8 @@
             32
         ],
         "Http/Router.php": [
-            109,
-            110
+            116,
+            117
         ],
         "Http/StatusText.php": [
             1,
@@ -1165,8 +1185,8 @@
             14
         ],
         "Http/Transport.php": [
-            70,
-            72
+            72,
+            74
         ],
         "Http/TrustedProxies.php": [
             43,
@@ -1217,12 +1237,12 @@
             16
         ],
         "I18n/SiteLanguage.php": [
-            17,
-            18
+            22,
+            23
         ],
         "I18n/TextDomains.php": [
-            40,
-            41
+            52,
+            53
         ],
         "I18n/TranslationFiles.php": [
             14,
@@ -1233,8 +1253,8 @@
             48
         ],
         "Login/LoginController.php": [
-            233,
-            263
+            224,
+            250
         ],
         "Login/LoginForm.php": [
             108,
@@ -1248,13 +1268,17 @@
             35,
             36
         ],
+        "Login/OneTimeLink.php": [
+            21,
+            21
+        ],
         "Login/ServeLogin.php": [
             0,
             0
         ],
         "Mail/AddressRules.php": [
-            44,
-            45
+            48,
+            49
         ],
         "Mail/ChangeNotices.php": [
             6,
@@ -1605,7 +1629,7 @@
             0
         ],
         "Ops/Archive.php": [
-            37,
+            44,
             54
         ],
         "Ops/Asking.php": [
@@ -1625,8 +1649,8 @@
             14
         ],
         "Ops/Diagnostics.php": [
-            202,
-            222
+            211,
+            232
         ],
         "Ops/Directory.php": [
             19,
@@ -1641,23 +1665,23 @@
             62
         ],
         "Ops/EngineUpdate.php": [
-            62,
-            70
+            65,
+            78
         ],
         "Ops/FilesystemCredentials.php": [
-            124,
-            125
+            125,
+            126
         ],
         "Ops/InstalledSoftware.php": [
             25,
             28
         ],
         "Ops/Logs.php": [
-            56,
+            61,
             75
         ],
         "Ops/Packages.php": [
-            81,
+            152,
             223
         ],
         "Ops/Release.php": [
@@ -1669,19 +1693,19 @@
             25
         ],
         "Ops/ShapeFiles.php": [
-            38,
-            39
+            58,
+            59
         ],
         "Ops/Unzip.php": [
             53,
             58
         ],
         "Ops/Updates.php": [
-            150,
+            152,
             193
         ],
         "Ops/UpgraderRun.php": [
-            18,
+            33,
             42
         ],
         "Query/AuthorPostsSql.php": [
@@ -1717,15 +1741,15 @@
             38
         ],
         "Query/Sql.php": [
-            8,
-            8
+            10,
+            11
         ],
         "Query/TaxSql.php": [
             83,
             84
         ],
         "Rest/Api.php": [
-            179,
+            181,
             186
         ],
         "Rest/ApplicationPasswordsController.php": [
@@ -1761,7 +1785,7 @@
             60
         ],
         "Rest/BlocksController.php": [
-            4,
+            7,
             7
         ],
         "Rest/Caller.php": [
@@ -1785,8 +1809,8 @@
             46
         ],
         "Rest/CommentsController.php": [
-            142,
-            151
+            144,
+            153
         ],
         "Rest/Context.php": [
             2,
@@ -1795,6 +1819,10 @@
         "Rest/DeclaredPostsController.php": [
             10,
             11
+        ],
+        "Rest/DeclaredRevisionsController.php": [
+            6,
+            9
         ],
         "Rest/DeclaredTermsController.php": [
             6,
@@ -1805,8 +1833,8 @@
             123
         ],
         "Rest/EngineRoutes.php": [
-            25,
-            25
+            27,
+            27
         ],
         "Rest/ExistingPost.php": [
             2,
@@ -1821,7 +1849,7 @@
             0
         ],
         "Rest/FontCollectionsController.php": [
-            16,
+            25,
             30
         ],
         "Rest/FontFaceCreation.php": [
@@ -1833,19 +1861,19 @@
             2
         ],
         "Rest/FontFamilyCreation.php": [
-            0,
+            2,
             2
         ],
         "Rest/FontObject.php": [
-            1,
+            19,
             34
         ],
         "Rest/FontSettings.php": [
-            13,
+            33,
             67
         ],
         "Rest/FontWritesController.php": [
-            1,
+            24,
             75
         ],
         "Rest/FontsController.php": [
@@ -1853,11 +1881,11 @@
             56
         ],
         "Rest/GlobalStylesController.php": [
-            26,
+            47,
             54
         ],
         "Rest/GlobalStylesObject.php": [
-            27,
+            38,
             38
         ],
         "Rest/GlobalStylesParams.php": [
@@ -1865,7 +1893,7 @@
             1
         ],
         "Rest/IndexController.php": [
-            43,
+            45,
             46
         ],
         "Rest/InstalledThemesController.php": [
@@ -1917,7 +1945,7 @@
             18
         ],
         "Rest/MenusController.php": [
-            93,
+            103,
             111
         ],
         "Rest/NavigationController.php": [
@@ -1933,12 +1961,12 @@
             0
         ],
         "Rest/PatternDirectoryController.php": [
-            36,
-            42
+            38,
+            43
         ],
         "Rest/PluginsController.php": [
-            103,
-            124
+            111,
+            127
         ],
         "Rest/PolicyGate.php": [
             72,
@@ -1953,16 +1981,16 @@
             76
         ],
         "Rest/PostObject.php": [
-            261,
-            269
+            270,
+            271
         ],
         "Rest/PostsController.php": [
             113,
             115
         ],
         "Rest/PostsWriteController.php": [
-            207,
-            234
+            215,
+            242
         ],
         "Rest/RegisteredFields.php": [
             53,
@@ -1996,13 +2024,17 @@
             12,
             12
         ],
+        "Rest/RevisableTypes.php": [
+            9,
+            9
+        ],
         "Rest/RevisionCollection.php": [
             39,
             76
         ],
         "Rest/RevisionsController.php": [
-            111,
-            137
+            114,
+            139
         ],
         "Rest/RouteArgs.php": [
             15,
@@ -2033,15 +2065,15 @@
             49
         ],
         "Rest/RuntimePrepare.php": [
-            41,
+            43,
             48
         ],
         "Rest/RuntimeRoutes.php": [
-            222,
+            228,
             230
         ],
         "Rest/Schema.php": [
-            241,
+            242,
             260
         ],
         "Rest/SchemaChoices.php": [
@@ -2129,8 +2161,8 @@
             97
         ],
         "Rest/Types.php": [
-            65,
-            78
+            78,
+            81
         ],
         "Rest/UrlDetails.php": [
             31,
@@ -2149,7 +2181,7 @@
             49
         ],
         "Rest/UsersController.php": [
-            155,
+            157,
             176
         ],
         "Rest/ViewConfigPatch.php": [
@@ -2213,7 +2245,7 @@
             18
         ],
         "Runtime/AssetQueue.php": [
-            60,
+            58,
             63
         ],
         "Runtime/AssetView.php": [
@@ -2257,11 +2289,11 @@
             73
         ],
         "Runtime/BlockMetadata.php": [
-            53,
+            35,
             60
         ],
         "Runtime/BlockQueries.php": [
-            29,
+            30,
             30
         ],
         "Runtime/BlockTemplates.php": [
@@ -2272,12 +2304,16 @@
             3,
             3
         ],
+        "Runtime/Bookmarks.php": [
+            9,
+            9
+        ],
         "Runtime/BrowserGlobals.php": [
             23,
             23
         ],
         "Runtime/CommentChecks.php": [
-            123,
+            125,
             133
         ],
         "Runtime/CommentCloser.php": [
@@ -2293,7 +2329,7 @@
             26
         ],
         "Runtime/CommentForm.php": [
-            57,
+            63,
             64
         ],
         "Runtime/CommentPages.php": [
@@ -2333,8 +2369,8 @@
             83
         ],
         "Runtime/Constants.php": [
-            55,
-            58
+            60,
+            63
         ],
         "Runtime/CronEvents.php": [
             116,
@@ -2360,6 +2396,10 @@
             30,
             30
         ],
+        "Runtime/DeclaredTypes.php": [
+            41,
+            41
+        ],
         "Runtime/Deferrals.php": [
             28,
             28
@@ -2381,7 +2421,7 @@
             9
         ],
         "Runtime/EarlyRequest.php": [
-            3,
+            4,
             15
         ],
         "Runtime/EditLinks.php": [
@@ -2405,7 +2445,7 @@
             45
         ],
         "Runtime/Handoff.php": [
-            89,
+            90,
             90
         ],
         "Runtime/Heartbeat.php": [
@@ -2497,7 +2537,7 @@
             65
         ],
         "Runtime/Options.php": [
-            205,
+            206,
             211
         ],
         "Runtime/OptionsGroup.php": [
@@ -2513,7 +2553,7 @@
             55
         ],
         "Runtime/Patterns.php": [
-            43,
+            33,
             49
         ],
         "Runtime/PlaceholderTrace.php": [
@@ -2524,8 +2564,12 @@
             13,
             13
         ],
+        "Runtime/Pluggables.php": [
+            5,
+            5
+        ],
         "Runtime/PluginActivation.php": [
-            33,
+            32,
             35
         ],
         "Runtime/PluginCall.php": [
@@ -2533,12 +2577,12 @@
             1
         ],
         "Runtime/PluginFiles.php": [
-            54,
-            54
+            75,
+            75
         ],
         "Runtime/PluginRemoval.php": [
-            56,
-            70
+            60,
+            72
         ],
         "Runtime/PluginRequirements.php": [
             38,
@@ -2549,8 +2593,8 @@
             18
         ],
         "Runtime/Plugins.php": [
-            84,
-            102
+            93,
+            112
         ],
         "Runtime/PostCaches.php": [
             15,
@@ -2605,7 +2649,7 @@
             102
         ],
         "Runtime/PostQueryWhere.php": [
-            144,
+            146,
             149
         ],
         "Runtime/PostReads.php": [
@@ -2617,7 +2661,7 @@
             91
         ],
         "Runtime/PostSave.php": [
-            70,
+            73,
             74
         ],
         "Runtime/PostTags.php": [
@@ -2637,7 +2681,7 @@
             7
         ],
         "Runtime/QueryArgs.php": [
-            21,
+            18,
             23
         ],
         "Runtime/QueryFlags.php": [
@@ -2653,8 +2697,8 @@
             65
         ],
         "Runtime/Recovery.php": [
-            74,
-            85
+            96,
+            104
         ],
         "Runtime/Refusal.php": [
             1,
@@ -2685,8 +2729,8 @@
             47
         ],
         "Runtime/Runtime.php": [
-            111,
-            129
+            116,
+            133
         ],
         "Runtime/SafeUrls.php": [
             13,
@@ -2697,8 +2741,8 @@
             26
         ],
         "Runtime/ScriptModules.php": [
-            139,
-            142
+            172,
+            175
         ],
         "Runtime/ScriptPack.php": [
             5,
@@ -2721,8 +2765,8 @@
             36
         ],
         "Runtime/SiteUrls.php": [
-            45,
-            47
+            46,
+            48
         ],
         "Runtime/StoredObjects.php": [
             41,
@@ -2761,8 +2805,8 @@
             24
         ],
         "Runtime/TermLookup.php": [
-            195,
-            211
+            206,
+            223
         ],
         "Runtime/TermOrder.php": [
             32,
@@ -2817,11 +2861,11 @@
             5
         ],
         "Runtime/Transients.php": [
-            83,
-            84
+            98,
+            99
         ],
         "Runtime/Translations.php": [
-            64,
+            68,
             74
         ],
         "Runtime/TreeWalk.php": [
@@ -2865,7 +2909,7 @@
             121
         ],
         "Runtime/UserSave.php": [
-            30,
+            29,
             30
         ],
         "Runtime/UserStylesPost.php": [
@@ -2873,7 +2917,7 @@
             23
         ],
         "Runtime/UserWrites.php": [
-            169,
+            168,
             177
         ],
         "Runtime/VersionCheck.php": [
@@ -2883,6 +2927,10 @@
         "Runtime/WidgetAreas.php": [
             125,
             127
+        ],
+        "Runtime/WpApiMode.php": [
+            17,
+            24
         ],
         "Runtime/WpdbFields.php": [
             173,
@@ -2894,7 +2942,7 @@
         ],
         "Runtime/WpdbSetup.php": [
             61,
-            62
+            63
         ],
         "Support/Accents.php": [
             15,
@@ -2921,8 +2969,8 @@
             33
         ],
         "Support/Escape.php": [
-            34,
-            34
+            35,
+            35
         ],
         "Support/FileHeaders.php": [
             11,
@@ -2933,7 +2981,7 @@
             58
         ],
         "Support/Files.php": [
-            22,
+            21,
             34
         ],
         "Support/Flag.php": [
@@ -2949,8 +2997,8 @@
             10
         ],
         "Support/Kses.php": [
-            180,
-            189
+            181,
+            190
         ],
         "Support/KsesAttributes.php": [
             26,
@@ -3061,12 +3109,12 @@
             23
         ],
         "Theme/ClassicRenderer.php": [
-            0,
+            4,
             44
         ],
         "Theme/ClassicTheme.php": [
-            0,
-            11
+            2,
+            12
         ],
         "Theme/CustomCss.php": [
             26,
@@ -3081,28 +3129,36 @@
             14
         ],
         "Theme/FeedHeaders.php": [
-            24,
+            25,
             26
         ],
         "Theme/Folder.php": [
             34,
             34
         ],
+        "Theme/FontCollectionSource.php": [
+            4,
+            13
+        ],
         "Theme/FontFaces.php": [
             50,
             51
         ],
         "Theme/FontNames.php": [
-            15,
+            20,
+            20
+        ],
+        "Theme/FontSchema.php": [
+            14,
             15
         ],
         "Theme/FrontLifecycle.php": [
-            48,
-            51
+            50,
+            52
         ],
         "Theme/GlobalStyles.php": [
-            213,
-            233
+            221,
+            241
         ],
         "Theme/HeadLinks.php": [
             11,
@@ -3113,20 +3169,20 @@
             51
         ],
         "Theme/MainQueryBridge.php": [
-            43,
-            47
+            49,
+            52
         ],
         "Theme/NotModified.php": [
             0,
             0
         ],
         "Theme/PageRenderer.php": [
-            86,
+            87,
             92
         ],
         "Theme/PatternHeaders.php": [
-            25,
-            27
+            21,
+            22
         ],
         "Theme/PatternText.php": [
             93,
@@ -3137,7 +3193,7 @@
             0
         ],
         "Theme/QueryClasses.php": [
-            63,
+            68,
             68
         ],
         "Theme/SpacingScale.php": [
@@ -3169,8 +3225,8 @@
             29
         ],
         "Theme/TemplateIndex.php": [
-            134,
-            136
+            143,
+            145
         ],
         "Theme/TemplatePartTheme.php": [
             21,
@@ -3189,12 +3245,16 @@
             54
         ],
         "Theme/Templates.php": [
-            57,
-            74
+            65,
+            84
         ],
         "Theme/Theme.php": [
-            119,
-            125
+            112,
+            120
+        ],
+        "Theme/ThemeFiles.php": [
+            20,
+            20
         ],
         "Theme/ThemeHeaders.php": [
             30,
@@ -3217,7 +3277,7 @@
             49
         ],
         "Theme/UserStyles.php": [
-            15,
+            18,
             44
         ],
         "Widgets/TextWidgets.php": [
