@@ -22,9 +22,9 @@ use Minn\Runtime\Runtime;
  * rest_cannot_read. A collection shows its slug, then its name,
  * description, font families and categories as its data holds them, the
  * same in every context, through rest_prepare_font_collection. The
- * reference registers a Google Fonts collection read from wordpress.org;
- * the engine registers none of its own (wp-api/fonts.php), so the list
- * holds what plugins register.
+ * Google Fonts collection is registered as the reference registers it, its
+ * file read from the Minn update service's relay of wordpress.org's
+ * (wp-api/fonts.php) and kept a day (Theme\FontCollectionSource).
  */
 final readonly class FontCollectionsController
 {

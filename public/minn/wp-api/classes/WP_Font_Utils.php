@@ -22,36 +22,10 @@ class WP_Font_Utils
         return Minn\Theme\FontNames::faceSlug($settings);
     }
 
-    /** Only the keys the schema names, each through its sanitizer; lists of objects take the schema's first entry. */
+    /** Only the keys the schema names, each through its rule, as the reference sanitizes a font tree (Minn\Theme\FontSchema). */
     public static function sanitize_from_schema($tree, $schema)
     {
-        if (!is_array($tree) || !is_array($schema)) {
-            return [];
-        }
-        $out = [];
-        foreach ($tree as $key => $value) {
-            // A list or object needs a schema of its own; one given a single sanitizer is dropped.
-            if (array_key_exists($key, $schema) && (!is_array($value) || is_array($schema[$key]))) {
-                $out[$key] = self::sanitize_value($value, $schema[$key]);
-            }
-        }
-        return $out;
-    }
-
-    private static function sanitize_value($value, $rule)
-    {
-        if (!is_array($value)) {
-            return self::apply_sanitizer($value, $rule);
-        }
-        if (!array_is_list($value) || !isset($rule[0])) {
-            return self::sanitize_from_schema($value, $rule);
-        }
-        return array_map(static fn ($item) => is_array($item) ? self::sanitize_from_schema($item, $rule[0]) : self::apply_sanitizer($item, $rule[0]), $value);
-    }
-
-    private static function apply_sanitizer($value, $sanitizer)
-    {
-        return is_callable($sanitizer) ? call_user_func($sanitizer, $value) : $value;
+        return Minn\Theme\FontSchema::sanitize($tree, $schema);
     }
 
     public static function get_allowed_font_mime_types()

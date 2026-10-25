@@ -27,8 +27,9 @@ final class FontNames
 
     /**
      * A font-family list as text, each name trimmed of spaces and quotes,
-     * then joined by ", ": a name of letters and hyphens alone as it is,
-     * any other (a space, a digit, an underscore) double-quoted.
+     * then joined by ", ": a name quoted as given stays double-quoted (a
+     * generic family too, `"serif"`), a name of letters and hyphens alone is
+     * as it is, any other (a space, a digit, an underscore) double-quoted.
      */
     public static function family(mixed $fontFamily): string
     {
@@ -36,8 +37,15 @@ final class FontNames
         if ($fontFamily === '') {
             return '';
         }
-        $names = array_filter(array_map(static fn (string $name): string => trim($name, " \t\n\r\0\x0B\"'"), explode(',', $fontFamily)), static fn (string $name): bool => $name !== '');
-        return implode(', ', array_map(self::quoted(...), $names));
+        $names = [];
+        foreach (explode(',', $fontFamily) as $given) {
+            $given = trim($given);
+            $name = trim($given, " \t\n\r\0\x0B\"'");
+            if ($name !== '') {
+                $names[] = preg_match('/^(["\']).*\1$/s', $given) === 1 ? '"' . $name . '"' : self::quoted($name);
+            }
+        }
+        return implode(', ', $names);
     }
 
     /** One name of a font-family list, double-quoted unless it is letters and hyphens alone. */

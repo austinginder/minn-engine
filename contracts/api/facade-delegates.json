@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1663
+        "delegates": 1664
     },
     "functions": {
         "__": {
@@ -791,6 +791,10 @@
         "_wp_privacy_statuses": {
             "file": "post.php",
             "statement": "return ['request-pending' => _x('Pending', 'request status'), 'request-confirmed' => _x('Confirmed', 'request status'), 'request-failed' => _x('Failed', 'request status'), 'request-completed' => _x('Completed', 'request status')];"
+        },
+        "_wp_register_default_font_collections": {
+            "file": "fonts.php",
+            "statement": "wp_register_font_collection('google-fonts', ['name' => _x('Google Fonts', 'font collection name'), 'description' => __('Install from Google Fonts. Fonts are copied to and served from your site.'), 'font_families' => \\Minn\\Ops\\Directory::url('assets/s/images/fonts/wp-' . implode('.', array_slice(explode('.', wp_get_wp_version()), 0, 2)) . '/collections/google-fonts-with-preview.json'), 'categories' => [['name' => _x('Sans Serif', 'font category'), 'slug' => 'sans-serif'], ['name' => _x('Display', 'font category'), 'slug' => 'display'], ['name' => _x('Serif', 'font category'), 'slug' => 'serif'], ['name' => _x('Handwriting', 'font category'), 'slug' => 'handwriting'], ['name' => _x('Monospace', 'font category'), 'slug' => 'monospace']]]);"
         },
         "_wp_register_default_icon_collections": {
             "file": "icons.php",

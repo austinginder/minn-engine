@@ -15,8 +15,10 @@ use Minn\Http\Route;
 use Minn\Json;
 use Minn\Ops\Directory;
 use Minn\RestError;
+use Minn\Runtime\KsesRules;
 use Minn\Runtime\Transients;
 use Minn\Runtime\Translations;
+use Minn\Support\Sanitize;
 
 /**
  * wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the
@@ -131,22 +133,27 @@ final readonly class PatternDirectoryController
     }
 
     /**
-     * One pattern as the directory route shows it.
+     * One pattern as the directory route shows it, each field sanitized as
+     * the reference sanitizes what the directory sent (probe 2026-10-24):
+     * the title, description, keywords and block types as text, the
+     * categories as slugs, the markup as a post's, the numbers as whole
+     * numbers.
      *
      * @return array<string, mixed>
      */
     private static function item(object $raw): array
     {
         $meta = (array) ($raw->meta ?? []);
+        $text = static fn (mixed $value): string => Sanitize::textField((string) $value);
         return [
-            'id' => (int) ($raw->id ?? 0),
-            'title' => (string) (((array) ($raw->title ?? []))['rendered'] ?? ''),
-            'content' => (string) ($raw->pattern_content ?? ''),
-            'categories' => array_map('strval', (array) ($raw->category_slugs ?? [])),
-            'keywords' => array_map('trim', explode(',', (string) ($meta['wpop_keywords'] ?? ''))),
-            'description' => (string) ($meta['wpop_description'] ?? ''),
-            'viewport_width' => (int) ($meta['wpop_viewport_width'] ?? 0),
-            'block_types' => array_values((array) ($meta['wpop_block_types'] ?? [])),
+            'id' => abs((int) ($raw->id ?? 0)),
+            'title' => $text(((array) ($raw->title ?? []))['rendered'] ?? ''),
+            'content' => KsesRules::post((string) ($raw->pattern_content ?? '')),
+            'categories' => array_map(static fn (mixed $slug): string => Sanitize::title((string) $slug), array_values((array) ($raw->category_slugs ?? []))),
+            'keywords' => array_map($text, explode(',', (string) ($meta['wpop_keywords'] ?? ''))),
+            'description' => $text($meta['wpop_description'] ?? ''),
+            'viewport_width' => abs((int) ($meta['wpop_viewport_width'] ?? 0)),
+            'block_types' => array_map($text, array_values((array) ($meta['wpop_block_types'] ?? []))),
         ];
     }
 }

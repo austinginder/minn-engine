@@ -33,12 +33,14 @@ function wp_unregister_font_collection(string $slug)
 }
 
 /**
- * The reference registers its Google Fonts collection here, read from
- * wordpress.org. The engine talks to no wordpress.org address, so it
- * registers none; a site adds its own with wp_register_font_collection().
+ * The Google Fonts collection, as the reference registers it (its name,
+ * description and categories), its file read from the Minn update service,
+ * which relays wordpress.org's for this release with the previews pointed at
+ * itself: the engine talks to no wordpress.org address.
  */
 function _wp_register_default_font_collections()
 {
+    wp_register_font_collection('google-fonts', ['name' => _x('Google Fonts', 'font collection name'), 'description' => __('Install from Google Fonts. Fonts are copied to and served from your site.'), 'font_families' => \Minn\Ops\Directory::url('assets/s/images/fonts/wp-' . implode('.', array_slice(explode('.', wp_get_wp_version()), 0, 2)) . '/collections/google-fonts-with-preview.json'), 'categories' => [['name' => _x('Sans Serif', 'font category'), 'slug' => 'sans-serif'], ['name' => _x('Display', 'font category'), 'slug' => 'display'], ['name' => _x('Serif', 'font category'), 'slug' => 'serif'], ['name' => _x('Handwriting', 'font category'), 'slug' => 'handwriting'], ['name' => _x('Monospace', 'font category'), 'slug' => 'monospace']]]);
 }
 
 /** The fonts directory: the uploads directory with /fonts as its base and no dated subdirectory, through font_dir. */

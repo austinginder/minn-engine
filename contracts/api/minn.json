@@ -78851,6 +78851,7 @@
                 "Minn\\Support\\Accents",
                 "Minn\\Support\\KsesEntities",
                 "Minn\\Support\\KsesProtocols",
+                "Minn\\Theme\\FontCollectionSource",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\StyleLayers",
                 "Minn\\Theme\\StylePresets",
@@ -94294,7 +94295,8 @@
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Upgrade",
-                "Minn\\Runtime\\UserEvents"
+                "Minn\\Runtime\\UserEvents",
+                "Minn\\Theme\\FontCollectionSource"
             ],
             "constructor": null,
             "cases": [],
@@ -110387,7 +110389,7 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/FontCollectionsController.php",
             "lines": 78,
-            "doc": "wp/v2/font-collections (probe: the font library routes on the\nreference): the collections registered with the font library, in the\norder they were registered, a page at a time, and one by its slug. Only\nsomeone who may edit theme options reads them, refused as\nrest_cannot_read. A collection shows its slug, then its name,\ndescription, font families and categories as its data holds them, the\nsame in every context, through rest_prepare_font_collection. The\nreference registers a Google Fonts collection read from wordpress.org;\nthe engine registers none of its own (wp-api/fonts.php), so the list\nholds what plugins register.",
+            "doc": "wp/v2/font-collections (probe: the font library routes on the\nreference): the collections registered with the font library, in the\norder they were registered, a page at a time, and one by its slug. Only\nsomeone who may edit theme options reads them, refused as\nrest_cannot_read. A collection shows its slug, then its name,\ndescription, font families and categories as its data holds them, the\nsame in every context, through rest_prepare_font_collection. The\nGoogle Fonts collection is registered as the reference registers it, its\nfile read from the Minn update service's relay of wordpress.org's\n(wp-api/fonts.php) and kept a day (Theme\\FontCollectionSource).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -116107,7 +116109,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PatternDirectoryController.php",
-            "lines": 120,
+            "lines": 125,
             "doc": "wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the\nblock editor's pattern directory, asked of wordpress.org through the Minn\nupdate service, with the query the reference sends upstream (its paging\nand order, then the search, slugs and offset asked for, the reader's\nlocale, the WordPress version, then the category and keyword by their\nupstream names). An answer is kept an hour in the site transient the\nreference keeps it in, named for that query, so either stack reads the\nother's. Anyone who may edit posts browses it. Each pattern shows its\ntitle as the directory renders it, its markup, its category and keyword\nslugs, its description, viewport width and block types.",
             "implements": [],
             "extends": null,
@@ -116125,8 +116127,10 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Transients",
-                "Minn\\Runtime\\Translations"
+                "Minn\\Runtime\\Translations",
+                "Minn\\Support\\Sanitize"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -116145,8 +116149,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 55,
-                "end": 57
+                "line": 57,
+                "end": 59
             },
             "cases": [],
             "constants": [
@@ -116206,8 +116210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 72
+                    "line": 63,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -116229,8 +116233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 108
+                    "line": 85,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -116252,8 +116256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 131
+                    "line": 121,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -116261,7 +116265,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "item(object $raw): array",
-                    "doc": "One pattern as the directory route shows it.",
+                    "doc": "One pattern as the directory route shows it, each field sanitized as\nthe reference sanitizes what the directory sent (probe 2026-10-24):\nthe title, description, keywords and block types as text, the\ncategories as slugs, the markup as a post's, the numbers as whole\nnumbers.",
                     "shapes": [
                         "@return array<string, mixed>"
                     ],
@@ -116274,8 +116278,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 151
+                    "line": 144,
+                    "end": 158
                 }
             ]
         },
@@ -151121,6 +151125,7 @@
             "usedBy": [
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\OptionSanitizer",
@@ -182222,7 +182227,8 @@
                 "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\ThemeSwitch",
-                "Minn\\Runtime\\UpdateCounts"
+                "Minn\\Runtime\\UpdateCounts",
+                "Minn\\Theme\\FontCollectionSource"
             ],
             "constructor": null,
             "cases": [],
@@ -189554,7 +189560,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 579,
+            "lines": 580,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist are dropped; URL attributes lose unsafe schemes; style attributes\nkeep only listed properties and no code. Comments keep their text, and\nblock delimiters are written back with their attribute values filtered.",
             "implements": [],
             "extends": null,
@@ -190070,8 +190076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 367
+                    "line": 333,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -190090,8 +190096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 376
+                    "line": 371,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -190110,8 +190116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 392
+                    "line": 385,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -190139,8 +190145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 420
+                    "line": 405,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -190159,8 +190165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 512,
-                    "end": 518
+                    "line": 513,
+                    "end": 519
                 },
                 {
                     "routes": [],
@@ -190186,8 +190192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 572,
-                    "end": 586
+                    "line": 573,
+                    "end": 587
                 },
                 {
                     "routes": [],
@@ -190308,7 +190314,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "run(string $run, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "One bracketed run as the tag pass keeps it, or nothing.",
+                    "doc": "One bracketed run as the tag pass keeps it, or nothing; a slashed quote in it is a quote, as on the reference (`title=\\\"x\\\"`).",
                     "shapes": [],
                     "params": [
                         {
@@ -190327,7 +190333,7 @@
                         }
                     ],
                     "line": 275,
-                    "end": 296
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -190353,8 +190359,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 321
+                    "line": 304,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -190373,8 +190379,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 433
+                    "line": 424,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -190393,8 +190399,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 440
+                    "line": 437,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -190413,8 +190419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 451,
-                    "end": 466
+                    "line": 452,
+                    "end": 467
                 },
                 {
                     "routes": [],
@@ -190433,8 +190439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 491
+                    "line": 475,
+                    "end": 492
                 },
                 {
                     "routes": [],
@@ -190453,8 +190459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 494,
-                    "end": 498
+                    "line": 495,
+                    "end": 499
                 },
                 {
                     "routes": [],
@@ -190473,8 +190479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 501,
-                    "end": 505
+                    "line": 502,
+                    "end": 506
                 },
                 {
                     "routes": [],
@@ -190507,8 +190513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 526,
-                    "end": 548
+                    "line": 527,
+                    "end": 549
                 },
                 {
                     "routes": [],
@@ -190541,8 +190547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 551,
-                    "end": 565
+                    "line": 552,
+                    "end": 566
                 },
                 {
                     "routes": [],
@@ -190561,8 +190567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 589,
-                    "end": 598
+                    "line": 590,
+                    "end": 599
                 }
             ]
         },
@@ -192169,6 +192175,7 @@
                 "Minn\\Query\\PostOrder",
                 "Minn\\Rest\\FontSettings",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\AccountFlows",
@@ -196409,6 +196416,74 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\FontCollectionSource",
+            "short": "FontCollectionSource",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FontCollectionSource.php",
+            "lines": 35,
+            "doc": "A font collection read from an address, kept as the reference keeps it\n(probed 2026-10-24 on its Google Fonts collection): the collection's\nfamilies, sanitized as the collection keeps them, in a site transient\nnamed after the address for a day, read from there until it lapses. A\nfetch that fails, answers anything but 200, or holds no font_families is\nkept nowhere, so the next ask tries again.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Json",
+                "Minn\\Objects\\Errors",
+                "Minn\\Runtime\\Transients"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "TTL",
+                    "value": "86400",
+                    "doc": "Seconds a fetched collection is kept.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "remember",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "remember(string $url, Closure $fetch, Closure $sanitize): ?array",
+                    "doc": "The collection at $url as ['font_families' => ...], or null when it\ncould not be read. $fetch makes the request (the WordPress layer's\nHTTP API, so its filters hear it) and hands back its response;\n$sanitize gives the families as the collection keeps them.",
+                    "shapes": [
+                        "@param Closure(): mixed $fetch",
+                        "@param Closure(array): array $sanitize",
+                        "@return array{font_families: array}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fetch",
+                            "type": "Closure",
+                            "shape": "Closure(): mixed",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sanitize",
+                            "type": "Closure",
+                            "shape": "Closure(array): array",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 53
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\FontFaces",
             "short": "FontFaces",
             "namespace": "Minn\\Theme",
@@ -196610,7 +196685,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FontNames.php",
-            "lines": 56,
+            "lines": 64,
             "doc": "The font library's names (probes fonts and font-writes): a font-family\nlist as a family stores it, the identity a face is stored under (its\ntitle, which the duplicate check compares), and the font types an\nupload may carry.",
             "implements": [],
             "extends": null,
@@ -196645,7 +196720,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "family(mixed $fontFamily): string",
-                    "doc": "A font-family list as text, each name trimmed of spaces and quotes,\nthen joined by \", \": a name of letters and hyphens alone as it is,\nany other (a space, a digit, an underscore) double-quoted.",
+                    "doc": "A font-family list as text, each name trimmed of spaces and quotes,\nthen joined by \", \": a name quoted as given stays double-quoted (a\ngeneric family too, `\"serif\"`), a name of letters and hyphens alone is\nas it is, any other (a space, a digit, an underscore) double-quoted.",
                     "shapes": [],
                     "params": [
                         {
@@ -196656,8 +196731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 41
+                    "line": 34,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -196676,8 +196751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 48
+                    "line": 52,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -196696,8 +196771,83 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 69
+                    "line": 66,
+                    "end": 77
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\FontSchema",
+            "short": "FontSchema",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FontSchema.php",
+            "lines": 38,
+            "doc": "The font library's tree sanitizer (WP_Font_Utils::sanitize_from_schema),\nas the reference answers it (probed 2026-10-24): only the keys the schema\nnames are kept; a key whose rule is a callable gets the callable's answer\nfor whatever its value is, a list included (a text sanitizer makes a list\nempty); a rule that is an array reads an object as a schema of its own,\nand a list as a list of that rule's first entry; anything an object level\ncomes out with that is empty ('', '0', 0, false, null, []) is left out,\nwhile a list keeps every item. A rule that is not callable leaves the value\nas it is (the reference stops on a TypeError there).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sanitize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitize(mixed $tree, mixed $schema): array",
+                    "doc": "The tree with only the keys the schema names, each through its rule.",
+                    "shapes": [
+                        "@return array<array-key, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "tree",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "value",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "value(mixed $value, mixed $rule): mixed",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rule",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 54
                 }
             ]
         },

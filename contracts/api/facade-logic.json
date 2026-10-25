@@ -2,11 +2,11 @@
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
         "functions": 3495,
-        "methods": 3814,
-        "delegates": 3566,
+        "methods": 3812,
+        "delegates": 3567,
         "logicFunctions": 1773,
-        "logicMethods": 1970,
-        "logicLines": 29229,
+        "logicMethods": 1967,
+        "logicLines": 29209,
         "kept": 0
     },
     "byFile": {
@@ -542,10 +542,6 @@
             "logic": 8,
             "lines": 48
         },
-        "classes/WP_Font_Collection.php": {
-            "logic": 6,
-            "lines": 47
-        },
         "classes/WP_REST_Response.php": {
             "logic": 5,
             "lines": 47
@@ -569,6 +565,10 @@
         "speculative-loading.php": {
             "logic": 4,
             "lines": 45
+        },
+        "classes/WP_Font_Collection.php": {
+            "logic": 5,
+            "lines": 44
         },
         "classes/WP_Post.php": {
             "logic": 5,
@@ -840,10 +840,6 @@
         },
         "classes/WP_Date_Query.php": {
             "logic": 5,
-            "lines": 17
-        },
-        "classes/WP_Font_Utils.php": {
-            "logic": 2,
             "lines": 17
         },
         "classes/WP_Http_Encoding.php": {
@@ -4683,12 +4679,12 @@
         "WP_Font_Collection::__construct": {
             "file": "classes/WP_Font_Collection.php",
             "line": 16,
-            "statements": 5,
-            "lines": 9
+            "statements": 4,
+            "lines": 8
         },
         "WP_Font_Collection::get_data": {
             "file": "classes/WP_Font_Collection.php",
-            "line": 29,
+            "line": 28,
             "statements": 4,
             "lines": 13
         },
@@ -4700,19 +4696,13 @@
         },
         "WP_Font_Collection::load_from_json": {
             "file": "classes/WP_Font_Collection.php",
-            "line": 46,
+            "line": 45,
             "statements": 5,
             "lines": 7
         },
-        "WP_Font_Collection::load_from_url": {
-            "file": "classes/WP_Font_Collection.php",
-            "line": 62,
-            "statements": 2,
-            "lines": 2
-        },
         "WP_Font_Collection::sanitize_and_validate_data": {
             "file": "classes/WP_Font_Collection.php",
-            "line": 68,
+            "line": 67,
             "statements": 3,
             "lines": 9
         },
@@ -4739,18 +4729,6 @@
             "line": 24,
             "statements": 3,
             "lines": 6
-        },
-        "WP_Font_Utils::sanitize_from_schema": {
-            "file": "classes/WP_Font_Utils.php",
-            "line": 26,
-            "statements": 4,
-            "lines": 10
-        },
-        "WP_Font_Utils::sanitize_value": {
-            "file": "classes/WP_Font_Utils.php",
-            "line": 41,
-            "statements": 3,
-            "lines": 7
         },
         "WP_HTML_Active_Formatting_Elements::clear_up_to_last_marker": {
             "file": "classes/WP_HTML_Token.php",
@@ -14786,7 +14764,7 @@
         },
         "_wp_after_delete_font_family": {
             "file": "fonts.php",
-            "line": 63,
+            "line": 65,
             "statements": 2,
             "lines": 6
         },
@@ -14810,7 +14788,7 @@
         },
         "_wp_before_delete_font_face": {
             "file": "fonts.php",
-            "line": 74,
+            "line": 76,
             "statements": 3,
             "lines": 7
         },
@@ -14918,7 +14896,7 @@
         },
         "_wp_filter_font_directory": {
             "file": "fonts.php",
-            "line": 53,
+            "line": 55,
             "statements": 3,
             "lines": 5
         },
@@ -20732,7 +20710,7 @@
         },
         "wp_font_dir": {
             "file": "fonts.php",
-            "line": 45,
+            "line": 47,
             "statements": 4,
             "lines": 4
         },

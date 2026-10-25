@@ -179,8 +179,8 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-logic.php') . ' --check', $ignored, $facadeLogicStale);
 $check('facade logic: contracts/api/facade-logic.json is current', $facadeLogicStale === 0, 'run php tests/tools/facade-logic.php');
 $facadeLogic = (array) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/facade-logic.json'), true) ?: [])['summary'] ?? []);
-$facadeLogicCeiling = 3743;
-$facadeLogicLinesCeiling = 29232;
+$facadeLogicCeiling = 3740;
+$facadeLogicLinesCeiling = 29209;
 $facadeLogicCount = (int) ($facadeLogic['logicFunctions'] ?? PHP_INT_MAX) + (int) ($facadeLogic['logicMethods'] ?? 0);
 $check("facade logic: functions and methods holding logic stay at or under {$facadeLogicCeiling}", $facadeLogicCount <= $facadeLogicCeiling, (string) $facadeLogicCount);
 $check("facade logic: their body lines stay at or under {$facadeLogicLinesCeiling}", (int) ($facadeLogic['logicLines'] ?? PHP_INT_MAX) <= $facadeLogicLinesCeiling, (string) ($facadeLogic['logicLines'] ?? '?'));

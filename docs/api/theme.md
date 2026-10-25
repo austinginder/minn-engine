@@ -15,8 +15,10 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FeatureSelectors`](#featureselectors) | final class | 33 | A block's styles split between the selectors its metadata gives its |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 99 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
+| [`FontCollectionSource`](#fontcollectionsource) | final class | 35 | A font collection read from an address, kept as the reference keeps it |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
-| [`FontNames`](#fontnames) | final class | 56 | The font library's names (probes fonts and font-writes): a font-family |
+| [`FontNames`](#fontnames) | final class | 64 | The font library's names (probes fonts and font-writes): a font-family |
+| [`FontSchema`](#fontschema) | final class | 38 | The font library's tree sanitizer (WP_Font_Utils::sanitize_from_schema), |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 113 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 580 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
@@ -358,6 +360,31 @@ Whether any of the folders ships a block template index.
 The first of the stylesheet and template directories that holds the file, or the template directory's path.
 
 
+## FontCollectionSource
+
+`final class Minn\Theme\FontCollectionSource` · `public/minn/src/Minn/Theme/FontCollectionSource.php`
+
+A font collection read from an address, kept as the reference keeps it
+(probed 2026-10-24 on its Google Fonts collection): the collection's
+families, sanitized as the collection keeps them, in a site transient
+named after the address for a day, read from there until it lapses. A
+fetch that fails, answers anything but 200, or holds no font_families is
+kept nowhere, so the next ask tries again.
+
+- const `TTL` = `86400` — Seconds a fetched collection is kept.
+
+### static `remember(string $url, Closure $fetch, Closure $sanitize): ?array`
+
+The collection at $url as ['font_families' => ...], or null when it
+could not be read. $fetch makes the request (the WordPress layer's
+HTTP API, so its filters hear it) and hands back its response;
+$sanitize gives the families as the collection keeps them.
+
+- `@param Closure(): mixed $fetch`
+- `@param Closure(array): array $sanitize`
+- `@return array{font_families: array}|null`
+
+
 ## FontFaces
 
 `final class Minn\Theme\FontFaces` · `public/minn/src/Minn/Theme/FontFaces.php`
@@ -417,8 +444,9 @@ Used by: `Minn\Rest\FontSettings`, `Minn\Rest\FontWritesController`
 ### static `family(mixed $fontFamily): string`
 
 A font-family list as text, each name trimmed of spaces and quotes,
-then joined by ", ": a name of letters and hyphens alone as it is,
-any other (a space, a digit, an underscore) double-quoted.
+then joined by ", ": a name quoted as given stays double-quoted (a
+generic family too, `"serif"`), a name of letters and hyphens alone is
+as it is, any other (a space, a digit, an underscore) double-quoted.
 
 ### static `quoted(mixed $name): string`
 
@@ -432,6 +460,29 @@ style (lower case), weight (lower case, normal and bold as numbers),
 stretch (lower case, keywords as percentages) and unicode range
 (upper case), joined by ";". A property left out takes its default
 (normal, 400, 100%, U+0-10FFFF); one given empty stays empty.
+
+
+## FontSchema
+
+`final class Minn\Theme\FontSchema` · `public/minn/src/Minn/Theme/FontSchema.php`
+
+The font library's tree sanitizer (WP_Font_Utils::sanitize_from_schema),
+as the reference answers it (probed 2026-10-24): only the keys the schema
+names are kept; a key whose rule is a callable gets the callable's answer
+for whatever its value is, a list included (a text sanitizer makes a list
+empty); a rule that is an array reads an object as a schema of its own,
+and a list as a list of that rule's first entry; anything an object level
+comes out with that is empty ('', '0', 0, false, null, []) is left out,
+while a list keeps every item. A rule that is not callable leaves the value
+as it is (the reference stops on a TypeError there).
+
+### static `sanitize(mixed $tree, mixed $schema): array`
+
+The tree with only the keys the schema names, each through its rule.
+
+- `@return array<array-key, mixed>`
+
+Internals: `value()` (private, line 45)
 
 
 ## FrontLifecycle

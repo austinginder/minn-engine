@@ -57,7 +57,7 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PathArgs`](#pathargs) | final class | 79 | The arguments a route's path names, as the reference lists them among the |
-| [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 120 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
+| [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 125 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 292 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
@@ -1284,9 +1284,9 @@ someone who may edit theme options reads them, refused as
 rest_cannot_read. A collection shows its slug, then its name,
 description, font families and categories as its data holds them, the
 same in every context, through rest_prepare_font_collection. The
-reference registers a Google Fonts collection read from wordpress.org;
-the engine registers none of its own (wp-api/fonts.php), so the list
-holds what plugins register.
+Google Fonts collection is registered as the reference registers it, its
+file read from the Minn update service's relay of wordpress.org's
+(wp-api/fonts.php) and kept a day (Theme\FontCollectionSource).
 
 - const `REFUSAL` = `'Sorry, you are not allowed to access font collections.'`
 - const `FIELDS` = `array (   0 => 'name',   1 => 'description',   2 => 'font_families',   3 => 'categories', )`
@@ -2375,7 +2375,7 @@ Route: `GET /wp/v2/pattern-directory/patterns (cap edit_posts)`
 
 The directory's patterns for a query, a page at a time.
 
-Internals: `upstreamQuery()` (private, line 83), `fetch()` (private, line 119), `item()` (private, line 138)
+Internals: `upstreamQuery()` (private, line 85), `fetch()` (private, line 121), `item()` (private, line 144)
 
 
 ## PluginsController

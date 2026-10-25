@@ -3748,7 +3748,7 @@ attributes allowed in a context (data/kses.json, as wp_kses_allowed_html
 leaves them), content filtered to them, one attribute judged, and the
 null bytes taken out.
 
-Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Runtime\Attachments`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PostData`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetTemplates`
+Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Rest\PatternDirectoryController`, `Minn\Runtime\Attachments`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PostData`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetTemplates`
 
 
 ### static `table(): array`
@@ -9772,7 +9772,7 @@ transient and site-transient groups, an expiry handed along): the table is
 neither read nor written, and removing one the cache lacks answers false
 (probe transient-stores).
 
-Used by: `Minn\Ops\Updates`, `Minn\Rest\PatternDirectoryController`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\UpdateCounts`
+Used by: `Minn\Ops\Updates`, `Minn\Rest\PatternDirectoryController`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\UpdateCounts`, `Minn\Theme\FontCollectionSource`
 
 ### static `get(mixed $transient): mixed`
 

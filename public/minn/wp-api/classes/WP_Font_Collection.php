@@ -19,7 +19,6 @@ final class WP_Font_Collection
         if ($this->slug !== $slug) {
             _doing_it_wrong(__METHOD__, sprintf('Font collection slug "%s" is not valid. Slugs must use only alphanumeric characters, dashes, and underscores.', $slug), '6.5.0');
         }
-        $args = array_merge(['description' => '', 'categories' => []], $args);
         if (is_string($args['font_families'] ?? null)) {
             $this->src = $args['font_families'];
         }
@@ -59,15 +58,16 @@ final class WP_Font_Collection
         return is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
     }
 
+    /** The collection at an address, kept a day as the reference keeps it (Minn\Theme\FontCollectionSource). */
     private function load_from_url($url)
     {
-        $response = wp_safe_remote_get($url);
-        return is_wp_error($response) || (int) wp_remote_retrieve_response_code($response) !== 200 ? null : json_decode((string) wp_remote_retrieve_body($response), true);
+        return \Minn\Theme\FontCollectionSource::remember((string) $url, static fn () => wp_safe_remote_get($url), static fn (array $families): array => (array) (WP_Font_Utils::sanitize_from_schema(['font_families' => $families], self::get_sanitization_schema())['font_families'] ?? []));
     }
 
     private function sanitize_and_validate_data($data, $required_properties = [])
     {
-        $data = WP_Font_Utils::sanitize_from_schema((array) $data, self::get_sanitization_schema());
+        // A description and categories always, first, whatever sanitizing left of them.
+        $data = array_merge(['description' => '', 'categories' => []], WP_Font_Utils::sanitize_from_schema((array) $data, self::get_sanitization_schema()));
         foreach ((array) $required_properties as $property) {
             if (empty($data[$property])) {
                 $message = sprintf('Font collection "%1$s" has missing or empty property: "%2$s".', $this->slug, $property);
@@ -80,11 +80,11 @@ final class WP_Font_Collection
 
     private static function get_sanitization_schema()
     {
-        $face = array_fill_keys(['fontFamily', 'fontStyle', 'fontWeight', 'fontDisplay', 'fontStretch', 'ascentOverride', 'descentOverride', 'fontVariant', 'fontFeatureSettings', 'fontVariationSettings', 'lineGapOverride', 'sizeAdjust', 'unicodeRange'], 'sanitize_text_field') + ['src' => 'sanitize_url', 'preview' => 'sanitize_url'];
+        $face = array_fill_keys(['fontFamily', 'fontStyle', 'fontWeight', 'fontDisplay', 'fontStretch', 'ascentOverride', 'descentOverride', 'fontVariant', 'fontFeatureSettings', 'fontVariationSettings', 'lineGapOverride', 'sizeAdjust', 'unicodeRange'], 'sanitize_text_field') + ['src' => static fn ($src) => is_array($src) ? array_map('sanitize_text_field', $src) : sanitize_text_field($src), 'preview' => 'sanitize_url'];
         return [
             'name' => 'sanitize_text_field',
             'description' => 'sanitize_text_field',
-            'font_families' => [['font_family_settings' => ['name' => 'sanitize_text_field', 'slug' => 'sanitize_title', 'fontFamily' => 'WP_Font_Utils::sanitize_font_family', 'preview' => 'sanitize_url', 'fontFace' => [$face]], 'categories' => ['sanitize_title']]],
+            'font_families' => [['font_family_settings' => ['name' => 'sanitize_text_field', 'slug' => static fn ($slug) => _wp_to_kebab_case(sanitize_title($slug)), 'fontFamily' => 'WP_Font_Utils::sanitize_font_family', 'preview' => 'sanitize_url', 'fontFace' => [$face]], 'categories' => ['sanitize_title']]],
             'categories' => [['name' => 'sanitize_text_field', 'slug' => 'sanitize_title']],
         ];
     }

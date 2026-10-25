@@ -271,9 +271,10 @@ final class Kses
         return '<' . $element . self::attributes($attributes, strtolower($element), $policy) . (str_ends_with(rtrim($attributes), '/') ? ' />' : '>');
     }
 
-    /** One bracketed run as the tag pass keeps it, or nothing. */
+    /** One bracketed run as the tag pass keeps it, or nothing; a slashed quote in it is a quote, as on the reference (`title=\"x\"`). */
     private static function run(string $run, KsesPolicy $policy): string
     {
+        $run = str_replace('\\"', '"', $run);
         $closed = str_ends_with($run, '>');
         if (str_starts_with($run, '<!--')) {
             return self::htmlComment(substr($run, 4), $policy);

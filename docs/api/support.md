@@ -17,7 +17,7 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 579 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 580 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -559,7 +559,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleaned()` (private, line 159), `cleanValue()` (private, line 164), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 303), `deepDecode()` (private, line 423), `visible()` (private, line 436), `normalizeText()` (private, line 451), `normalizeAttribute()` (private, line 474), `named()` (private, line 494), `codePoint()` (private, line 501), `attributes()` (private, line 526), `rendered()` (private, line 551), `srcset()` (private, line 589)
+Internals: `cleaned()` (private, line 159), `cleanValue()` (private, line 164), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 304), `deepDecode()` (private, line 424), `visible()` (private, line 437), `normalizeText()` (private, line 452), `normalizeAttribute()` (private, line 475), `named()` (private, line 495), `codePoint()` (private, line 502), `attributes()` (private, line 527), `rendered()` (private, line 552), `srcset()` (private, line 590)
 
 
 ## KsesAttributes
@@ -973,7 +973,7 @@ in the filter plugins hook there, handed the result and what was given: a
 title (accents gone when saving), a key, a line of plain text, a user name,
 an email address and the check of one.
 
-Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\FontSettings`, `Minn\Rest\MediaController`, `Minn\Rest\PluginsController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`, `Minn\Theme\FontNames`
+Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\FontSettings`, `Minn\Rest\MediaController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`, `Minn\Theme\FontNames`
 
 ### static `title(mixed $title, mixed $fallback = '', mixed $context = 'save'): string`
 
