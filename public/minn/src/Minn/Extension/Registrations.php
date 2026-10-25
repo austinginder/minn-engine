@@ -21,6 +21,7 @@ final readonly class Registrations
      * @param list<object> $routes controllers with #[Route] methods
      * @param array<string, array{metadata: array<string, mixed>, render: Closure}> $blocks
      * @param list<string> $editorStyles
+     * @param list<object> $rest controllers with #[Route] methods for the REST API
      */
     public function __construct(
         public array $blockGates,
@@ -35,6 +36,7 @@ final readonly class Registrations
         public array $routes = [],
         public array $blocks = [],
         public array $editorStyles = [],
+        public array $rest = [],
     ) {
     }
 

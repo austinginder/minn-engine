@@ -6,12 +6,13 @@ the extension contract and its seams
 |---|---|---|---|
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
-| [`Loader`](#loader) | final class | 173 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
-| [`Manifest`](#manifest) | final readonly class | 81 | minn.json, read as data. A folder under wp-content/plugins (or |
-| [`Registrations`](#registrations) | final readonly class | 37 | Everything the extensions registered for this request, handed from Seams to the runner once. |
+| [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
+| [`Manifest`](#manifest) | final readonly class | 101 | minn.json, read as data. A folder under wp-content/plugins (or |
+| [`Registrations`](#registrations) | final readonly class | 39 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 106 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 239 | Where an extension can take part in a request: twelve typed registrations, |
+| [`Seams`](#seams) | final class | 284 | Where an extension can take part in a request: thirteen typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
+| [`Tables`](#tables) | final readonly class | 84 | An extension's own tables, from the "tables" its minn.json declares: |
 
 ## Extension
 
@@ -110,9 +111,11 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 
 ### `register(Minn\Extension\Seams $seams): void`
 
-Registers every active extension, each on seams of its own; one that throws adds nothing.
+Registers every active extension, each on seams of its own; one that
+throws adds nothing. An extension's declared tables are settled first
+(Tables), so its routes find them on the request that creates them.
 
-Internals: `themeDirs()` (private, line 62), `autoload()` (private, line 178)
+Internals: `themeDirs()` (private, line 62), `autoload()` (private, line 184)
 
 
 ## Manifest
@@ -134,6 +137,7 @@ a WordPress plugin, in which case the two share a name and a version.
 "blocks": ["vendor/block"],
 "types": [{"slug": "zz_note", "name": "Notes", "rest_base": "zz-note"}],
 "taxonomies": [{"slug": "zz_topic", "name": "Topics", "types": ["zz_note"]}],
+"tables": {"minn_block_visibility_log": ["id bigint(20) unsigned NOT NULL AUTO_INCREMENT", "PRIMARY KEY  (id)"]},
 "needs": {"http": ["https://api.example.com/"]}
 }
 
@@ -144,13 +148,17 @@ named in the minn_active_extensions option. "shortcodes" and "blocks"
 are the content tokens preflight treats as provided instead of missing.
 "types" are extra post types and "taxonomies" extra taxonomies, each
 registered on init as a plugin registers its own (DeclaredTypes).
+"tables" are the extension's own tables, each a name (the extension's
+slug, dashes as underscores, then "_" and more) and its column and key
+lines; the engine creates them under the site's table prefix and adds
+what a later version declares, never dropping or changing (Tables).
 "needs" says what the extension reaches outside the process: "http" is
 the URL prefixes its $minn->http may request (true for any public host).
 
-Used by: `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`
+Used by: `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Extension\Tables`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`
 
 ```php
-__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), array $taxonomies = array ( ), ?array $http = NULL)
+__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), array $taxonomies = array ( ), ?array $http = NULL, array $tables = array ( ))
 ```
 - `@param list<string> $replaces`
 - `@param array<string, string> $autoload namespace prefix => directory`
@@ -158,6 +166,7 @@ __construct(string $slug, string $dir, string $name, string $version, string $li
 - `@param list<string> $blocks`
 - `@param list<array<string, mixed>> $types`
 - `@param list<array<string, mixed>> $taxonomies`
+- `@param array<string, list<string>> $tables table name without the prefix => its column and key lines`
 
 - readonly `string $slug`
 - readonly `string $dir`
@@ -173,12 +182,13 @@ __construct(string $slug, string $dir, string $name, string $version, string $li
 - readonly `array $types`
 - readonly `array $taxonomies`
 - readonly `?array $http`
+- readonly `array $tables`
 
 ### static `read(string $dir): ?self`
 
 A folder's minn.json, or null when there is none.
 
-Internals: `http()` (private, line 105)
+Internals: `tables()` (private, line 111), `http()` (private, line 130)
 
 
 ## Registrations
@@ -190,7 +200,7 @@ Everything the extensions registered for this request, handed from Seams to the 
 Used by: `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`
 
 ```php
-__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ), array $blocks = array ( ), array $editorStyles = array ( ))
+__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ), array $blocks = array ( ), array $editorStyles = array ( ), array $rest = array ( ))
 ```
 - `@param list<Closure> $blockGates`
 - `@param list<Closure> $blockFilters`
@@ -203,6 +213,7 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 - `@param list<object> $routes controllers with #[Route] methods`
 - `@param array<string, array{metadata: array<string, mixed>, render: Closure}> $blocks`
 - `@param list<string> $editorStyles`
+- `@param list<object> $rest controllers with #[Route] methods for the REST API`
 
 - readonly `array $blockGates`
 - readonly `array $blockFilters`
@@ -216,6 +227,7 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 - readonly `array $routes`
 - readonly `array $blocks`
 - readonly `array $editorStyles`
+- readonly `array $rest`
 
 ### `onlyBlocks(): self`
 
@@ -294,8 +306,9 @@ Every extension block's block.json, by name.
 
 `final class Minn\Extension\Seams` · `public/minn/src/Minn/Extension/Seams.php`
 
-Where an extension can take part in a request: twelve typed registrations,
-the request they run in, and the outgoing HTTP its minn.json asks for.
+Where an extension can take part in a request: thirteen typed registrations,
+the request they run in (and who it speaks for), and the outgoing HTTP
+its minn.json asks for.
 This is the whole surface an extension sees. Each extension registers on
 its own (forExtension), and what it registered joins the request's once
 its register() returns (adopt). The engine calls what was registered
@@ -369,6 +382,29 @@ the captures it names and returns a Response. They are asked after the
 engine's own routes and before the themed front, so an extension can
 add pages but never take over one the engine answers.
 
+### `rest(object ...$controllers): void`
+
+Answers REST routes (under /wp-json/, and as ?rest_route=) with
+controllers whose public methods carry #[Route] attributes, as the
+engine's own REST controllers do: the pattern leaves out /wp-json
+("/acme/v1/notes/{id:\d+}"), and the route's Policy is judged by the
+engine's REST gate, so the sign-in cookie counts only with its
+wp_rest nonce (X-WP-Nonce or _wpnonce) or an application password,
+and a refusal is the engine's own (401 rest_not_logged_in, 403
+rest_cookie_invalid_nonce, 403 for a missing capability). They are
+asked after the engine's routes and before plugins' routes; user()
+is the caller the gate judged. Each pattern names a namespace of the
+extension's own: one under wp, wp-*, oembed or minn-admin (where
+WordPress's and the engine's routes live) throws, which skips the
+extension.
+
+### `user(): ?Minn\Content\UserRecord`
+
+The signed-in user this request speaks for, or null for nobody. On a
+REST route that is the caller the REST gate accepted (the cookie with
+its nonce, or an application password); on a page it is the sign-in
+cookie alone, so a page reads with it and never writes on it.
+
 ### `block(string $metadata, Closure $render): void`
 
 A block of the extension's own. Its block.json (a folder holding one,
@@ -426,4 +462,52 @@ Content with the registered shortcodes run.
 A shortcode's attributes parsed, curly quotes included.
 
 - `@return array<string, string> named attributes; bare words keyed by position`
+
+
+## Tables
+
+`final readonly class Minn\Extension\Tables` · `public/minn/src/Minn/Extension/Tables.php`
+
+An extension's own tables, from the "tables" its minn.json declares:
+created under the site's table prefix the first time the extension
+registers, and brought up to date (missing columns and keys added, as
+dbDelta adds them) when its version or its declaration changes. What
+was applied is recorded per extension in one option, so a request
+after that costs one autoloaded read. Nothing is ever dropped, renamed
+or changed: a column a later version leaves out stays, and so does
+every table when the extension goes away.
+
+- const `OPTION` = `'minn_extension_tables'` — The option recording, per extension slug, the version and declaration last applied.
+- const `FALLBACK_COLLATION` = `'utf8mb4_unicode_520_ci'`
+
+Used by: `Minn\Extension\Loader`, `Minn\Extension\Manifest`
+
+```php
+__construct(Minn\Db $db, Minn\Content\Site $site)
+```
+
+
+### `settle(Minn\Extension\Manifest $manifest): array`
+
+Applies an extension's tables when they changed since the last time,
+and records them. Returns what was done (empty when nothing was due),
+by table or table.column, in DbDelta's words. A declaration that
+names a table outside the extension's own throws, which skips it.
+
+- `@return array<string, string>`
+
+### static `statements(Minn\Extension\Manifest $manifest, string $prefix, string $collation = self::FALLBACK_COLLATION): array`
+
+The CREATE TABLE statements an extension declares, keyed by the
+prefixed table name: each name must be the extension's slug (dashes
+as underscores) followed by "_" and lowercase letters, digits or
+underscores, and each line one column or key definition.
+
+- `@return array<string, string>`
+
+### static `marker(Minn\Extension\Manifest $manifest): string`
+
+What is recorded for an extension once its tables are applied: its version and a digest of the declaration.
+
+Internals: `recorded()` (private, line 95), `collation()` (private, line 102)
 

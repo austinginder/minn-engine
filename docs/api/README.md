@@ -13,7 +13,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Cli`](cli.md) | 20 | the wp verbs the engine answers itself |
 | [`Minn\Content`](content.md) | 42 | the repositories and records: posts, users, terms, comments, and the render pipeline |
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |
-| [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
+| [`Minn\Extension`](extension.md) | 9 | the extension contract and its seams |
 | [`Minn\Feed`](feed.md) | 8 |  |
 | [`Minn\Front`](front.md) | 49 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 7 | the HTML tag processor |

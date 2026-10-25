@@ -1,0 +1,17 @@
+{
+  "name": "Records probe (test fixture)",
+  "version": "0.1.0",
+  "license": "MIT",
+  "replaces": [],
+  "autoload": {"Minn\\Ext\\TestRecords\\": "src/"},
+  "extension": "Minn\\Ext\\TestRecords\\Extension",
+  "tables": {
+    "minn_test_records_notes": [
+      "id bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+      "user_id bigint(20) unsigned NOT NULL DEFAULT 0",
+      "body text NOT NULL",
+      "PRIMARY KEY  (id)",
+      "KEY user_id (user_id)"
+    ]
+  }
+}

@@ -167,10 +167,11 @@ final readonly class Engine
         Plugins::load($runtime, $mode);
         self::recheckNonce($api, $runtime);
         self::adoptSettledUser($api, $runtime);
-        // The extensions register here too, and their blocks take part: REST answers and the editor's previews draw them.
+        // The extensions register here too: their blocks take part (REST answers and the editor's previews draw them), and their REST routes answer after the engine's.
         $seams = new Seams($db, $site, $context->request, $runtime->reader);
         (new Loader(ABSPATH . 'wp-content', $site))->register($seams);
         Extensions::setBlocks($seams);
+        $api->adopt(...$seams->registrations()->rest);
         // As the reference's request parsing leaves things for rest_api_loaded:
         // the route among the query vars, and REST_REQUEST (hook-trace).
         \_minn_rewrite();

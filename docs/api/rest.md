@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 465 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 475 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -144,6 +144,12 @@ The engine's routes in the reference's index form.
 
 The API for one request: the shared services and the route table.
 
+### `adopt(object ...$controllers): void`
+
+Adds an extension's REST controllers (Seams::rest) behind the
+engine's own: matched after every engine route, judged by the same
+gate and argument check, and answered inside the same envelope.
+
 ### `caller(): Minn\Rest\Caller`
 
 Who is making this request.
@@ -272,7 +278,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 421), `withPageLinks()` (private, line 436), `options()` (private, line 468), `withSchema()` (private, line 485), `withAllow()` (private, line 501)
+Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 431), `withPageLinks()` (private, line 446), `options()` (private, line 478), `withSchema()` (private, line 495), `withAllow()` (private, line 511)
 
 
 ## ApplicationPasswordsController

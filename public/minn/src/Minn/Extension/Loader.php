@@ -156,11 +156,17 @@ final class Loader
         return $out;
     }
 
-    /** Registers every active extension, each on seams of its own; one that throws adds nothing. */
+    /**
+     * Registers every active extension, each on seams of its own; one that
+     * throws adds nothing. An extension's declared tables are settled first
+     * (Tables), so its routes find them on the request that creates them.
+     */
     public function register(Seams $seams): void
     {
+        $tables = new Tables($seams->db, $seams->site);
         foreach ($this->active() as $manifest) {
             try {
+                $tables->settle($manifest);
                 self::autoload($manifest);
                 $class = $manifest->extension;
                 if (!class_exists($class) || !is_subclass_of($class, Extension::class)) {

@@ -146,6 +146,16 @@ final readonly class Api
         return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite), new DeclaredRevisionsController($revisions), new DeclaredTermsController($terms)];
     }
 
+    /**
+     * Adds an extension's REST controllers (Seams::rest) behind the
+     * engine's own: matched after every engine route, judged by the same
+     * gate and argument check, and answered inside the same envelope.
+     */
+    public function adopt(object ...$controllers): void
+    {
+        $this->router->register(...$controllers);
+    }
+
     /** Who is making this request. */
     public function caller(): Caller
     {

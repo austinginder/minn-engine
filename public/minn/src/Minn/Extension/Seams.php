@@ -5,20 +5,26 @@ declare(strict_types=1);
 namespace Minn\Extension;
 
 use Closure;
+use ReflectionClass;
+use ReflectionMethod;
 use Minn\Blocks\Block;
 use Minn\Content\Reader;
 use Minn\Content\Site;
 use Minn\Content\PostRecord;
+use Minn\Content\UserRecord;
+use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\AdminBar;
 use Minn\Front\Resolution;
 use Minn\Http;
 use Minn\Http\Request;
+use Minn\Http\Route;
 use Minn\Json;
 
 /**
- * Where an extension can take part in a request: twelve typed registrations,
- * the request they run in, and the outgoing HTTP its minn.json asks for.
+ * Where an extension can take part in a request: thirteen typed registrations,
+ * the request they run in (and who it speaks for), and the outgoing HTTP
+ * its minn.json asks for.
  * This is the whole surface an extension sees. Each extension registers on
  * its own (forExtension), and what it registered joins the request's once
  * its register() returns (adopt). The engine calls what was registered
@@ -46,6 +52,8 @@ final class Seams
     private ?Closure $title = null;
     /** @var list<object> controllers whose #[Route] methods answer paths */
     private array $routes = [];
+    /** @var list<object> controllers whose #[Route] methods answer REST routes */
+    private array $rest = [];
     /** @var array<string, array{metadata: array<string, mixed>, render: Closure}> blocks of the extension's own, by name */
     private array $blocks = [];
     /** @var list<string> stylesheets the editor's previews load */
@@ -111,6 +119,7 @@ final class Seams
         array_push($this->documentFilters, ...$extension->documentFilters);
         $this->title = $extension->title ?? $this->title;
         array_push($this->routes, ...$extension->routes);
+        array_push($this->rest, ...$extension->rest);
         array_push($this->editorStyles, ...$extension->editorStyles);
         foreach ($extension->blocks as $name => $block) {
             $render = $block['render'];
@@ -182,6 +191,47 @@ final class Seams
     public function routes(object ...$controllers): void
     {
         array_push($this->routes, ...$controllers);
+    }
+
+    /**
+     * Answers REST routes (under /wp-json/, and as ?rest_route=) with
+     * controllers whose public methods carry #[Route] attributes, as the
+     * engine's own REST controllers do: the pattern leaves out /wp-json
+     * ("/acme/v1/notes/{id:\d+}"), and the route's Policy is judged by the
+     * engine's REST gate, so the sign-in cookie counts only with its
+     * wp_rest nonce (X-WP-Nonce or _wpnonce) or an application password,
+     * and a refusal is the engine's own (401 rest_not_logged_in, 403
+     * rest_cookie_invalid_nonce, 403 for a missing capability). They are
+     * asked after the engine's routes and before plugins' routes; user()
+     * is the caller the gate judged. Each pattern names a namespace of the
+     * extension's own: one under wp, wp-*, oembed or minn-admin (where
+     * WordPress's and the engine's routes live) throws, which skips the
+     * extension.
+     */
+    public function rest(object ...$controllers): void
+    {
+        foreach ($controllers as $controller) {
+            foreach ((new ReflectionClass($controller))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                foreach ($method->getAttributes(Route::class) as $attribute) {
+                    $pattern = $attribute->newInstance()->pattern;
+                    if (preg_match('#^/[a-z0-9-]+/[^/]+#', $pattern) !== 1 || preg_match('#^/(?:wp|wp-[a-z0-9-]+|oembed|minn-admin)/#', $pattern) === 1) {
+                        throw new \InvalidArgumentException("REST route {$pattern} is not in a namespace of the extension's own (/acme/v1/...)");
+                    }
+                }
+            }
+        }
+        array_push($this->rest, ...$controllers);
+    }
+
+    /**
+     * The signed-in user this request speaks for, or null for nobody. On a
+     * REST route that is the caller the REST gate accepted (the cookie with
+     * its nonce, or an application password); on a page it is the sign-in
+     * cookie alone, so a page reads with it and never writes on it.
+     */
+    public function user(): ?UserRecord
+    {
+        return $this->reader->userId > 0 ? (new Users($this->db))->find($this->reader->userId) : null;
     }
 
     /**
@@ -260,6 +310,7 @@ final class Seams
             $this->routes,
             $this->blocks,
             $this->editorStyles,
+            $this->rest,
         );
     }
 }

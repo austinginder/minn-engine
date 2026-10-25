@@ -39299,6 +39299,7 @@
                 "Minn\\Engine",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Seams",
+                "Minn\\Extension\\Tables",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontParts",
@@ -41824,6 +41825,7 @@
                 "Minn\\Cli\\LoginLink",
                 "Minn\\Cli\\UserCommand",
                 "Minn\\Content\\Users",
+                "Minn\\Extension\\Seams",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\Permalinks",
@@ -42256,6 +42258,7 @@
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Engine",
+                "Minn\\Extension\\Seams",
                 "Minn\\Front\\FrontParts",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
@@ -43619,6 +43622,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
+                "Minn\\Extension\\Tables",
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
@@ -44386,7 +44390,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 406,
+            "lines": 407,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44619,7 +44623,7 @@
                         }
                     ],
                     "line": 144,
-                    "end": 185
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -44645,8 +44649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 208
+                    "line": 195,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -44672,8 +44676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 238
+                    "line": 218,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -44699,8 +44703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 282
+                    "line": 254,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -44719,8 +44723,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 289
+                    "line": 286,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -44746,8 +44750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 370
+                    "line": 292,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -44857,8 +44861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 432
+                    "line": 374,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -44891,8 +44895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 443,
-                    "end": 452
+                    "line": 444,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -44925,8 +44929,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 458,
-                    "end": 472
+                    "line": 459,
+                    "end": 473
                 }
             ]
         },
@@ -45105,7 +45109,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Loader.php",
-            "lines": 173,
+            "lines": 179,
             "doc": "Finds extensions under wp-content/plugins and wp-content/mu-plugins, and\nin the active theme (a theme folder with a minn.json is an extension too,\nactive because it is the theme: the child, then its parent), decides\nwhich are active, autoloads them, and asks each to register.\nAn extension that throws is logged and skipped; the page still renders.",
             "implements": [],
             "extends": null,
@@ -45114,6 +45118,7 @@
                 "Minn\\Extension\\Extension",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Extension\\Seams",
+                "Minn\\Extension\\Tables",
                 "Minn\\Json",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Support\\Serialized"
@@ -45282,7 +45287,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "register(Minn\\Extension\\Seams $seams): void",
-                    "doc": "Registers every active extension, each on seams of its own; one that throws adds nothing.",
+                    "doc": "Registers every active extension, each on seams of its own; one that\nthrows adds nothing. An extension's declared tables are settled first\n(Tables), so its routes find them on the request that creates them.",
                     "shapes": [],
                     "params": [
                         {
@@ -45293,8 +45298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 176
+                    "line": 164,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -45327,8 +45332,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 191
+                    "line": 184,
+                    "end": 197
                 }
             ]
         },
@@ -45338,11 +45343,12 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Manifest.php",
-            "lines": 81,
-            "doc": "minn.json, read as data. A folder under wp-content/plugins (or\nmu-plugins) with this file is an extension; the same folder may also be\na WordPress plugin, in which case the two share a name and a version.\n\n{\n\"name\": \"Block Visibility for Minn\",\n\"version\": \"1.0.0\",\n\"license\": \"MIT\",\n\"replaces\": [\"block-visibility/block-visibility.php\"],\n\"autoload\": {\"Minn\\\\Ext\\\\BlockVisibility\\\\\": \"src/\"},\n\"extension\": \"Minn\\\\Ext\\\\BlockVisibility\\\\Extension\",\n\"shortcodes\": [\"example_tag\"],\n\"blocks\": [\"vendor/block\"],\n\"types\": [{\"slug\": \"zz_note\", \"name\": \"Notes\", \"rest_base\": \"zz-note\"}],\n\"taxonomies\": [{\"slug\": \"zz_topic\", \"name\": \"Topics\", \"types\": [\"zz_note\"]}],\n\"needs\": {\"http\": [\"https://api.example.com/\"]}\n}\n\n\"replaces\" names the WordPress plugin files whose behaviour this\nextension stands in for; the extension is active whenever one of them is\nin active_plugins, or when its own folder is listed there, or when it is\nnamed in the minn_active_extensions option. \"shortcodes\" and \"blocks\"\nare the content tokens preflight treats as provided instead of missing.\n\"types\" are extra post types and \"taxonomies\" extra taxonomies, each\nregistered on init as a plugin registers its own (DeclaredTypes).\n\"needs\" says what the extension reaches outside the process: \"http\" is\nthe URL prefixes its $minn->http may request (true for any public host).",
+            "lines": 101,
+            "doc": "minn.json, read as data. A folder under wp-content/plugins (or\nmu-plugins) with this file is an extension; the same folder may also be\na WordPress plugin, in which case the two share a name and a version.\n\n{\n\"name\": \"Block Visibility for Minn\",\n\"version\": \"1.0.0\",\n\"license\": \"MIT\",\n\"replaces\": [\"block-visibility/block-visibility.php\"],\n\"autoload\": {\"Minn\\\\Ext\\\\BlockVisibility\\\\\": \"src/\"},\n\"extension\": \"Minn\\\\Ext\\\\BlockVisibility\\\\Extension\",\n\"shortcodes\": [\"example_tag\"],\n\"blocks\": [\"vendor/block\"],\n\"types\": [{\"slug\": \"zz_note\", \"name\": \"Notes\", \"rest_base\": \"zz-note\"}],\n\"taxonomies\": [{\"slug\": \"zz_topic\", \"name\": \"Topics\", \"types\": [\"zz_note\"]}],\n\"tables\": {\"minn_block_visibility_log\": [\"id bigint(20) unsigned NOT NULL AUTO_INCREMENT\", \"PRIMARY KEY  (id)\"]},\n\"needs\": {\"http\": [\"https://api.example.com/\"]}\n}\n\n\"replaces\" names the WordPress plugin files whose behaviour this\nextension stands in for; the extension is active whenever one of them is\nin active_plugins, or when its own folder is listed there, or when it is\nnamed in the minn_active_extensions option. \"shortcodes\" and \"blocks\"\nare the content tokens preflight treats as provided instead of missing.\n\"types\" are extra post types and \"taxonomies\" extra taxonomies, each\nregistered on init as a plugin registers its own (DeclaredTypes).\n\"tables\" are the extension's own tables, each a name (the extension's\nslug, dashes as underscores, then \"_\" and more) and its column and key\nlines; the engine creates them under the site's table prefix and adds\nwhat a later version declares, never dropping or changing (Tables).\n\"needs\" says what the extension reaches outside the process: \"http\" is\nthe URL prefixes its $minn->http may request (true for any public host).",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Extension\\Tables",
                 "Minn\\Json"
             ],
             "usedBy": [
@@ -45350,11 +45356,12 @@
                 "Minn\\Content\\PluginState",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Seams",
+                "Minn\\Extension\\Tables",
                 "Minn\\Ops\\Packages",
                 "Minn\\Rest\\PluginsController"
             ],
             "constructor": {
-                "signature": "__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), array $taxonomies = array ( ), ?array $http = NULL)",
+                "signature": "__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), array $taxonomies = array ( ), ?array $http = NULL, array $tables = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $replaces",
@@ -45362,7 +45369,8 @@
                     "@param list<string> $shortcodes",
                     "@param list<string> $blocks",
                     "@param list<array<string, mixed>> $types",
-                    "@param list<array<string, mixed>> $taxonomies"
+                    "@param list<array<string, mixed>> $taxonomies",
+                    "@param array<string, list<string>> $tables table name without the prefix => its column and key lines"
                 ],
                 "params": [
                     {
@@ -45462,11 +45470,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "tables",
+                        "type": "array",
+                        "shape": "array<string, list<string>>",
+                        "default": "array ( )",
+                        "doc": "table name without the prefix => its column and key lines"
                     }
                 ],
                 "visibility": "public",
-                "line": 48,
-                "end": 66
+                "line": 54,
+                "end": 73
             },
             "cases": [],
             "constants": [],
@@ -45596,6 +45611,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "tables",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -45616,8 +45640,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 95
+                    "line": 76,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "tables",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "tables(mixed $declared): array",
+                    "doc": "\"tables\" as name => lines: a name with a list of strings is kept as\nwritten, anything else is left out (Tables judges the names).",
+                    "shapes": [
+                        "@return array<string, list<string>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "declared",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -45638,8 +45684,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 117
+                    "line": 130,
+                    "end": 142
                 }
             ]
         },
@@ -45649,7 +45695,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Registrations.php",
-            "lines": 37,
+            "lines": 39,
             "doc": "Everything the extensions registered for this request, handed from Seams to the runner once.",
             "implements": [],
             "extends": null,
@@ -45659,7 +45705,7 @@
                 "Minn\\Extension\\Seams"
             ],
             "constructor": {
-                "signature": "__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ), array $blocks = array ( ), array $editorStyles = array ( ))",
+                "signature": "__construct(array $blockGates, array $blockFilters, array $shortcodes, array $contentFilters, array $head, array $footer, array $bodyClasses, array $documentFilters, ?Closure $title, array $routes = array ( ), array $blocks = array ( ), array $editorStyles = array ( ), array $rest = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param list<Closure> $blockGates",
@@ -45672,7 +45718,8 @@
                     "@param list<Closure> $documentFilters",
                     "@param list<object> $routes controllers with #[Route] methods",
                     "@param array<string, array{metadata: array<string, mixed>, render: Closure}> $blocks",
-                    "@param list<string> $editorStyles"
+                    "@param list<string> $editorStyles",
+                    "@param list<object> $rest controllers with #[Route] methods for the REST API"
                 ],
                 "params": [
                     {
@@ -45758,11 +45805,18 @@
                         "shape": "list<string>",
                         "default": "array ( )",
                         "doc": ""
+                    },
+                    {
+                        "name": "rest",
+                        "type": "array",
+                        "shape": "list<object>",
+                        "default": "array ( )",
+                        "doc": "controllers with #[Route] methods for the REST API"
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 39
+                "line": 26,
+                "end": 41
             },
             "cases": [],
             "constants": [],
@@ -45874,6 +45928,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "rest",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -45886,8 +45949,8 @@
                     "doc": "Only the blocks and what previews them, for a request that draws content but is no themed page (REST).",
                     "shapes": [],
                     "params": [],
-                    "line": 42,
-                    "end": 45
+                    "line": 44,
+                    "end": 47
                 }
             ]
         },
@@ -46182,8 +46245,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Seams.php",
-            "lines": 239,
-            "doc": "Where an extension can take part in a request: twelve typed registrations,\nthe request they run in, and the outgoing HTTP its minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
+            "lines": 284,
+            "doc": "Where an extension can take part in a request: thirteen typed registrations,\nthe request they run in (and who it speaks for), and the outgoing HTTP\nits minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -46191,6 +46254,8 @@
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\UserRecord",
+                "Minn\\Content\\Users",
                 "Minn\\Db",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Extension\\Registrations",
@@ -46199,6 +46264,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Http",
                 "Minn\\Http\\Request",
+                "Minn\\Http\\Route",
                 "Minn\\Json"
             ],
             "usedBy": [
@@ -46252,8 +46318,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 61,
-                "end": 69
+                "line": 69,
+                "end": 77
             },
             "cases": [],
             "constants": [],
@@ -46341,6 +46407,15 @@
                 },
                 {
                     "name": "routes",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "rest",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -46448,8 +46523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 85
+                    "line": 84,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -46468,8 +46543,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 119
+                    "line": 100,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -46488,8 +46563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 125
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -46508,8 +46583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 131
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -46535,8 +46610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -46555,8 +46630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 143
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -46575,8 +46650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 149
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -46595,8 +46670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -46615,8 +46690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 161
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -46635,8 +46710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -46655,8 +46730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 173
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -46675,8 +46750,40 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 185
+                    "line": 191,
+                    "end": 194
+                },
+                {
+                    "routes": [],
+                    "name": "rest",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rest(object ...$controllers): void",
+                    "doc": "Answers REST routes (under /wp-json/, and as ?rest_route=) with\ncontrollers whose public methods carry #[Route] attributes, as the\nengine's own REST controllers do: the pattern leaves out /wp-json\n(\"/acme/v1/notes/{id:\\d+}\"), and the route's Policy is judged by the\nengine's REST gate, so the sign-in cookie counts only with its\nwp_rest nonce (X-WP-Nonce or _wpnonce) or an application password,\nand a refusal is the engine's own (401 rest_not_logged_in, 403\nrest_cookie_invalid_nonce, 403 for a missing capability). They are\nasked after the engine's routes and before plugins' routes; user()\nis the caller the gate judged. Each pattern names a namespace of the\nextension's own: one under wp, wp-*, oembed or minn-admin (where\nWordPress's and the engine's routes live) throws, which skips the\nextension.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "controllers",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 211,
+                    "end": 224
+                },
+                {
+                    "routes": [],
+                    "name": "user",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "user(): ?Minn\\Content\\UserRecord",
+                    "doc": "The signed-in user this request speaks for, or null for nobody. On a\nREST route that is the caller the REST gate accepted (the cookie with\nits nonce, or an application password); on a page it is the sign-in\ncookie alone, so a page reads with it and never writes on it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -46704,8 +46811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 209
+                    "line": 249,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -46724,8 +46831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 219
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -46751,8 +46858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 239
+                    "line": 277,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -46771,8 +46878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 245
+                    "line": 292,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -46783,8 +46890,8 @@
                     "doc": "What was registered, for the engine's runner. Extensions have no reason to call this.",
                     "shapes": [],
                     "params": [],
-                    "line": 248,
-                    "end": 264
+                    "line": 298,
+                    "end": 315
                 }
             ]
         },
@@ -46866,6 +46973,194 @@
                     ],
                     "line": 46,
                     "end": 69
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Extension\\Tables",
+            "short": "Tables",
+            "namespace": "Minn\\Extension",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Extension/Tables.php",
+            "lines": 84,
+            "doc": "An extension's own tables, from the \"tables\" its minn.json declares:\ncreated under the site's table prefix the first time the extension\nregisters, and brought up to date (missing columns and keys added, as\ndbDelta adds them) when its version or its declaration changes. What\nwas applied is recorded per extension in one option, so a request\nafter that costs one autoloaded read. Nothing is ever dropped, renamed\nor changed: a column a later version leaves out stays, and so does\nevery table when the extension goes away.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Site",
+                "Minn\\Db",
+                "Minn\\Extension\\Manifest",
+                "Minn\\Json",
+                "Minn\\Runtime\\DbDelta",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Extension\\Loader",
+                "Minn\\Extension\\Manifest"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "site",
+                        "type": "Minn\\Content\\Site",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 31,
+                "end": 33
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "OPTION",
+                    "value": "'minn_extension_tables'",
+                    "doc": "The option recording, per extension slug, the version and declaration last applied.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "FALLBACK_COLLATION",
+                    "value": "'utf8mb4_unicode_520_ci'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "site",
+                    "type": "Minn\\Content\\Site",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "settle(Minn\\Extension\\Manifest $manifest): array",
+                    "doc": "Applies an extension's tables when they changed since the last time,\nand records them. Returns what was done (empty when nothing was due),\nby table or table.column, in DbDelta's words. A declaration that\nnames a table outside the extension's own throws, which skips it.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "manifest",
+                            "type": "Minn\\Extension\\Manifest",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "statements",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "statements(Minn\\Extension\\Manifest $manifest, string $prefix, string $collation = self::FALLBACK_COLLATION): array",
+                    "doc": "The CREATE TABLE statements an extension declares, keyed by the\nprefixed table name: each name must be the extension's slug (dashes\nas underscores) followed by \"_\" and lowercase letters, digits or\nunderscores, and each line one column or key definition.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "manifest",
+                            "type": "Minn\\Extension\\Manifest",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "collation",
+                            "type": "string",
+                            "shape": "",
+                            "default": "self::FALLBACK_COLLATION",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "marker",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "marker(Minn\\Extension\\Manifest $manifest): string",
+                    "doc": "What is recorded for an extension once its tables are applied: its version and a digest of the declaration.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "manifest",
+                            "type": "Minn\\Extension\\Manifest",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "recorded",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "recorded(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string> slug => marker"
+                    ],
+                    "params": [],
+                    "line": 95,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "collation",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "collation(): string",
+                    "doc": "The collation the site's own options table was made with, so extension tables sort text as the site does.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 102,
+                    "end": 106
                 }
             ]
         },
@@ -74124,6 +74419,7 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
+                "Minn\\Extension\\Seams",
                 "Minn\\Front\\AssetsController",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\EntryScriptsController",
@@ -78807,6 +79103,7 @@
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Extension\\Seams",
+                "Minn\\Extension\\Tables",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\FrontController",
                 "Minn\\Html",
@@ -104007,7 +104304,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 465,
+            "lines": 475,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -104239,6 +104536,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "adopt",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "adopt(object ...$controllers): void",
+                    "doc": "Adds an extension's REST controllers (Seams::rest) behind the\nengine's own: matched after every engine route, judged by the same\ngate and argument check, and answered inside the same envelope.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "controllers",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 157
+                },
+                {
+                    "routes": [],
                     "name": "caller",
                     "static": false,
                     "visibility": "public",
@@ -104246,8 +104563,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 150,
-                    "end": 153
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -104289,8 +104606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 174
+                    "line": 172,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -104318,8 +104635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 181
+                    "line": 187,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -104330,8 +104647,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 184,
-                    "end": 187
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -104342,8 +104659,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 190,
-                    "end": 193
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -104354,8 +104671,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 196,
-                    "end": 199
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -104366,8 +104683,8 @@
                     "doc": "The wp/v2 menu shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 206
+                    "line": 212,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -104395,8 +104712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 214
+                    "line": 219,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -104424,8 +104741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 221
+                    "line": 227,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -104453,8 +104770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 228
+                    "line": 234,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -104489,8 +104806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 236
+                    "line": 241,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -104518,8 +104835,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 242
+                    "line": 249,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -104547,8 +104864,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 245,
-                    "end": 248
+                    "line": 255,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -104559,8 +104876,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 254
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -104571,8 +104888,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 257,
-                    "end": 260
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -104598,8 +104915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 277
+                    "line": 278,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -104618,8 +104935,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 307
+                    "line": 290,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -104645,8 +104962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 351
+                    "line": 331,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -104665,8 +104982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 358
+                    "line": 364,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -104720,8 +105037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 383
+                    "line": 376,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -104747,8 +105064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 404
+                    "line": 402,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -104776,8 +105093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 412,
-                    "end": 419
+                    "line": 422,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -104825,8 +105142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 429
+                    "line": 431,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -104852,8 +105169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 459
+                    "line": 446,
+                    "end": 469
                 },
                 {
                     "routes": [],
@@ -104872,8 +105189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 475
+                    "line": 478,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -104902,8 +105219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 485,
-                    "end": 495
+                    "line": 495,
+                    "end": 505
                 },
                 {
                     "routes": [],
@@ -104929,8 +105246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 501,
-                    "end": 505
+                    "line": 511,
+                    "end": 515
                 }
             ]
         },
@@ -145463,7 +145780,9 @@
             "uses": [
                 "Minn\\Db"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Extension\\Tables"
+            ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
                 "doc": "",
@@ -170805,6 +171124,7 @@
                 "Minn\\Db",
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
+                "Minn\\Extension\\Tables",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\CustomLogo",
                 "Minn\\Front\\EmbedCard",

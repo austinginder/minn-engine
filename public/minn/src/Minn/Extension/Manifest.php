@@ -22,6 +22,7 @@ use Minn\Json;
  *     "blocks": ["vendor/block"],
  *     "types": [{"slug": "zz_note", "name": "Notes", "rest_base": "zz-note"}],
  *     "taxonomies": [{"slug": "zz_topic", "name": "Topics", "types": ["zz_note"]}],
+ *     "tables": {"minn_block_visibility_log": ["id bigint(20) unsigned NOT NULL AUTO_INCREMENT", "PRIMARY KEY  (id)"]},
  *     "needs": {"http": ["https://api.example.com/"]}
  *   }
  *
@@ -32,6 +33,10 @@ use Minn\Json;
  * are the content tokens preflight treats as provided instead of missing.
  * "types" are extra post types and "taxonomies" extra taxonomies, each
  * registered on init as a plugin registers its own (DeclaredTypes).
+ * "tables" are the extension's own tables, each a name (the extension's
+ * slug, dashes as underscores, then "_" and more) and its column and key
+ * lines; the engine creates them under the site's table prefix and adds
+ * what a later version declares, never dropping or changing (Tables).
  * "needs" says what the extension reaches outside the process: "http" is
  * the URL prefixes its $minn->http may request (true for any public host).
  */
@@ -44,6 +49,7 @@ final readonly class Manifest
      * @param list<string> $blocks
      * @param list<array<string, mixed>> $types
      * @param list<array<string, mixed>> $taxonomies
+     * @param array<string, list<string>> $tables table name without the prefix => its column and key lines
      */
     public function __construct(
         public string $slug,
@@ -62,6 +68,7 @@ final readonly class Manifest
         public array $taxonomies = [],
         /** @var list<string>|null needs.http: the URL prefixes granted, [] for any public host, null when not asked */
         public ?array $http = null,
+        public array $tables = [],
     ) {
     }
 
@@ -91,7 +98,25 @@ final readonly class Manifest
             array_values(array_filter((array) ($data['types'] ?? []), static fn ($row) => is_array($row))),
             array_values(array_filter((array) ($data['taxonomies'] ?? []), static fn ($row) => is_array($row))),
             self::http(is_array($data['needs'] ?? null) ? ($data['needs']['http'] ?? null) : null),
+            self::tables($data['tables'] ?? null),
         );
+    }
+
+    /**
+     * "tables" as name => lines: a name with a list of strings is kept as
+     * written, anything else is left out (Tables judges the names).
+     *
+     * @return array<string, list<string>>
+     */
+    private static function tables(mixed $declared): array
+    {
+        $tables = [];
+        foreach (is_array($declared) ? $declared : [] as $name => $lines) {
+            if (is_string($name) && is_array($lines) && $lines !== [] && array_filter($lines, is_string(...)) === $lines) {
+                $tables[$name] = array_values($lines);
+            }
+        }
+        return $tables;
     }
 
     /**

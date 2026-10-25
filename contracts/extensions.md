@@ -2,7 +2,7 @@
 
 How code that is not the engine takes part in a request, and how a WordPress
 plugin's behaviour is re-provided on Minn. Code: `public/minn/src/Minn/Extension/`.
-Suite: `tests/extensions.test.php` (24 checks). First port: `extensions/minn-block-visibility`.
+Suites: `tests/extensions.test.php` (24 checks), `tests/extension-records.test.php` (29 checks: REST routes and tables). First port: `extensions/minn-block-visibility`.
 
 ## What an extension is
 
@@ -58,7 +58,8 @@ the rest of B5. `tests/unit/extension-grants.php` proves the grant.
 
 ## The seams
 
-`Seams` carries the request (`db`, `site`, `request`, `reader`), the granted
+`Seams` carries the request (`db`, `site`, `request`, `reader`, and `user()`:
+the signed-in `UserRecord` the request speaks for, or null), the granted
 `http`, and the
 registrations, each a typed closure, called in registration order:
 
@@ -72,10 +73,48 @@ registrations, each a typed closure, called in registration order:
 | `bodyClass` | `string` | appended after the theme classes |
 | `filterDocument` | `(string $html): string` | the whole themed document before it is sent (what an output buffer did on the reference) |
 | `routes` | `object ...$controllers` | controllers whose public methods carry `#[Route]`, as the engine's own do (`Request` and the captures in, `Response` out, a `Policy` each); asked after every engine route and before the themed front, so an extension adds pages but never takes over one the engine answers; a path its pattern refuses falls through to the front |
+| `rest` | `object ...$controllers` | REST routes under `/wp-json/` (and `?rest_route=`): controllers with `#[Route]` methods whose pattern leaves out `/wp-json` (`/acme/v1/notes/{id:\d+}`), judged by the engine's REST gate exactly as its own routes are. The sign-in cookie counts only with its `wp_rest` nonce (`X-WP-Nonce` or `_wpnonce`), or an application password; a signed-out caller on an `Access::SignedIn` route gets 401 `rest_not_logged_in`, a nonce that does not verify 403 `rest_cookie_invalid_nonce` on any route, a missing capability 403 with the policy's code. Asked after every engine route and before plugins' routes, inside the same envelope (the REST server's filters run around them); the REST index lists their namespace. `user()` inside a handler is the caller the gate accepted. Each pattern must name a namespace of the extension's own: one under `wp`, `wp-*`, `oembed` or `minn-admin`, or a pattern with no namespace, throws and skips the extension. A batch (`/batch/v1`) does not reach them yet |
 | `block($metadata)` | `(array $attributes, string $content, Seams): string` | a block of the extension's own, wherever blocks render: the themed front, REST answers (`content.rendered`) and Minn Admin's editor previews. `$metadata` is a folder holding a `block.json`, or the file, relative to the extension's folder; the engine registers it as a dynamic block type from that file (title, attributes with types, enums and defaults, `parent`, `supports`, `example`), so `wp/v2/block-types` lists it and Minn Admin edits its attributes with a form and offers it in the inserter. `$attributes` arrive with the block.json defaults filled in; `$content` is the block's inner blocks, already rendered. A file that is missing or names no block skips the extension |
 | `editorStyles` | `string ...$hrefs` | stylesheets Minn Admin's block previews load after the theme's `style.css` (`minn-admin/v1/editor-styles`): what an extension's blocks are drawn against when the theme's own stylesheet is not all of it; a path from the site root becomes the site's URL |
 
-Extensions register on REST requests too, where only their blocks take part: the filters, shortcodes, head and routes stay with the themed front, as before.
+Extensions register on REST requests too, where their blocks and their `rest` routes take part: the filters, shortcodes, head and page `routes` stay with the themed front, as before. On a page, `user()` and `reader` are the sign-in cookie alone (no nonce), so a page route may read with them but a write belongs on a `rest` route.
+
+## Tables of an extension's own
+
+`"tables"` in `minn.json` declares tables the extension owns, as a name and its
+column and key lines:
+
+```json
+"tables": {
+  "acme_notes": [
+    "id bigint(20) unsigned NOT NULL AUTO_INCREMENT",
+    "user_id bigint(20) unsigned NOT NULL DEFAULT 0",
+    "body longtext NOT NULL",
+    "PRIMARY KEY  (id)",
+    "KEY user_id (user_id)"
+  ]
+}
+```
+
+A name is the extension's slug with dashes as underscores, then `_` and more
+lowercase letters, digits or underscores (`acme-shop` owns `acme_shop_*`), at
+most 64 characters with the prefix; a line is one column or key definition (no
+`;`, line break or comment). The engine builds `CREATE TABLE IF NOT EXISTS
+{prefix}{name} (...)` in the collation of the site's options table and applies it
+through `Runtime\DbDelta` before the extension registers (`Extension\Tables`), so
+a route finds its table on the very request that created it. Option
+`minn_extension_tables` records, per slug, the version and a digest of the
+declaration last applied; while both stand a request applies nothing (one
+autoloaded read). A new version, or a changed declaration, applies again:
+missing tables are created and missing columns and keys added, in DbDelta's
+order. Nothing is ever dropped, renamed or changed: a column a later version
+leaves out stays with its data, a type change is not made, and the tables stay
+when the extension is switched off. A name outside the extension's own or a
+line that is not one definition throws, which skips the extension (logged) and
+records nothing; a statement the database refuses does the same, and the next
+request tries again. The extension reads and writes its tables through
+`$minn->db` (`$minn->db->table('acme_notes')` is the prefixed name): the engine
+is their only writer, and they travel with the site's database in a backup.
 
 An extension page is a whole document the extension built, so the engine adds nothing to it. `$minn->frontBar($html, ?PostRecord $post)` gives it the Minn bar a signed-in editor sees on themed pages (the bar's stylesheet before `</head>`, the bar before `</body>`; with a post named, the bar's Edit opens it) and returns anyone else's document unchanged. The bar is settled before extensions register.
 
@@ -106,7 +145,7 @@ plugin registering the same; `tests/unit/declared-types.php` pins the
 row-to-arguments mapping. Preflight GREENS extra post types a manifest
 declares.
 
-Not yet seams (next ports decide their shape): REST controllers under `/wp-json/`, cron
+Not yet seams (next ports decide their shape): cron
 jobs, CLI verbs, file assets by URL (a plugin folder is web-served, so an extension
 can link its own files), Minn Admin surfaces.
 
