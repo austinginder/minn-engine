@@ -10,6 +10,7 @@ use Minn\Objects\Errors;
 use Minn\Objects\User;
 use Minn\Support\Entities;
 use Minn\Support\Sanitize;
+use Minn\Support\Slashes;
 
 /**
  * The account functions a sign-in page and plugins call, with the
@@ -89,6 +90,55 @@ final class AccountFlows
      */
     public static function registerNewUser(string $login, string $email): int|Errors
     {
+        [$name, $email, $errors] = self::vetRegistration($login, $email);
+        if ($errors->has_errors()) {
+            return $errors;
+        }
+        $id = UserWrites::create($name, Handoff::password(12, false), $email);
+        if (!is_int($id) || $id < 1) {
+            return self::registerFailed();
+        }
+        MetaData::updateUser($id, 'default_password_nag', true);
+        Runtime::hooks()->action('register_new_user', [$id]);
+        return $id;
+    }
+
+    /**
+     * A new account whose holder chose the password (a sign-up form of an
+     * extension's own): the same checks as registerNewUser, then the account
+     * with that password (as a form sends it, slashed) and, when one is
+     * given, the name shown for it (display name and nickname) and the role
+     * (else the site's default role), and the site told. The holder is
+     * mailed nothing: there is no password to set.
+     */
+    public static function registerWithPassword(string $login, string $email, string $password, string $shownAs = '', string $role = ''): int|Errors
+    {
+        [$name, $email, $errors] = self::vetRegistration($login, $email);
+        if ($password === '') {
+            $errors->add('empty_password', Gettext::text('<strong>Error:</strong> Please enter a password.'));
+        }
+        if ($errors->has_errors()) {
+            return $errors;
+        }
+        $account = ['user_login' => Slashes::add($name), 'user_email' => Slashes::add($email), 'user_pass' => Slashes::add($password)];
+        $account += $shownAs === '' ? [] : ['display_name' => Slashes::add($shownAs), 'nickname' => Slashes::add($shownAs)];
+        $id = UserWrites::insert($role === '' ? $account : $account + ['role' => $role]);
+        if (!is_int($id) || $id < 1) {
+            return self::registerFailed();
+        }
+        self::newUserNotification($id, null, 'admin');
+        return $id;
+    }
+
+    /**
+     * The name and email a registration asks for, judged as the reference
+     * judges them: the sanitised name, the filtered email, and the refusals
+     * (none when the registration may go ahead).
+     *
+     * @return array{0: string, 1: string, 2: Errors}
+     */
+    private static function vetRegistration(string $login, string $email): array
+    {
         $errors = Handoff::newError();
         $name = Sanitize::user($login);
         $email = (string) Runtime::hooks()->filter('user_registration_email', [$email]);
@@ -114,17 +164,13 @@ final class AccountFlows
             $email = $emailError[0] === 'invalid_email' ? '' : $email;
         }
         Runtime::hooks()->action('register_post', [$name, $email, $errors]);
-        $errors = Runtime::hooks()->filter('registration_errors', [$errors, $name, $email]);
-        if ($errors->has_errors()) {
-            return $errors;
-        }
-        $id = UserWrites::create($name, Handoff::password(12, false), $email);
-        if (!is_int($id) || $id < 1) {
-            return Handoff::newError('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
-        }
-        MetaData::updateUser($id, 'default_password_nag', true);
-        Runtime::hooks()->action('register_new_user', [$id]);
-        return $id;
+        return [$name, $email, Runtime::hooks()->filter('registration_errors', [$errors, $name, $email])];
+    }
+
+    /** The refusal when the account row could not be written. */
+    private static function registerFailed(): Errors
+    {
+        return Handoff::newError('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
     }
 
     /**

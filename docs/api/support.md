@@ -151,7 +151,7 @@ named or numeric entity stays as it is.
 - const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
 - const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
 
-Used by: `Minn\Admin\MetaBoxMarkup`, `Minn\Admin\SubmitButton`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
+Used by: `Minn\Admin\MetaBoxMarkup`, `Minn\Admin\SubmitButton`, `Minn\Extension\Accounts`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -1166,7 +1166,7 @@ Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
 added to or stripped from every string inside a value, arrays and
 objects walked all the way down, anything else left as it is.
 
-Used by: `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Login\LoginController`, `Minn\Ops\FilesystemCredentials`, `Minn\Rest\FontWritesController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\Autosaves`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Extension\Accounts`, `Minn\Login\LoginController`, `Minn\Ops\FilesystemCredentials`, `Minn\Rest\FontWritesController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\UsersController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\Autosaves`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
 
 ### static `add(mixed $value): mixed`
 

@@ -1,0 +1,143 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Minn on its own: an extension's own sign-in surface over Seams::accounts().
+ * Registration follows users_can_register and the site's default role, takes
+ * the password the form chose and refuses what the sign-in page's
+ * registration refuses; the sign-in counts against the same throttle and
+ * mints the same session and cookies (the REST nonce and wp-login.php both
+ * accept the result), a refusal never says which half was wrong, sign-out
+ * ends the session, and the reset link is the lost-password page's. Drives
+ * a copy of tests/fixtures/extensions/minn-test-records on the test site.
+ *
+ *   php tests/extension-accounts.test.php
+ */
+
+require_once __DIR__ . '/lib.php';
+
+$pass = 0;
+$fail = 0;
+$check = static function (string $label, bool $ok, string $detail = '') use (&$pass, &$fail): void {
+    if ($ok) {
+        $pass++;
+        echo "  ok   {$label}\n";
+        return;
+    }
+    $fail++;
+    echo "  FAIL {$label}" . ($detail !== '' ? "\n      " . substr($detail, 0, 400) : '') . "\n";
+};
+
+$ENGINE = minn_test_url();
+$site = minn_test_site_root();
+$wp = static fn (string $command): string => trim((string) shell_exec('cd ' . escapeshellarg($site . '/wp-reference') . " && wp {$command} 2>/dev/null"));
+$jar = tempnam(sys_get_temp_dir(), 'minn-accounts-');
+/** @return array{0: int, 1: mixed, 2: string} status, decoded body, headers */
+$call = static function (string $method, string $path, ?array $body = null, array $headers = [], bool $cookies = true) use ($ENGINE, $jar): array {
+    $args = ['-sk', '-D', '-', '-o', '-', '-X', $method, str_starts_with($path, '/wp-') ? "{$ENGINE}{$path}" : "{$ENGINE}/wp-json{$path}"];
+    if ($cookies) {
+        array_push($args, '-b', $jar, '-c', $jar);
+    }
+    foreach ($headers as $header) {
+        array_push($args, '-H', $header);
+    }
+    if ($body !== null) {
+        array_push($args, '-H', 'Content-Type: application/json', '--data-binary', json_encode($body));
+    }
+    $out = (string) shell_exec('/usr/bin/curl ' . implode(' ', array_map('escapeshellarg', $args)));
+    [$head, $text] = array_pad(explode("\r\n\r\n", $out, 2), 2, '');
+    preg_match('#^HTTP/\S+ (\d+)#', $head, $m);
+    return [(int) ($m[1] ?? 0), json_decode($text, true), $head];
+};
+$nonce = static fn (): string => trim((string) shell_exec('/usr/bin/curl -sk -b ' . escapeshellarg($jar) . ' ' . escapeshellarg("{$ENGINE}/wp-admin/admin-ajax.php?action=rest-nonce")));
+
+echo "extension-accounts suite: {$ENGINE}\n";
+$fixture = __DIR__ . '/fixtures/extensions/minn-test-records';
+$copy = "{$site}/public/wp-content/plugins/minn-test-records";
+$logins = ['zz-acct-one', 'zz-acct-two'];
+$sweep = static function () use ($wp, $copy, $logins): void {
+    foreach ($logins as $login) {
+        $id = $wp('user get ' . escapeshellarg($login) . ' --field=ID');
+        if (ctype_digit($id)) {
+            $wp("user delete {$id} --yes");
+        }
+    }
+    $wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
+    exec('rm -rf ' . escapeshellarg($copy));
+};
+$sweep();
+exec('cp -R ' . escapeshellarg($fixture) . ' ' . escapeshellarg($copy));
+$active = $wp('option get minn_active_extensions') ?: '[]';
+$register = $wp('option get users_can_register');
+$role = $wp('option get default_role');
+$wp('option update minn_active_extensions ' . escapeshellarg(json_encode([...(array) json_decode($active, true), 'minn-test-records'])));
+register_shutdown_function(static function () use ($wp, $active, $register, $role, $sweep, $jar): void {
+    $wp('option update minn_active_extensions ' . escapeshellarg($active));
+    $wp('option update users_can_register ' . escapeshellarg($register));
+    $wp('option update default_role ' . escapeshellarg($role));
+    $sweep();
+    @unlink($jar);
+});
+$password = 'zz "quoted" pass\\word 1';
+
+// 1. Registration follows the site's settings.
+$wp('option update users_can_register 0');
+[$status, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-one', 'email' => 'zz-acct-one@example.com', 'password' => $password]);
+$check('a site that takes no new accounts refuses registration', $status === 400 && ($error['code'] ?? '') === 'registration_closed', json_encode([$status, $error]));
+$wp('option update users_can_register 1');
+$wp('option update default_role subscriber');
+[$status, $made] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-one', 'email' => 'zz-acct-one@example.com', 'password' => $password, 'shownAs' => 'Zz Shown One']);
+$check('an open site makes the account', $status === 201 && ($made['login'] ?? '') === 'zz-acct-one' && (int) ($made['id'] ?? 0) > 0, json_encode([$status, $made]));
+$check('with the site\'s default role', $wp('user get zz-acct-one --field=roles') === 'subscriber');
+$check('shown by the name the form gave (display name and nickname)', $wp('user get zz-acct-one --field=display_name') === 'Zz Shown One' && $wp('user meta get zz-acct-one nickname') === 'Zz Shown One');
+$check('and no nag to change the password it chose', $wp('user meta get zz-acct-one default_password_nag') === '');
+[, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-one', 'email' => 'not-an-email', 'password' => '']);
+$codes = array_column((array) ($error['data']['notices'] ?? []), 'code');
+$check('every refusal comes back at once: name taken, email malformed, no password', $codes === ['username_exists', 'invalid_email', 'empty_password'], json_encode($error));
+$check('the answer is the first refusal, in plain words', ($error['code'] ?? '') === 'username_exists' && ($error['message'] ?? '') === 'This username is already registered. Please choose another one.', json_encode($error));
+[, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-two', 'email' => 'zz-acct-one@example.com', 'password' => 'x']);
+$check('an email another account holds is refused', ($error['code'] ?? '') === 'email_exists', json_encode($error));
+[, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-two', 'email' => 'zz-acct-two@example.com', 'password' => 'zz-other-pass', 'role' => 'zz-no-such-role']);
+$check('a role the site does not have is refused', ($error['code'] ?? '') === 'unknown_role', json_encode($error));
+$wp('option update default_role author');
+[$status] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-two', 'email' => 'zz-acct-two@example.com', 'password' => 'zz-other-pass', 'role' => 'subscriber']);
+$check('a role asked for wins over the site\'s default role', $wp('user get zz-acct-two --field=roles') === 'subscriber');
+$wp('option update default_role subscriber');
+$check('without a name to show, the account is shown by its login', $wp('user get zz-acct-two --field=display_name') === 'zz-acct-two');
+$check('nobody is signed in by registering', $status === 201 && !str_contains((string) @file_get_contents($jar), 'wordpress_logged_in_'));
+
+// 2. Signing in.
+[$status, $error] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => 'wrong']);
+$check('a wrong password is refused without saying which half was wrong', $status === 400 && ($error['code'] ?? '') === 'incorrect_credentials', json_encode([$status, $error]));
+$check('and counts against the address\'s sign-in throttle', $wp("db query \"SELECT COUNT(*) FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\" --skip-column-names") === '1');
+[, $error] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-nobody-here', 'password' => 'wrong']);
+$check('an unknown name reads the same', ($error['code'] ?? '') === 'incorrect_credentials', json_encode($error));
+[$status, , $head] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one@example.com', 'password' => $password]);
+$check('the right password (by email) signs in: the sign-in cookies ride on the answer', $status === 200 && preg_match('/set-cookie: wordpress_logged_in_[0-9a-f]{32}=zz-acct-one%7C/i', $head) === 1, $head);
+$check('a session that ends with the browser unless remembered', preg_match('/set-cookie: wordpress_logged_in_[^\n]*expires=/i', $head) !== 1, $head);
+[, , $kept] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-two', 'password' => 'zz-other-pass', 'remember' => true], [], false);
+$check('remembered, the cookie outlives the browser session by fourteen days', preg_match('/set-cookie: wordpress_logged_in_[^\n]*expires=([^;\n]+)/i', $kept, $until) === 1 && strtotime($until[1]) - time() >= 14 * 86400 - 120 && strtotime($until[1]) - time() <= 14 * 86400 + 12 * 3600 + 120, implode("\n", preg_grep('/^set-cookie/i', explode("\r\n", $kept))));
+$fresh = $nonce();
+[, $who] = $call('GET', '/minn-test/v1/whoami', null, ["X-WP-Nonce: {$fresh}"]);
+$check('the cookie and the nonce admin-ajax hands out are the new user to the REST gate', ($who['login'] ?? '') === 'zz-acct-one', json_encode([$fresh, $who]));
+$check('one session is stored for the user', substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1);
+
+// 3. Signing out.
+[$status, , $head] = $call('DELETE', '/minn-test/v1/session');
+$expired = preg_match('/set-cookie: wordpress_logged_in_[0-9a-f]{32}=[^\n]*expires=([^;\n]+)/i', $head, $gone) === 1 && strtotime($gone[1]) < time();
+$check('signing out expires the sign-in cookie', $status === 200 && $expired, $head);
+$check('and ends the session', !str_contains($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration'));
+[$status, $okay] = $call('DELETE', '/minn-test/v1/session', null, [], false);
+$check('signing out with no session is harmless', $status === 200 && ($okay['ok'] ?? false) === true, json_encode([$status, $okay]));
+
+// 4. The account is the site's like any other.
+$form = (string) shell_exec('/usr/bin/curl -sk -D - -o /dev/null -b wordpress_test_cookie=WP%20Cookie%20check --data-urlencode ' . escapeshellarg('log=zz-acct-one') . ' --data-urlencode ' . escapeshellarg('pwd=' . $password) . ' -d testcookie=1 ' . escapeshellarg("{$ENGINE}/wp-login.php"));
+$check('the password it chose signs in at wp-login.php too (quotes and a backslash in it)', preg_match('#^HTTP/\S+ 302#', $form) === 1 && stripos($form, 'set-cookie: wordpress_logged_in_') !== false, $form);
+[$status, $sent] = $call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-acct-one'], [], false);
+$check('a reset link is mailed as the lost-password page mails it', $status === 200 && ($sent['sent'] ?? false) === true && $wp('user get zz-acct-one --field=user_activation_key') !== '', json_encode([$status, $sent]));
+[, $error] = $call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-nobody@example.com'], [], false);
+$check('no account by that address is refused in plain words', ($error['code'] ?? '') === 'invalid_email' && !str_contains((string) ($error['message'] ?? ''), '<'), json_encode($error));
+
+echo "\n{$pass} passed, {$fail} failed\n";
+exit($fail === 0 ? 0 : 1);

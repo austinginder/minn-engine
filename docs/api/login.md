@@ -153,7 +153,7 @@ own report. wp_login follows a good sign-in and wp_logout a sign-out.
 The refusal is shown as the page's notices (LoginNotices): the chain's
 own as one vague sentence, a plugin's in its own words.
 
-Used by: `Minn\Login\LoginController`, `Minn\Login\LoginForm`
+Used by: `Minn\Extension\Accounts`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`
 
 ```php
 __construct(Minn\Content\Users $users)

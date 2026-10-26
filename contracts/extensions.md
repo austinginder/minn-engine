@@ -79,6 +79,30 @@ registrations, each a typed closure, called in registration order:
 
 Extensions register on REST requests too, where their blocks and their `rest` routes take part: the filters, shortcodes, head and page `routes` stay with the themed front, as before. On a page, `user()` and `reader` are the sign-in cookie alone (no nonce), so a page route may read with them but a write belongs on a `rest` route.
 
+## Accounts for a sign-in surface of an extension's own
+
+`$minn->accounts()` (`Extension\Accounts`) lets an extension's REST routes run
+their own sign-in surface (a game's players, a members' area) on the site's
+accounts. Each call is what the engine's sign-in page does, with the same
+throttle, hooks, sessions and mail, handed back as a value the extension words
+itself; a refusal is a `Runtime\Refusal` whose `code` and `message` (plain text,
+no markup, no "Error:" label) are the first notice and whose `data.notices` lists
+every `{code, message}`. They run the sign-in hooks plugins listen on, so they belong on `rest` routes.
+
+| Call | Does | Refusals |
+|---|---|---|
+| `signIn(Response, login, password)`, `signInRemembered(...)` | the authenticate chain with the password slashed, as a form sends it (login or email); on success a new session and the three sign-in cookies on the given response, `wp_login` fired: `SignedIn {user, response}`. `signIn` lasts two days, ending with the browser; `signInRemembered` fourteen days, kept past it | `too_many_attempts` (`data.retryAfter` seconds; the per-address `LoginThrottle`, shared with the sign-in page); `incorrect_credentials` for every refusal of the chain's own (never which half), a plugin's own refusal in its own words. Each refusal counts against the throttle |
+| `signOut(Response)` | ends the session the request's sign-in cookie names, expires the cookies, `wp_logout` fired; with no session only the cookies are expired | none |
+| `registrationOpen()` | `users_can_register` | |
+| `register(login, email, password, shownAs = '', role = '')` | the sign-in page's registration checks (sanitised name, `illegal_user_logins`, `user_registration_email`, `register_post`, `registration_errors`), then the account with `role` (a role the site has, else the site's `default_role`), the chosen password (stored slashed, so wp-login.php accepts it) and, given one, `shownAs` as its display name and nickname (an email-only sign-up makes up a login of its own and shows the person's chosen name instead), and the site's address told (`wp_new_user_notification` for `admin`). No password nag, no mail to the holder, `register_new_user` not fired (its default listener mails a link to set a password). Nobody is signed in: the route calls `signIn` after when it wants that | `registration_closed`, `unknown_role`; every refusal at once (`empty_username`, `invalid_username`, `username_exists`, `empty_email`, `invalid_email`, `email_exists`, `empty_password`, a plugin's) |
+| `lostPassword(login)` | the lost-password page's reset mail (`retrieve_password`) | its refusals (`empty_username`, `invalid_email`, `invalidcombo`, a plugin's, the mail failing) |
+
+A signed-in browser needs the new session's `wp_rest` nonce before it calls a
+signed-in route: `wp-admin/admin-ajax.php?action=rest-nonce` hands it out once the
+cookie is set. `tests/extension-accounts.test.php` (fixture
+`minn-test-records/src/Players.php`) pins all of it, including a password with
+quotes and a backslash signing in at `wp-login.php`.
+
 ## Tables of an extension's own
 
 `"tables"` in `minn.json` declares tables the extension owns, as a name and its

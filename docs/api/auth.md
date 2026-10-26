@@ -107,7 +107,7 @@ reads. Every value shares the username|expiration|token|hmac shape.
 - const `DAY` = `86400`
 - const `HOUR` = `3600`
 
-Used by: `Minn\Auth\SignIn`, `Minn\Engine`
+Used by: `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Extension\Accounts`
 
 ```php
 __construct(Minn\Db $db, Minn\Auth\Cookie $cookie)
@@ -214,7 +214,7 @@ A session whose nonce did not verify.
 
 A validated session: the user row and the raw session token behind it.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Extension\Accounts`, `Minn\Front\AdminBar`, `Minn\Front\FrontParts`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
 
 ```php
 __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPassword = NULL)
@@ -239,7 +239,7 @@ a REST call must also carry a nonce bound to the same session.
 
 - const `NOBODY` = `'$wp$2y$10$q/tQZiHVAKXuCoJIeZTH0.rb6Otms4vDKv0NrPeGKdvracPiLPy4W'` — A real hash of a password nobody knows, checked against when the user does not exist so the answer takes as long either way.
 
-Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Extension\Accounts`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Auth\Cookie $cookie, Minn\Content\Users $users)
@@ -402,7 +402,7 @@ and the session live in the user's session_tokens store. The engine's own
 sign-in reads the logged_in one; check() judges any scheme's the way
 wp_validate_auth_cookie reports it (probe auth-cookies).
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Engine`, `Minn\Runtime\AdminActionController`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Engine`, `Minn\Extension\Accounts`, `Minn\Runtime\AdminActionController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Sessions $sessions)
@@ -500,7 +500,7 @@ statement, so failures arriving together are all counted.
 - const `WINDOW` = `900`
 - const `PREFIX` = `'minn_login_throttle_'`
 
-Used by: `Minn\Auth\SignIn`, `Minn\Cron\Cron`, `Minn\Engine`
+Used by: `Minn\Auth\SignIn`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Accounts`
 
 ```php
 __construct(Minn\Db $db)
@@ -804,7 +804,7 @@ The session_tokens usermeta store: {sha256(token): {expiration, ip, ua,
 login}}. Read by a bounded scan of the serialized blob and written by
 serializing it ourselves, so stored data is never executed.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Rest\Services`
+Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Extension\Accounts`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -870,7 +870,7 @@ password. Sessions are minted here, the three cookies ride out on the
 response, and the failure counter behind the throttle is kept in one
 place with the session store and the cookie jar it protects.
 
-Used by: `Minn\Engine`, `Minn\Login\LoginController`
+Used by: `Minn\Engine`, `Minn\Extension\Accounts`, `Minn\Login\LoginController`
 
 ```php
 __construct(Minn\Auth\AuthCookies $cookies, Minn\Auth\LoginThrottle $throttle)

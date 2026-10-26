@@ -12,6 +12,6 @@ final class Extension implements MinnExtension
 {
     public function register(Seams $minn): void
     {
-        $minn->rest(new Notes($minn));
+        $minn->rest(new Notes($minn), new Players($minn));
     }
 }

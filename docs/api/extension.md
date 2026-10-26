@@ -4,15 +4,77 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`Accounts`](#accounts) | final readonly class | 129 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
 | [`Manifest`](#manifest) | final readonly class | 101 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 39 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 106 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 284 | Where an extension can take part in a request: thirteen typed registrations, |
+| [`Seams`](#seams) | final class | 294 | Where an extension can take part in a request: thirteen typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
+| [`SignedIn`](#signedin) | final readonly class | 8 | A sign-in that worked (Accounts::signIn): who, and the response carrying the session's cookies. |
 | [`Tables`](#tables) | final readonly class | 84 | An extension's own tables, from the "tables" its minn.json declares: |
+
+## Accounts
+
+`final readonly class Minn\Extension\Accounts` · `public/minn/src/Minn/Extension/Accounts.php`
+
+Accounts for a sign-in surface of an extension's own (a game's players, a
+members' area), from its REST routes: the sign-in, sign-out, registration
+and password reset the engine's sign-in page runs, with the same
+throttle, hooks, sessions and mail, handed back as values the extension
+words itself. A refusal is a Refusal: its code, its message as plain
+text, and every code and message in data.notices. A refused sign-in
+never says which half was wrong (code incorrect_credentials) unless a
+plugin refused it in its own words. They run the sign-in hooks plugins
+listen on, so they belong on an extension's REST routes.
+
+- const `REFUSALS` = `array (   0 => 'empty_username',   1 => 'empty_password',   2 => 'invalid_username',   3 => 'invalid_email',   4 => 'incorrect_password',   5 => 'authentication_failed', )` — The authenticate chain's own refusals, which read as one.
+
+Used by: `Minn\Extension\Seams`, `Minn\Extension\SignedIn`
+
+```php
+__construct(Minn\Db $db, Minn\Http\Request $request)
+```
+
+
+### `signIn(Minn\Http\Response $response, string $login, string $password): Minn\Extension\SignedIn|Minn\Runtime\Refusal`
+
+Signs in with a login (or email) and password, as the sign-in page
+does, for two days ending with the browser: the response with the new
+session's cookies and the user, or the refusal (too_many_attempts with
+data.retryAfter in seconds, incorrect_credentials, or a plugin's own).
+
+### `signInRemembered(Minn\Http\Response $response, string $login, string $password): Minn\Extension\SignedIn|Minn\Runtime\Refusal`
+
+Signs in as signIn does, remembered: fourteen days, the cookies kept past the browser session.
+
+### `signOut(Minn\Http\Response $response): Minn\Http\Response`
+
+Ends the session the request's sign-in cookie names (when there is one) and clears the cookies on the response.
+
+### `registrationOpen(): bool`
+
+Whether the site takes new accounts (users_can_register).
+
+### `register(string $login, string $email, string $password, string $shownAs = '', string $role = ''): Minn\Content\UserRecord|Minn\Runtime\Refusal`
+
+A new account with the password its holder chose, the role asked for
+(one the site has, else the site's default role) and, when given, the
+name shown for it (display name and nickname; an email-only sign-up
+passes a login of its own making), when the site takes new accounts:
+the user, or every refusal (registration_closed, unknown_role; the name empty, illegal, taken or barred; the
+email empty, malformed or taken; no password; whatever plugins add).
+The site's address is told; nobody is signed in.
+
+### `lostPassword(string $login): Minn\Runtime\Refusal|true`
+
+A password reset link mailed to the account a login or email names,
+as the lost-password page sends it: true, or the refusal.
+
+Internals: `attempt()` (private, line 76), `refusal()` (private, line 145), `plain()` (private, line 162)
+
 
 ## Extension
 
@@ -307,8 +369,9 @@ Every extension block's block.json, by name.
 `final class Minn\Extension\Seams` · `public/minn/src/Minn/Extension/Seams.php`
 
 Where an extension can take part in a request: thirteen typed registrations,
-the request they run in (and who it speaks for), and the outgoing HTTP
-its minn.json asks for.
+the request they run in (and who it speaks for), the accounts a sign-in
+surface of its own may sign in and make, and the outgoing HTTP its
+minn.json asks for.
 This is the whole surface an extension sees. Each extension registers on
 its own (forExtension), and what it registered joins the request's once
 its register() returns (adopt). The engine calls what was registered
@@ -405,6 +468,12 @@ REST route that is the caller the REST gate accepted (the cookie with
 its nonce, or an application password); on a page it is the sign-in
 cookie alone, so a page reads with it and never writes on it.
 
+### `accounts(): Minn\Extension\Accounts`
+
+Accounts for a sign-in surface of the extension's own, from its REST
+routes: sign in and out, register with a chosen password, mail a
+reset link, each as the engine's sign-in page does it (Accounts).
+
 ### `block(string $metadata, Closure $render): void`
 
 A block of the extension's own. Its block.json (a folder holding one,
@@ -462,6 +531,22 @@ Content with the registered shortcodes run.
 A shortcode's attributes parsed, curly quotes included.
 
 - `@return array<string, string> named attributes; bare words keyed by position`
+
+
+## SignedIn
+
+`final readonly class Minn\Extension\SignedIn` · `public/minn/src/Minn/Extension/SignedIn.php`
+
+A sign-in that worked (Accounts::signIn): who, and the response carrying the session's cookies.
+
+Used by: `Minn\Extension\Accounts`
+
+```php
+__construct(Minn\Content\UserRecord $user, Minn\Http\Response $response)
+```
+
+- readonly `Minn\Content\UserRecord $user`
+- readonly `Minn\Http\Response $response`
 
 
 ## Tables

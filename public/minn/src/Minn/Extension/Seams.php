@@ -23,8 +23,9 @@ use Minn\Json;
 
 /**
  * Where an extension can take part in a request: thirteen typed registrations,
- * the request they run in (and who it speaks for), and the outgoing HTTP
- * its minn.json asks for.
+ * the request they run in (and who it speaks for), the accounts a sign-in
+ * surface of its own may sign in and make, and the outgoing HTTP its
+ * minn.json asks for.
  * This is the whole surface an extension sees. Each extension registers on
  * its own (forExtension), and what it registered joins the request's once
  * its register() returns (adopt). The engine calls what was registered
@@ -232,6 +233,16 @@ final class Seams
     public function user(): ?UserRecord
     {
         return $this->reader->userId > 0 ? (new Users($this->db))->find($this->reader->userId) : null;
+    }
+
+    /**
+     * Accounts for a sign-in surface of the extension's own, from its REST
+     * routes: sign in and out, register with a chosen password, mail a
+     * reset link, each as the engine's sign-in page does it (Accounts).
+     */
+    public function accounts(): Accounts
+    {
+        return new Accounts($this->db, $this->request);
     }
 
     /**
