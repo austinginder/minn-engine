@@ -30,10 +30,15 @@ final class AccountFlows
      * allowed, or the mail failing). $link makes the link from the account's
      * login and the key when the reset page is someone else's (an
      * extension's own); without it the link opens the sign-in page's.
+     * $words writes the mail's subject and body from the link and the
+     * account's display name, for a site whose people never see a login;
+     * without it the mail is the reference's. Plugins' filters still have
+     * the last word either way.
      *
      * @param (Closure(string, string): string)|null $link
+     * @param (Closure(string, string): array{0: string, 1: string})|null $words
      */
-    public static function retrievePassword(string $login, ?Closure $link = null): bool|Errors
+    public static function retrievePassword(string $login, ?Closure $link = null, ?Closure $words = null): bool|Errors
     {
         $errors = Handoff::newError();
         $login = trim(stripslashes($login));
@@ -66,10 +71,15 @@ final class AccountFlows
         }
         // Written in the user's language (probe account-flows).
         $url = $link === null ? self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) Translations::userLocale($user)) : $link((string) $user->user_login, $key);
-        $sent = RecipientLocale::forUser((int) $user->ID, static function () use ($user, $key, $url): bool {
-            $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, $url, (string) (Runtime::current()->request?->remoteAddress ?? ''));
-            $title = Runtime::hooks()->filter('retrieve_password_title', [$notice->subject, $user->user_login, $user]);
-            $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
+        $sent = RecipientLocale::forUser((int) $user->ID, static function () use ($user, $key, $url, $words): bool {
+            if ($words === null) {
+                $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, $url, (string) (Runtime::current()->request?->remoteAddress ?? ''));
+                [$subject, $body] = [$notice->subject, $notice->body];
+            } else {
+                [$subject, $body] = $words($url, (string) $user->display_name);
+            }
+            $title = Runtime::hooks()->filter('retrieve_password_title', [$subject, $user->user_login, $user]);
+            $message = Runtime::hooks()->filter('retrieve_password_message', [$body, $key, $user->user_login, $user]);
             $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);
             return (bool) Handoff::mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '');
         });

@@ -138,13 +138,17 @@ final readonly class Accounts
      * as the lost-password page sends it: true, or the refusal. $link makes
      * the link from the account's login and the key, for a reset page of the
      * extension's own (which hands both to resetPassword); without it the
-     * link opens the sign-in page's reset form.
+     * link opens the sign-in page's reset form. $words writes the mail
+     * (subject, body) from the link and the account's display name, for a
+     * site whose people never see a login; without it the mail is the
+     * sign-in page's, which names the login.
      *
      * @param (Closure(string, string): string)|null $link
+     * @param (Closure(string, string): array{0: string, 1: string})|null $words
      */
-    public function lostPassword(string $login, ?Closure $link = null): true|Refusal
+    public function lostPassword(string $login, ?Closure $link = null, ?Closure $words = null): true|Refusal
     {
-        $sent = AccountFlows::retrievePassword($login, $link);
+        $sent = AccountFlows::retrievePassword($login, $link, $words);
         return $sent === true ? true : self::refusal($sent, 'retrieve_password_failed', 'The reset email could not be sent.');
     }
 

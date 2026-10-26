@@ -56,7 +56,8 @@ final readonly class Players
         $body = $request->json();
         $page = (string) ($body['page'] ?? '');
         $link = $page === '' ? null : static fn (string $login, string $key): string => $page . '#key=' . rawurlencode($key) . '&login=' . rawurlencode($login);
-        $sent = $this->minn->accounts()->lostPassword((string) ($body['login'] ?? ''), $link);
+        $words = empty($body['words']) ? null : static fn (string $url, string $shownAs): array => ["Reset for {$shownAs}", "Hello {$shownAs}, choose a new password: {$url}"];
+        $sent = $this->minn->accounts()->lostPassword((string) ($body['login'] ?? ''), $link, $words);
         return $sent instanceof Refusal ? self::refused($sent) : Response::json(['sent' => true]);
     }
 

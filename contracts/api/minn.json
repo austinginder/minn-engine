@@ -44952,7 +44952,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 170,
+            "lines": 174,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -45209,10 +45209,11 @@
                     "name": "lostPassword",
                     "static": false,
                     "visibility": "public",
-                    "signature": "lostPassword(string $login, ?Closure $link = NULL): Minn\\Runtime\\Refusal|true",
-                    "doc": "A password reset link mailed to the account a login or email names,\nas the lost-password page sends it: true, or the refusal. $link makes\nthe link from the account's login and the key, for a reset page of the\nextension's own (which hands both to resetPassword); without it the\nlink opens the sign-in page's reset form.",
+                    "signature": "lostPassword(string $login, ?Closure $link = NULL, ?Closure $words = NULL): Minn\\Runtime\\Refusal|true",
+                    "doc": "A password reset link mailed to the account a login or email names,\nas the lost-password page sends it: true, or the refusal. $link makes\nthe link from the account's login and the key, for a reset page of the\nextension's own (which hands both to resetPassword); without it the\nlink opens the sign-in page's reset form. $words writes the mail\n(subject, body) from the link and the account's display name, for a\nsite whose people never see a login; without it the mail is the\nsign-in page's, which names the login.",
                     "shapes": [
-                        "@param (Closure(string, string): string)|null $link"
+                        "@param (Closure(string, string): string)|null $link",
+                        "@param (Closure(string, string): array{0: string, 1: string})|null $words"
                     ],
                     "params": [
                         {
@@ -45228,10 +45229,17 @@
                             "shape": "(Closure(string, string): string)|null",
                             "default": "NULL",
                             "doc": ""
+                        },
+                        {
+                            "name": "words",
+                            "type": "?Closure",
+                            "shape": "(Closure(string, string): array{0: string, 1: string})|null",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 149
+                    "line": 149,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -45264,8 +45272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 185
+                    "line": 163,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -45341,8 +45349,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 202
+                    "line": 192,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -45361,8 +45369,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 209
+                    "line": 209,
+                    "end": 213
                 }
             ]
         },
@@ -135458,7 +135466,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AccountFlows.php",
-            "lines": 199,
+            "lines": 209,
             "doc": "The account functions a sign-in page and plugins call, with the\nreference's checks, words, hooks and mail (probe account-flows): asking\nfor a password reset (retrieve_password), resetting one\n(reset_password), registering (register_new_user), and telling the site\nand the new user about a registration (wp_new_user_notification).",
             "implements": [],
             "extends": null,
@@ -135499,10 +135507,11 @@
                     "name": "retrievePassword",
                     "static": true,
                     "visibility": "public",
-                    "signature": "retrievePassword(string $login, ?Closure $link = NULL): Minn\\Objects\\Errors|bool",
-                    "doc": "A reset link mailed to the account a login or email names: true, or\nthe refusal (no name, no such account, a plugin's error, reset not\nallowed, or the mail failing). $link makes the link from the account's\nlogin and the key when the reset page is someone else's (an\nextension's own); without it the link opens the sign-in page's.",
+                    "signature": "retrievePassword(string $login, ?Closure $link = NULL, ?Closure $words = NULL): Minn\\Objects\\Errors|bool",
+                    "doc": "A reset link mailed to the account a login or email names: true, or\nthe refusal (no name, no such account, a plugin's error, reset not\nallowed, or the mail failing). $link makes the link from the account's\nlogin and the key when the reset page is someone else's (an\nextension's own); without it the link opens the sign-in page's.\n$words writes the mail's subject and body from the link and the\naccount's display name, for a site whose people never see a login;\nwithout it the mail is the reference's. Plugins' filters still have\nthe last word either way.",
                     "shapes": [
-                        "@param (Closure(string, string): string)|null $link"
+                        "@param (Closure(string, string): string)|null $link",
+                        "@param (Closure(string, string): array{0: string, 1: string})|null $words"
                     ],
                     "params": [
                         {
@@ -135518,10 +135527,17 @@
                             "shape": "(Closure(string, string): string)|null",
                             "default": "NULL",
                             "doc": ""
+                        },
+                        {
+                            "name": "words",
+                            "type": "?Closure",
+                            "shape": "(Closure(string, string): array{0: string, 1: string})|null",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 80
+                    "line": 41,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -135547,8 +135563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 89
+                    "line": 93,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -135574,8 +135590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 110
+                    "line": 107,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -135622,8 +135638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 137
+                    "line": 130,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -135656,8 +135672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 214
+                    "line": 197,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -135685,8 +135701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 174
+                    "line": 156,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -135697,8 +135713,8 @@
                     "doc": "The refusal when the account row could not be written.",
                     "shapes": [],
                     "params": [],
-                    "line": 177,
-                    "end": 180
+                    "line": 187,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -135724,8 +135740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 227,
+                    "end": 230
                 }
             ]
         },

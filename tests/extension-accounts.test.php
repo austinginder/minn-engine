@@ -151,6 +151,13 @@ $found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com') .
 $text = (string) ($mailpit('message/' . ($found['messages'][0]['ID'] ?? ''))['Text'] ?? '');
 $linked = preg_match('#https://minn\.localhost/zz-reset/\#key=([A-Za-z0-9]{20})&login=zz-acct-one#', $text, $m) === 1;
 $check('with a page of its own, the mailed link opens that page, the key and login in its fragment', $status === 200 && $linked, substr($text, 0, 300));
+$check('without words of its own, the mail is the sign-in page\'s', str_contains($text, 'zz-acct-one') && str_contains($text, 'Username'), substr($text, 0, 200));
+$call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-acct-one@example.com', 'page' => 'https://minn.localhost/zz-reset/', 'words' => true], [], false);
+usleep(500000);
+$found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com') . '&limit=1');
+$mail = $mailpit('message/' . ($found['messages'][0]['ID'] ?? ''));
+$text = (string) ($mail['Text'] ?? '');
+$check('with words of its own, the mail is the extension\'s: the display name, the link, no login', ($mail['Subject'] ?? '') === 'Reset for Zz Shown One' && preg_match('#^Hello Zz Shown One, choose a new password: https://minn\.localhost/zz-reset/\#key=([A-Za-z0-9]{20})&login=zz-acct-one\s*$#', $text, $m) === 1, json_encode([$mail['Subject'] ?? null, $text]));
 $key = $m[1] ?? '';
 [, $error] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => 'zzzzzzzzzzzzzzzzzzzz', 'password' => 'zz-new-pass-1'], [], false);
 $check('a key that does not match is refused', ($error['code'] ?? '') === 'invalid_key', json_encode($error));
