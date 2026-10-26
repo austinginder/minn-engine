@@ -10438,7 +10438,7 @@ reference fires in its order.
 
 - const `ROW_FIELDS` = `array (   'user_login' => true,   'user_nicename' => true,   'user_url' => true,   'user_email' => true,   'display_name' => true, )` — The fields an account's row takes from its filtered fields.
 
-Used by: `Minn\Front\ToolbarMenus`, `Minn\Rest\UsersController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\DeprecatedUserMeta`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserSave`
+Used by: `Minn\Extension\Accounts`, `Minn\Front\ToolbarMenus`, `Minn\Rest\UsersController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\DeprecatedUserMeta`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserSave`
 
 ### static `validUsername(mixed $username): bool`
 

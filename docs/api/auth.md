@@ -574,7 +574,7 @@ phpass "$P$" hashes and any other password_hash() value still verify, and
 a sign-in replaces whatever needsRehash() says is outdated (probe
 password-rehash).
 
-Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Content\Users`, `Minn\Rest\UsersController`
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Content\Users`, `Minn\Extension\Accounts`, `Minn\Rest\UsersController`
 
 ### static `verify(string $password, string $hash): bool`
 

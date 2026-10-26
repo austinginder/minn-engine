@@ -11524,6 +11524,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
                 "Minn\\Content\\Users",
+                "Minn\\Extension\\Accounts",
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": null,
@@ -44952,7 +44953,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 175,
+            "lines": 273,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -44962,6 +44963,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\LoginThrottle",
+                "Minn\\Auth\\Password",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Sessions",
                 "Minn\\Auth\\SignIn",
@@ -44977,7 +44979,9 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\UserWrites",
                 "Minn\\Support\\Entities",
+                "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
@@ -45005,8 +45009,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 50,
-                "end": 58
+                "line": 53,
+                "end": 61
             },
             "cases": [],
             "constants": [
@@ -45087,8 +45091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -45121,8 +45125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -45141,8 +45145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 106
+                    "line": 100,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -45153,8 +45157,8 @@
                     "doc": "Whether the site takes new accounts (users_can_register).",
                     "shapes": [],
                     "params": [],
-                    "line": 109,
-                    "end": 112
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -45201,8 +45205,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 134
+                    "line": 126,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -45238,8 +45242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 154
+                    "line": 153,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -45272,8 +45276,101 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 190
+                    "line": 167,
+                    "end": 193
+                },
+                {
+                    "routes": [],
+                    "name": "changePassword",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "changePassword(Minn\\Http\\Response $response, Minn\\Content\\UserRecord $user, string $current, string $new, ?Closure $words = NULL): Minn\\Extension\\SignedIn|Minn\\Runtime\\Refusal",
+                    "doc": "A new password for a signed-in user, once the current one checks out:\nsaved as a profile save saves it (wp_update_user, its hooks and its\nnotice to the account's address, in the extension's words when $words\ngives them), every session of the account ended, and a new one on the\nresponse: a sign-in cookie is bound to the password it was made under,\nso the old ones stop working anyway. Refusals: too_many_attempts,\nincorrect_password (counts against the throttle), empty_password, a\nplugin's.",
+                    "shapes": [
+                        "@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name"
+                    ],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "current",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "new",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "words",
+                            "type": "?Closure",
+                            "shape": "(Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null",
+                            "default": "NULL",
+                            "doc": "the notice from the display name"
+                        }
+                    ],
+                    "line": 207,
+                    "end": 223
+                },
+                {
+                    "routes": [],
+                    "name": "changeEmail",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "changeEmail(Minn\\Content\\UserRecord $user, string $current, string $email, ?Closure $words = NULL): Minn\\Content\\UserRecord|Minn\\Runtime\\Refusal",
+                    "doc": "A new email for a signed-in user, once the current password checks\nout: saved as a profile save saves it, the old address told (in the\nextension's words when $words gives them). Refusals:\ntoo_many_attempts, incorrect_password, invalid_email, email_exists, a\nplugin's.",
+                    "shapes": [
+                        "@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name"
+                    ],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "current",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "words",
+                            "type": "?Closure",
+                            "shape": "(Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null",
+                            "default": "NULL",
+                            "doc": "the notice from the display name"
+                        }
+                    ],
+                    "line": 234,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -45315,8 +45412,76 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 94
+                    "line": 81,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "checkCurrent",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "checkCurrent(Minn\\Content\\UserRecord $user, string $current): ?Minn\\Runtime\\Refusal",
+                    "doc": "The current password, judged under the sign-in throttle: null when it checks out, else the refusal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "current",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 256,
+                    "end": 268
+                },
+                {
+                    "routes": [],
+                    "name": "worded",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "worded(string $filter, ?Closure $words, Minn\\Content\\UserRecord $user, Closure $save): mixed",
+                    "doc": "Runs a save whose notice goes through $filter (password_change_email,\nemail_change_email) with the extension's words in place of the\nreference's, early, so plugins' filters still have the last word.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "filter",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "words",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "save",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 275,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -45349,8 +45514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 207
+                    "line": 294,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -45369,8 +45534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 214
+                    "line": 311,
+                    "end": 315
                 }
             ]
         },
@@ -186379,6 +186544,7 @@
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
+                "Minn\\Extension\\Accounts",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\AccountFlows",
@@ -193228,6 +193394,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\TemplatePartVariations",
+                "Minn\\Extension\\Accounts",
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Query\\PostOrder",

@@ -10,6 +10,7 @@ use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Cookie;
 use Minn\Auth\LoginThrottle;
+use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\Sessions;
 use Minn\Auth\SignIn;
@@ -24,7 +25,9 @@ use Minn\Runtime\AccountFlows;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\UserWrites;
 use Minn\Support\Entities;
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
 /**
@@ -187,6 +190,104 @@ final readonly class Accounts
         AccountFlows::resetPassword(Handoff::newUser($user->id), (string) Slashes::add($password));
         Handoff::sessionTokens($user->id)->destroy_all();
         return $this->users->find($user->id) ?? $user;
+    }
+
+    /**
+     * A new password for a signed-in user, once the current one checks out:
+     * saved as a profile save saves it (wp_update_user, its hooks and its
+     * notice to the account's address, in the extension's words when $words
+     * gives them), every session of the account ended, and a new one on the
+     * response: a sign-in cookie is bound to the password it was made under,
+     * so the old ones stop working anyway. Refusals: too_many_attempts,
+     * incorrect_password (counts against the throttle), empty_password, a
+     * plugin's.
+     *
+     * @param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name
+     */
+    public function changePassword(Response $response, UserRecord $user, string $current, string $new, ?Closure $words = null): SignedIn|Refusal
+    {
+        $refused = $this->checkCurrent($user, $current);
+        if ($refused !== null) {
+            return $refused;
+        }
+        if ($new === '') {
+            return new Refusal('empty_password', 'The new password cannot be empty.', ['notices' => []]);
+        }
+        $saved = self::worded('password_change_email', $words, $user, static fn (): mixed => UserWrites::update(['ID' => $user->id, 'user_pass' => Slashes::add($new)]));
+        if (!is_int($saved)) {
+            return self::refusal($saved, 'password_not_saved', 'The password could not be saved.');
+        }
+        Handoff::sessionTokens($user->id)->destroy_all();
+        $fresh = $this->users->find($user->id) ?? $user;
+        return new SignedIn($fresh, $this->signIn->remember($response, $fresh, $this->request));
+    }
+
+    /**
+     * A new email for a signed-in user, once the current password checks
+     * out: saved as a profile save saves it, the old address told (in the
+     * extension's words when $words gives them). Refusals:
+     * too_many_attempts, incorrect_password, invalid_email, email_exists, a
+     * plugin's.
+     *
+     * @param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name
+     */
+    public function changeEmail(UserRecord $user, string $current, string $email, ?Closure $words = null): UserRecord|Refusal
+    {
+        $refused = $this->checkCurrent($user, $current);
+        if ($refused !== null) {
+            return $refused;
+        }
+        $email = trim($email);
+        if (!Sanitize::isEmail($email)) {
+            return new Refusal('invalid_email', 'The email address is not correct.', ['notices' => []]);
+        }
+        $holder = UserWrites::emailExists($email);
+        if ($holder !== false && (int) $holder !== $user->id) {
+            return new Refusal('email_exists', 'This email address is already registered.', ['notices' => []]);
+        }
+        $saved = self::worded('email_change_email', $words, $user, static fn (): mixed => UserWrites::update(['ID' => $user->id, 'user_email' => Slashes::add($email)]));
+        if (!is_int($saved)) {
+            return self::refusal($saved, 'email_not_saved', 'The email could not be saved.');
+        }
+        return $this->users->find($user->id) ?? $user;
+    }
+
+    /** The current password, judged under the sign-in throttle: null when it checks out, else the refusal. */
+    private function checkCurrent(UserRecord $user, string $current): ?Refusal
+    {
+        $wait = $this->signIn->retryAfter($this->request->remoteAddress);
+        if ($wait !== null) {
+            return new Refusal('too_many_attempts', 'Too many tries. Try again in a few minutes.', ['retryAfter' => $wait, 'notices' => []]);
+        }
+        // Stored slashed, as a sign-in form sends it (AccountFlows::registerWithPassword).
+        if (!Password::verify((string) Slashes::add($current), $user->passwordHash)) {
+            $this->signIn->recordFailure($this->request->remoteAddress);
+            return new Refusal('incorrect_password', 'The current password is incorrect.', ['notices' => []]);
+        }
+        return null;
+    }
+
+    /**
+     * Runs a save whose notice goes through $filter (password_change_email,
+     * email_change_email) with the extension's words in place of the
+     * reference's, early, so plugins' filters still have the last word.
+     */
+    private static function worded(string $filter, ?Closure $words, UserRecord $user, Closure $save): mixed
+    {
+        if ($words === null) {
+            return $save();
+        }
+        $replace = static function (mixed $mail) use ($words, $user): array {
+            [$subject, $body, $headers] = $words($user->displayName !== '' ? $user->displayName : $user->login) + [2 => ''];
+            // The subject is a sprintf pattern for the site's name there: a literal % stays one.
+            return array_replace((array) $mail, ['subject' => str_replace('%', '%%', $subject), 'message' => $body, 'headers' => $headers]);
+        };
+        Runtime::hooks()->add($filter, $replace, 1, 1);
+        try {
+            return $save();
+        } finally {
+            Runtime::hooks()->remove($filter, $replace, 1);
+        }
     }
 
     /** A refusal from the WordPress layer's errors: the first as the answer, all of them in data.notices; the chain's own as one sentence. */

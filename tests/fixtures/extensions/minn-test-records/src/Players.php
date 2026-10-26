@@ -74,6 +74,26 @@ final readonly class Players
         return $user instanceof Refusal ? self::refused($user) : Response::json(['id' => $user->id]);
     }
 
+    /** A new password for the caller (the current one first); fresh cookies on the answer. */
+    #[Route(Method::Put, '/minn-test/v1/password', policy: new Policy(Access::SignedIn))]
+    public function changePassword(Request $request): Response
+    {
+        $body = $request->json();
+        $words = empty($body['words']) ? null : static fn (string $shownAs): array => ["Password changed for {$shownAs}", "<p>{$shownAs}, your password changed.</p>", ['Content-Type: text/html; charset=UTF-8']];
+        $result = $this->minn->accounts()->changePassword(Response::json(['ok' => true]), $this->minn->user(), (string) ($body['current'] ?? ''), (string) ($body['password'] ?? ''), $words);
+        return $result instanceof SignedIn ? $result->response : self::refused($result);
+    }
+
+    /** A new email for the caller (the current password first). */
+    #[Route(Method::Put, '/minn-test/v1/email', policy: new Policy(Access::SignedIn))]
+    public function changeEmail(Request $request): Response
+    {
+        $body = $request->json();
+        $words = empty($body['words']) ? null : static fn (string $shownAs): array => ["Email changed for {$shownAs}", "{$shownAs}, your email changed."];
+        $result = $this->minn->accounts()->changeEmail($this->minn->user(), (string) ($body['current'] ?? ''), (string) ($body['email'] ?? ''), $words);
+        return $result instanceof Refusal ? self::refused($result) : Response::json(['email' => $result->email]);
+    }
+
     private static function refused(Refusal $refusal, int $status = 400): Response
     {
         return Response::json(['code' => $refusal->code, 'message' => $refusal->message, 'data' => $refusal->data], $status);

@@ -177,5 +177,36 @@ $check('the old password no longer signs in, the new one does', ($error['code'] 
 [, $error] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => $key, 'password' => 'zz-other-pass-2'], [], false);
 $check('a key works once', ($error['code'] ?? '') === 'invalid_key', json_encode($error));
 
+// 6. Changing the password and the email of a signed-in account.
+$call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => 'zz-new-pass-1']);
+$other = tempnam(sys_get_temp_dir(), 'minn-accounts-other-');
+shell_exec('/usr/bin/curl -sk -o /dev/null -c ' . escapeshellarg($other) . " -H 'Content-Type: application/json' --data-binary '{\"login\":\"zz-acct-one\",\"password\":\"zz-new-pass-1\"}' " . escapeshellarg("{$ENGINE}/wp-json/minn-test/v1/session"));
+$check('more than one session open before the change', substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') >= 2);
+$fresh = $nonce();
+[$status, $error] = $call('PUT', '/minn-test/v1/password', ['current' => 'not-it', 'password' => 'zz-third-pass-3'], ["X-WP-Nonce: {$fresh}"]);
+$check('a wrong current password is refused', $status === 400 && ($error['code'] ?? '') === 'incorrect_password', json_encode([$status, $error]));
+[$status, , $head] = $call('PUT', '/minn-test/v1/password', ['current' => 'zz-new-pass-1', 'password' => 'zz-third-pass-3', 'words' => true], ["X-WP-Nonce: {$fresh}"]);
+$check('the right one saves the new password, fresh cookies on the answer', $status === 200 && stripos($head, 'set-cookie: wordpress_logged_in_') !== false, $head);
+$check('and only the new session is left', substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1);
+[, $who] = $call('GET', '/minn-test/v1/whoami', null, ['X-WP-Nonce: ' . $nonce()]);
+$check('the fresh cookies sign this browser in', ($who['login'] ?? '') === 'zz-acct-one', json_encode($who));
+$oldOther = trim((string) shell_exec('/usr/bin/curl -sk -b ' . escapeshellarg($other) . ' ' . escapeshellarg("{$ENGINE}/wp-admin/admin-ajax.php?action=rest-nonce")));
+$check('the other browser is signed out', $oldOther === '0', $oldOther);
+@unlink($other);
+usleep(500000);
+$found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com subject:"Password changed"') . '&limit=1');
+$mail = $mailpit('message/' . ($found['messages'][0]['ID'] ?? ''));
+$check('the notice is in the extension\'s words, to the account\'s address', ($mail['Subject'] ?? '') === 'Password changed for Zz Shown One' && str_contains((string) ($mail['HTML'] ?? ''), 'your password changed'), json_encode([$mail['Subject'] ?? null]));
+[, $error] = $call('PUT', '/minn-test/v1/email', ['current' => 'zz-third-pass-3', 'email' => 'zz-acct-two@example.com'], ['X-WP-Nonce: ' . $nonce()]);
+$check('an email another account holds is refused', ($error['code'] ?? '') === 'email_exists', json_encode($error));
+[, $error] = $call('PUT', '/minn-test/v1/email', ['current' => 'zz-third-pass-3', 'email' => 'nope'], ['X-WP-Nonce: ' . $nonce()]);
+$check('a malformed one too', ($error['code'] ?? '') === 'invalid_email', json_encode($error));
+[$status, $changed] = $call('PUT', '/minn-test/v1/email', ['current' => 'zz-third-pass-3', 'email' => 'zz-acct-one-new@example.com', 'words' => true], ['X-WP-Nonce: ' . $nonce()]);
+$check('the right password saves the new email', $status === 200 && ($changed['email'] ?? '') === 'zz-acct-one-new@example.com' && $wp('user get zz-acct-one --field=user_email') === 'zz-acct-one-new@example.com', json_encode([$status, $changed]));
+usleep(500000);
+$found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com subject:"Email changed"') . '&limit=1');
+$check('the old address is told, in the extension\'s words', ($found['messages'][0]['Subject'] ?? '') === 'Email changed for Zz Shown One', json_encode($found['messages'][0]['Subject'] ?? null));
+$wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);
