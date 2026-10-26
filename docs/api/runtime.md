@@ -6,7 +6,7 @@ the WordPress runtime plugins load against
 |---|---|---|---|
 | [`Abilities`](#abilities) | final class | 226 | The abilities registry behind WP_Abilities_Registry, |
 | [`AbilityRun`](#abilityrun) | final class | 28 | The checks of an ability's run, as the reference makes them (probes |
-| [`AccountFlows`](#accountflows) | final class | 209 | The account functions a sign-in page and plugins call, with the |
+| [`AccountFlows`](#accountflows) | final class | 210 | The account functions a sign-in page and plugins call, with the |
 | [`AdminActionController`](#adminactioncontroller) | final readonly class | 138 | The wp-admin pages a plugin answers itself. The admin is Minn Admin, so |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 86 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
@@ -351,13 +351,14 @@ the refusal (no name, no such account, a plugin's error, reset not
 allowed, or the mail failing). $link makes the link from the account's
 login and the key when the reset page is someone else's (an
 extension's own); without it the link opens the sign-in page's.
-$words writes the mail's subject and body from the link and the
-account's display name, for a site whose people never see a login;
-without it the mail is the reference's. Plugins' filters still have
-the last word either way.
+$words writes the mail's subject, body and (optionally) headers from
+the link and the account's display name, for a site whose people never
+see a login (an HTML mail sends its Content-Type header); without it
+the mail is the reference's. Plugins' filters still have the last word
+either way.
 
 - `@param (Closure(string, string): string)|null $link`
-- `@param (Closure(string, string): array{0: string, 1: string})|null $words`
+- `@param (Closure(string, string): array{0: string, 1: string, 2?: string|list<string>})|null $words`
 
 ### static `resetPassword(Minn\Objects\User $user, string $password): void`
 
@@ -385,7 +386,7 @@ A new account announced: to the site's address (unless only the user
 is told), then to the user with a link to set their password (unless
 only the site is, or the old call shape asks for nobody).
 
-Internals: `vetRegistration()` (private, line 156), `registerFailed()` (private, line 187), `resetLink()` (private, line 227)
+Internals: `vetRegistration()` (private, line 157), `registerFailed()` (private, line 188), `resetLink()` (private, line 228)
 
 
 ## AdminActionController

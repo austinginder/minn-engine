@@ -56,7 +56,11 @@ final readonly class Players
         $body = $request->json();
         $page = (string) ($body['page'] ?? '');
         $link = $page === '' ? null : static fn (string $login, string $key): string => $page . '#key=' . rawurlencode($key) . '&login=' . rawurlencode($login);
-        $words = empty($body['words']) ? null : static fn (string $url, string $shownAs): array => ["Reset for {$shownAs}", "Hello {$shownAs}, choose a new password: {$url}"];
+        $words = match (true) {
+            !empty($body['html']) => static fn (string $url, string $shownAs): array => ["Reset for {$shownAs}", "<p>Hello <b>{$shownAs}</b>, <a href=\"{$url}\">choose a new password</a>.</p>", ['Content-Type: text/html; charset=UTF-8', 'From: Records Probe <records@minn.localhost>']],
+            !empty($body['words']) => static fn (string $url, string $shownAs): array => ["Reset for {$shownAs}", "Hello {$shownAs}, choose a new password: {$url}"],
+            default => null,
+        };
         $sent = $this->minn->accounts()->lostPassword((string) ($body['login'] ?? ''), $link, $words);
         return $sent instanceof Refusal ? self::refused($sent) : Response::json(['sent' => true]);
     }

@@ -158,6 +158,11 @@ $found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com') .
 $mail = $mailpit('message/' . ($found['messages'][0]['ID'] ?? ''));
 $text = (string) ($mail['Text'] ?? '');
 $check('with words of its own, the mail is the extension\'s: the display name, the link, no login', ($mail['Subject'] ?? '') === 'Reset for Zz Shown One' && preg_match('#^Hello Zz Shown One, choose a new password: https://minn\.localhost/zz-reset/\#key=([A-Za-z0-9]{20})&login=zz-acct-one\s*$#', $text, $m) === 1, json_encode([$mail['Subject'] ?? null, $text]));
+$call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-acct-one@example.com', 'page' => 'https://minn.localhost/zz-reset/', 'html' => true], [], false);
+usleep(500000);
+$found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com') . '&limit=1');
+$html = $mailpit('message/' . ($found['messages'][0]['ID'] ?? ''));
+$check('its words may carry headers: an HTML mail from a sender of its own', str_contains((string) ($html['HTML'] ?? ''), '<b>Zz Shown One</b>') && preg_match('#href="https://minn\.localhost/zz-reset/\#key=([A-Za-z0-9]{20})&(?:amp;)?login=zz-acct-one"#', (string) ($html['HTML'] ?? ''), $m) === 1 && ($html['From']['Name'] ?? '') === 'Records Probe' && ($html['From']['Address'] ?? '') === 'records@minn.localhost', json_encode([$html['From'] ?? null, substr((string) ($html['HTML'] ?? ''), 0, 200)]));
 $key = $m[1] ?? '';
 [, $error] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => 'zzzzzzzzzzzzzzzzzzzz', 'password' => 'zz-new-pass-1'], [], false);
 $check('a key that does not match is refused', ($error['code'] ?? '') === 'invalid_key', json_encode($error));
