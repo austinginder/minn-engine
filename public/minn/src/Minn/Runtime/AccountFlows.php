@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Closure;
 use Minn\Mail\Mailer;
 use Minn\I18n\Gettext;
 use Minn\Objects\Errors;
@@ -26,9 +27,13 @@ final class AccountFlows
     /**
      * A reset link mailed to the account a login or email names: true, or
      * the refusal (no name, no such account, a plugin's error, reset not
-     * allowed, or the mail failing).
+     * allowed, or the mail failing). $link makes the link from the account's
+     * login and the key when the reset page is someone else's (an
+     * extension's own); without it the link opens the sign-in page's.
+     *
+     * @param (Closure(string, string): string)|null $link
      */
-    public static function retrievePassword(string $login): bool|Errors
+    public static function retrievePassword(string $login, ?Closure $link = null): bool|Errors
     {
         $errors = Handoff::newError();
         $login = trim(stripslashes($login));
@@ -60,8 +65,9 @@ final class AccountFlows
             return $key;
         }
         // Written in the user's language (probe account-flows).
-        $sent = RecipientLocale::forUser((int) $user->ID, static function () use ($user, $key): bool {
-            $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) Translations::userLocale($user)), (string) (Runtime::current()->request?->remoteAddress ?? ''));
+        $url = $link === null ? self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) Translations::userLocale($user)) : $link((string) $user->user_login, $key);
+        $sent = RecipientLocale::forUser((int) $user->ID, static function () use ($user, $key, $url): bool {
+            $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, $url, (string) (Runtime::current()->request?->remoteAddress ?? ''));
             $title = Runtime::hooks()->filter('retrieve_password_title', [$notice->subject, $user->user_login, $user]);
             $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
             $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);

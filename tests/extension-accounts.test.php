@@ -139,5 +139,31 @@ $check('a reset link is mailed as the lost-password page mails it', $status === 
 [, $error] = $call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-nobody@example.com'], [], false);
 $check('no account by that address is refused in plain words', ($error['code'] ?? '') === 'invalid_email' && !str_contains((string) ($error['message'] ?? ''), '<'), json_encode($error));
 
+// 5. A reset page of the extension's own.
+$mailpit = static function (string $path): array {
+    $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+    return (array) json_decode((string) @file_get_contents((getenv('MINN_MAILPIT') ?: 'https://cove.localhost/mail-api/v1') . "/{$path}", false, $context), true);
+};
+$call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => $password]);
+[$status] = $call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-acct-one@example.com', 'page' => 'https://minn.localhost/zz-reset/'], [], false);
+usleep(500000);
+$found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com') . '&limit=1');
+$text = (string) ($mailpit('message/' . ($found['messages'][0]['ID'] ?? ''))['Text'] ?? '');
+$linked = preg_match('#https://minn\.localhost/zz-reset/\#key=([A-Za-z0-9]{20})&login=zz-acct-one#', $text, $m) === 1;
+$check('with a page of its own, the mailed link opens that page, the key and login in its fragment', $status === 200 && $linked, substr($text, 0, 300));
+$key = $m[1] ?? '';
+[, $error] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => 'zzzzzzzzzzzzzzzzzzzz', 'password' => 'zz-new-pass-1'], [], false);
+$check('a key that does not match is refused', ($error['code'] ?? '') === 'invalid_key', json_encode($error));
+[, $error] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => $key, 'password' => ''], [], false);
+$check('an empty password is refused', ($error['code'] ?? '') === 'empty_password', json_encode($error));
+[$status, $done] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => $key, 'password' => 'zz-new-pass-1'], [], false);
+$check('the right key saves the new password', $status === 200 && ($done['id'] ?? 0) > 0, json_encode([$status, $done]));
+$check('and ends every session of the account', !str_contains($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration'));
+[, $error] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => $password], [], false);
+[$status] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => 'zz-new-pass-1'], [], false);
+$check('the old password no longer signs in, the new one does', ($error['code'] ?? '') === 'incorrect_credentials' && $status === 200, json_encode($error));
+[, $error] = $call('POST', '/minn-test/v1/reset', ['login' => 'zz-acct-one', 'key' => $key, 'password' => 'zz-other-pass-2'], [], false);
+$check('a key works once', ($error['code'] ?? '') === 'invalid_key', json_encode($error));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

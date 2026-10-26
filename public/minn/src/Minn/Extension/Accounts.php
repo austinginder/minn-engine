@@ -10,6 +10,7 @@ use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Cookie;
 use Minn\Auth\LoginThrottle;
+use Minn\Auth\PasswordReset;
 use Minn\Auth\Sessions;
 use Minn\Auth\SignIn;
 use Minn\Content\UserRecord;
@@ -20,6 +21,7 @@ use Minn\Http\Response;
 use Minn\Login\LoginHooks;
 use Minn\Objects\Errors;
 use Minn\Runtime\AccountFlows;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 use Minn\Support\Entities;
@@ -133,12 +135,53 @@ final readonly class Accounts
 
     /**
      * A password reset link mailed to the account a login or email names,
-     * as the lost-password page sends it: true, or the refusal.
+     * as the lost-password page sends it: true, or the refusal. $link makes
+     * the link from the account's login and the key, for a reset page of the
+     * extension's own (which hands both to resetPassword); without it the
+     * link opens the sign-in page's reset form.
+     *
+     * @param (Closure(string, string): string)|null $link
      */
-    public function lostPassword(string $login): true|Refusal
+    public function lostPassword(string $login, ?Closure $link = null): true|Refusal
     {
-        $sent = AccountFlows::retrievePassword($login);
+        $sent = AccountFlows::retrievePassword($login, $link);
         return $sent === true ? true : self::refusal($sent, 'retrieve_password_failed', 'The reset email could not be sent.');
+    }
+
+    /**
+     * A new password for the account a reset link named, as the reset form
+     * saves one: the key must still be good (a day, or what
+     * password_reset_expiration says), plugins may refuse the password
+     * (validate_password_reset), and every session of the account ends. The
+     * user, or the refusal (too_many_attempts, invalid_key, expired_key,
+     * empty_password, a plugin's). Nobody is signed in.
+     */
+    public function resetPassword(string $login, string $key, string $password): UserRecord|Refusal
+    {
+        $wait = $this->signIn->retryAfter($this->request->remoteAddress);
+        if ($wait !== null) {
+            return new Refusal('too_many_attempts', 'Too many tries. Try again in a few minutes.', ['retryAfter' => $wait, 'notices' => []]);
+        }
+        $user = $this->users->findByLogin($login);
+        $lifetime = (int) Runtime::hooks()->filter('password_reset_expiration', [PasswordReset::LIFETIME]);
+        $status = $user === null ? 'invalid' : (new PasswordReset($this->users))->status($user, $key, $lifetime);
+        if ($user === null || $status !== 'valid') {
+            $this->signIn->recordFailure($this->request->remoteAddress);
+            return $status === 'invalid'
+                ? new Refusal('invalid_key', 'This reset link is not valid. Ask for a new one.', ['notices' => []])
+                : new Refusal('expired_key', 'This reset link has expired. Ask for a new one.', ['notices' => []]);
+        }
+        if ($password === '') {
+            return new Refusal('empty_password', 'The password cannot be empty.', ['notices' => []]);
+        }
+        $errors = Handoff::newError();
+        Runtime::hooks()->action('validate_password_reset', [$errors, Handoff::newUser($user->id)]);
+        if ($errors->has_errors()) {
+            return self::refusal($errors, 'password_refused', 'That password was refused.');
+        }
+        AccountFlows::resetPassword(Handoff::newUser($user->id), (string) Slashes::add($password));
+        Handoff::sessionTokens($user->id)->destroy_all();
+        return $this->users->find($user->id) ?? $user;
     }
 
     /** A refusal from the WordPress layer's errors: the first as the answer, all of them in data.notices; the chain's own as one sentence. */

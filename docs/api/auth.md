@@ -623,7 +623,7 @@ itself) is expired, as the reference treats it.
 
 - const `LIFETIME` = `86400`
 
-Used by: `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Engine`, `Minn\Extension\Accounts`, `Minn\Login\LoginController`, `Minn\Runtime\UserWrites`
 
 ```php
 __construct(Minn\Content\Users $users)

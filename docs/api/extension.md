@@ -4,7 +4,7 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accounts`](#accounts) | final readonly class | 129 | Accounts for a sign-in surface of an extension's own (a game's players, a |
+| [`Accounts`](#accounts) | final readonly class | 170 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
@@ -68,12 +68,26 @@ the user, or every refusal (registration_closed, unknown_role; the name empty, i
 email empty, malformed or taken; no password; whatever plugins add).
 The site's address is told; nobody is signed in.
 
-### `lostPassword(string $login): Minn\Runtime\Refusal|true`
+### `lostPassword(string $login, ?Closure $link = NULL): Minn\Runtime\Refusal|true`
 
 A password reset link mailed to the account a login or email names,
-as the lost-password page sends it: true, or the refusal.
+as the lost-password page sends it: true, or the refusal. $link makes
+the link from the account's login and the key, for a reset page of the
+extension's own (which hands both to resetPassword); without it the
+link opens the sign-in page's reset form.
 
-Internals: `attempt()` (private, line 76), `refusal()` (private, line 145), `plain()` (private, line 162)
+- `@param (Closure(string, string): string)|null $link`
+
+### `resetPassword(string $login, string $key, string $password): Minn\Content\UserRecord|Minn\Runtime\Refusal`
+
+A new password for the account a reset link named, as the reset form
+saves one: the key must still be good (a day, or what
+password_reset_expiration says), plugins may refuse the password
+(validate_password_reset), and every session of the account ends. The
+user, or the refusal (too_many_attempts, invalid_key, expired_key,
+empty_password, a plugin's). Nobody is signed in.
+
+Internals: `attempt()` (private, line 78), `refusal()` (private, line 188), `plain()` (private, line 205)
 
 
 ## Extension

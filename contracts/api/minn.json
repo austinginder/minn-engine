@@ -11692,6 +11692,7 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
+                "Minn\\Extension\\Accounts",
                 "Minn\\Login\\LoginController",
                 "Minn\\Runtime\\UserWrites"
             ],
@@ -44951,7 +44952,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 129,
+            "lines": 170,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -44961,6 +44962,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\LoginThrottle",
+                "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Sessions",
                 "Minn\\Auth\\SignIn",
                 "Minn\\Content\\UserRecord",
@@ -44972,6 +44974,7 @@
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Objects\\Errors",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Entities",
@@ -45002,8 +45005,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 48,
-                "end": 56
+                "line": 50,
+                "end": 58
             },
             "cases": [],
             "constants": [
@@ -45084,8 +45087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -45118,8 +45121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -45138,8 +45141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 104
+                    "line": 97,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -45150,8 +45153,8 @@
                     "doc": "Whether the site takes new accounts (users_can_register).",
                     "shapes": [],
                     "params": [],
-                    "line": 107,
-                    "end": 110
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -45198,16 +45201,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 132
+                    "line": 123,
+                    "end": 134
                 },
                 {
                     "routes": [],
                     "name": "lostPassword",
                     "static": false,
                     "visibility": "public",
-                    "signature": "lostPassword(string $login): Minn\\Runtime\\Refusal|true",
-                    "doc": "A password reset link mailed to the account a login or email names,\nas the lost-password page sends it: true, or the refusal.",
+                    "signature": "lostPassword(string $login, ?Closure $link = NULL): Minn\\Runtime\\Refusal|true",
+                    "doc": "A password reset link mailed to the account a login or email names,\nas the lost-password page sends it: true, or the refusal. $link makes\nthe link from the account's login and the key, for a reset page of the\nextension's own (which hands both to resetPassword); without it the\nlink opens the sign-in page's reset form.",
+                    "shapes": [
+                        "@param (Closure(string, string): string)|null $link"
+                    ],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "link",
+                            "type": "?Closure",
+                            "shape": "(Closure(string, string): string)|null",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 145,
+                    "end": 149
+                },
+                {
+                    "routes": [],
+                    "name": "resetPassword",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "resetPassword(string $login, string $key, string $password): Minn\\Content\\UserRecord|Minn\\Runtime\\Refusal",
+                    "doc": "A new password for the account a reset link named, as the reset form\nsaves one: the key must still be good (a day, or what\npassword_reset_expiration says), plugins may refuse the password\n(validate_password_reset), and every session of the account ends. The\nuser, or the refusal (too_many_attempts, invalid_key, expired_key,\nempty_password, a plugin's). Nobody is signed in.",
                     "shapes": [],
                     "params": [
                         {
@@ -45216,10 +45248,24 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 142
+                    "line": 159,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -45261,8 +45307,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 92
+                    "line": 78,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -45295,8 +45341,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 159
+                    "line": 188,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -45315,8 +45361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 166
+                    "line": 205,
+                    "end": 209
                 }
             ]
         },
@@ -135412,7 +135458,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AccountFlows.php",
-            "lines": 194,
+            "lines": 199,
             "doc": "The account functions a sign-in page and plugins call, with the\nreference's checks, words, hooks and mail (probe account-flows): asking\nfor a password reset (retrieve_password), resetting one\n(reset_password), registering (register_new_user), and telling the site\nand the new user about a registration (wp_new_user_notification).",
             "implements": [],
             "extends": null,
@@ -135453,9 +135499,11 @@
                     "name": "retrievePassword",
                     "static": true,
                     "visibility": "public",
-                    "signature": "retrievePassword(string $login): Minn\\Objects\\Errors|bool",
-                    "doc": "A reset link mailed to the account a login or email names: true, or\nthe refusal (no name, no such account, a plugin's error, reset not\nallowed, or the mail failing).",
-                    "shapes": [],
+                    "signature": "retrievePassword(string $login, ?Closure $link = NULL): Minn\\Objects\\Errors|bool",
+                    "doc": "A reset link mailed to the account a login or email names: true, or\nthe refusal (no name, no such account, a plugin's error, reset not\nallowed, or the mail failing). $link makes the link from the account's\nlogin and the key when the reset page is someone else's (an\nextension's own); without it the link opens the sign-in page's.",
+                    "shapes": [
+                        "@param (Closure(string, string): string)|null $link"
+                    ],
                     "params": [
                         {
                             "name": "login",
@@ -135463,10 +135511,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "link",
+                            "type": "?Closure",
+                            "shape": "(Closure(string, string): string)|null",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 74
+                    "line": 36,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -135492,8 +135547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 83
+                    "line": 83,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -135519,8 +135574,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 104
+                    "line": 97,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -135567,8 +135622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 131
+                    "line": 120,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -135601,8 +135656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 208
+                    "line": 187,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -135630,8 +135685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 168
+                    "line": 146,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -135642,8 +135697,8 @@
                     "doc": "The refusal when the account row could not be written.",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 174
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -135669,8 +135724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 214
+                    "line": 217,
+                    "end": 220
                 }
             ]
         },
@@ -148477,6 +148532,7 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Users",
                 "Minn\\Engine",
+                "Minn\\Extension\\Accounts",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\EntryScriptsController",

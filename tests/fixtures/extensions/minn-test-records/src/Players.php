@@ -49,12 +49,24 @@ final readonly class Players
         return $this->minn->accounts()->signOut(Response::json(['ok' => true]));
     }
 
-    /** Mails a reset link. */
+    /** Mails a reset link; with a page, the link opens that page with the key and login in its fragment. */
     #[Route(Method::Post, '/minn-test/v1/lost-password', policy: new Policy(Access::Public))]
     public function lostPassword(Request $request): Response
     {
-        $sent = $this->minn->accounts()->lostPassword((string) ($request->json()['login'] ?? ''));
+        $body = $request->json();
+        $page = (string) ($body['page'] ?? '');
+        $link = $page === '' ? null : static fn (string $login, string $key): string => $page . '#key=' . rawurlencode($key) . '&login=' . rawurlencode($login);
+        $sent = $this->minn->accounts()->lostPassword((string) ($body['login'] ?? ''), $link);
         return $sent instanceof Refusal ? self::refused($sent) : Response::json(['sent' => true]);
+    }
+
+    /** Saves a new password from a reset link's key. */
+    #[Route(Method::Post, '/minn-test/v1/reset', policy: new Policy(Access::Public))]
+    public function reset(Request $request): Response
+    {
+        $body = $request->json();
+        $user = $this->minn->accounts()->resetPassword((string) ($body['login'] ?? ''), (string) ($body['key'] ?? ''), (string) ($body['password'] ?? ''));
+        return $user instanceof Refusal ? self::refused($user) : Response::json(['id' => $user->id]);
     }
 
     private static function refused(Refusal $refusal, int $status = 400): Response
