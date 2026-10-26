@@ -125,13 +125,29 @@ final readonly class Accounts
      */
     public function register(string $login, string $email, string $password, string $shownAs = '', string $role = ''): UserRecord|Refusal
     {
+        return $this->refuseRegistration($role) ?? $this->made(AccountFlows::registerWithPassword($login, $email, $password, $shownAs, $role));
+    }
+
+    /** A new account as register makes it, with the site's address told nothing (a game's players, say). */
+    public function registerQuietly(string $login, string $email, string $password, string $shownAs = '', string $role = ''): UserRecord|Refusal
+    {
+        return $this->refuseRegistration($role) ?? $this->made(AccountFlows::accountWithPassword($login, $email, $password, $shownAs, $role));
+    }
+
+    /** Why the site takes no new account in that role, or null when it does. */
+    private function refuseRegistration(string $role): ?Refusal
+    {
         if (!$this->registrationOpen()) {
             return new Refusal('registration_closed', 'This site is not taking new accounts.', ['notices' => []]);
         }
         if ($role !== '' && !isset(Runtime::current()->capabilities->roles()->all()[$role])) {
             return new Refusal('unknown_role', "The site has no role named {$role}.", ['notices' => []]);
         }
-        $id = AccountFlows::registerWithPassword($login, $email, $password, $shownAs, $role);
+        return null;
+    }
+
+    private function made(int|Errors $id): UserRecord|Refusal
+    {
         $user = is_int($id) ? $this->users->find($id) : null;
         return $user ?? self::refusal($id, 'registerfail', 'The account could not be made.');
     }

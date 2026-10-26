@@ -4,7 +4,7 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accounts`](#accounts) | final readonly class | 273 | Accounts for a sign-in surface of an extension's own (a game's players, a |
+| [`Accounts`](#accounts) | final readonly class | 289 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
@@ -68,6 +68,10 @@ the user, or every refusal (registration_closed, unknown_role; the name empty, i
 email empty, malformed or taken; no password; whatever plugins add).
 The site's address is told; nobody is signed in.
 
+### `registerQuietly(string $login, string $email, string $password, string $shownAs = '', string $role = ''): Minn\Content\UserRecord|Minn\Runtime\Refusal`
+
+A new account as register makes it, with the site's address told nothing (a game's players, say).
+
 ### `lostPassword(string $login, ?Closure $link = NULL, ?Closure $words = NULL): Minn\Runtime\Refusal|true`
 
 A password reset link mailed to the account a login or email names,
@@ -115,7 +119,7 @@ plugin's.
 
 - `@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name`
 
-Internals: `attempt()` (private, line 81), `checkCurrent()` (private, line 256), `worded()` (private, line 275), `refusal()` (private, line 294), `plain()` (private, line 311)
+Internals: `attempt()` (private, line 81), `refuseRegistration()` (private, line 138), `made()` (private, line 149), `checkCurrent()` (private, line 272), `worded()` (private, line 291), `refusal()` (private, line 310), `plain()` (private, line 327)
 
 
 ## Extension

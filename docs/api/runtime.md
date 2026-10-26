@@ -6,7 +6,7 @@ the WordPress runtime plugins load against
 |---|---|---|---|
 | [`Abilities`](#abilities) | final class | 226 | The abilities registry behind WP_Abilities_Registry, |
 | [`AbilityRun`](#abilityrun) | final class | 28 | The checks of an ability's run, as the reference makes them (probes |
-| [`AccountFlows`](#accountflows) | final class | 210 | The account functions a sign-in page and plugins call, with the |
+| [`AccountFlows`](#accountflows) | final class | 223 | The account functions a sign-in page and plugins call, with the |
 | [`AdminActionController`](#adminactioncontroller) | final readonly class | 138 | The wp-admin pages a plugin answers itself. The admin is Minn Admin, so |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 86 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
@@ -380,13 +380,19 @@ given, the name shown for it (display name and nickname) and the role
 (else the site's default role), and the site told. The holder is
 mailed nothing: there is no password to set.
 
+### static `accountWithPassword(string $login, string $email, string $password, string $shownAs = '', string $role = ''): Minn\Objects\Errors|int`
+
+The account registerWithPassword makes, with nobody told: for a
+sign-up whose accounts the site's address has no need to hear about
+one by one (the players of a game).
+
 ### static `newUserNotification(int $userId, mixed $deprecated, string $notify): void`
 
 A new account announced: to the site's address (unless only the user
 is told), then to the user with a link to set their password (unless
 only the site is, or the old call shape asks for nobody).
 
-Internals: `vetRegistration()` (private, line 157), `registerFailed()` (private, line 188), `resetLink()` (private, line 228)
+Internals: `vetRegistration()` (private, line 170), `registerFailed()` (private, line 201), `resetLink()` (private, line 241)
 
 
 ## AdminActionController

@@ -26,7 +26,9 @@ final readonly class Players
     public function register(Request $request): Response
     {
         $body = $request->json();
-        $made = $this->minn->accounts()->register((string) ($body['login'] ?? ''), (string) ($body['email'] ?? ''), (string) ($body['password'] ?? ''), (string) ($body['shownAs'] ?? ''), (string) ($body['role'] ?? ''));
+        $args = [(string) ($body['login'] ?? ''), (string) ($body['email'] ?? ''), (string) ($body['password'] ?? ''), (string) ($body['shownAs'] ?? ''), (string) ($body['role'] ?? '')];
+        $accounts = $this->minn->accounts();
+        $made = empty($body['quietly']) ? $accounts->register(...$args) : $accounts->registerQuietly(...$args);
         return $made instanceof Refusal ? self::refused($made) : Response::json(['id' => $made->id, 'login' => $made->login], 201);
     }
 

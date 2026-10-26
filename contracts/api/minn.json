@@ -44953,7 +44953,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 273,
+            "lines": 289,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -45206,7 +45206,55 @@
                         }
                     ],
                     "line": 126,
-                    "end": 137
+                    "end": 129
+                },
+                {
+                    "routes": [],
+                    "name": "registerQuietly",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "registerQuietly(string $login, string $email, string $password, string $shownAs = '', string $role = ''): Minn\\Content\\UserRecord|Minn\\Runtime\\Refusal",
+                    "doc": "A new account as register makes it, with the site's address told nothing (a game's players, say).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "shownAs",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -45242,8 +45290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 157
+                    "line": 169,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -45276,8 +45324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 193
+                    "line": 183,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -45326,8 +45374,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 207,
-                    "end": 223
+                    "line": 223,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -45369,8 +45417,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 234,
-                    "end": 253
+                    "line": 250,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -45417,6 +45465,46 @@
                 },
                 {
                     "routes": [],
+                    "name": "refuseRegistration",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refuseRegistration(string $role): ?Minn\\Runtime\\Refusal",
+                    "doc": "Why the site takes no new account in that role, or null when it does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 138,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "made",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "made(Minn\\Objects\\Errors|int $id): Minn\\Content\\UserRecord|Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "Minn\\Objects\\Errors|int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 149,
+                    "end": 153
+                },
+                {
+                    "routes": [],
                     "name": "checkCurrent",
                     "static": false,
                     "visibility": "private",
@@ -45439,8 +45527,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 268
+                    "line": 272,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -45480,8 +45568,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 291
+                    "line": 291,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -45514,8 +45602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 308
+                    "line": 310,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -45534,8 +45622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 315
+                    "line": 327,
+                    "end": 331
                 }
             ]
         },
@@ -135631,7 +135719,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AccountFlows.php",
-            "lines": 210,
+            "lines": 223,
             "doc": "The account functions a sign-in page and plugins call, with the\nreference's checks, words, hooks and mail (probe account-flows): asking\nfor a password reset (retrieve_password), resetting one\n(reset_password), registering (register_new_user), and telling the site\nand the new user about a registration (wp_new_user_notification).",
             "implements": [],
             "extends": null,
@@ -135804,7 +135892,55 @@
                         }
                     ],
                     "line": 131,
-                    "end": 148
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "accountWithPassword",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "accountWithPassword(string $login, string $email, string $password, string $shownAs = '', string $role = ''): Minn\\Objects\\Errors|int",
+                    "doc": "The account registerWithPassword makes, with nobody told: for a\nsign-up whose accounts the site's address has no need to hear about\none by one (the players of a game).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "shownAs",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 145,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -135837,8 +135973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 225
+                    "line": 211,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -135866,8 +136002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 185
+                    "line": 170,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -135878,8 +136014,8 @@
                     "doc": "The refusal when the account row could not be written.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -135905,8 +136041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 231
+                    "line": 241,
+                    "end": 244
                 }
             ]
         },

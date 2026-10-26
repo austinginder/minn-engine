@@ -55,7 +55,7 @@ $nonce = static fn (): string => trim((string) shell_exec('/usr/bin/curl -sk -b 
 echo "extension-accounts suite: {$ENGINE}\n";
 $fixture = __DIR__ . '/fixtures/extensions/minn-test-records';
 $copy = "{$site}/public/wp-content/plugins/minn-test-records";
-$logins = ['zz-acct-one', 'zz-acct-two'];
+$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet'];
 $sweep = static function () use ($wp, $copy, $logins): void {
     foreach ($logins as $login) {
         $id = $wp('user get ' . escapeshellarg($login) . ' --field=ID');
@@ -106,6 +106,8 @@ $check('a role asked for wins over the site\'s default role', $wp('user get zz-a
 $wp('option update default_role subscriber');
 $check('without a name to show, the account is shown by its login', $wp('user get zz-acct-two --field=display_name') === 'zz-acct-two');
 $check('nobody is signed in by registering', $status === 201 && !str_contains((string) @file_get_contents($jar), 'wordpress_logged_in_'));
+[$status] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-quiet', 'email' => 'zz-acct-quiet@example.com', 'password' => 'zz-quiet-pass', 'quietly' => true]);
+$check('registerQuietly makes the account too', $status === 201 && ctype_digit($wp('user get zz-acct-quiet --field=ID')));
 
 // 2. Signing in.
 [$status, $error] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => 'wrong']);
@@ -144,6 +146,8 @@ $mailpit = static function (string $path): array {
     $context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
     return (array) json_decode((string) @file_get_contents((getenv('MINN_MAILPIT') ?: 'https://cove.localhost/mail-api/v1') . "/{$path}", false, $context), true);
 };
+$told = static fn (string $login): int => (int) ($mailpit('search?query=' . rawurlencode('subject:"New User Registration" ' . $login) . '&limit=5')['messages_count'] ?? 0);
+$check('register tells the site\'s address; registerQuietly tells nobody', $told('zz-acct-two') >= 1 && $told('zz-acct-quiet') === 0, json_encode([$told('zz-acct-two'), $told('zz-acct-quiet')]));
 $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-one', 'password' => $password]);
 [$status] = $call('POST', '/minn-test/v1/lost-password', ['login' => 'zz-acct-one@example.com', 'page' => 'https://minn.localhost/zz-reset/'], [], false);
 usleep(500000);

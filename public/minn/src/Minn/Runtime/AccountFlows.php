@@ -130,6 +130,20 @@ final class AccountFlows
      */
     public static function registerWithPassword(string $login, string $email, string $password, string $shownAs = '', string $role = ''): int|Errors
     {
+        $id = self::accountWithPassword($login, $email, $password, $shownAs, $role);
+        if (is_int($id)) {
+            self::newUserNotification($id, null, 'admin');
+        }
+        return $id;
+    }
+
+    /**
+     * The account registerWithPassword makes, with nobody told: for a
+     * sign-up whose accounts the site's address has no need to hear about
+     * one by one (the players of a game).
+     */
+    public static function accountWithPassword(string $login, string $email, string $password, string $shownAs = '', string $role = ''): int|Errors
+    {
         [$name, $email, $errors] = self::vetRegistration($login, $email);
         if ($password === '') {
             $errors->add('empty_password', Gettext::text('<strong>Error:</strong> Please enter a password.'));
@@ -143,7 +157,6 @@ final class AccountFlows
         if (!is_int($id) || $id < 1) {
             return self::registerFailed();
         }
-        self::newUserNotification($id, null, 'admin');
         return $id;
     }
 
