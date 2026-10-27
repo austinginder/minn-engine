@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Ext\TestRecords;
 
+use Minn\Content\Users;
 use Minn\Extension\Seams;
 use Minn\Extension\SignedIn;
 use Minn\Http\Access;
@@ -14,7 +15,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Runtime\Refusal;
 
-/** A sign-in surface of the extension's own over Seams::accounts(): sign up, sign in, sign out, reset. */
+/** A sign-in surface of the extension's own over Seams::accounts(): sign up (now, or from a held hash), sign in (by password, or vouched for), sign out, reset, its own mail. */
 final readonly class Players
 {
     public function __construct(private Seams $minn)
@@ -30,6 +31,44 @@ final readonly class Players
         $accounts = $this->minn->accounts();
         $made = empty($body['quietly']) ? $accounts->register(...$args) : $accounts->registerQuietly(...$args);
         return $made instanceof Refusal ? self::refused($made) : Response::json(['id' => $made->id, 'login' => $made->login], 201);
+    }
+
+    /** A password hashed for holding (a sign-up waiting on its email). */
+    #[Route(Method::Post, '/minn-test/v1/players/hash', policy: new Policy(Access::Public))]
+    public function hash(Request $request): Response
+    {
+        return Response::json(['hash' => $this->minn->accounts()->passwordHash((string) ($request->json()['password'] ?? ''))]);
+    }
+
+    /** A new account from a held hash, quietly. */
+    #[Route(Method::Post, '/minn-test/v1/players/hashed', policy: new Policy(Access::Public))]
+    public function registerHashed(Request $request): Response
+    {
+        $body = $request->json();
+        $made = $this->minn->accounts()->registerQuietlyWithHash((string) ($body['login'] ?? ''), (string) ($body['email'] ?? ''), (string) ($body['hash'] ?? ''), (string) ($body['shownAs'] ?? ''), (string) ($body['role'] ?? ''));
+        return $made instanceof Refusal ? self::refused($made) : Response::json(['id' => $made->id, 'login' => $made->login], 201);
+    }
+
+    /** Signs a login in without its password, as an emailed link would; the cookies on the answer. */
+    #[Route(Method::Post, '/minn-test/v1/session/verified', policy: new Policy(Access::Public))]
+    public function signInVerified(Request $request): Response
+    {
+        $table = $this->minn->db->table('users');
+        $id = (int) $this->minn->db->value("SELECT ID FROM {$table} WHERE user_login = ?", [(string) ($request->json()['login'] ?? '')]);
+        $user = $id > 0 ? (new Users($this->minn->db))->find($id) : null;
+        if ($user === null) {
+            return Response::json(['code' => 'no_user'], 404);
+        }
+        return $this->minn->accounts()->signInVerified(Response::json(['ok' => true]), $user)->response;
+    }
+
+    /** An email of the extension's own; html sends it as HTML from a sender of its own. */
+    #[Route(Method::Post, '/minn-test/v1/mail', policy: new Policy(Access::Public))]
+    public function mail(Request $request): Response
+    {
+        $body = $request->json();
+        $headers = empty($body['html']) ? '' : ['Content-Type: text/html; charset=UTF-8', 'From: Records Probe <records@minn.localhost>'];
+        return Response::json(['sent' => $this->minn->accounts()->mail((string) ($body['to'] ?? ''), (string) ($body['subject'] ?? ''), (string) ($body['body'] ?? ''), $headers)]);
     }
 
     /** Signs in, the cookies on the answer. */

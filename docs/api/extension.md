@@ -4,7 +4,7 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accounts`](#accounts) | final readonly class | 289 | Accounts for a sign-in surface of an extension's own (a game's players, a |
+| [`Accounts`](#accounts) | final readonly class | 354 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
@@ -72,6 +72,36 @@ The site's address is told; nobody is signed in.
 
 A new account as register makes it, with the site's address told nothing (a game's players, say).
 
+### `passwordHash(string $password): string`
+
+A password hashed as an account stores it (slashed, as a sign-in form
+sends it, through wp_hash_password), for a sign-up that holds it until
+the email is proven: registerQuietlyWithHash makes the account from it.
+
+### `registerQuietlyWithHash(string $login, string $email, string $hash, string $shownAs = '', string $role = ''): Minn\Content\UserRecord|Minn\Runtime\Refusal`
+
+A new account as registerQuietly makes it, its password one that
+passwordHash hashed earlier (a sign-up held until its email was
+proven), so the password itself never had to be kept: the same checks
+and refusals, and a hash that is empty or not a hash refused as no
+password (empty_password).
+
+### `signInVerified(Minn\Http\Response $response, Minn\Content\UserRecord $user): Minn\Extension\SignedIn`
+
+Signs in a user the extension vouches for without a password (an
+emailed link proved the address), remembered as signInRemembered
+signs in: a new session and the three cookies on the response,
+wp_login fired. The extension's own proof is the only check, so it
+belongs after a single-use secret of the extension's own.
+
+### `mail(string $to, string $subject, string $body, array|string $headers = ''): bool`
+
+Sends an email of the extension's own through the site's mailer
+(wp_mail: its filters, an SMTP plugin), headers as wp_mail takes them
+(an HTML mail's Content-Type, a From): whether it was accepted.
+
+- `@param string|list<string> $headers`
+
 ### `lostPassword(string $login, ?Closure $link = NULL, ?Closure $words = NULL): Minn\Runtime\Refusal|true`
 
 A password reset link mailed to the account a login or email names,
@@ -119,7 +149,7 @@ plugin's.
 
 - `@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name`
 
-Internals: `attempt()` (private, line 81), `refuseRegistration()` (private, line 138), `made()` (private, line 149), `checkCurrent()` (private, line 272), `worded()` (private, line 291), `refusal()` (private, line 310), `plain()` (private, line 327)
+Internals: `attempt()` (private, line 81), `storedHash()` (private, line 170), `refuseRegistration()` (private, line 203), `made()` (private, line 214), `checkCurrent()` (private, line 337), `worded()` (private, line 356), `refusal()` (private, line 375), `plain()` (private, line 392)
 
 
 ## Extension

@@ -134,6 +134,71 @@ final readonly class Accounts
         return $this->refuseRegistration($role) ?? $this->made(AccountFlows::accountWithPassword($login, $email, $password, $shownAs, $role));
     }
 
+    /**
+     * A password hashed as an account stores it (slashed, as a sign-in form
+     * sends it, through wp_hash_password), for a sign-up that holds it until
+     * the email is proven: registerQuietlyWithHash makes the account from it.
+     */
+    public function passwordHash(string $password): string
+    {
+        return (string) Handoff::hashPassword((string) Slashes::add($password));
+    }
+
+    /**
+     * A new account as registerQuietly makes it, its password one that
+     * passwordHash hashed earlier (a sign-up held until its email was
+     * proven), so the password itself never had to be kept: the same checks
+     * and refusals, and a hash that is empty or not a hash refused as no
+     * password (empty_password).
+     */
+    public function registerQuietlyWithHash(string $login, string $email, string $hash, string $shownAs = '', string $role = ''): UserRecord|Refusal
+    {
+        if (!self::storedHash($hash)) {
+            return new Refusal('empty_password', 'The password cannot be empty.', ['notices' => [['code' => 'empty_password', 'message' => 'The password cannot be empty.']]]);
+        }
+        // Made with a password nobody knows, then given the held hash before anyone can sign in with it.
+        $made = $this->registerQuietly($login, $email, bin2hex(random_bytes(24)), $shownAs, $role);
+        if ($made instanceof Refusal) {
+            return $made;
+        }
+        $this->users->setPassword($made->id, $hash);
+        UserWrites::cleanCache($made->id);
+        return $this->users->find($made->id) ?? $made;
+    }
+
+    /** Whether a value reads as a stored password hash: "$"-led, of a hash's length. */
+    private static function storedHash(string $hash): bool
+    {
+        return str_starts_with($hash, '$') && strlen($hash) >= 20 && strlen($hash) <= 255 && !preg_match('/\s/', $hash);
+    }
+
+    /**
+     * Signs in a user the extension vouches for without a password (an
+     * emailed link proved the address), remembered as signInRemembered
+     * signs in: a new session and the three cookies on the response,
+     * wp_login fired. The extension's own proof is the only check, so it
+     * belongs after a single-use secret of the extension's own.
+     */
+    public function signInVerified(Response $response, UserRecord $user): SignedIn
+    {
+        $fresh = $this->users->find($user->id) ?? $user;
+        $response = $this->signIn->remember($response, $fresh, $this->request);
+        (new LoginHooks($this->users))->signedIn($fresh);
+        return new SignedIn($fresh, $response);
+    }
+
+    /**
+     * Sends an email of the extension's own through the site's mailer
+     * (wp_mail: its filters, an SMTP plugin), headers as wp_mail takes them
+     * (an HTML mail's Content-Type, a From): whether it was accepted.
+     *
+     * @param string|list<string> $headers
+     */
+    public function mail(string $to, string $subject, string $body, string|array $headers = ''): bool
+    {
+        return (bool) Handoff::mail($to, $subject, $body, $headers);
+    }
+
     /** Why the site takes no new account in that role, or null when it does. */
     private function refuseRegistration(string $role): ?Refusal
     {

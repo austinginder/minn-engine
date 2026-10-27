@@ -55,7 +55,7 @@ $nonce = static fn (): string => trim((string) shell_exec('/usr/bin/curl -sk -b 
 echo "extension-accounts suite: {$ENGINE}\n";
 $fixture = __DIR__ . '/fixtures/extensions/minn-test-records';
 $copy = "{$site}/public/wp-content/plugins/minn-test-records";
-$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet'];
+$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet', 'zz-acct-held'];
 $sweep = static function () use ($wp, $copy, $logins): void {
     foreach ($logins as $login) {
         $id = $wp('user get ' . escapeshellarg($login) . ' --field=ID');
@@ -210,6 +210,37 @@ $check('the right password saves the new email', $status === 200 && ($changed['e
 usleep(500000);
 $found = $mailpit('search?query=' . rawurlencode('to:zz-acct-one@example.com subject:"Email changed"') . '&limit=1');
 $check('the old address is told, in the extension\'s words', ($found['messages'][0]['Subject'] ?? '') === 'Email changed for Zz Shown One', json_encode($found['messages'][0]['Subject'] ?? null));
+$wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
+
+// 7. A sign-up held until its email is proven: the password kept only as its hash, the account made from it later, signed in by the link.
+[, $held] = $call('POST', '/minn-test/v1/players/hash', ['password' => $password], [], false);
+$hash = (string) ($held['hash'] ?? '');
+$check('passwordHash hashes as an account stores it, never the password itself', str_starts_with($hash, '$wp$2y$') && !str_contains($hash, 'quoted'), $hash);
+[, $error] = $call('POST', '/minn-test/v1/players/hashed', ['login' => 'zz-acct-held', 'email' => 'zz-acct-held@example.com', 'hash' => 'not a hash'], [], false);
+$check('a hash that is not one is refused as no password', ($error['code'] ?? '') === 'empty_password', json_encode($error));
+[, $error] = $call('POST', '/minn-test/v1/players/hashed', ['login' => 'zz-acct-held', 'email' => 'zz-acct-two@example.com', 'hash' => $hash], [], false);
+$check('the registration checks still run: an email another account holds is refused', ($error['code'] ?? '') === 'email_exists', json_encode($error));
+[$status, $made] = $call('POST', '/minn-test/v1/players/hashed', ['login' => 'zz-acct-held', 'email' => 'zz-acct-held@example.com', 'hash' => $hash, 'shownAs' => 'Zz Held', 'role' => 'subscriber'], [], false);
+$check('registerQuietlyWithHash makes the account, with the role and name asked for', $status === 201 && $wp('user get zz-acct-held --field=roles') === 'subscriber' && $wp('user get zz-acct-held --field=display_name') === 'Zz Held', json_encode([$status, $made]));
+$check('storing the held hash as the account\'s password', $wp('user get zz-acct-held --field=user_pass') === $hash);
+$check('and telling nobody', $told('zz-acct-held') === 0);
+[$status] = $call('POST', '/minn-test/v1/session', ['login' => 'zz-acct-held@example.com', 'password' => $password], [], false);
+$form = (string) shell_exec('/usr/bin/curl -sk -D - -o /dev/null -b wordpress_test_cookie=WP%20Cookie%20check --data-urlencode ' . escapeshellarg('log=zz-acct-held') . ' --data-urlencode ' . escapeshellarg('pwd=' . $password) . ' -d testcookie=1 ' . escapeshellarg("{$ENGINE}/wp-login.php"));
+$check('the password that was hashed signs in, here and at wp-login.php (quotes and a backslash in it)', $status === 200 && preg_match('#^HTTP/\S+ 302#', $form) === 1 && stripos($form, 'set-cookie: wordpress_logged_in_') !== false, $form);
+$call('DELETE', '/minn-test/v1/session');
+@unlink($jar);
+[$status, , $head] = $call('POST', '/minn-test/v1/session/verified', ['login' => 'zz-acct-held']);
+$check('signInVerified signs in without the password, remembered: the cookies outlive the browser session', $status === 200 && preg_match('/set-cookie: wordpress_logged_in_[0-9a-f]{32}=zz-acct-held%7C[^\n]*expires=([^;\n]+)/i', $head, $until) === 1 && strtotime($until[1]) - time() >= 14 * 86400 - 120, $head);
+[, $who] = $call('GET', '/minn-test/v1/whoami', null, ['X-WP-Nonce: ' . $nonce()]);
+$check('and the REST gate takes that session as the user', ($who['login'] ?? '') === 'zz-acct-held', json_encode($who));
+$check('one session is stored for it', substr_count($wp('user meta get zz-acct-held session_tokens --format=json'), 'expiration') >= 1);
+$call('DELETE', '/minn-test/v1/session');
+$subject = 'zz-acct-mail ' . bin2hex(random_bytes(3));
+[$status, $sent] = $call('POST', '/minn-test/v1/mail', ['to' => 'zz-acct-held@example.com', 'subject' => $subject, 'body' => '<p>Open <a href="https://minn.localhost/zz-verify/#t=abc">the link</a>.</p>', 'html' => true], [], false);
+usleep(500000);
+$found = $mailpit('search?query=' . rawurlencode('subject:"' . $subject . '"') . '&limit=1');
+$mail = $mailpit('message/' . ($found['messages'][0]['ID'] ?? ''));
+$check('mail sends the extension\'s own email through the site\'s mailer, HTML from its own sender', $status === 200 && ($sent['sent'] ?? false) === true && ($mail['Subject'] ?? '') === $subject && str_contains((string) ($mail['HTML'] ?? ''), 'href="https://minn.localhost/zz-verify/#t=abc"') && ($mail['From']['Address'] ?? '') === 'records@minn.localhost' && ($mail['To'][0]['Address'] ?? '') === 'zz-acct-held@example.com', json_encode([$mail['Subject'] ?? null, $mail['From'] ?? null]));
 $wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
 
 echo "\n{$pass} passed, {$fail} failed\n";

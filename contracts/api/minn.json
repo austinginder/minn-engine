@@ -44953,7 +44953,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 289,
+            "lines": 354,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -45258,6 +45258,144 @@
                 },
                 {
                     "routes": [],
+                    "name": "passwordHash",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "passwordHash(string $password): string",
+                    "doc": "A password hashed as an account stores it (slashed, as a sign-in form\nsends it, through wp_hash_password), for a sign-up that holds it until\nthe email is proven: registerQuietlyWithHash makes the account from it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 142,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "registerQuietlyWithHash",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "registerQuietlyWithHash(string $login, string $email, string $hash, string $shownAs = '', string $role = ''): Minn\\Content\\UserRecord|Minn\\Runtime\\Refusal",
+                    "doc": "A new account as registerQuietly makes it, its password one that\npasswordHash hashed earlier (a sign-up held until its email was\nproven), so the password itself never had to be kept: the same checks\nand refusals, and a hash that is empty or not a hash refused as no\npassword (empty_password).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hash",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "shownAs",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "signInVerified",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "signInVerified(Minn\\Http\\Response $response, Minn\\Content\\UserRecord $user): Minn\\Extension\\SignedIn",
+                    "doc": "Signs in a user the extension vouches for without a password (an\nemailed link proved the address), remembered as signInRemembered\nsigns in: a new session and the three cookies on the response,\nwp_login fired. The extension's own proof is the only check, so it\nbelongs after a single-use secret of the extension's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 182,
+                    "end": 188
+                },
+                {
+                    "routes": [],
+                    "name": "mail",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mail(string $to, string $subject, string $body, array|string $headers = ''): bool",
+                    "doc": "Sends an email of the extension's own through the site's mailer\n(wp_mail: its filters, an SMTP plugin), headers as wp_mail takes them\n(an HTML mail's Content-Type, a From): whether it was accepted.",
+                    "shapes": [
+                        "@param string|list<string> $headers"
+                    ],
+                    "params": [
+                        {
+                            "name": "to",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subject",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array|string",
+                            "shape": "string|list<string>",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 197,
+                    "end": 200
+                },
+                {
+                    "routes": [],
                     "name": "lostPassword",
                     "static": false,
                     "visibility": "public",
@@ -45290,8 +45428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 173
+                    "line": 234,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -45324,8 +45462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 209
+                    "line": 248,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -45374,8 +45512,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 223,
-                    "end": 239
+                    "line": 288,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -45417,8 +45555,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 250,
-                    "end": 269
+                    "line": 315,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -45465,6 +45603,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "storedHash",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "storedHash(string $hash): bool",
+                    "doc": "Whether a value reads as a stored password hash: \"$\"-led, of a hash's length.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hash",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 173
+                },
+                {
+                    "routes": [],
                     "name": "refuseRegistration",
                     "static": false,
                     "visibility": "private",
@@ -45480,8 +45638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 147
+                    "line": 203,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -45500,8 +45658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 153
+                    "line": 214,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -45527,8 +45685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 284
+                    "line": 337,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -45568,8 +45726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 307
+                    "line": 356,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -45602,8 +45760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 324
+                    "line": 375,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -45622,8 +45780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 331
+                    "line": 392,
+                    "end": 396
                 }
             ]
         },
