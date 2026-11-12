@@ -18317,8 +18317,13 @@ ejected. What it found, and what changed:
 
 - **A host that disables `getmyuid()`** (Kinsta disables 63 functions) took every request down:
   Code Snippets asks for the filesystem method while it loads, and `Ops\FilesystemCredentials`
-  called `getmyuid()` without asking whether it exists. It reads the entry file's owner there now;
-  the reference answers `direct` on the same host.
+  called `getmyuid()` without asking whether it exists. It reads the owner of the engine's own
+  code there now; the reference answers `direct` on the same host. (It first read the owner of the
+  first included file, which on Kinsta is the host's root-owned `auto_prepend_file`, so the method
+  came out `ftpext` and every plugin and theme update stopped with no reason given. Suite
+  `filesystem-method` serves both stacks with `php -S`, getmyuid() disabled and a root-owned
+  prepend, and compares the answers. An upgrader that stops because it cannot reach the files now
+  refuses with `fs_unavailable`, naming the method, instead of a bare "could not be installed".)
 - **nginx runs a `.php` request only when the file exists**, so every entry point the install
   parked answered 404 before the engine saw it, the host's own cron (`wp-cron.php`) among them.
   The install lays a shape file under each (`contracts/layout.md`).

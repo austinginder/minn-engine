@@ -14,7 +14,7 @@
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 181 | Replaces the running engine with a published release. The release's |
-| [`FilesystemCredentials`](#filesystemcredentials) | final class | 220 | How the site reaches its own files, and the connection it asks for when |
+| [`FilesystemCredentials`](#filesystemcredentials) | final class | 225 | How the site reaches its own files, and the connection it asks for when |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 484 | Putting plugins, themes and extensions on disk. Plugins and themes come |
@@ -23,7 +23,7 @@
 | [`ShapeFiles`](#shapefiles) | final class | 156 | The files an install lays at the webroot for tooling to find: the shape |
 | [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 456 | Update offers for the site's plugins and themes from the directory, asked |
-| [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
+| [`UpgraderRun`](#upgraderrun) | final readonly class | 127 | The engine's own installs and updates, run through the reference's |
 
 ## Archive
 
@@ -448,6 +448,8 @@ wp_admin_notice).
 - const `NONCE` = `'filesystem-credentials'`
 - const `CONSTANTS` = `array (   'hostname' => 'FTP_HOST',   'username' => 'FTP_USER',   'password' => 'FTP_PASS',   'public_key' => 'FTP_PUBKEY',   'private_key' => 'FTP_PRIKEY', )`
 
+Used by: `Minn\Ops\UpgraderRun`
+
 ### static `method(array $asked): mixed`
 
 The method the site's files are reached by (get_filesystem_method).
@@ -463,7 +465,7 @@ The connection, or false with the form to print
 - `@param array<string, mixed> $posted the request's form`
 - `@return array{0: mixed, 1: string} the answer, then what is printed`
 
-Internals: `credentials()` (private, line 108), `host()` (private, line 135), `types()` (private, line 141), `ownsNewFiles()` (private, line 152), `scriptOwner()` (private, line 166), `transport()` (private, line 172), `form()` (private, line 191)
+Internals: `credentials()` (private, line 108), `host()` (private, line 135), `types()` (private, line 141), `ownsNewFiles()` (private, line 152), `scriptOwner()` (private, line 171), `transport()` (private, line 177), `form()` (private, line 196)
 
 
 ## InstalledSoftware
@@ -1037,5 +1039,5 @@ theme (folder), as Minn Admin does on WordPress: a plugin through
 bulk_upgrade, a theme through upgrade. The sha256 of the package, ''
 when it did not come from the service.
 
-Internals: `guarded()` (private, line 79), `refusal()` (private, line 110), `taken()` (private, line 130)
+Internals: `guarded()` (private, line 79), `refusal()` (private, line 110), `unreachable()` (private, line 134), `taken()` (private, line 144)
 

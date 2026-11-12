@@ -98425,7 +98425,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/FilesystemCredentials.php",
-            "lines": 220,
+            "lines": 225,
             "doc": "How the site reaches its own files, and the connection it asks for when\nit cannot write them itself (probes filesystem-credentials and\nfilesystem-credentials-constants).\n\nThe method (get_filesystem_method) is FS_METHOD when set; otherwise\ndirect when a file made in the folder (the content folder by default)\nbelongs to the owner of the running script, or when ownership is relaxed\nand the file could be made at all; otherwise SSH2, the FTP extension or\nFTP over sockets, whichever this PHP has; filesystem_method has the last\nword.\n\nThe connection (request_filesystem_credentials): request_filesystem_\ncredentials may answer first; a direct method needs none. The stored\nconnection (ftp_credentials) is the start, each field then taken from its\nFTP_* constant, else from the form posted with a good _fs_nonce when it\nis not empty, else as stored; a host's \":port\" is split off (kept only\nwhen it is a number); the type is ssh under FTP_SSH, ftps under FTP_SSL,\nelse as posted, stored, or ftp. With no error to show, a host, a user and\na password (or, over SSH, both key paths) make it complete: it is stored\n(not autoloaded) without the password, the keys or the port (the port\nback on the host)\nand returned. Otherwise the answer is false and the form is printed, as\nthe reference prints it, after the error's notice (the facade's\nwp_admin_notice).",
             "implements": [],
             "extends": null,
@@ -98439,7 +98439,9 @@
                 "Minn\\Support\\Slashes",
                 "Minn\\Support\\Url"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Ops\\UpgraderRun"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -98596,11 +98598,11 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "scriptOwner(): int|false",
-                    "doc": "The running script's owner, as getmyuid() reports it; read from the entry file where a host disables getmyuid() (Kinsta).",
+                    "doc": "The running script's owner, as getmyuid() reports it. Where a host\ndisables getmyuid() it is the owner of the engine's own code: the first\nincluded file can be the host's auto_prepend_file (root-owned on\nKinsta), which made every update ask for an FTP connection.",
                     "shapes": [],
                     "params": [],
-                    "line": 166,
-                    "end": 169
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -98611,8 +98613,8 @@
                     "doc": "The first remote transport this PHP has, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 172,
-                    "end": 180
+                    "line": 177,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -98664,8 +98666,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 260
+                    "line": 196,
+                    "end": 265
                 }
             ]
         },
@@ -101573,7 +101575,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/UpgraderRun.php",
-            "lines": 113,
+            "lines": 127,
             "doc": "The engine's own installs and updates, run through the reference's\nupgraders (Plugin_Upgrader, Theme_Upgrader) so plugins hear every hook a\nWordPress install or update tells them: the REST plugin route, Minn\nAdmin's install, upload and update routes, the CLI verbs and the\nautomatic updates all come here. The Minn update service's packages are\nfetched over the engine's own client (Packages::fetch: https, the\nservice's host, a size cap) and handed to the upgrader as a file through\nupgrader_pre_download, so where Minn gets code is never the\nplugin-filterable HTTP API's to change. A package from anywhere else is\ninstalled only when its publisher answered upgrader_pre_download with a\ncopy it checked (or refused it): nobody's word, no install. A package\nfrom the service passes Archive's checks before the upgrader unpacks it;\na local file (an upload, checked by Packages) is the upgrader's to read. The upgrader's refusals come back\nas the engine's REST errors, in the words its routes already use.",
             "implements": [],
             "extends": null,
@@ -101583,6 +101585,7 @@
                 "Minn\\Objects\\UpgraderSkin",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\Directory",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Ops\\Packages",
                 "Minn\\RestError",
                 "Minn\\Runtime\\Handoff",
@@ -101771,6 +101774,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "unreachable",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "unreachable(): ?Minn\\RestError",
+                    "doc": "The refusal for an upgrader that stopped without a word because it\ncould not reach the site's files (fs_connect answers false and records\nnothing); null when the files are reachable directly.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 134,
+                    "end": 141
+                },
+                {
+                    "routes": [],
                     "name": "taken",
                     "static": false,
                     "visibility": "private",
@@ -101800,8 +101815,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 141
+                    "line": 144,
+                    "end": 155
                 }
             ]
         },

@@ -121,9 +121,23 @@ final readonly class UpgraderRun
             str_starts_with($code, 'incompatible_') => new RestError($code, $message, 400),
             $code === 'download_failed', $code === 'update_failed' => new RestError('update_failed', $message, 502),
             in_array($code, ['not_zip', 'bad_archive'], true) => new RestError($code, $message, 400),
-            $code === '' => new RestError('install_failed', $message, 500),
+            $code === '' => $this->unreachable() ?? new RestError('install_failed', $message, 500),
             default => new RestError($code, $message, 500),
         };
+    }
+
+    /**
+     * The refusal for an upgrader that stopped without a word because it
+     * could not reach the site's files (fs_connect answers false and records
+     * nothing); null when the files are reachable directly.
+     */
+    private function unreachable(): ?RestError
+    {
+        $method = FilesystemCredentials::method([]);
+        if ($method === 'direct') {
+            return null;
+        }
+        return new RestError('fs_unavailable', sprintf("The site's files could not be written: the filesystem method is %s and no connection is set for it. Set FS_METHOD, or the FTP constants, in wp-config.php.", is_string($method) && $method !== '' ? $method : 'none'), 500);
     }
 
     /** The refusal for a folder already taken, naming what is there and what the package holds. */

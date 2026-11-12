@@ -122,6 +122,18 @@ try {
     $check('a publisher\'s refusal stops the update, with its reason', $e->errorCode === 'zz_bad_hash', $e->errorCode);
 }
 remove_filter('upgrader_pre_download', $refuse, 10);
+// Files the site cannot write directly, with no connection set: the upgrader stops before any download
+// and records no error, so the refusal names the method rather than a bare "could not be installed".
+$ftp = static fn () => 'ftpext';
+add_filter('filesystem_method', $ftp);
+try {
+    $updates->updatePlugin($file);
+    $check('unreachable files stop the update, naming the method', false, 'updated');
+} catch (RestError $e) {
+    $check('unreachable files stop the update, naming the method', $e->errorCode === 'fs_unavailable' && $e->status === 500 && str_contains($e->getMessage(), 'ftpext') && str_contains($e->getMessage(), 'FS_METHOD'), $e->errorCode . ': ' . $e->getMessage());
+}
+remove_filter('filesystem_method', $ftp);
+$check('the stopped update leaves the plugin as it was', Minn\Support\FileHeaders::values("{$contentDir}/plugins/{$file}", ['Version'])['Version'] === '2.0');
 $verified = "{$tmp}/verified.zip";
 file_put_contents($verified, $zip('verified-source.zip', ['zz-upg-plugin/zz-upg-plugin.php' => $plugin('3.0')]));
 $vouch = static fn ($reply, $package) => $package === $offer['package'] ? $verified : $reply;

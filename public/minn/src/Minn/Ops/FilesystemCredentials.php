@@ -162,10 +162,15 @@ final class FilesystemCredentials
         return $own;
     }
 
-    /** The running script's owner, as getmyuid() reports it; read from the entry file where a host disables getmyuid() (Kinsta). */
+    /**
+     * The running script's owner, as getmyuid() reports it. Where a host
+     * disables getmyuid() it is the owner of the engine's own code: the first
+     * included file can be the host's auto_prepend_file (root-owned on
+     * Kinsta), which made every update ask for an FTP connection.
+     */
     private static function scriptOwner(): int|false
     {
-        return function_exists('getmyuid') ? getmyuid() : fileowner(get_included_files()[0]);
+        return function_exists('getmyuid') ? getmyuid() : fileowner(__FILE__);
     }
 
     /** The first remote transport this PHP has, or false. */
