@@ -247,6 +247,12 @@ $engine = $multibyte('engine');
 $reference = $multibyte('reference');
 $check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
 
+// 2026-11-12 (finding 2.8): the laid wp-includes/pluggable.php asked for on its own answers as the reference's does,
+// an empty 200, where it failed with a 500 that named the engine and the file's path.
+[$engineStatus, $engineBody] = $http($ENGINE . '/wp-includes/pluggable.php');
+[$referenceStatus, $referenceBody] = $http($REF . '/wp-includes/pluggable.php');
+$check('wp-includes/pluggable.php asked for directly answers as the reference does (an empty 200)', [$engineStatus, $engineBody] === [$referenceStatus, $referenceBody] && $engineStatus === 200, "engine {$engineStatus} " . substr($engineBody, 0, 120) . ", reference {$referenceStatus}");
+
 // 2026-11-12 (finding 3.2): a post's author may edit a comment on their post, but only a moderator gives it to
 // another user. The reference lets the author do it and read back that user's email; Minn refuses, as create does.
 $author = $wp('user create zz-sweep-author zz-sweep-author@example.com --role=author --porcelain');

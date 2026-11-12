@@ -160130,7 +160130,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Pluggables.php",
-            "lines": 40,
+            "lines": 43,
             "doc": "Where the pluggable functions are declared. The reference declares them in\nwp-includes/pluggable.php, and code that asks where one lives (a mail\nplugin reading ReflectionFunction('wp_mail')->getFileName() to decide\nwhether it may take over mail, as SandyWP's mail helper and FluentSMTP do)\nstands aside when it finds them anywhere else. So an install lays the\nengine's own wp-api/pluggable.php at that path, whole, behind a header\nthat hands over to the engine's copy when the laid one is not the running\nengine's (an engine updated past it, a checkout edited since): a laid copy\nnever declares anything the engine running would not (Austin, 2026-10-24).",
             "implements": [],
             "extends": null,
@@ -160150,7 +160150,7 @@
                 },
                 {
                     "name": "HEADER",
-                    "value": "'<?php // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not // the running engine\\'s leaves the declaring to the engine\\'s own. if (defined(\\'MINN_ENGINE_DIR\\') && !\\\\Minn\\\\Runtime\\\\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {     require_once MINN_ENGINE_DIR . \\'/wp-api/pluggable.php\\';     return; } '",
+                    "value": "'<?php // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not // the running engine\\'s leaves the declaring to the engine\\'s own. Requested on its own, it does nothing. if (!defined(\\'MINN_ENGINE_DIR\\')) {     return; } if (!\\\\Minn\\\\Runtime\\\\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {     require_once MINN_ENGINE_DIR . \\'/wp-api/pluggable.php\\';     return; } '",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -160184,8 +160184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 43
+                    "line": 42,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -160211,8 +160211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -160238,8 +160238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 56
+                    "line": 55,
+                    "end": 59
                 }
             ]
         },

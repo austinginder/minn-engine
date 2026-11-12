@@ -38,6 +38,10 @@ if (!defined('ABSPATH') && PHP_SAPI !== 'cli') {
 
 Minn\Autoloader::register();
 
+// The server variables are made whole first, as the reference makes them before its maintenance check and its
+// page cache's early file, so both read the path the engine will route (security sweep 2026-11-12, finding 2.5).
+Minn\Http\Request::fixServerVars();
+
 // Before anything else, as the reference does: a fresh .maintenance answers every request.
 $minn_content_dir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
 $minn_maintenance = Minn\Front\Maintenance::answer(ABSPATH, $minn_content_dir, time());

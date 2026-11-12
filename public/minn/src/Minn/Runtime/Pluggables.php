@@ -24,8 +24,11 @@ final class Pluggables
         <?php
         // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks
         // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not
-        // the running engine's leaves the declaring to the engine's own.
-        if (defined('MINN_ENGINE_DIR') && !\Minn\Runtime\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {
+        // the running engine's leaves the declaring to the engine's own. Requested on its own, it does nothing.
+        if (!defined('MINN_ENGINE_DIR')) {
+            return;
+        }
+        if (!\Minn\Runtime\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {
             require_once MINN_ENGINE_DIR . '/wp-api/pluggable.php';
             return;
         }

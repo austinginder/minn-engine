@@ -120,6 +120,21 @@ foreach ($stacks as $name => $dir) {
 $unstage();
 $check('a signed-in page request with advanced-cache.php answers as the reference does', $cookieValue !== '' && $signedIn['engine'] === 200 && $signedIn['reference'] === 200, json_encode($signedIn));
 
+// 2b''. A server that leaves REQUEST_URI empty (IIS outside FastCGI, some CGI setups): the page cache's early
+// file reads the path made whole from X-Original-URL, as on the reference, so it caches the page the engine
+// routes (security sweep 2026-11-12, finding 2.5).
+foreach ($stacks as $dir) {
+    $stage("{$fixtures}/advanced-cache-uri.php", "{$dir}/wp-content/advanced-cache.php");
+}
+$early = [];
+foreach ($stacks as $name => $dir) {
+    $boot = 'define("WP_CACHE", true); $_SERVER["HTTP_HOST"] = "minn.localhost"; $_SERVER["REQUEST_URI"] = ""; $_SERVER["HTTP_X_ORIGINAL_URL"] = "/sample-page/"; $_SERVER["REQUEST_METHOD"] = "GET"; $_SERVER["SERVER_NAME"] = "minn.localhost"; $_SERVER["HTTPS"] = "on"; require "index.php";';
+    $stderr = (string) shell_exec('cd ' . escapeshellarg($dir) . ' && php -r ' . escapeshellarg($boot) . ' 2>&1 >/dev/null');
+    $early[$name] = preg_match('/^MINN-URI (.*)$/m', $stderr, $m) ? $m[1] : 'no report';
+}
+$unstage();
+$check('advanced-cache.php reads the request path made whole, as the reference does', $early['engine'] === $early['reference'] && str_contains($early['reference'], '"uri":"\\/sample-page\\/"'), json_encode($early));
+
 // 2c. Option reads kept in a drop-in's options group, as the api probe
 // option-cache sees them without one.
 foreach ($stacks as $dir) {

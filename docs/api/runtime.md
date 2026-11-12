@@ -94,7 +94,7 @@ the WordPress runtime plugins load against
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 37 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 71 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
-| [`Pluggables`](#pluggables) | final class | 40 | Where the pluggable functions are declared. The reference declares them in |
+| [`Pluggables`](#pluggables) | final class | 43 | Where the pluggable functions are declared. The reference declares them in |
 | [`PluginActivation`](#pluginactivation) | final class | 70 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginCall`](#plugincall) | final class | 12 | Calls code a plugin, theme or drop-in registered (a hook callback, a |
 | [`PluginFiles`](#pluginfiles) | final class | 178 | A plugin's files as WordPress's plugin functions know them: where a |
@@ -5233,7 +5233,7 @@ engine's (an engine updated past it, a checkout edited since): a laid copy
 never declares anything the engine running would not (Austin, 2026-10-24).
 
 - const `LAID` = `'wp-includes/pluggable.php'` — Where the reference declares the pluggable functions, from the webroot.
-- const `HEADER` = `'<?php // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not // the running engine\'s leaves the declaring to the engine\'s own. if (defined(\'MINN_ENGINE_DIR\') && !\\Minn\\Runtime\\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {     require_once MINN_ENGINE_DIR . \'/wp-api/pluggable.php\';     return; } '`
+- const `HEADER` = `'<?php // Minn Engine: the pluggable functions, declared where the reference declares them, so code that asks // where one lives finds this file. Laid by the engine from minn/wp-api/pluggable.php; a copy that is not // the running engine\'s leaves the declaring to the engine\'s own. Requested on its own, it does nothing. if (!defined(\'MINN_ENGINE_DIR\')) {     return; } if (!\\Minn\\Runtime\\Pluggables::current(__FILE__, MINN_ENGINE_DIR)) {     require_once MINN_ENGINE_DIR . \'/wp-api/pluggable.php\';     return; } '`
 
 Used by: `Minn\Ops\ShapeFiles`, `Minn\Runtime\Runtime`
 
