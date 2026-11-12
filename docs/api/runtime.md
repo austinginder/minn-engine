@@ -173,7 +173,7 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 152 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 67 | The updates waiting, as wp_get_update_data counts them for the user |
-| [`Upgrade`](#upgrade) | final class | 423 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
+| [`Upgrade`](#upgrade) | final class | 426 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserCounts`](#usercounts) | final class | 75 | The user counts WordPress's user functions give: how many users hold each |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 118 | The decisions behind wp_insert_user: what a new account needs, which email |
@@ -10140,7 +10140,7 @@ when it is not to be retried.
 
 Maintenance mode off; said only when it was on.
 
-Internals: `installUnpacked()` (private, line 153), `destinationFor()` (private, line 305), `clearOrRefuse()` (private, line 314), `move()` (private, line 335), `copyInto()` (private, line 346), `report()` (private, line 360), `setAside()` (private, line 378), `putBack()` (private, line 391), `forget()` (private, line 403), `backedUp()` (private, line 412), `randomName()` (private, line 424), `listing()` (private, line 440)
+Internals: `installUnpacked()` (private, line 154), `destinationFor()` (private, line 308), `clearOrRefuse()` (private, line 317), `move()` (private, line 338), `copyInto()` (private, line 349), `report()` (private, line 363), `setAside()` (private, line 381), `putBack()` (private, line 394), `forget()` (private, line 406), `backedUp()` (private, line 415), `randomName()` (private, line 427), `listing()` (private, line 443)
 
 
 ## UserCounts

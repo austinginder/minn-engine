@@ -88,6 +88,14 @@ try {
 // Security sweep 2026-11-12 (2.6): a refused install leaves no unpacked package in the upgrade folder, which keeps its index.
 $left = array_values(array_diff(scandir("{$contentDir}/upgrade") ?: [], ['.', '..']));
 $check('a refused install leaves only the upgrade folder\'s index behind', $left === ['index.php'], json_encode($left));
+// Fix-delta review: a failed install's source that climbs out of the upgrade folder is resolved first, so nothing
+// outside it is removed.
+@mkdir("{$contentDir}/zz-outside-upgrade", 0755, true);
+file_put_contents("{$contentDir}/zz-outside-upgrade/keep.txt", 'keep');
+\Minn\Runtime\Upgrade::install(new Plugin_Upgrader(), ['source' => "{$contentDir}/upgrade/../zz-outside-upgrade", 'destination' => '']);
+$check('a failed install never removes a folder outside the upgrade folder', is_file("{$contentDir}/zz-outside-upgrade/keep.txt"));
+@unlink("{$contentDir}/zz-outside-upgrade/keep.txt");
+@rmdir("{$contentDir}/zz-outside-upgrade");
 $result = $packages->unpackReplacing($zip('replace.zip', ['zz-upg-plugin/zz-upg-plugin.php' => $plugin('2.0')]), 'plugin');
 $check('an upload may replace the folder', ($result['version'] ?? '') === '2.0', json_encode($result));
 try {
