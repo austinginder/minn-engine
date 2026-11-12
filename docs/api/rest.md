@@ -57,7 +57,7 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PathArgs`](#pathargs) | final class | 79 | The arguments a route's path names, as the reference lists them among the |
-| [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 125 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
+| [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 129 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 292 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 187 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 241 | A post type's collection parameters as the reference builds them for its |

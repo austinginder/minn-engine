@@ -247,6 +247,18 @@ $engine = $multibyte('engine');
 $reference = $multibyte('reference');
 $check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
 
+// 2026-11-12 (finding 3.8): a pattern directory answer with a list or an object where text belongs maps to empty
+// fields, never a failure that would answer 500 for as long as the answer is kept.
+$directoryItem = trim((string) shell_exec('MINN_SALT_ROOT=' . escapeshellarg($ROOT) . ' php -d display_errors=0 -r ' . escapeshellarg('require getenv("MINN_SALT_ROOT") . "/tests/tools/engine-runtime.php";
+    $item = new ReflectionMethod(Minn\\Rest\\PatternDirectoryController::class, "item");
+    try {
+        $mapped = $item->invoke(null, (object) ["id" => ["x"], "title" => (object) ["rendered" => ["x"]], "pattern_content" => (object) ["a" => 1], "category_slugs" => [["x"], "ok-slug"], "meta" => (object) ["wpop_keywords" => ["a"], "wpop_description" => (object) [], "wpop_viewport_width" => [], "wpop_block_types" => [["x"], "core/paragraph"]]]);
+        echo json_encode([$mapped["title"], $mapped["content"], $mapped["categories"], $mapped["description"], $mapped["block_types"]]);
+    } catch (Throwable $e) {
+        echo get_class($e), ": ", $e->getMessage();
+    }') . ' 2>&1'));
+$check('a pattern directory item of the wrong shape maps to empty fields without failing', $directoryItem === '["","",["","ok-slug"],"",["","core\\/paragraph"]]', $directoryItem);
+
 // 2026-11-12 (finding 3.7): the smallest integer as a page, comment page or hour answers without a server error;
 // the reference's absint() makes it a float, which the engine's typed code could not hold (a 500).
 foreach (['/?paged=-9223372036854775808', '/category/uncategorized/?paged=-9223372036854775808', '/?hour=-9223372036854775808', '/wp-sitemap-posts-post-1.xml?paged=-9223372036854775808'] as $path) {

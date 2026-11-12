@@ -145,13 +145,17 @@ final readonly class PatternDirectoryController
     private static function item(object $raw): array
     {
         $meta = (array) ($raw->meta ?? []);
-        $text = static fn (mixed $value): string => Sanitize::textField((string) $value);
+        // The directory's answer is read as data, never trusted for its shape: a list or an object where text
+        // belongs reads as nothing, rather than failing the route for as long as the answer is kept (security sweep
+        // 2026-11-12, finding 3.8).
+        $plain = static fn (mixed $value): string => is_scalar($value) ? (string) $value : '';
+        $text = static fn (mixed $value): string => Sanitize::textField($plain($value));
         return [
             'id' => Whole::abs(($raw->id ?? 0)),
             'title' => $text(((array) ($raw->title ?? []))['rendered'] ?? ''),
-            'content' => KsesRules::post((string) ($raw->pattern_content ?? '')),
-            'categories' => array_map(static fn (mixed $slug): string => Sanitize::title((string) $slug), array_values((array) ($raw->category_slugs ?? []))),
-            'keywords' => array_map($text, explode(',', (string) ($meta['wpop_keywords'] ?? ''))),
+            'content' => KsesRules::post($plain($raw->pattern_content ?? '')),
+            'categories' => array_map(static fn (mixed $slug): string => Sanitize::title($plain($slug)), array_values((array) ($raw->category_slugs ?? []))),
+            'keywords' => array_map($text, explode(',', $plain($meta['wpop_keywords'] ?? ''))),
             'description' => $text($meta['wpop_description'] ?? ''),
             'viewport_width' => Whole::abs(($meta['wpop_viewport_width'] ?? 0)),
             'block_types' => array_map($text, array_values((array) ($meta['wpop_block_types'] ?? []))),

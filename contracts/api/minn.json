@@ -117803,7 +117803,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PatternDirectoryController.php",
-            "lines": 125,
+            "lines": 129,
             "doc": "wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the\nblock editor's pattern directory, asked of wordpress.org through the Minn\nupdate service, with the query the reference sends upstream (its paging\nand order, then the search, slugs and offset asked for, the reader's\nlocale, the WordPress version, then the category and keyword by their\nupstream names). An answer is kept an hour in the site transient the\nreference keeps it in, named for that query, so either stack reads the\nother's. Anyone who may edit posts browses it. Each pattern shows its\ntitle as the directory renders it, its markup, its category and keyword\nslugs, its description, viewport width and block types.",
             "implements": [],
             "extends": null,
@@ -117974,7 +117974,7 @@
                         }
                     ],
                     "line": 145,
-                    "end": 159
+                    "end": 163
                 }
             ]
         },
