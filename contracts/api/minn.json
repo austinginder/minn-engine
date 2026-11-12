@@ -26521,7 +26521,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 403,
+            "lines": 431,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -26552,8 +26552,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 58,
-                "end": 60
+                "line": 64,
+                "end": 66
             },
             "cases": [],
             "constants": [
@@ -26567,6 +26567,30 @@
                     "name": "PARK_MARK",
                     "value": "'.minn-park'",
                     "doc": "The mark install leaves in the park, naming the webroot parked there; eject takes no park without it.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PARK_GUARD",
+                    "value": "'.htaccess'",
+                    "doc": "Apache's refusal for the whole park, for a host whose park still sits under a served folder (nginx ignores it).",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PARK_GUARD_TEXT",
+                    "value": "'# Minn: WordPress\\'s own files, parked by the engine. Nothing here is served. <IfModule mod_authz_core.c> \tRequire all denied </IfModule> <IfModule !mod_authz_core.c> \tDeny from all </IfModule> '",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SERVED_FILES",
+                    "value": "array (   0 => 'index.php',   1 => 'index.html',   2 => 'index.htm',   3 => 'wp-config.php',   4 => 'wp-load.php',   5 => '.htaccess',   6 => 'web.config', )",
+                    "doc": "What marks a folder as a site's own webroot, and the names hosts give one.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SERVED_NAMES",
+                    "value": "array (   0 => 'public_html',   1 => 'www',   2 => 'htdocs',   3 => 'httpdocs',   4 => 'html',   5 => 'wwwroot',   6 => 'web',   7 => 'public', )",
+                    "doc": "",
                     "visibility": "private"
                 },
                 {
@@ -26659,8 +26683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 73
+                    "line": 74,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -26689,8 +26713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 119
+                    "line": 89,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -26709,8 +26733,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 130
+                    "line": 128,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -26746,8 +26770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 155
+                    "line": 153,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -26766,8 +26790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 182
+                    "line": 164,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -26786,8 +26810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 196
+                    "line": 191,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -26815,8 +26839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 258
+                    "line": 210,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -26844,8 +26868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 325
+                    "line": 294,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -26864,8 +26888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 337
+                    "line": 356,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -26886,8 +26910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 357
+                    "line": 375,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -26898,8 +26922,28 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 132,
-                    "end": 138
+                    "line": 138,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "served",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "served(string $folder): ?string",
+                    "doc": "Why a folder looks like a served webroot (a file only a webroot holds, or a host's name for one), or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 275,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -26918,8 +26962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 371
+                    "line": 393,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -26945,8 +26989,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 395
+                    "line": 402,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -26972,8 +27016,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 414
+                    "line": 425,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -26984,8 +27028,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 416,
-                    "end": 419
+                    "line": 444,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -27004,8 +27048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 424
+                    "line": 449,
+                    "end": 452
                 }
             ]
         },

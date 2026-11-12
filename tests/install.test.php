@@ -116,6 +116,12 @@ $check('install --help prints the usage and installs nothing (the field test ins
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --yes');
 $check('an option install does not read refuses it before anything changes', $code === 1 && str_contains($out, 'does not take --yes') && $tree($WEBROOT) === $before, $out);
 
+// Security sweep 2026-11-12 (2.1): the default park sits beside the webroot, so where that folder is served (an
+// addon domain inside public_html) the parked core would answer on the web. Install refuses that default.
+file_put_contents("$SCRATCH/index.php", "<?php // the main site's front controller\n");
+[$out, $code] = $minn('install ' . escapeshellarg($WEBROOT));
+@unlink("$SCRATCH/index.php");
+$check('the default park beside a served folder is refused with the way out, and nothing changes', $code === 1 && str_contains($out, 'looks served (it holds index.php)') && str_contains($out, '--park=<dir>') && $tree($WEBROOT) === $before && !file_exists("$SCRATCH/wp-parked"), $out);
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=/dev/null/wp-parked');
 $check('a park folder that cannot be made is refused with the way out, and no PHP warning', $code === 1 && str_contains($out, 'cannot create /dev/null/wp-parked') && str_contains($out, '--park=<dir>') && !str_contains($out, 'Warning') && $tree($WEBROOT) === $before, $out);
 $readConfig = new ReflectionMethod(Minn\Cli\Preflight::class, 'readConfig');
@@ -194,6 +200,7 @@ file_put_contents("$WEBROOT/.minn-install.php", str_replace(json_encode($PARK, J
 $check('eject refuses a park that carries no mark from this install, and moves nothing', $code === 1 && str_contains($out, 'does not carry this install') && is_file("$decoy/wp-load.php") && is_dir("$WEBROOT/minn"), $out);
 file_put_contents("$WEBROOT/.minn-install.php", $record);
 $check('install marks its park with the webroot it parked', trim((string) @file_get_contents("$PARK/.minn-park")) === realpath($WEBROOT));
+$check('the park refuses every web request on Apache', str_contains((string) @file_get_contents("$PARK/.htaccess"), 'Require all denied'));
 
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject succeeds', $code === 0 && str_contains($out, 'Ejected.'), $out);

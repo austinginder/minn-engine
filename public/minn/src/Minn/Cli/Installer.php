@@ -31,6 +31,12 @@ final class Installer
     private const RECORD = '.minn-install.php';
     /** The mark install leaves in the park, naming the webroot parked there; eject takes no park without it. */
     private const PARK_MARK = '.minn-park';
+    /** Apache's refusal for the whole park, for a host whose park still sits under a served folder (nginx ignores it). */
+    private const PARK_GUARD = '.htaccess';
+    private const PARK_GUARD_TEXT = "# Minn: WordPress's own files, parked by the engine. Nothing here is served.\n<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n";
+    /** What marks a folder as a site's own webroot, and the names hosts give one. */
+    private const SERVED_FILES = ['index.php', 'index.html', 'index.htm', 'wp-config.php', 'wp-load.php', '.htaccess', 'web.config'];
+    private const SERVED_NAMES = ['public_html', 'www', 'htdocs', 'httpdocs', 'html', 'wwwroot', 'web', 'public'];
     private const RECORD_HEAD = "<?php return; // Minn Engine's install record: what `wp minn eject` puts back. ?>\n";
     /** Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink. */
     private const LEGACY_RECORD = '.install.json';
@@ -213,6 +219,13 @@ final class Installer
             return 1;
         }
         $park = is_string($options['park'] ?? null) ? rtrim($options['park'], '/') : dirname($root) . '/wp-parked';
+        // The default park sits beside the webroot. Where that folder is itself served (an addon domain inside
+        // public_html), WordPress's parked core, setup-config.php and all, would answer at /wp-parked/.
+        $served = is_string($options['park'] ?? null) ? null : self::served(dirname($root));
+        if ($served !== null) {
+            $this->say('Install refused: the default park, ' . $park . ', would sit in ' . dirname($root) . ", which looks served ({$served}), so WordPress's parked files could be reached from the web. Pass --park=<dir> naming a folder outside every site's webroot.");
+            return 1;
+        }
         if (is_dir($park) && count(scandir($park) ?: []) > 2) {
             $this->say("Install refused: {$park} exists and is not empty. Pass --park=<dir>.");
             return 1;
@@ -222,6 +235,7 @@ final class Installer
             return 1;
         }
         file_put_contents("{$park}/" . self::PARK_MARK, (realpath($root) ?: $root) . "\n");
+        file_put_contents("{$park}/" . self::PARK_GUARD, self::PARK_GUARD_TEXT);
         $moved = [];
         foreach (self::CORE_ENTRIES as $entry) {
             if (file_exists("{$root}/{$entry}") || is_link("{$root}/{$entry}")) {
@@ -255,6 +269,17 @@ final class Installer
         $this->say('Note: a PHP opcode cache may serve the old index.php or wp-settings.php for up to a minute (opcache.revalidate_freq); clear it if the host offers a way.');
         $this->say('Note: a page cache keeps serving WordPress\'s pages until purged; once the site answers as Minn, `wp cache flush` runs the host\'s purge hooks (the curl installer does this itself).');
         return 0;
+    }
+
+    /** Why a folder looks like a served webroot (a file only a webroot holds, or a host's name for one), or null. */
+    private static function served(string $folder): ?string
+    {
+        foreach (self::SERVED_FILES as $file) {
+            if (file_exists("{$folder}/{$file}")) {
+                return "it holds {$file}";
+            }
+        }
+        return in_array(strtolower(basename($folder)), self::SERVED_NAMES, true) ? 'its name is one hosts serve' : null;
     }
 
     /**
@@ -314,6 +339,9 @@ final class Installer
             }
         }
         @unlink("{$park}/" . self::PARK_MARK);
+        if (@file_get_contents("{$park}/" . self::PARK_GUARD) === self::PARK_GUARD_TEXT) {
+            @unlink("{$park}/" . self::PARK_GUARD);
+        }
         if (count(scandir($park) ?: []) <= 2 && !@rmdir($park)) {
             $this->say("Left the empty {$park}: this user cannot remove it.");
         }

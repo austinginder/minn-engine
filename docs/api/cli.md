@@ -11,7 +11,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 403 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 431 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`LoginLink`](#loginlink) | final class | 73 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
@@ -317,6 +317,10 @@ will not get before anything moves.
 cannot take it. It is PHP that returns first, so a web request for it
 prints nothing, and it names the webroot it belongs to.
 - const `PARK_MARK` = `'.minn-park'` — The mark install leaves in the park, naming the webroot parked there; eject takes no park without it.
+- const `PARK_GUARD` = `'.htaccess'` — Apache's refusal for the whole park, for a host whose park still sits under a served folder (nginx ignores it).
+- const `PARK_GUARD_TEXT` = `'# Minn: WordPress\'s own files, parked by the engine. Nothing here is served. <IfModule mod_authz_core.c> 	Require all denied </IfModule> <IfModule !mod_authz_core.c> 	Deny from all </IfModule> '`
+- const `SERVED_FILES` = `array (   0 => 'index.php',   1 => 'index.html',   2 => 'index.htm',   3 => 'wp-config.php',   4 => 'wp-load.php',   5 => '.htaccess',   6 => 'web.config', )` — What marks a folder as a site's own webroot, and the names hosts give one.
+- const `SERVED_NAMES` = `array (   0 => 'public_html',   1 => 'www',   2 => 'htdocs',   3 => 'httpdocs',   4 => 'html',   5 => 'wwwroot',   6 => 'web',   7 => 'public', )`
 - const `RECORD_HEAD` = `'<?php return; // Minn Engine\'s install record: what `wp minn eject` puts back. ?> '`
 - const `LEGACY_RECORD` = `'.install.json'` — Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.
 - const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
@@ -394,7 +398,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 132), `inside()` (private, line 365), `move()` (private, line 374), `copyTree()` (private, line 397), `version()` (private, line 416), `say()` (private, line 421)
+Internals: `help()` (private, line 138), `served()` (private, line 275), `inside()` (private, line 393), `move()` (private, line 402), `copyTree()` (private, line 425), `version()` (private, line 444), `say()` (private, line 449)
 
 
 ## LoginLink
