@@ -1,5 +1,5 @@
 {
-    "wordpress": "7.1.3",
+    "wordpress": "7.1.4",
     "audit": {
         "date": "2026-10-22",
         "file": "docs/audit-2026-10-22.md"
@@ -271,10 +271,10 @@
         "austin": 0
     },
     "run": {
-        "measured": "2026-10-24",
-        "suites": 99,
-        "green": 99,
-        "checks": 31392,
+        "measured": "2026-11-12",
+        "suites": 102,
+        "green": 102,
+        "checks": 31656,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -305,10 +305,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 194391
+            "of": 195510
         },
         "engine": {
-            "of": 118242,
+            "of": 119341,
             "php": {
                 "strict": {
                     "window": 40,
@@ -335,16 +335,16 @@
             "sequences": 20
         },
         "facade": {
-            "of": 76149,
+            "of": 76169,
             "window": 80,
             "stretches": 108,
             "lines": 2901
         }
     },
     "facadeLogic": {
-        "functions": 3495,
+        "functions": 3497,
         "methods": 3812,
-        "delegates": 3568,
+        "delegates": 3570,
         "logicFunctions": 1772,
         "logicMethods": 1967,
         "logicLines": 29198,
@@ -396,10 +396,10 @@
         }
     },
     "fixtures": {
-        "wordpress": "7.1.3",
-        "rows": 11015,
+        "wordpress": "7.1.4",
+        "rows": 11096,
         "differing": 0,
-        "measured": "2026-10-25",
+        "measured": "2026-11-12",
         "current": true
     }
 }

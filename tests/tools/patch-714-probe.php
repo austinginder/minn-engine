@@ -122,7 +122,7 @@ $told();
 $say('kses: directives in post content', array_map('wp_kses_post', $kses));
 $say('kses: directives for a comment', array_map(static fn ($html) => wp_kses_data($html), $kses));
 $allowed = wp_kses_allowed_html('post');
-$say('kses: the restricted-values helper', array_map('_wp_kses_restricts_attribute_values', [
+$say('kses: the restricted-values helper', array_map(static fn ($attributes) => _wp_kses_restricts_attribute_values($attributes), [
     $allowed['a'] ?? [], $allowed['img'] ?? [], $allowed['div'] ?? [], $allowed['object'] ?? [], $allowed['span'] ?? [], [], true, ['href' => true], ['href' => ['values' => ['x']]], ['data-*' => true],
     ['x' => ['required' => true]], ['x' => ['maxlen' => 5]], ['x' => ['minlen' => 1]], ['x' => ['maxval' => 5]], ['x' => ['valueless' => 'y']], ['x' => ['value_callback' => 'is_string']], ['x' => ['values' => []]], ['x' => ['values' => 'x']], ['x' => ['value' => 'x']], ['x' => []], ['x' => false], ['x' => 'values'], ['x' => true, 'y' => ['values' => ['z']]],
     ['x' => ['minval' => 1]], ['x' => ['foo' => 1]], ['x' => ['VALUES' => ['y']]], ['x' => ['required' => true, 'valueless' => 'y']], ['x' => (object) ['values' => ['y']]], 'not a list',
