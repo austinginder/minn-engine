@@ -59,3 +59,26 @@ Every finding was then checked on the test site, sending the same input to both 
 - **Matching the self-check's failure (2.3).** Recovery still pauses when the engine's own request fails anywhere in the same extension, not only with the same file, line and message. What a visitor can steer in that request is now only the server's own address, which every self-request carries. Matching the failure exactly would need the original failure stored, a transformative change for the next cycle.
 - **`MINN_WP_API` auto/off (Info, boot reviewer).** On the runtime-free lane, sign-in is judged on the stored sessions alone, and plugin access controls do not run on public pages. That is what the mode is for; the System view now warns (2.9).
 - **Parity notes, not security.** At `PHP_INT_MIN`, `?hour=` answers 200 where the reference answers 404, and a sitemap page answers 200 where the reference redirects to a float-named sitemap. With `redirect_canonical` removed, the reference still moves `//path` to `/path`, and the engine does not.
+
+## Fix-delta review, round 1
+
+One more reviewer read only the fixes (`572e1685..e2a19473`), attacking each with its class's variants. It found two Medium gaps, five Lows worth closing and some notes. All but three are fixed, each pinned by a check that fails on the code before it:
+
+| # | Severity | Finding | Done |
+|---|---|---|---|
+| D1 | Medium | 1.2 was half done: REST kept an extension's shortcodes and content filters but never ran them, and an auto-excerpt kept an extension's shortcode text raw. | REST content goes through the same seam filter as the page, and `strip_shortcodes` takes out an extension's shortcodes too. Suite `extensions`. |
+| D2 | Medium | 2.1 left sites already installed by 0.1.0 with an unguarded park. | Once per engine version (`AdminPlugin::settle`), a park the install record names gets its refusal back, and the System view warns when a park lies in a served folder. Suite `install`. |
+| D3 | Low | The served test refused `/var/www/html` (its parent's name, `www`) and missed a park nested deeper inside `public_html`. | Only names that are always served count (`public_html`, `htdocs`, `httpdocs`, `wwwroot`), on the folder and every folder above it; a parent's `wp-config.php` no longer counts. Suite `install`. |
+| D4 | Low | `minn login` read a commented-out `WP_HOME` after the real one, and a `WP_HOME` built from parts as a broken address. | wp-config.php is read without its comments, and `WP_HOME` only when defined once as a plain string or from the environment; otherwise the command refuses. Suite `cli`. |
+| D5 | Low | The server's bind still printed `srcdoc`, `form` and style `url()` that the client now refuses. | The server applies the same refusals, and judges `xlink:href` and `ping` as addresses. Suite `security-sweep`. |
+| D6 | Low | A sign-out from an extension's page route (a plain GET) could still be forged by a navigation from another site. | `signOut` itself requires the session's REST nonce. Suite `extension-accounts`, with a page route in its fixture. |
+| D7 | Low | The role rule refused harmless custom roles (`read` plus `play_game`). | A sign-up role may hold capabilities of its own, but none of WordPress's beyond the default role's. Suite `extension-accounts`. |
+| D8 | Low | Creating the upgrade folder directly could leave it owned by PHP where the filesystem method is FTP or SSH. A failed install's source path climbing out with `..` could remove a folder outside it. | The folder is made through the site's filesystem, and the path is resolved before anything is removed. Suite `upgrades`. |
+| Info | | Recovery never blamed a plugin whose own input failed inside the options or transients code. Maintenance hid extension pages even with Minn Admin inactive. A removal of `maybe_render_app` never matched its priority. | Only `Db.php` and storage drop-ins are the site's own. Maintenance counts only while Minn Admin is active. The dead removal is dropped and documented. Unit `recovery-blame`, suite `wp-api-modes`. |
+
+Accepted, with their consequences:
+
+- **D9.** Anyone who knows a user's id can burn a freshly minted seven-character helper link with one wrong guess, and the support person re-mints it. Counting misses per address instead would bring back the race the burn closes.
+- **A page cache that ignores unknown query arguments** can answer recovery's self-check from cache. The plugin is then simply not paused, which fails safe.
+- **Extension table names.** A slug can still take a name another plugin uses (`wc` and `wc_orders`), a numeric slug on multisite can name a subsite's table, and an extension installed after another can still take names inside the other's prefix. An extension is code the administrator installs, so this is robustness, not a boundary.
+- **PHP_INT_MIN offsets on REST lists** (categories, users, comments) answer 200 on both stacks.

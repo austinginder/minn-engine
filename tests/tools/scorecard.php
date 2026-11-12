@@ -202,6 +202,13 @@ $findings = [
     'PHP_INT_MIN as a page answered 500' => ['tests/security-sweep.test.php', 'answers without a server error'],
     'A hostile pattern-directory answer failed the route for the hour it was kept' => ['tests/security-sweep.test.php', 'a pattern directory item of the wrong shape'],
     'wp_kses_one_attr skipped the 7.1.4 binding check' => ['tests/tools/shortcode-run-probe.php', 'wp_kses_one_attr refused'],
+    'REST kept an extension\'s shortcodes and content filters but never ran them' => ['tests/extensions.test.php', 'shortcodes, content filters and block gates run for REST too'],
+    'A park an earlier engine left unguarded stayed unguarded after an update' => ['tests/install.test.php', 'a park left without its refusal gets it back'],
+    'The served-folder test refused /var/www and missed folders deeper in public_html' => ['tests/install.test.php', 'the served test passes /var/www'],
+    'minn login read a commented-out or built WP_HOME' => ['tests/cli.test.php', 'a commented-out WP_HOME is never the one minn login reads'],
+    'The server\'s bind printed srcdoc, form and style url() the client refuses' => ['tests/security-sweep.test.php', 'the server binds no style with url() and no srcdoc'],
+    'A sign-out on an extension\'s page route could be forged by a cross-site navigation' => ['tests/extension-accounts.test.php', 'a sign-out page reached without the nonce ends no session'],
+    'A failed install\'s climbing source path could remove a folder outside the upgrade folder' => ['tests/upgrades.test.php', 'a failed install never removes a folder outside the upgrade folder'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 
