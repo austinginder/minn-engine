@@ -42,14 +42,6 @@ final readonly class Site
         Runtime::optionWritten($name);
     }
 
-    /** Inserts an option row only when none holds the name yet, so two requests cannot both take it. Whether this call made it. */
-    public function claimOption(string $name, string $value, string $autoload): bool
-    {
-        $made = $this->db->execute("INSERT IGNORE INTO {$this->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)", [$name, $value, $autoload]) > 0;
-        Runtime::optionWritten($name);
-        return $made;
-    }
-
     /** Removes an option row; the option store hears of it. */
     public function deleteOption(string $name): void
     {

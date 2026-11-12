@@ -39510,7 +39510,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Site.php",
-            "lines": 122,
+            "lines": 114,
             "doc": "Site-wide options and the site's clock.",
             "implements": [],
             "extends": null,
@@ -39677,40 +39677,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "claimOption",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "claimOption(string $name, string $value, string $autoload): bool",
-                    "doc": "Inserts an option row only when none holds the name yet, so two requests cannot both take it. Whether this call made it.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "autoload",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 46,
-                    "end": 51
-                },
-                {
-                    "routes": [],
                     "name": "deleteOption",
                     "static": false,
                     "visibility": "public",
@@ -39726,8 +39692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 58
+                    "line": 46,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -39753,8 +39719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 77
+                    "line": 60,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -39765,8 +39731,8 @@
                     "doc": "The site's timezone (wp_timezone): the zone timezone_string names, else\ngmt_offset as a fixed offset. With a zone set, the stored gmt_offset is\nnot read at all, as the reference does not read it.",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 96
+                    "line": 76,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -39777,8 +39743,8 @@
                     "doc": "The site's offset from UTC in seconds now: the zone's, daylight saving included, or gmt_offset's.",
                     "shapes": [],
                     "params": [],
-                    "line": 99,
-                    "end": 102
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -39789,8 +39755,8 @@
                     "doc": "Now in the site's local time, MySQL format.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 108
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -39811,8 +39777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 122
+                    "line": 108,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -39833,8 +39799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 134
+                    "line": 122,
+                    "end": 126
                 }
             ]
         },
@@ -169391,7 +169357,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Recovery.php",
-            "lines": 340,
+            "lines": 351,
             "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills the boot of a request, the file it died in names it (or, when that\nfile is the engine's or core's, the first plugin or theme file the trace\npasses through); the failure is noted, and the engine asks the site once\nitself (check()): one request to the home page carrying nothing a visitor\nchose. If that request fails at boot on the same extension, it is paused,\nand the next request loads without it: the site comes back on its own\ninstead of staying down until a human reads the log. A visitor's request\nnever pauses anything by itself: a pause is a site-wide decision, and a\nrequest's path, headers and their values are the visitor's to choose, so\nan extension that fails on some input fails for that input alone.\nFailures after boot (a route, a template) never pause anything; see\nFailure::armRecovery().\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with. The strikes live in the\nengine's own `minn_recovery_strikes` option.",
             "implements": [],
             "extends": null,
@@ -169400,6 +169366,7 @@
                 "Minn\\Http\\Outbound",
                 "Minn\\Http\\Transport",
                 "Minn\\Json",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -169701,8 +169668,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 296,
-                    "end": 299
+                    "line": 307,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -169715,8 +169682,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 306,
-                    "end": 309
+                    "line": 317,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -169737,8 +169704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 319
+                    "line": 327,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -169757,8 +169724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 329
+                    "line": 333,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -169784,8 +169751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 343
+                    "line": 343,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -169796,8 +169763,8 @@
                     "doc": "Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.",
                     "shapes": [],
                     "params": [],
-                    "line": 346,
-                    "end": 354
+                    "line": 357,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -169865,6 +169832,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "kept",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "kept(): ?array",
+                    "doc": "The check check() keeps for the engine's own request, read past every cache.",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [],
+                    "line": 272,
+                    "end": 276
+                },
+                {
+                    "routes": [],
                     "name": "strikes",
                     "static": false,
                     "visibility": "private",
@@ -169874,8 +169855,8 @@
                         "@return array<string, int>"
                     ],
                     "params": [],
-                    "line": 273,
-                    "end": 277
+                    "line": 284,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -169896,8 +169877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 289
+                    "line": 291,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -169918,8 +169899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 362
+                    "line": 368,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -169947,8 +169928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 372
+                    "line": 376,
+                    "end": 383
                 }
             ]
         },
@@ -172947,6 +172928,7 @@
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\RecipientLocale",
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\RegisteredSettings",
                 "Minn\\Runtime\\Registry",

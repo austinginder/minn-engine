@@ -234,12 +234,12 @@ final readonly class Recovery
         if ($host === '') {
             return 'the site has no home address';
         }
-        $kept = Json::decode((string) ($this->site->option(self::CHECK_OPTION) ?? ''), or: null);
-        if (is_array($kept) && (int) ($kept['expires'] ?? 0) < time()) {
+        $kept = $this->kept();
+        if ($kept !== null && (int) ($kept['expires'] ?? 0) < time()) {
             $this->site->deleteOption(self::CHECK_OPTION);
         }
         $token = bin2hex(random_bytes(16));
-        if (!$this->site->claimOption(self::CHECK_OPTION, Json::encode(['key' => $blamed['kind'] . ':' . $blamed['name'], 'token' => $token, 'expires' => time() + self::CHECK_TTL]), 'off')) {
+        if (!Runtime::options()->claim(self::CHECK_OPTION, Json::encode(['key' => $blamed['kind'] . ':' . $blamed['name'], 'token' => $token, 'expires' => time() + self::CHECK_TTL]), 'off')) {
             return null;
         }
         $headers = [self::CHECK_HEADER . ': ' . $token, 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language: en-US,en;q=0.9'];
@@ -256,12 +256,23 @@ final readonly class Recovery
      */
     public function confirmed(array $blamed, string $token): bool
     {
-        $kept = Json::decode((string) ($this->site->option(self::CHECK_OPTION) ?? ''), or: null);
-        if (!is_array($kept) || !is_string($kept['token'] ?? null) || !hash_equals($kept['token'], $token)) {
+        $kept = $this->kept();
+        if ($kept === null || !is_string($kept['token'] ?? null) || !hash_equals($kept['token'], $token)) {
             return false;
         }
         $this->site->deleteOption(self::CHECK_OPTION);
         return ($kept['key'] ?? null) === $blamed['kind'] . ':' . $blamed['name'] && (int) ($kept['expires'] ?? 0) >= time();
+    }
+
+    /**
+     * The check check() keeps for the engine's own request, read past every cache.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function kept(): ?array
+    {
+        $kept = Json::decode((string) ($this->site->option(self::CHECK_OPTION) ?? ''), or: null);
+        return is_array($kept) ? $kept : null;
     }
 
     /**
