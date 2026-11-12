@@ -152466,7 +152466,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Interactivity.php",
-            "lines": 559,
+            "lines": 565,
             "doc": "Server-side directive processing for the Interactivity API: the state and\nconfig stores, and the pass that resolves data-wp-bind, data-wp-class,\ndata-wp-style, data-wp-text, and data-wp-each against state and context\nbefore the markup leaves the server. Behaviour pinned by the interactivity\nprobe fixture.",
             "implements": [],
             "extends": null,
@@ -152882,7 +152882,7 @@
                         }
                     ],
                     "line": 341,
-                    "end": 384
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -152908,8 +152908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 390
+                    "line": 393,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -152928,8 +152928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 403
+                    "line": 398,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -152948,8 +152948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 419
+                    "line": 411,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -152975,8 +152975,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 457
+                    "line": 428,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -153019,8 +153019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 463,
-                    "end": 494
+                    "line": 469,
+                    "end": 500
                 },
                 {
                     "routes": [],
@@ -153046,8 +153046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 523
+                    "line": 503,
+                    "end": 529
                 },
                 {
                     "routes": [],
@@ -153069,8 +153069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 529,
-                    "end": 536
+                    "line": 535,
+                    "end": 542
                 },
                 {
                     "routes": [],
@@ -153099,8 +153099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 542,
-                    "end": 545
+                    "line": 548,
+                    "end": 551
                 },
                 {
                     "routes": [],
@@ -153119,8 +153119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 547,
-                    "end": 550
+                    "line": 553,
+                    "end": 556
                 },
                 {
                     "routes": [],
@@ -153139,8 +153139,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 552,
-                    "end": 555
+                    "line": 558,
+                    "end": 561
                 },
                 {
                     "routes": [],
@@ -153168,8 +153168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 563,
-                    "end": 576
+                    "line": 569,
+                    "end": 582
                 }
             ]
         },

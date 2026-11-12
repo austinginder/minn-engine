@@ -373,7 +373,13 @@ final class Interactivity
             return;
         }
         $value = (string) $result;
-        if ($value !== '' && in_array($attribute, Kses::URI_ATTRIBUTES, true)) {
+        // What the engine's own client refuses is never printed either, so the page before the script runs carries
+        // none of it: a frame's document, a button's form, a style with url() or escapes (fix-delta review of the
+        // 2026-11-12 sweep).
+        if (in_array($attribute, ['srcdoc', 'form'], true) || ($attribute === 'style' && preg_match('/url\s*\(|image-set\s*\(|expression\s*\(|\\\\|@import/i', $value) === 1)) {
+            return;
+        }
+        if ($value !== '' && (in_array($attribute, Kses::URI_ATTRIBUTES, true) || in_array($attribute, ['xlink:href', 'ping'], true))) {
             // A URL is escaped as for display; one nothing of which survives (a refused scheme) leaves the attribute as it was.
             $value = Escape::url($value);
             if ($value === '') {

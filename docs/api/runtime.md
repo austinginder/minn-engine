@@ -67,7 +67,7 @@ the WordPress runtime plugins load against
 | [`Handoff`](#handoff) | final class | 554 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 426 | The hook registry plugin code registers into and the engine fires. |
-| [`Interactivity`](#interactivity) | final class | 559 | Server-side directive processing for the Interactivity API: the state and |
+| [`Interactivity`](#interactivity) | final class | 565 | Server-side directive processing for the Interactivity API: the state and |
 | [`KsesRules`](#ksesrules) | final class | 114 | The HTML WordPress's kses functions let through: the elements and |
 | [`LegacyPack`](#legacypack) | final class | 310 | WordPress's own browser files, for the plugins whose screens are built on |
 | [`MainQuery`](#mainquery) | final class | 23 | The query the request answers ($wp_query), as WordPress keeps it: the |
@@ -3763,7 +3763,7 @@ The element whose directives are being evaluated.
 
 HTML with its directives resolved on the server.
 
-Internals: `namespace()` (private, line 146), `tokenize()` (private, line 157), `walk()` (private, line 217), `applyDirectives()` (private, line 279), `bind()` (private, line 341), `toldOff()` (private, line 387), `interactiveNamespace()` (private, line 392), `pushContext()` (private, line 405), `evaluate()` (private, line 422), `expandEach()` (private, line 463), `markChildren()` (private, line 497), `attributeMap()` (private, line 529), `relative()` (private, line 542), `escape()` (private, line 547), `camel()` (private, line 552), `follow()` (private, line 563)
+Internals: `namespace()` (private, line 146), `tokenize()` (private, line 157), `walk()` (private, line 217), `applyDirectives()` (private, line 279), `bind()` (private, line 341), `toldOff()` (private, line 393), `interactiveNamespace()` (private, line 398), `pushContext()` (private, line 411), `evaluate()` (private, line 428), `expandEach()` (private, line 469), `markChildren()` (private, line 503), `attributeMap()` (private, line 535), `relative()` (private, line 548), `escape()` (private, line 553), `camel()` (private, line 558), `follow()` (private, line 569)
 
 
 ## KsesRules

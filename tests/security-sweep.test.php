@@ -273,6 +273,12 @@ $directoryItem = trim((string) shell_exec('MINN_SALT_ROOT=' . escapeshellarg($RO
     }') . ' 2>&1'));
 $check('a pattern directory item of the wrong shape maps to empty fields without failing', $directoryItem === '["","",["","ok-slug"],"",["","core\\/paragraph"]]', $directoryItem);
 
+// Fix-delta review of the 2026-11-12 sweep: the server's bind prints nothing the engine's client refuses (a frame's
+// document, a button's form, a style with url()), so the page before the script runs carries none of it.
+$bound = trim((string) shell_exec('MINN_SALT_ROOT=' . escapeshellarg($ROOT) . ' php -d display_errors=0 -r ' . escapeshellarg('require getenv("MINN_SALT_ROOT") . "/tests/tools/engine-runtime.php";
+    echo wp_interactivity_process_directives(\'<div data-wp-interactive="zz" data-wp-context=\\\'{"s":"background:url(https://example.com/t.gif)","c":"color:red","d":"<p>x</p>"}\\\'><p data-wp-bind--style="context.s">a</p><p data-wp-bind--style="context.c">b</p><iframe data-wp-bind--srcdoc="context.d"></iframe></div>\');') . ' 2>&1'));
+$check('the server binds no style with url() and no srcdoc, and still binds a plain style', preg_match('/ style="[^"]*url\(/', $bound) !== 1 && !str_contains($bound, ' srcdoc=') && str_contains($bound, 'style="color:red"'), $bound);
+
 // 2026-11-12 (finding 3.7): the smallest integer as a page, comment page or hour answers without a server error;
 // the reference's absint() makes it a float, which the engine's typed code could not hold (a 500).
 foreach (['/?paged=-9223372036854775808', '/category/uncategorized/?paged=-9223372036854775808', '/?hour=-9223372036854775808', '/wp-sitemap-posts-post-1.xml?paged=-9223372036854775808'] as $path) {
