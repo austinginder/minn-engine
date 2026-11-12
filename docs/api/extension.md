@@ -14,7 +14,7 @@ the extension contract and its seams
 | [`Seams`](#seams) | final class | 294 | Where an extension can take part in a request: thirteen typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 | [`SignedIn`](#signedin) | final readonly class | 8 | A sign-in that worked (Accounts::signIn): who, and the response carrying the session's cookies. |
-| [`Tables`](#tables) | final readonly class | 84 | An extension's own tables, from the "tables" its minn.json declares: |
+| [`Tables`](#tables) | final readonly class | 98 | An extension's own tables, from the "tables" its minn.json declares: |
 
 ## Accounts
 
@@ -650,6 +650,7 @@ every table when the extension goes away.
 
 - const `OPTION` = `'minn_extension_tables'` — The option recording, per extension slug, the version and declaration last applied.
 - const `FALLBACK_COLLATION` = `'utf8mb4_unicode_520_ci'`
+- const `CORE_TABLES` = `array (   0 => 'posts',   1 => 'postmeta',   2 => 'comments',   3 => 'commentmeta',   4 => 'terms',   5 => 'termmeta',   6 => 'term_taxonomy',   7 => 'term_relationships',   8 => 'users',   9 => 'usermeta',   10 => 'options',   11 => 'links',   12 => 'blogs',   13 => 'blogmeta',   14 => 'site',   15 => 'sitemeta',   16 => 'signups',   17 => 'registration_log',   18 => 'blog_versions', )` — WordPress's own tables, unprefixed: no extension declares one, whatever its slug ("term" would own term_relationships).
 
 Used by: `Minn\Extension\Loader`, `Minn\Extension\Manifest`
 
@@ -667,18 +668,23 @@ names a table outside the extension's own throws, which skips it.
 
 - `@return array<string, string>`
 
-### static `statements(Minn\Extension\Manifest $manifest, string $prefix, string $collation = self::FALLBACK_COLLATION): array`
+### static `statements(Minn\Extension\Manifest $manifest, string $prefix, string $collation = self::FALLBACK_COLLATION, array $others = array ( )): array`
 
 The CREATE TABLE statements an extension declares, keyed by the
 prefixed table name: each name must be the extension's slug (dashes
 as underscores) followed by "_" and lowercase letters, digits or
-underscores, and each line one column or key definition.
+underscores, and each line one column or key definition. No name is
+one of WordPress's own tables, or inside the names of another
+extension (from $others, the slugs with tables recorded) whose slug
+is longer: acme may not declare acme_x_orders while acme-x has tables
+(security sweep 2026-11-12, finding 1.5).
 
+- `@param list<string> $others`
 - `@return array<string, string>`
 
 ### static `marker(Minn\Extension\Manifest $manifest): string`
 
 What is recorded for an extension once its tables are applied: its version and a digest of the declaration.
 
-Internals: `recorded()` (private, line 95), `collation()` (private, line 102)
+Internals: `recorded()` (private, line 109), `collation()` (private, line 116)
 

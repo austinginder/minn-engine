@@ -48225,7 +48225,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Tables.php",
-            "lines": 84,
+            "lines": 98,
             "doc": "An extension's own tables, from the \"tables\" its minn.json declares:\ncreated under the site's table prefix the first time the extension\nregisters, and brought up to date (missing columns and keys added, as\ndbDelta adds them) when its version or its declaration changes. What\nwas applied is recorded per extension in one option, so a request\nafter that costs one autoloaded read. Nothing is ever dropped, renamed\nor changed: a column a later version leaves out stays, and so does\nevery table when the extension goes away.",
             "implements": [],
             "extends": null,
@@ -48262,8 +48262,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 33
+                "line": 34,
+                "end": 36
             },
             "cases": [],
             "constants": [
@@ -48277,6 +48277,12 @@
                     "name": "FALLBACK_COLLATION",
                     "value": "'utf8mb4_unicode_520_ci'",
                     "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CORE_TABLES",
+                    "value": "array (   0 => 'posts',   1 => 'postmeta',   2 => 'comments',   3 => 'commentmeta',   4 => 'terms',   5 => 'termmeta',   6 => 'term_taxonomy',   7 => 'term_relationships',   8 => 'users',   9 => 'usermeta',   10 => 'options',   11 => 'links',   12 => 'blogs',   13 => 'blogmeta',   14 => 'site',   15 => 'sitemeta',   16 => 'signups',   17 => 'registration_log',   18 => 'blog_versions', )",
+                    "doc": "WordPress's own tables, unprefixed: no extension declares one, whatever its slug (\"term\" would own term_relationships).",
                     "visibility": "private"
                 }
             ],
@@ -48320,17 +48326,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 57
+                    "line": 46,
+                    "end": 60
                 },
                 {
                     "routes": [],
                     "name": "statements",
                     "static": true,
                     "visibility": "public",
-                    "signature": "statements(Minn\\Extension\\Manifest $manifest, string $prefix, string $collation = self::FALLBACK_COLLATION): array",
-                    "doc": "The CREATE TABLE statements an extension declares, keyed by the\nprefixed table name: each name must be the extension's slug (dashes\nas underscores) followed by \"_\" and lowercase letters, digits or\nunderscores, and each line one column or key definition.",
+                    "signature": "statements(Minn\\Extension\\Manifest $manifest, string $prefix, string $collation = self::FALLBACK_COLLATION, array $others = array ( )): array",
+                    "doc": "The CREATE TABLE statements an extension declares, keyed by the\nprefixed table name: each name must be the extension's slug (dashes\nas underscores) followed by \"_\" and lowercase letters, digits or\nunderscores, and each line one column or key definition. No name is\none of WordPress's own tables, or inside the names of another\nextension (from $others, the slugs with tables recorded) whose slug\nis longer: acme may not declare acme_x_orders while acme-x has tables\n(security sweep 2026-11-12, finding 1.5).",
                     "shapes": [
+                        "@param list<string> $others",
                         "@return array<string, string>"
                     ],
                     "params": [
@@ -48354,10 +48361,17 @@
                             "shape": "",
                             "default": "self::FALLBACK_COLLATION",
                             "doc": ""
+                        },
+                        {
+                            "name": "others",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 86
+                    "line": 75,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -48376,8 +48390,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -48390,8 +48404,8 @@
                         "@return array<string, string> slug => marker"
                     ],
                     "params": [],
-                    "line": 95,
-                    "end": 99
+                    "line": 109,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -48402,8 +48416,8 @@
                     "doc": "The collation the site's own options table was made with, so extension tables sort text as the site does.",
                     "shapes": [],
                     "params": [],
-                    "line": 102,
-                    "end": 106
+                    "line": 116,
+                    "end": 120
                 }
             ]
         },

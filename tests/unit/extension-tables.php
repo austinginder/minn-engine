@@ -67,6 +67,16 @@ return [
         $refused = array_filter($said, static fn (string $message): bool => str_starts_with($message, 'acme may declare only tables named acme_*: '));
         return count($refused) === 4 ? true : json_encode($said);
     },
+    // Security sweep 2026-11-12 (1.5): a slug that is a core table's start, and another extension's names.
+    'no extension declares a core table or another extension\'s, however its slug reads' => static function () use ($manifest, $thrown): bool|string {
+        $said = [
+            $thrown(static fn () => Tables::statements($manifest('term', ['tables' => ['term_relationships' => ['id int']]]), 'wp_')),
+            $thrown(static fn () => Tables::statements($manifest('comment', ['tables' => ['commentmeta' => ['id int']]]), 'wp_')),
+            $thrown(static fn () => Tables::statements($manifest('acme', ['tables' => ['acme_x_orders' => ['id int']]]), 'wp_', 'utf8mb4_unicode_520_ci', ['acme-x'])),
+        ];
+        $kept = Tables::statements($manifest('acme', ['tables' => ['acme_orders' => ['id int']]]), 'wp_', 'utf8mb4_unicode_520_ci', ['acme-x', 'other']);
+        return !in_array('nothing thrown', $said, true) && array_keys($kept) === ['wp_acme_orders'] ? true : json_encode([$said, array_keys($kept)]);
+    },
     'a line that is more than one definition throws' => static function () use ($manifest, $thrown): bool|string {
         $said = [
             $thrown(static fn () => Tables::statements($manifest('acme', ['tables' => ['acme_x' => ['id int); DROP TABLE wp_users; --']]]), 'wp_')),
