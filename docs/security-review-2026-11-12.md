@@ -82,3 +82,26 @@ Accepted, with their consequences:
 - **A page cache that ignores unknown query arguments** can answer recovery's self-check from cache. The plugin is then simply not paused, which fails safe.
 - **Extension table names.** A slug can still take a name another plugin uses (`wc` and `wc_orders`), a numeric slug on multisite can name a subsite's table, and an extension installed after another can still take names inside the other's prefix. An extension is code the administrator installs, so this is robustness, not a boundary.
 - **PHP_INT_MIN offsets on REST lists** (categories, users, comments) answer 200 on both stacks.
+
+## Fix-delta review, round 2
+
+A second reviewer read the round-1 fixes (`e2a19473..6eb5ecd9`). No High or Medium. Every point it raised is fixed except the three accepted below, each pinned where a request or a unit can show it:
+
+| # | Finding | Done |
+|---|---|---|
+| R1 | A sign-out without its nonce ended no session, but still expired the browser's cookies, so another site could still sign a player out of the browser. | A request naming a live session without its nonce gets the response unchanged. Suite `extension-accounts` (no sign-in cookie expired). |
+| R2 | The role rule let a role carry another plugin's administrative capabilities (`manage_woocommerce`). | Any capability the site's own administrator holds counts too. Suite `extension-accounts`. |
+| R3 | Dropping `html`, `public` and `web` missed a site placed directly in nginx's `/var/www/html`. | Those names count again on the webroot's parent and above, where the usual layouts never carry them (`www` alone stays out). Suite `install`. |
+| R4 | `DEFINE` in capitals and `const WP_HOME` went unseen, so `minn login` fell back to the database's home. | Both are seen, and a double-quoted value holding `$` or `{` is refused. Suite `cli`. |
+| R5 | The park row passed when it could not look (no record, open_basedir, a mismatched mark), with a warning logged under open_basedir. | Four answers: no park on record, not checked, served, no refusal. Reachability is asked first. Suite `install`. |
+| R6 | On an FTP or SSH method, the index write and a refused install's cleanup still went straight to disk. | Both go through the site's filesystem. Suite `upgrades` (a recording filesystem). |
+| R7 | The note on `maybe_render_app` said it was never reached; it answers `?minn_admin=1` on plain permalinks. | Note and contract corrected. |
+| R8 | The sign-out nonce was read from the query string, so it could land in addresses and logs. | Header or form only. Suite `extension-accounts`. |
+| R10 | Maintenance read the unfiltered plugin list and only `minn-admin/minn-admin.php`. | The filtered list, and Minn Admin in any folder. Pinned by the code: moving the plugin on the shared test site is not done. |
+| R11 | Latest Posts showing whole posts outside a post (a template part, the block renderer) skipped the extensions' shortcodes and filters. | It runs them for each post. Suite `extensions`. |
+
+Accepted:
+
+- **On a route answered without the runtime** (`MINN_WP_API` auto or off), a plugin's `nonce_life` filter is not loaded, so a site that changes the nonce lifetime may see an extension's sign-out end no session there. It fails safe.
+- **The server's bind leaves `srcset`, `lowsrc` and `dynsrc` unjudged** (none runs script), and passes a multi-address `ping` through URL escaping.
+- **An auto-excerpt runs the extensions' shortcode strip but not their content filters**, so a filter-based gate shows its first words in an excerpt, on the page as on REST.

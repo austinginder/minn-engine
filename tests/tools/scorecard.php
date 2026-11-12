@@ -209,6 +209,12 @@ $findings = [
     'The server\'s bind printed srcdoc, form and style url() the client refuses' => ['tests/security-sweep.test.php', 'the server binds no style with url() and no srcdoc'],
     'A sign-out on an extension\'s page route could be forged by a cross-site navigation' => ['tests/extension-accounts.test.php', 'a sign-out page reached without the nonce ends no session'],
     'A failed install\'s climbing source path could remove a folder outside the upgrade folder' => ['tests/upgrades.test.php', 'a failed install never removes a folder outside the upgrade folder'],
+    'An extension\'s sign-out without its nonce still expired the browser\'s cookies' => ['tests/extension-accounts.test.php', 'and leaves the browser signed in: no sign-in cookie is expired'],
+    'A sign-up role could carry another plugin\'s administrative capabilities' => ['tests/extension-accounts.test.php', 'a sign-up role holding a capability the administrator holds is refused'],
+    'minn login missed DEFINE in capitals and const WP_HOME' => ['tests/cli.test.php', 'a WP_HOME set by const is refused rather than read from the database'],
+    'The System view\'s park row passed when it could not look' => ['tests/install.test.php', 'a park without its refusal warns in the System view'],
+    'The upgrade folder\'s index and a refused install\'s cleanup bypassed the site\'s filesystem' => ['tests/upgrades.test.php', 'go through the site'],
+    'Latest Posts showing whole posts outside a post skipped the extensions\' shortcodes' => ['tests/extensions.test.php', 'Latest Posts showing whole posts runs the extensions'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 
