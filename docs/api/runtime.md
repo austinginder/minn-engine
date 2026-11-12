@@ -127,7 +127,7 @@ the WordPress runtime plugins load against
 | [`QueryFlags`](#queryflags) | final readonly class | 202 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`RecipientLocale`](#recipientlocale) | final class | 30 | An email written in its reader's language, as the reference writes each: |
 | [`Records`](#records) | final class | 140 | Posts, terms and comments as WordPress hands them to plugins: found by |
-| [`Recovery`](#recovery) | final readonly class | 314 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 340 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 200 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 108 | Settings as register_setting keeps them (probe rest-settings): the |
@@ -6986,9 +6986,9 @@ notify once.
 
 Notes a boot failure against an extension. True when one is already
 noted inside the window, which is when the caller has asked the site
-about it once already; the first is when it asks (check()). Strikes
-older than the window are dropped as they are read, so the option
-never grows.
+about it once already; the first is when it asks (check()). One time
+is kept per extension, written only when it is new, so failing
+requests never grow the option; it is not autoloaded.
 
 - `@param array{kind: string, name: string} $blamed`
 
@@ -6996,22 +6996,24 @@ never grows.
 
 Asks the site once about an extension a request saw fail at boot: a
 token is kept for it, then one GET of the home page goes out carrying
-the token and nothing a visitor chose (no body, the engine's own
-headers; a fresh query and a signed-in cookie name, which sign nobody
-in, step past a page cache that would answer from what it holds). If
-that request fails at boot on the same extension, its own recovery
-pauses it (confirmed()). The address is the site's own, so its
-certificate is not checked, as the reference sends its requests to
-itself (a local certificate authority the server's own PHP does not
-know would refuse it); the request carries nothing but a token good
-once, for a minute. Null when the site answered, else why not.
+the token and nothing a visitor chose (no body, no cookie, the headers
+a browser sends; a fresh query steps past a page cache). If that
+request fails at boot on the same extension, its own recovery pauses
+it (confirmed()). The token is claimed, so of requests failing at
+once only one asks. The address is the site's own, so its certificate
+is not checked, as the reference sends its requests to itself (a
+local certificate authority the server's own PHP does not know would
+refuse it); the request carries nothing but a token good once, for a
+minute. Null when the site answered or another request is asking,
+else why not.
 
 - `@param array{kind: string, name: string} $blamed`
 
 ### `confirmed(array $blamed, string $token): bool`
 
 Whether a request's token is the one check() kept for this extension
-and still good. The token is spent either way, so it answers once.
+and still good. A matching token is spent, so it answers once; a
+wrong one changes nothing and lapses with the minute.
 
 - `@param array{kind: string, name: string} $blamed`
 
@@ -7045,7 +7047,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.
 
-Internals: `pluginFile()` (private, line 131), `activePlugins()` (private, line 145), `strikes()` (private, line 247), `forgetStrikes()` (private, line 254), `read()` (private, line 331), `write()` (private, line 339)
+Internals: `storageFailure()` (private, line 128), `pluginFile()` (private, line 147), `activePlugins()` (private, line 161), `strikes()` (private, line 273), `forgetStrikes()` (private, line 280), `read()` (private, line 357), `write()` (private, line 365)
 
 
 ## Refusal

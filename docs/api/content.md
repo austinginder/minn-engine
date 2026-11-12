@@ -35,7 +35,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 47 | Revision rows read: the plain snapshots and the per-author autosave slots. |
 | [`RowCache`](#rowcache) | final class | 102 | Rows read once a request: posts, their terms, users, and every object's |
-| [`Site`](#site) | final readonly class | 114 | Site-wide options and the site's clock. |
+| [`Site`](#site) | final readonly class | 122 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
@@ -1773,6 +1773,10 @@ Writes an option, inserting it as autoloaded when it does not exist;
 the option store hears of it. An $autoload given is written too, so a
 cache the engine reads on demand (autoload "off") stays out of the
 list every request loads.
+
+### `claimOption(string $name, string $value, string $autoload): bool`
+
+Inserts an option row only when none holds the name yet, so two requests cannot both take it. Whether this call made it.
 
 ### `deleteOption(string $name): void`
 

@@ -175,5 +175,31 @@ $check(str_contains($wp('option get minn_recovery_strikes'), 'Could not get'), '
 [$well] = minn_test_fetch($ENGINE . '/');
 $check($well['status'] === 200, 'the site itself stays up', (string) $well['status']);
 
+// Security sweep 2026-11-12 (2.4): a failure only a visitor's header causes is noted once per extension however often
+// it repeats (the row never grows, and is not autoloaded), and the engine's own request, which lacks the header, pauses nothing.
+$strikeSlug = 'minn-recovery-strike-probe';
+$strikeDir = $public . '/wp-content/plugins/' . $strikeSlug;
+$strikePlugin = $strikeSlug . '/' . $strikeSlug . '.php';
+register_shutdown_function(static function () use ($strikeDir, $wp, $strikeSlug): void {
+    $wp('plugin deactivate ' . escapeshellarg($strikeSlug));
+    $wp('minn recovery resume-all');
+    array_map('unlink', glob($strikeDir . '/*') ?: []);
+    @rmdir($strikeDir);
+});
+@mkdir($strikeDir, 0755, true);
+file_put_contents($strikeDir . '/' . $strikeSlug . '.php', "<?php\n/**\n * Plugin Name: Minn Recovery Strike Probe\n */\nadd_action('init', static function (): void {\n    if (isset(\$_SERVER['HTTP_X_ZZ_STRIKE'])) {\n        minn_recovery_strike_probe_no_such_function();\n    }\n});\n");
+$wp('plugin activate ' . escapeshellarg($strikeSlug));
+$wp('minn recovery resume-all');
+for ($i = 0; $i < 4; $i++) {
+    $ch = curl_init($ENGINE . '/');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30, CURLOPT_HTTPHEADER => ['X-Zz-Strike: 1']]);
+    curl_exec($ch);
+}
+$row = json_decode($wp('eval ' . escapeshellarg('global $wpdb; echo json_encode($wpdb->get_row("SELECT option_value, autoload FROM {$wpdb->options} WHERE option_name = \'minn_recovery_strikes\'", ARRAY_A));')), true);
+$kept = json_decode((string) ($row['option_value'] ?? ''), true);
+$check(is_array($kept) && is_int($kept['plugin:' . $strikePlugin] ?? null), 'a failure a visitor\'s header causes is noted as one time, however often it repeats', (string) ($row['option_value'] ?? 'none'));
+$check(($row['autoload'] ?? '') === 'off', 'the strikes row is not autoloaded', (string) ($row['autoload'] ?? 'none'));
+$check(!str_contains($wp('minn recovery'), $strikePlugin), 'and the engine\'s own request, without the header, pauses nothing', $wp('minn recovery'));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

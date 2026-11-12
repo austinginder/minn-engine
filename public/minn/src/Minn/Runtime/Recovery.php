@@ -111,13 +111,29 @@ final readonly class Recovery
      */
     public function blameFailure(string $file, array $trace, array $realpaths = []): ?array
     {
-        foreach ([$file, ...$trace] as $frame) {
+        // A failure in the engine's own storage or a drop-in (a full disk, a deadlock, a cache backend down) is the
+        // site's state, not the plugin that happened to write at boot: only its own file is asked (security sweep
+        // 2026-11-12, finding 2.2).
+        $frames = self::storageFailure($file) ? [$file] : [$file, ...$trace];
+        foreach ($frames as $frame) {
             $blamed = $this->blame($frame, $realpaths);
             if ($blamed !== null) {
                 return $blamed;
             }
         }
         return null;
+    }
+
+    /** Whether a failure's own file is the engine's storage (database, options, transients) or a drop-in. */
+    private static function storageFailure(string $file): bool
+    {
+        $file = str_replace('\\', '/', $file);
+        foreach (['/src/Minn/Db.php', '/src/Minn/Runtime/Options.php', '/src/Minn/Runtime/OptionWrites.php', '/src/Minn/Runtime/Transients.php', '/wp-content/db.php', '/wp-content/object-cache.php', '/wp-content/advanced-cache.php'] as $storage) {
+            if (str_ends_with($file, $storage)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -176,41 +192,38 @@ final readonly class Recovery
     /**
      * Notes a boot failure against an extension. True when one is already
      * noted inside the window, which is when the caller has asked the site
-     * about it once already; the first is when it asks (check()). Strikes
-     * older than the window are dropped as they are read, so the option
-     * never grows.
+     * about it once already; the first is when it asks (check()). One time
+     * is kept per extension, written only when it is new, so failing
+     * requests never grow the option; it is not autoloaded.
      *
      * @param array{kind: string, name: string} $blamed
      */
     public function strike(array $blamed): bool
     {
         $now = time();
-        $strikes = $this->strikes();
-        foreach ($strikes as $key => $times) {
-            $strikes[$key] = array_values(array_filter($times, static fn (int $at): bool => $at > $now - self::WINDOW));
-            if ($strikes[$key] === []) {
-                unset($strikes[$key]);
-            }
-        }
         $key = $blamed['kind'] . ':' . $blamed['name'];
-        $second = isset($strikes[$key]);
-        $strikes[$key][] = $now;
-        $this->site->setOption(self::STRIKES_OPTION, Json::encode($strikes));
-        return $second;
+        $strikes = array_filter($this->strikes(), static fn (int $at): bool => $at > $now - self::WINDOW);
+        if (isset($strikes[$key])) {
+            return true;
+        }
+        $strikes[$key] = $now;
+        $this->site->setOption(self::STRIKES_OPTION, Json::encode($strikes), 'off');
+        return false;
     }
 
     /**
      * Asks the site once about an extension a request saw fail at boot: a
      * token is kept for it, then one GET of the home page goes out carrying
-     * the token and nothing a visitor chose (no body, the engine's own
-     * headers; a fresh query and a signed-in cookie name, which sign nobody
-     * in, step past a page cache that would answer from what it holds). If
-     * that request fails at boot on the same extension, its own recovery
-     * pauses it (confirmed()). The address is the site's own, so its
-     * certificate is not checked, as the reference sends its requests to
-     * itself (a local certificate authority the server's own PHP does not
-     * know would refuse it); the request carries nothing but a token good
-     * once, for a minute. Null when the site answered, else why not.
+     * the token and nothing a visitor chose (no body, no cookie, the headers
+     * a browser sends; a fresh query steps past a page cache). If that
+     * request fails at boot on the same extension, its own recovery pauses
+     * it (confirmed()). The token is claimed, so of requests failing at
+     * once only one asks. The address is the site's own, so its certificate
+     * is not checked, as the reference sends its requests to itself (a
+     * local certificate authority the server's own PHP does not know would
+     * refuse it); the request carries nothing but a token good once, for a
+     * minute. Null when the site answered or another request is asking,
+     * else why not.
      *
      * @param array{kind: string, name: string} $blamed
      */
@@ -221,15 +234,23 @@ final readonly class Recovery
         if ($host === '') {
             return 'the site has no home address';
         }
+        $kept = Json::decode((string) ($this->site->option(self::CHECK_OPTION) ?? ''), or: null);
+        if (is_array($kept) && (int) ($kept['expires'] ?? 0) < time()) {
+            $this->site->deleteOption(self::CHECK_OPTION);
+        }
         $token = bin2hex(random_bytes(16));
-        $this->site->setOption(self::CHECK_OPTION, Json::encode(['key' => $blamed['kind'] . ':' . $blamed['name'], 'token' => $token, 'expires' => time() + self::CHECK_TTL]));
-        $answer = Transport::send(new Outbound('GET', $home . '/?minn-recovery-check=' . bin2hex(random_bytes(4)), [self::CHECK_HEADER . ': ' . $token, 'Cookie: wordpress_logged_in_minn_recovery_check=1'], null, 10.0, 0, false, 'Minn Engine recovery check'));
+        if (!$this->site->claimOption(self::CHECK_OPTION, Json::encode(['key' => $blamed['kind'] . ':' . $blamed['name'], 'token' => $token, 'expires' => time() + self::CHECK_TTL]), 'off')) {
+            return null;
+        }
+        $headers = [self::CHECK_HEADER . ': ' . $token, 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language: en-US,en;q=0.9'];
+        $answer = Transport::send(new Outbound('GET', $home . '/?minn-recovery-check=' . bin2hex(random_bytes(4)), $headers, null, 10.0, 0, false, 'Minn Engine recovery check'));
         return $answer->code > 0 ? null : (string) ($answer->error ?? 'no answer');
     }
 
     /**
      * Whether a request's token is the one check() kept for this extension
-     * and still good. The token is spent either way, so it answers once.
+     * and still good. A matching token is spent, so it answers once; a
+     * wrong one changes nothing and lapses with the minute.
      *
      * @param array{kind: string, name: string} $blamed
      */
@@ -243,11 +264,16 @@ final readonly class Recovery
         return ($kept['key'] ?? null) === $blamed['kind'] . ':' . $blamed['name'] && (int) ($kept['expires'] ?? 0) >= time();
     }
 
-    /** @return array<string, list<int>> */
+    /**
+     * The time each extension was first noted inside the window; a list an
+     * older engine kept reads as its earliest time.
+     *
+     * @return array<string, int>
+     */
     private function strikes(): array
     {
         $decoded = Json::decode((string) ($this->site->option(self::STRIKES_OPTION) ?? ''), or: null);
-        return is_array($decoded) ? array_map(static fn ($times): array => array_map('intval', (array) $times), $decoded) : [];
+        return is_array($decoded) ? array_map(static fn ($at): int => is_array($at) ? (int) (min($at ?: [0])) : (int) $at, $decoded) : [];
     }
 
     /** @param array{kind: string, name: string} $blamed */

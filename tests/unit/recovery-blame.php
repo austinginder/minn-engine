@@ -17,4 +17,9 @@ return [
     'a symlinked plugin is brought home first' => static fn () => $recovery->blame('/elsewhere/redirection/api/x.php', ['/elsewhere/redirection' => '/site/wp-content/plugins/redirection'], $active) === ['kind' => 'plugin', 'name' => 'redirection/redirection.php'],
     'a theme blames its slug' => static fn () => $recovery->blame('/site/wp-content/themes/twentytwentyfive/functions.php', [], $active) === ['kind' => 'theme', 'name' => 'twentytwentyfive'],
     'the engine blames nobody' => static fn () => $recovery->blame('/site/minn/src/Minn/Db.php', [], $active) === null,
+    'a failure inside engine code is the theme frame\'s that called it' => static fn () => $recovery->blameFailure('/site/minn/src/Minn/Json.php', ['/site/minn/src/Minn/Json.php', '/site/wp-content/themes/zz/functions.php']) === ['kind' => 'theme', 'name' => 'zz'],
+    // Security sweep 2026-11-12 (2.2): a full disk, a deadlock or a cache backend down is the site's state.
+    'a failure in the engine\'s database layer is nobody\'s, whoever wrote at boot' => static fn () => $recovery->blameFailure('/site/minn/src/Minn/Db.php', ['/site/minn/src/Minn/Runtime/Options.php', '/site/wp-content/themes/zz/functions.php']) === null,
+    'a failure in the options or transients store is nobody\'s' => static fn () => $recovery->blameFailure('/site/minn/src/Minn/Runtime/Transients.php', ['/site/wp-content/themes/zz/functions.php']) === null && $recovery->blameFailure('/site/minn/src/Minn/Runtime/OptionWrites.php', ['/site/wp-content/themes/zz/functions.php']) === null,
+    'a failure in a cache or database drop-in is nobody\'s' => static fn () => $recovery->blameFailure('/site/wp-content/object-cache.php', ['/site/wp-content/themes/zz/functions.php']) === null && $recovery->blameFailure('/site/wp-content/db.php', ['/site/wp-content/themes/zz/functions.php']) === null,
 ];
