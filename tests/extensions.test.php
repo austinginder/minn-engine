@@ -131,6 +131,9 @@ $onDesktop = fetch("$ENGINE/$slug/", [$desktop]);
 $onPhone = fetch("$ENGINE/$slug/", [$phone]);
 $onTablet = fetch("$ENGINE/$slug/", [$tablet]);
 check(!str_contains($onDesktop, 'hidden-always') && str_contains($onDesktop, 'shown-always'), 'hideBlock hides; hideBlock false shows');
+// REST draws the same content, so it hides the same blocks (security sweep 2026-11-12: content.rendered showed them).
+$overRest = fetch("$ENGINE/wp-json/wp/v2/posts?slug=" . rawurlencode($slug), [$desktop]);
+check(str_contains($overRest, 'shown-always') && !str_contains($overRest, 'hidden-always') && !str_contains($overRest, 'members-only') && !str_contains($overRest, 'expired-schedule'), 'content.rendered over REST hides what the page hides', substr($overRest, 0, 300));
 check(!str_contains($onDesktop, 'only-mobile') && str_contains($onDesktop, 'only-desktop'), 'a desktop reader gets the desktop group only');
 check(str_contains($onPhone, 'only-mobile') && !str_contains($onPhone, 'only-desktop'), 'a phone gets the mobile group only');
 check(str_contains($onTablet, 'only-mobile') && !str_contains($onTablet, 'only-desktop'), 'a tablet counts as mobile, as observed');

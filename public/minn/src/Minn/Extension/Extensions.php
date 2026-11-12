@@ -23,9 +23,10 @@ final class Extensions
     }
 
     /**
-     * Installs only the extensions' blocks, for a REST request: its answers
-     * (content.rendered, the editor's previews) draw them, while the filters
-     * and the rest stay with the themed front.
+     * Installs the extensions' blocks and content rules, for a REST request:
+     * its answers (content.rendered, the editor's previews) draw the blocks
+     * and hide what the page hides, while the page's own parts stay with
+     * the themed front.
      */
     public static function setBlocks(Seams $seams): void
     {

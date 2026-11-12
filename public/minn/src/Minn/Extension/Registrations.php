@@ -40,9 +40,15 @@ final readonly class Registrations
     ) {
     }
 
-    /** Only the blocks and what previews them, for a request that draws content but is no themed page (REST). */
+    /**
+     * What a request that draws content but is no themed page (REST) keeps:
+     * the blocks and what previews them, and everything that decides what
+     * content shows (block gates and filters, shortcodes, content filters),
+     * so content.rendered hides what the page hides. The page's own parts
+     * (head, footer, classes, routes) stay with the themed front.
+     */
     public function onlyBlocks(): self
     {
-        return new self([], [], [], [], [], [], [], [], null, [], $this->blocks, $this->editorStyles);
+        return new self($this->blockGates, $this->blockFilters, $this->shortcodes, $this->contentFilters, [], [], [], [], null, [], $this->blocks, $this->editorStyles);
     }
 }
