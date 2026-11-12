@@ -206,7 +206,12 @@ $check('the park refuses every web request on Apache', str_contains((string) @fi
 @unlink("$PARK/.htaccess");
 Minn\Cli\Installer::guardPark($WEBROOT);
 $check('a park left without its refusal gets it back', str_contains((string) @file_get_contents("$PARK/.htaccess"), 'Require all denied'));
-$check('a park outside served folders reads as safe', Minn\Cli\Installer::parkServed($WEBROOT) === null);
+$check('a guarded park outside served folders passes the System view', Minn\Cli\Installer::parkStatus($WEBROOT)[0] === 'pass', json_encode(Minn\Cli\Installer::parkStatus($WEBROOT)));
+rename("$PARK/.htaccess", "$PARK/.htaccess-zz");
+$unguarded = Minn\Cli\Installer::parkStatus($WEBROOT);
+rename("$PARK/.htaccess-zz", "$PARK/.htaccess");
+$check('a park without its refusal warns in the System view', $unguarded[0] === 'warn' && str_contains($unguarded[1], 'no web refusal'), json_encode($unguarded));
+$check('a webroot with no install record says so, and passes', Minn\Cli\Installer::parkStatus($SCRATCH)[0] === 'pass' && str_contains(Minn\Cli\Installer::parkStatus($SCRATCH)[1], 'No park on record'));
 $served = new ReflectionMethod(Minn\Cli\Installer::class, 'served');
 $layouts = array_map(static fn (string $folder): bool => $served->invoke(null, $folder) !== null, ['/var/www' => '/var/www', '/www/site_123' => '/www/site_123', '/home/u/public_html/sites' => '/home/u/public_html/sites', '/home/u/public_html' => '/home/u/public_html', '/srv/htdocs' => '/srv/htdocs', '/home/u' => '/home/u', '/var/www/html' => '/var/www/html']);
 $check('the served test passes /var/www and Kinsta\'s /www/site, and refuses anything inside public_html, htdocs or nginx\'s /var/www/html', $layouts === ['/var/www' => false, '/www/site_123' => false, '/home/u/public_html/sites' => true, '/home/u/public_html' => true, '/srv/htdocs' => true, '/home/u' => false, '/var/www/html' => true], json_encode($layouts));

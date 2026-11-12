@@ -195,7 +195,7 @@ final readonly class EngineUpdate
     }
 
     /** Whether open_basedir lets PHP look inside a folder: when it is set, the folder must lie within one of its paths. */
-    private static function reachable(string $dir): bool
+    public static function reachable(string $dir): bool
     {
         $allowed = (string) ini_get('open_basedir');
         if ($allowed === '') {

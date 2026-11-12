@@ -76,7 +76,7 @@ final readonly class Diagnostics
             self::check('memory', 'Memory limit', ($memory < 0 || $memory >= 256 * 1024 * 1024) ? 'pass' : ($memory >= 128 * 1024 * 1024 ? 'warn' : 'fail'), ini_get('memory_limit') . ' available to PHP'),
             self::check('opcache', 'OPcache', $opcacheOn ? 'pass' : 'warn', $opcacheOn ? 'Bytecode caching is on' : 'Not enabled; pages recompile each request'),
             self::check('wp_api', 'WordPress runtime', ...$this->wpApi()),
-            self::check('park', 'Parked WordPress', ...self::park($this->webroot)),
+            self::check('park', 'Parked WordPress', ...\Minn\Cli\Installer::parkStatus($this->webroot)),
             self::check('debug', 'Debug mode', $debugOn ? 'warn' : 'pass', $debugOn ? 'WP_DEBUG is on in wp-config.php' : 'Off'),
             self::check('uploads', 'Uploads writable', $uploadsWritable ? 'pass' : 'fail', $uploadsWritable ? 'The uploads directory accepts writes' : 'Uploads directory is not writable'),
             self::check(
@@ -142,18 +142,6 @@ final readonly class Diagnostics
             WpApiMode::Auto => $count === 0 ? ['pass', 'auto: public pages skip the plugin boot'] : ['warn', "auto: {$plugins} run behind the pages, not on public pages, so none of them (a membership, private-site or firewall plugin among them) decides who reads a public page; their scheduled events run on wp-cron.php"],
             WpApiMode::Off => $count === 0 ? ['pass', 'off: no plugins run'] : ['warn', "off: {$plugins} active but never run"],
         };
-    }
-
-    /**
-     * Where WordPress's own files are parked, and whether the web could reach them: a park in a folder that looks
-     * served warns, since nginx ignores the park's own refusal.
-     *
-     * @return array{string, string} status, text
-     */
-    private static function park(string $webroot): array
-    {
-        $served = \Minn\Cli\Installer::parkServed($webroot);
-        return $served === null ? ['pass', 'Outside every folder that looks served'] : ['warn', "WordPress's parked files sit in a folder that looks served ({$served}); move them outside every site's webroot (minn eject, then install with --park=<dir>)"];
     }
 
     /** @return array<string, string> */

@@ -26525,7 +26525,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 477,
+            "lines": 495,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -26870,12 +26870,14 @@
                 },
                 {
                     "routes": [],
-                    "name": "parkServed",
+                    "name": "parkStatus",
                     "static": true,
                     "visibility": "public",
-                    "signature": "parkServed(string $root): ?string",
-                    "doc": "Why this webroot's park could be reached from the web (it lies in a served folder), or null.",
-                    "shapes": [],
+                    "signature": "parkStatus(string $root): array",
+                    "doc": "What the System view says of this webroot's park: none on record; not\nchecked (beyond open_basedir, or its mark not this webroot's as PHP\nsees it here); in a folder that looks served; without its refusal; or\nfine. A pass only when the park was read.",
+                    "shapes": [
+                        "@return array{string, string} status, text"
+                    ],
                     "params": [
                         {
                             "name": "root",
@@ -26885,8 +26887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 319
+                    "line": 322,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -26914,8 +26916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 399
+                    "line": 358,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -26934,8 +26936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 411
+                    "line": 420,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -26956,8 +26958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 431
+                    "line": 439,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -26997,7 +26999,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "recordedPark(string $root): ?string",
-                    "doc": "The park the install record names, when it is there and carries this webroot's mark.",
+                    "doc": "The park the install record names, when PHP may reach it and it is there carrying this webroot's mark.",
                     "shapes": [],
                     "params": [
                         {
@@ -27008,8 +27010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 329
+                    "line": 340,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -27028,8 +27030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 445
+                    "line": 457,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -27055,8 +27057,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 469
+                    "line": 466,
+                    "end": 487
                 },
                 {
                     "routes": [],
@@ -27082,8 +27084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 471,
-                    "end": 488
+                    "line": 489,
+                    "end": 506
                 },
                 {
                     "routes": [],
@@ -27094,8 +27096,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 490,
-                    "end": 493
+                    "line": 508,
+                    "end": 511
                 },
                 {
                     "routes": [],
@@ -27114,8 +27116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 495,
-                    "end": 498
+                    "line": 513,
+                    "end": 516
                 }
             ]
         },
@@ -97273,7 +97275,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Diagnostics.php",
-            "lines": 444,
+            "lines": 432,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
@@ -97457,8 +97459,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 208,
-                    "end": 241
+                    "line": 196,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -97469,8 +97471,8 @@
                     "doc": "The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 244,
-                    "end": 261
+                    "line": 232,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -97481,8 +97483,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 311,
-                    "end": 330
+                    "line": 299,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -97574,28 +97576,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "park",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "park(string $webroot): array",
-                    "doc": "Where WordPress's own files are parked, and whether the web could reach them: a park in a folder that looks\nserved warns, since nginx ignores the park's own refusal.",
-                    "shapes": [
-                        "@return array{string, string} status, text"
-                    ],
-                    "params": [
-                        {
-                            "name": "webroot",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 153,
-                    "end": 157
-                },
-                {
-                    "routes": [],
                     "name": "phpGroup",
                     "static": true,
                     "visibility": "private",
@@ -97605,8 +97585,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 160,
-                    "end": 180
+                    "line": 148,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -97627,8 +97607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 199
+                    "line": 171,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -97639,8 +97619,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 205
+                    "line": 189,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -97653,8 +97633,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 269,
-                    "end": 289
+                    "line": 257,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -97673,8 +97653,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 308
+                    "line": 280,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -97685,8 +97665,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 332,
-                    "end": 344
+                    "line": 320,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -97699,8 +97679,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 347,
-                    "end": 362
+                    "line": 335,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -97713,8 +97693,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 365,
-                    "end": 370
+                    "line": 353,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -97727,8 +97707,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 373,
-                    "end": 409
+                    "line": 361,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -97768,8 +97748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 414
+                    "line": 399,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -97790,8 +97770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 417,
-                    "end": 424
+                    "line": 405,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -97810,8 +97790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 439
+                    "line": 414,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -97830,8 +97810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 441,
-                    "end": 447
+                    "line": 429,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -97850,8 +97830,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 462
+                    "line": 437,
+                    "end": 450
                 }
             ]
         },
@@ -98775,6 +98755,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "reachable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "reachable(string $dir): bool",
+                    "doc": "Whether open_basedir lets PHP look inside a folder: when it is set, the folder must lie within one of its paths.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 198,
+                    "end": 211
+                },
+                {
+                    "routes": [],
                     "name": "swap",
                     "static": false,
                     "visibility": "private",
@@ -98845,26 +98845,6 @@
                     "params": [],
                     "line": 175,
                     "end": 180
-                },
-                {
-                    "routes": [],
-                    "name": "reachable",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "reachable(string $dir): bool",
-                    "doc": "Whether open_basedir lets PHP look inside a folder: when it is set, the folder must lie within one of its paths.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "dir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 198,
-                    "end": 211
                 }
             ]
         },

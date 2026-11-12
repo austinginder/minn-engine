@@ -311,18 +311,36 @@ final class Installer
         }
     }
 
-    /** Why this webroot's park could be reached from the web (it lies in a served folder), or null. */
-    public static function parkServed(string $root): ?string
+    /**
+     * What the System view says of this webroot's park: none on record; not
+     * checked (beyond open_basedir, or its mark not this webroot's as PHP
+     * sees it here); in a folder that looks served; without its refusal; or
+     * fine. A pass only when the park was read.
+     *
+     * @return array{string, string} status, text
+     */
+    public static function parkStatus(string $root): array
     {
+        $named = rtrim((string) (self::record($root)['park'] ?? ''), '/');
+        if ($named === '') {
+            return ['pass', 'No park on record: minn install did not park WordPress here'];
+        }
         $park = self::recordedPark($root);
-        return $park === null ? null : self::served(dirname($park));
+        if ($park === null) {
+            return ['warn', "Not checked: {$named} is out of PHP's reach here (open_basedir) or does not carry this site's mark"];
+        }
+        $served = self::served(dirname($park));
+        if ($served !== null) {
+            return ['warn', "WordPress's parked files sit in a folder that looks served ({$served}); move them outside every site's webroot (minn eject, then install with --park=<dir>)"];
+        }
+        return file_exists("{$park}/" . self::PARK_GUARD) ? ['pass', 'Outside every folder that looks served, and refusing web requests'] : ['warn', "The park at {$park} has no web refusal ({$park}/.htaccess); this PHP user could not write it"];
     }
 
-    /** The park the install record names, when it is there and carries this webroot's mark. */
+    /** The park the install record names, when PHP may reach it and it is there carrying this webroot's mark. */
     private static function recordedPark(string $root): ?string
     {
         $park = rtrim((string) (self::record($root)['park'] ?? ''), '/');
-        if ($park === '' || !is_dir($park) || is_link($park)) {
+        if ($park === '' || !str_starts_with($park, '/') || !\Minn\Ops\EngineUpdate::reachable($park) || !is_dir($park) || is_link($park)) {
             return null;
         }
         return trim((string) @file_get_contents("{$park}/" . self::PARK_MARK)) === (realpath($root) ?: $root) ? $park : null;

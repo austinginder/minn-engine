@@ -11,7 +11,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 477 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 495 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`LoginLink`](#loginlink) | final class | 87 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
@@ -385,9 +385,14 @@ mark and holding none. Run once per engine version (AdminPlugin::settle),
 so a site installed by 0.1.0 is guarded by its first request after an
 update (fix-delta review of the 2026-11-12 sweep).
 
-### static `parkServed(string $root): ?string`
+### static `parkStatus(string $root): array`
 
-Why this webroot's park could be reached from the web (it lies in a served folder), or null.
+What the System view says of this webroot's park: none on record; not
+checked (beyond open_basedir, or its mark not this webroot's as PHP
+sees it here); in a folder that looks served; without its refusal; or
+fine. A pass only when the park was read.
+
+- `@return array{string, string} status, text`
 
 ### `eject(string $root, array $options): int`
 
@@ -412,7 +417,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 143), `served()` (private, line 284), `recordedPark()` (private, line 322), `inside()` (private, line 439), `move()` (private, line 448), `copyTree()` (private, line 471), `version()` (private, line 490), `say()` (private, line 495)
+Internals: `help()` (private, line 143), `served()` (private, line 284), `recordedPark()` (private, line 340), `inside()` (private, line 457), `move()` (private, line 466), `copyTree()` (private, line 489), `version()` (private, line 508), `say()` (private, line 513)
 
 
 ## LoginLink
