@@ -139,12 +139,19 @@ function check( cond, label, detail = '' ) {
 			+ '<div data-wp-interactive="zzguard" data-wp-context=\'{"__proto__":{"zzPollutedContext":"context"},"x":1}\'>'
 			+ '<button id="zz-bind" data-wp-bind--onclick="state.code" data-wp-bind--ONMOUSEOVER="state.code" data-wp-bind--title="state.word">b</button>'
 			+ '<span id="zz-ctx" data-wp-text="context.x"></span></div>',
+		// Security sweep 2026-11-12 (3.1, 3.4): an address or style an author writes into context.
+		'/zz-guard-url/': '<div data-wp-interactive="zzguard" data-wp-context=\'{"js":"  JavaScript:alert(1)","data":"data:text/html,x","ok":"https://example.com/ok","css":"background:url(https://example.com/t.gif)","color":"red"}\'>'
+			+ '<a id="zz-js" href="https://example.com/" data-wp-bind--href="context.js">a</a>'
+			+ '<a id="zz-ok" href="https://example.com/" data-wp-bind--href="context.ok">a</a>'
+			+ '<iframe id="zz-frame" data-wp-bind--src="context.data" data-wp-bind--srcdoc="context.js"></iframe>'
+			+ '<button id="zz-form" data-wp-bind--formaction="context.js">b</button>'
+			+ '<div id="zz-css" data-wp-bind--style="context.css" data-wp-style--background-image="context.css" data-wp-style--color="context.color">d</div></div>',
 	};
 	await guarded.route( ( url ) => Object.keys( pages ).includes( new URL( url ).pathname ), ( route ) => route.fulfill( { status: 200, contentType: 'text/html', body: shell( pages[ new URL( route.request().url() ).pathname ] ) } ) );
 	await guard.goto( BASE + '/zz-guard-shadow/', { waitUntil: 'networkidle' } );
 	await guard.waitForFunction( () => window.zzReady === true, null, { timeout: 10000 } ).catch( () => {} );
 	const word = await guard.evaluate( () => document.getElementById( 'zz-word' ).textContent );
-	check( word !== 'shadowed', 'server state is never read from a non-script element carrying its id', JSON.stringify( word ) );
+	check( word === 'served', 'server state is read from the script element, past an earlier element carrying its id', JSON.stringify( word ) );
 	await guard.goto( BASE + '/zz-guard-proto/', { waitUntil: 'networkidle' } );
 	await guard.waitForFunction( () => window.zzReady === true, null, { timeout: 10000 } ).catch( () => {} );
 	const proto = await guard.evaluate( () => ( {
@@ -158,6 +165,19 @@ function check( cond, label, detail = '' ) {
 	check( proto.hydrated === 'served' && proto.text === '1', 'the guard page hydrates (title and context bound)', JSON.stringify( proto ) );
 	check( proto.state === undefined && proto.context === undefined, 'a __proto__ key in server state or context never reaches Object.prototype', JSON.stringify( proto ) );
 	check( proto.onclick === null && proto.onmouseover === null, 'an event handler attribute is never bound', JSON.stringify( proto ) );
+	await guard.goto( BASE + '/zz-guard-url/', { waitUntil: 'networkidle' } );
+	await guard.waitForFunction( () => window.zzReady === true, null, { timeout: 10000 } ).catch( () => {} );
+	const url = await guard.evaluate( () => ( {
+		js: document.getElementById( 'zz-js' ).getAttribute( 'href' ),
+		ok: document.getElementById( 'zz-ok' ).getAttribute( 'href' ),
+		src: document.getElementById( 'zz-frame' ).getAttribute( 'src' ),
+		srcdoc: document.getElementById( 'zz-frame' ).getAttribute( 'srcdoc' ),
+		formaction: document.getElementById( 'zz-form' ).getAttribute( 'formaction' ),
+		style: document.getElementById( 'zz-css' ).getAttribute( 'style' ) || '',
+	} ) );
+	check( url.js === null && url.src === null && url.formaction === null && url.ok === 'https://example.com/ok', 'a javascript: or data: address is never bound, as on the reference (a safe one is)', JSON.stringify( url ) );
+	check( url.srcdoc === null, 'a frame\'s srcdoc is never bound', JSON.stringify( url ) );
+	check( ! url.style.includes( 'url(' ) && url.style.includes( 'red' ), 'a style binding sets no url(), and a plain one still applies', JSON.stringify( url ) );
 	await guarded.close();
 
 	check( errors.length === 0, 'no page or console errors', errors.join( '\n      ' ) );

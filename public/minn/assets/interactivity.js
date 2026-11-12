@@ -194,8 +194,9 @@ const serverConfig = {};
 
 (function readServerData() {
 	// Only the script element the server printed: post content can carry an element with the same id.
-	const el = document.getElementById('wp-script-module-data-@wordpress/interactivity');
-	if (!el || el.tagName !== 'SCRIPT') return;
+	// The first script with that id, not the first element: an earlier decoy must not switch server state off (finding 3.9).
+	const el = document.querySelector('script[id="wp-script-module-data-@wordpress/interactivity"]');
+	if (!el) return;
 	try {
 		// Reserved keys are dropped at every depth, so copying the parsed data is safe.
 		const data = withoutReservedKeys(JSON.parse(el.textContent));
@@ -424,9 +425,33 @@ function evaluate(reference, s) {
 
 const VOID_VALUE = (v) => v === null || v === undefined || v === false;
 
+// Attributes whose value the browser loads or follows as an address.
+const URL_ATTRIBUTES = new Set(['href', 'src', 'action', 'formaction', 'xlink:href', 'poster', 'cite', 'background', 'data', 'codebase', 'longdesc', 'usemap', 'ping', 'manifest', 'lowsrc', 'dynsrc', 'srcset', 'imagesrcset']);
+const SAFE_SCHEMES = new Set(['http', 'https', 'mailto', 'tel', 'ftp', 'ftps', 'sms', 'irc', 'ircs', 'news', 'nntp', 'feed', 'urn', 'xmpp', 'webcal']);
+
+// An address is bound only with a scheme a link may carry (or none): a binding's value can come from
+// author-written context, so javascript:, data: and vbscript: never reach an href. As on the reference,
+// an unsafe address takes the attribute away (security sweep 2026-11-12, finding 3.1).
+function safeAddress(value) {
+	const bare = value.replace(/[\u0000-\u0020\u007f-\u009f]/g, '').toLowerCase();
+	const scheme = /^([a-z][a-z0-9+.-]*):/.exec(bare);
+	return scheme === null || SAFE_SCHEMES.has(scheme[1]);
+}
+
+// A style binding sets no url(), image-set() or escaped text: kses refuses those in authored styles.
+const safeStyle = (value) => !/url\s*\(|image-set\s*\(|expression\s*\(|\\|@import/i.test(value);
+
 function applyBind(el, attribute, value) {
 	// An event handler attribute would run its value as code; the server refuses these bindings too.
 	if (!attribute || attribute.toLowerCase().startsWith('on')) return;
+	const lower = attribute.toLowerCase();
+	// A frame's whole document, or a button's own form target, is never bound.
+	if (lower === 'srcdoc' || lower === 'form') return;
+	if (typeof value === 'string' && URL_ATTRIBUTES.has(lower) && !safeAddress(value)) {
+		el.removeAttribute(attribute);
+		return;
+	}
+	if (typeof value === 'string' && lower === 'style' && !safeStyle(value)) return;
 	const special = attribute.startsWith('aria-') || attribute.startsWith('data-');
 	if (value === null || value === undefined || (value === false && !special)) {
 		el.removeAttribute(attribute);
@@ -500,7 +525,7 @@ function hydrate(el, inherited) {
 				effect(() => {
 					const value = evaluate(d.value, s);
 					if (VOID_VALUE(value) || value === '') el.style.removeProperty(d.suffix);
-					else el.style.setProperty(d.suffix, String(value));
+					else if (safeStyle(String(value))) el.style.setProperty(d.suffix, String(value));
 				});
 				break;
 			case 'text':
