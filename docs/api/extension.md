@@ -4,7 +4,7 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accounts`](#accounts) | final readonly class | 354 | Accounts for a sign-in surface of an extension's own (a game's players, a |
+| [`Accounts`](#accounts) | final readonly class | 372 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 71 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
@@ -35,7 +35,7 @@ listen on, so they belong on an extension's REST routes.
 Used by: `Minn\Extension\Seams`, `Minn\Extension\SignedIn`
 
 ```php
-__construct(Minn\Db $db, Minn\Http\Request $request)
+__construct(Minn\Db $db, Minn\Http\Request $request, ?Minn\Content\Reader $reader = NULL)
 ```
 
 
@@ -52,7 +52,11 @@ Signs in as signIn does, remembered: fourteen days, the cookies kept past the br
 
 ### `signOut(Minn\Http\Response $response): Minn\Http\Response`
 
-Ends the session the request's sign-in cookie names (when there is one) and clears the cookies on the response.
+Clears the sign-in cookies on the response, and ends the session they
+name only when the REST gate accepted it for this request (a cookie
+with its nonce, as the sign-in page's sign-out asks for its own): a
+page on another site that sends the cookie alone cannot end a
+player's session (security sweep 2026-11-12, finding 1.4).
 
 ### `registrationOpen(): bool`
 
@@ -64,7 +68,8 @@ A new account with the password its holder chose, the role asked for
 (one the site has, else the site's default role) and, when given, the
 name shown for it (display name and nickname; an email-only sign-up
 passes a login of its own making), when the site takes new accounts:
-the user, or every refusal (registration_closed, unknown_role; the name empty, illegal, taken or barred; the
+the user, or every refusal (registration_closed, unknown_role, role_not_allowed for a role holding more than
+the default role does; the name empty, illegal, taken or barred; the
 email empty, malformed or taken; no password; whatever plugins add).
 The site's address is told; nobody is signed in.
 
@@ -149,7 +154,7 @@ plugin's.
 
 - `@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name`
 
-Internals: `attempt()` (private, line 81), `storedHash()` (private, line 170), `refuseRegistration()` (private, line 203), `made()` (private, line 214), `checkCurrent()` (private, line 337), `worded()` (private, line 356), `refusal()` (private, line 375), `plain()` (private, line 392)
+Internals: `attempt()` (private, line 83), `storedHash()` (private, line 180), `refuseRegistration()` (private, line 213), `made()` (private, line 233), `checkCurrent()` (private, line 356), `worded()` (private, line 375), `refusal()` (private, line 394), `plain()` (private, line 411)
 
 
 ## Extension

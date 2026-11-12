@@ -14,6 +14,7 @@ use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\Sessions;
 use Minn\Auth\SignIn;
+use Minn\Content\Reader;
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
@@ -53,6 +54,7 @@ final readonly class Accounts
     public function __construct(
         Db $db,
         private Request $request,
+        private ?Reader $reader = null,
     ) {
         $this->users = new Users($db);
         $cookie = new Cookie($db, $this->users, new Sessions($this->users));
@@ -96,11 +98,18 @@ final readonly class Accounts
         return new SignedIn($user, $response);
     }
 
-    /** Ends the session the request's sign-in cookie names (when there is one) and clears the cookies on the response. */
+    /**
+     * Clears the sign-in cookies on the response, and ends the session they
+     * name only when the REST gate accepted it for this request (a cookie
+     * with its nonce, as the sign-in page's sign-out asks for its own): a
+     * page on another site that sends the cookie alone cannot end a
+     * player's session (security sweep 2026-11-12, finding 1.4).
+     */
     public function signOut(Response $response): Response
     {
         $session = $this->authenticator->session($this->request->cookies);
-        if (!$session instanceof Authenticated) {
+        $accepted = $this->reader !== null && $session instanceof Authenticated && $this->reader->userId === $session->id() && $this->reader->sessionToken === $session->token;
+        if (!$accepted) {
             return $this->signIn->clear($response);
         }
         $response = $this->signIn->end($response, $session);
@@ -119,7 +128,8 @@ final readonly class Accounts
      * (one the site has, else the site's default role) and, when given, the
      * name shown for it (display name and nickname; an email-only sign-up
      * passes a login of its own making), when the site takes new accounts:
-     * the user, or every refusal (registration_closed, unknown_role; the name empty, illegal, taken or barred; the
+     * the user, or every refusal (registration_closed, unknown_role, role_not_allowed for a role holding more than
+     * the default role does; the name empty, illegal, taken or barred; the
      * email empty, malformed or taken; no password; whatever plugins add).
      * The site's address is told; nobody is signed in.
      */
@@ -205,8 +215,17 @@ final readonly class Accounts
         if (!$this->registrationOpen()) {
             return new Refusal('registration_closed', 'This site is not taking new accounts.', ['notices' => []]);
         }
-        if ($role !== '' && !isset(Runtime::current()->capabilities->roles()->all()[$role])) {
+        $roles = Runtime::current()->capabilities->roles()->all();
+        if ($role !== '' && !isset($roles[$role])) {
             return new Refusal('unknown_role', "The site has no role named {$role}.", ['notices' => []]);
+        }
+        // A sign-up takes no more than the site gives a new account: a role holding a capability the default role
+        // lacks (administrator, editor) is refused, so an extension that passes a visitor's choice through cannot
+        // make an administrator (security sweep 2026-11-12, finding 1.3).
+        $default = (string) (Runtime::options()->filtered('default_role') ?: 'subscriber');
+        $granted = static fn (string $name): array => array_keys(array_filter((array) ($roles[$name]['capabilities'] ?? [])));
+        if ($role !== '' && array_diff($granted($role), $granted($default)) !== []) {
+            return new Refusal('role_not_allowed', "A new account cannot take the {$role} role: it holds more than the site's default role ({$default}).", ['notices' => []]);
         }
         return null;
     }

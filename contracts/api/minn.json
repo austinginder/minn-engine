@@ -38856,6 +38856,7 @@
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Context",
                 "Minn\\Engine",
+                "Minn\\Extension\\Accounts",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\FrontParts",
                 "Minn\\Front\\Resolver",
@@ -45248,7 +45249,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 354,
+            "lines": 372,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -45262,6 +45263,7 @@
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Sessions",
                 "Minn\\Auth\\SignIn",
+                "Minn\\Content\\Reader",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
@@ -45284,7 +45286,7 @@
                 "Minn\\Extension\\SignedIn"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Http\\Request $request)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Http\\Request $request, ?Minn\\Content\\Reader $reader = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -45301,11 +45303,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "reader",
+                        "type": "?Minn\\Content\\Reader",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 53,
-                "end": 61
+                "line": 54,
+                "end": 63
             },
             "cases": [],
             "constants": [
@@ -45352,6 +45361,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "reader",
+                    "type": "?Minn\\Content\\Reader",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -45386,8 +45404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -45420,8 +45438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 78
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -45429,7 +45447,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "signOut(Minn\\Http\\Response $response): Minn\\Http\\Response",
-                    "doc": "Ends the session the request's sign-in cookie names (when there is one) and clears the cookies on the response.",
+                    "doc": "Clears the sign-in cookies on the response, and ends the session they\nname only when the REST gate accepted it for this request (a cookie\nwith its nonce, as the sign-in page's sign-out asks for its own): a\npage on another site that sends the cookie alone cannot end a\nplayer's session (security sweep 2026-11-12, finding 1.4).",
                     "shapes": [],
                     "params": [
                         {
@@ -45440,8 +45458,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 109
+                    "line": 108,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -45452,8 +45470,8 @@
                     "doc": "Whether the site takes new accounts (users_can_register).",
                     "shapes": [],
                     "params": [],
-                    "line": 112,
-                    "end": 115
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -45461,7 +45479,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "register(string $login, string $email, string $password, string $shownAs = '', string $role = ''): Minn\\Content\\UserRecord|Minn\\Runtime\\Refusal",
-                    "doc": "A new account with the password its holder chose, the role asked for\n(one the site has, else the site's default role) and, when given, the\nname shown for it (display name and nickname; an email-only sign-up\npasses a login of its own making), when the site takes new accounts:\nthe user, or every refusal (registration_closed, unknown_role; the name empty, illegal, taken or barred; the\nemail empty, malformed or taken; no password; whatever plugins add).\nThe site's address is told; nobody is signed in.",
+                    "doc": "A new account with the password its holder chose, the role asked for\n(one the site has, else the site's default role) and, when given, the\nname shown for it (display name and nickname; an email-only sign-up\npasses a login of its own making), when the site takes new accounts:\nthe user, or every refusal (registration_closed, unknown_role, role_not_allowed for a role holding more than\nthe default role does; the name empty, illegal, taken or barred; the\nemail empty, malformed or taken; no password; whatever plugins add).\nThe site's address is told; nobody is signed in.",
                     "shapes": [],
                     "params": [
                         {
@@ -45500,8 +45518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -45548,8 +45566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -45568,8 +45586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -45616,8 +45634,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 167
+                    "line": 164,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -45643,8 +45661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 188
+                    "line": 192,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -45686,8 +45704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 200
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -45723,8 +45741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 238
+                    "line": 253,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -45757,8 +45775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 274
+                    "line": 267,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -45807,8 +45825,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 288,
-                    "end": 304
+                    "line": 307,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -45850,8 +45868,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 315,
-                    "end": 334
+                    "line": 334,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -45893,8 +45911,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 97
+                    "line": 83,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -45913,8 +45931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 173
+                    "line": 180,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -45933,8 +45951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 212
+                    "line": 213,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -45953,8 +45971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 218
+                    "line": 233,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -45980,8 +45998,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 349
+                    "line": 356,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -46021,8 +46039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 372
+                    "line": 375,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -46055,8 +46073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 375,
-                    "end": 389
+                    "line": 394,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -46075,8 +46093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 396
+                    "line": 411,
+                    "end": 415
                 }
             ]
         },

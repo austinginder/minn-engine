@@ -55,7 +55,7 @@ $nonce = static fn (): string => trim((string) shell_exec('/usr/bin/curl -sk -b 
 echo "extension-accounts suite: {$ENGINE}\n";
 $fixture = __DIR__ . '/fixtures/extensions/minn-test-records';
 $copy = "{$site}/public/wp-content/plugins/minn-test-records";
-$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet', 'zz-acct-held'];
+$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet', 'zz-acct-held', 'zz-acct-admin-loud', 'zz-acct-admin-quiet', 'zz-acct-editor'];
 $sweep = static function () use ($wp, $copy, $logins): void {
     foreach ($logins as $login) {
         $id = $wp('user get ' . escapeshellarg($login) . ' --field=ID');
@@ -105,6 +105,14 @@ $check('the answer is the first refusal, in plain words', ($error['code'] ?? '')
 $check('an email another account holds is refused', ($error['code'] ?? '') === 'email_exists', json_encode($error));
 [, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-two', 'email' => 'zz-acct-two@example.com', 'password' => 'zz-other-pass', 'role' => 'zz-no-such-role']);
 $check('a role the site does not have is refused', ($error['code'] ?? '') === 'unknown_role', json_encode($error));
+// Security sweep 2026-11-12 (1.3): a sign-up never takes a role holding more than the default role, whatever an
+// extension passes through from a visitor, by register, registerQuietly or a held hash.
+foreach (['loud' => [], 'quiet' => ['quietly' => true]] as $how => $extra) {
+    [, $error] = $call('POST', '/minn-test/v1/players', ['login' => "zz-acct-admin-{$how}", 'email' => "zz-acct-admin-{$how}@example.com", 'password' => 'zz-admin-pass', 'role' => 'administrator'] + $extra);
+    $check("a sign-up asking for administrator is refused ({$how})", ($error['code'] ?? '') === 'role_not_allowed' && !ctype_digit($wp("user get zz-acct-admin-{$how} --field=ID")), json_encode($error));
+}
+[, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-editor', 'email' => 'zz-acct-editor@example.com', 'password' => 'zz-editor-pass', 'role' => 'editor']);
+$check('a sign-up asking for editor is refused', ($error['code'] ?? '') === 'role_not_allowed', json_encode($error));
 $wp('option update default_role author');
 [$status] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-two', 'email' => 'zz-acct-two@example.com', 'password' => 'zz-other-pass', 'role' => 'subscriber']);
 $check('a role asked for wins over the site\'s default role', $wp('user get zz-acct-two --field=roles') === 'subscriber');
@@ -130,8 +138,11 @@ $fresh = $nonce();
 $check('the cookie and the nonce admin-ajax hands out are the new user to the REST gate', ($who['login'] ?? '') === 'zz-acct-one', json_encode([$fresh, $who]));
 $check('one session is stored for the user', substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1);
 
-// 3. Signing out.
-[$status, , $head] = $call('DELETE', '/minn-test/v1/session');
+// 3. Signing out. A request carrying the cookie alone, as a page on another site can send it, clears cookies but
+// ends no session (security sweep 2026-11-12, finding 1.4); with the nonce the gate accepts, the session ends.
+$crossSite = (string) shell_exec('/usr/bin/curl -sk -o /dev/null -w "%{http_code}" -X DELETE -b ' . escapeshellarg($jar) . ' ' . escapeshellarg("{$ENGINE}/wp-json/minn-test/v1/session"));
+$check('a sign-out carrying the cookie without its nonce ends no session', $crossSite === '200' && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, $crossSite);
+[$status, , $head] = $call('DELETE', '/minn-test/v1/session', null, ["X-WP-Nonce: {$fresh}"]);
 $expired = preg_match('/set-cookie: wordpress_logged_in_[0-9a-f]{32}=[^\n]*expires=([^;\n]+)/i', $head, $gone) === 1 && strtotime($gone[1]) < time();
 $check('signing out expires the sign-in cookie', $status === 200 && $expired, $head);
 $check('and ends the session', !str_contains($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration'));
