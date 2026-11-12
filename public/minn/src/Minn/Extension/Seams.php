@@ -242,7 +242,7 @@ final class Seams
      */
     public function accounts(): Accounts
     {
-        return new Accounts($this->db, $this->request, $this->reader);
+        return new Accounts($this->db, $this->request);
     }
 
     /**

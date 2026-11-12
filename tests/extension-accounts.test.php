@@ -55,7 +55,7 @@ $nonce = static fn (): string => trim((string) shell_exec('/usr/bin/curl -sk -b 
 echo "extension-accounts suite: {$ENGINE}\n";
 $fixture = __DIR__ . '/fixtures/extensions/minn-test-records';
 $copy = "{$site}/public/wp-content/plugins/minn-test-records";
-$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet', 'zz-acct-held', 'zz-acct-admin-loud', 'zz-acct-admin-quiet', 'zz-acct-editor'];
+$logins = ['zz-acct-one', 'zz-acct-two', 'zz-acct-quiet', 'zz-acct-held', 'zz-acct-admin-loud', 'zz-acct-admin-quiet', 'zz-acct-editor', 'zz-acct-player'];
 $sweep = static function () use ($wp, $copy, $logins): void {
     foreach ($logins as $login) {
         $id = $wp('user get ' . escapeshellarg($login) . ' --field=ID');
@@ -113,6 +113,13 @@ foreach (['loud' => [], 'quiet' => ['quietly' => true]] as $how => $extra) {
 }
 [, $error] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-editor', 'email' => 'zz-acct-editor@example.com', 'password' => 'zz-editor-pass', 'role' => 'editor']);
 $check('a sign-up asking for editor is refused', ($error['code'] ?? '') === 'role_not_allowed', json_encode($error));
+// A role of the extension's own, with a capability WordPress does not have, is the extension's business.
+$wp("role create zz_player 'Zz Player'");
+$wp('cap add zz_player read zz_play_game');
+[$status] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-player', 'email' => 'zz-acct-player@example.com', 'password' => 'zz-player-pass', 'role' => 'zz_player', 'quietly' => true]);
+$check('a sign-up may take a role whose extra capabilities are not WordPress\'s own', $status === 201 && $wp('user get zz-acct-player --field=roles') === 'zz_player', (string) $status);
+$wp('user delete zz-acct-player --yes');
+$wp('role delete zz_player');
 $wp('option update default_role author');
 [$status] = $call('POST', '/minn-test/v1/players', ['login' => 'zz-acct-two', 'email' => 'zz-acct-two@example.com', 'password' => 'zz-other-pass', 'role' => 'subscriber']);
 $check('a role asked for wins over the site\'s default role', $wp('user get zz-acct-two --field=roles') === 'subscriber');
@@ -142,6 +149,9 @@ $check('one session is stored for the user', substr_count($wp('user meta get zz-
 // ends no session (security sweep 2026-11-12, finding 1.4); with the nonce the gate accepts, the session ends.
 $crossSite = (string) shell_exec('/usr/bin/curl -sk -o /dev/null -w "%{http_code}" -X DELETE -b ' . escapeshellarg($jar) . ' ' . escapeshellarg("{$ENGINE}/wp-json/minn-test/v1/session"));
 $check('a sign-out carrying the cookie without its nonce ends no session', $crossSite === '200' && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, $crossSite);
+// The same from an extension page that signs out on a plain GET, as a navigation from another site reaches it.
+$navigated = (string) shell_exec('/usr/bin/curl -sk -o /dev/null -w "%{http_code}" -b ' . escapeshellarg($jar) . ' ' . escapeshellarg("{$ENGINE}/minn-test-records/sign-out/"));
+$check('a sign-out page reached without the nonce ends no session', $navigated === '200' && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, $navigated);
 [$status, , $head] = $call('DELETE', '/minn-test/v1/session', null, ["X-WP-Nonce: {$fresh}"]);
 $expired = preg_match('/set-cookie: wordpress_logged_in_[0-9a-f]{32}=[^\n]*expires=([^;\n]+)/i', $head, $gone) === 1 && strtotime($gone[1]) < time();
 $check('signing out expires the sign-in cookie', $status === 200 && $expired, $head);

@@ -10,15 +10,16 @@ use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Cookie;
 use Minn\Auth\LoginThrottle;
+use Minn\Auth\Nonce;
 use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\Sessions;
 use Minn\Auth\SignIn;
-use Minn\Content\Reader;
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Http\Request;
+use Minn\Json;
 use Minn\Http\Response;
 use Minn\Login\LoginHooks;
 use Minn\Objects\Errors;
@@ -54,7 +55,6 @@ final readonly class Accounts
     public function __construct(
         Db $db,
         private Request $request,
-        private ?Reader $reader = null,
     ) {
         $this->users = new Users($db);
         $cookie = new Cookie($db, $this->users, new Sessions($this->users));
@@ -100,15 +100,18 @@ final readonly class Accounts
 
     /**
      * Clears the sign-in cookies on the response, and ends the session they
-     * name only when the REST gate accepted it for this request (a cookie
-     * with its nonce, as the sign-in page's sign-out asks for its own): a
-     * page on another site that sends the cookie alone cannot end a
-     * player's session (security sweep 2026-11-12, finding 1.4).
+     * name only when the request carries that session's REST nonce, as the
+     * sign-in page's sign-out asks for its own: a page on another site that
+     * sends the cookie alone cannot end a player's session (security sweep
+     * 2026-11-12, finding 1.4).
      */
     public function signOut(Response $response): Response
     {
         $session = $this->authenticator->session($this->request->cookies);
-        $accepted = $this->reader !== null && $session instanceof Authenticated && $this->reader->userId === $session->id() && $this->reader->sessionToken === $session->token;
+        // The request carries the session's REST nonce itself (X-WP-Nonce or _wpnonce), wherever it arrives: an
+        // extension page's own route is reached by a plain navigation from another site too, cookie and all.
+        $nonce = (string) ($this->request->header('x-wp-nonce') ?? (is_scalar($this->request->query['_wpnonce'] ?? null) ? $this->request->query['_wpnonce'] : ''));
+        $accepted = $session instanceof Authenticated && $nonce !== '' && Nonce::verify($nonce, $session->id(), $session->token);
         if (!$accepted) {
             return $this->signIn->clear($response);
         }
@@ -219,12 +222,14 @@ final readonly class Accounts
         if ($role !== '' && !isset($roles[$role])) {
             return new Refusal('unknown_role', "The site has no role named {$role}.", ['notices' => []]);
         }
-        // A sign-up takes no more than the site gives a new account: a role holding a capability the default role
-        // lacks (administrator, editor) is refused, so an extension that passes a visitor's choice through cannot
-        // make an administrator (security sweep 2026-11-12, finding 1.3).
+        // A sign-up takes none of WordPress's own capabilities beyond the default role's: a role holding one more
+        // (editor's edit_others_posts, administrator's manage_options) is refused, so an extension that passes a
+        // visitor's choice through cannot make an administrator; a capability of the extension's own (play_game)
+        // is its business (security sweep 2026-11-12, finding 1.3, narrowed by the fix-delta review).
         $default = (string) (Runtime::options()->filtered('default_role') ?: 'subscriber');
-        $granted = static fn (string $name): array => array_keys(array_filter((array) ($roles[$name]['capabilities'] ?? [])));
-        if ($role !== '' && array_diff($granted($role), $granted($default)) !== []) {
+        $granted = static fn (array $role): array => array_keys(array_filter((array) ($role['capabilities'] ?? [])));
+        $core = $granted(((array) Json::file(MINN_ENGINE_DIR . '/data/roles.json'))['administrator'] ?? []);
+        if ($role !== '' && array_intersect(array_diff($granted($roles[$role]), $granted($roles[$default] ?? [])), $core) !== []) {
             return new Refusal('role_not_allowed', "A new account cannot take the {$role} role: it holds more than the site's default role ({$default}).", ['notices' => []]);
         }
         return null;
