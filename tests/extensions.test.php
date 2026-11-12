@@ -71,6 +71,9 @@ check(str_contains($page, '<!-- seam:footer reader-0 -->'), 'the footer seam con
 check(preg_match('/<body class="[^"]*\bseam-body\b/', $page) === 1, 'the body class seam');
 $feed = fetch("$ENGINE/feed/");
 check(str_contains($feed, 'data-name="n"') && str_contains($feed, 'seam:content'), 'shortcodes and content filters run for feeds too');
+// REST draws what the page draws: shortcodes, the content filter and the block gate (security sweep 2026-11-12).
+$rest = fetch("$ENGINE/wp-json/wp/v2/posts?slug=" . rawurlencode($slug));
+check(str_contains($rest, 'data-name=\\"n\\"') && str_contains($rest, 'seam:content') && !str_contains($rest, 'gated away') && !str_contains($rest, '[seam_probe name'), 'shortcodes, content filters and block gates run for REST too', substr($rest, 0, 400));
 $routed = fetch("$ENGINE/seam-probe/hello-there/");
 check(str_contains($routed, '<p class="seam-route" data-name="hello-there">reader-0</p>'), 'the route seam answers its path, with the capture and the reader', $routed);
 check(!str_contains($routed, 'minn-cornerbar'), 'a signed-out reader gets an extension page without the Minn bar');

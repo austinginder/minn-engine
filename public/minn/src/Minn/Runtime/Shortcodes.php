@@ -251,7 +251,9 @@ final class Shortcodes
      */
     public function strip(string $content): string
     {
-        $wanted = (array) Runtime::hooks()->filter('strip_shortcodes_tagnames', [array_keys($this->tags), $content]);
+        // An extension's shortcodes are taken out too, so an excerpt never shows their text raw (security sweep 2026-11-12).
+        $names = array_values(array_unique([...array_keys($this->tags), ...(\Minn\Extension\Extensions::runner()?->shortcodeNames() ?? [])]));
+        $wanted = (array) Runtime::hooks()->filter('strip_shortcodes_tagnames', [$names, $content]);
         $names = $this->present($content, $wanted);
         if ($names === []) {
             return $content;

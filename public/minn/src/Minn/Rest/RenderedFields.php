@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Closure;
 use Minn\Content\PostRecord;
+use Minn\Extension\Extensions;
 use Minn\Objects\Post;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\PostData;
@@ -31,8 +32,17 @@ final class RenderedFields
     /** The rendered content. */
     public static function content(PostRecord $p): string
     {
-        // Through the_content as written, as the reference hands it.
-        return (string) self::withPost($p, static fn () => str_contains($p->content, '<!-- wp:') ? Runtime::blockContentFilter($p->content) : Runtime::classicContentFilter($p->content));
+        // Through the_content as written, as the reference hands it, and through the extensions' shortcodes and
+        // content filters as the page passes it, so REST shows no more than the page (security sweep 2026-11-12).
+        $seams = Extensions::runner();
+        $seamed = $seams === null ? null : static fn (string $html): string => $seams->filterContent($html, $p);
+        return (string) self::withPost($p, static function () use ($p, $seamed): string {
+            if (str_contains($p->content, '<!-- wp:')) {
+                return Runtime::blockContentFilter($p->content, $seamed);
+            }
+            $content = Runtime::classicContentFilter($p->content);
+            return $seamed === null ? $content : $seamed($content);
+        });
     }
 
     /** The rendered excerpt. */

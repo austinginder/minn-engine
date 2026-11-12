@@ -46165,6 +46165,8 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Engine",
+                "Minn\\Rest\\RenderedFields",
+                "Minn\\Runtime\\Shortcodes",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -47127,7 +47129,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/SeamRunner.php",
-            "lines": 106,
+            "lines": 116,
             "doc": "The engine's side of the seams: what the loader collected, called at the\nright moment and in registration order. An extension never sees this\nclass; it sees Seams, which is only the registrations.",
             "implements": [],
             "extends": null,
@@ -47239,6 +47241,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "shortcodeNames",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "shortcodeNames(): array",
+                    "doc": "The extensions' shortcode names, which strip_shortcodes takes out too.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 47,
+                    "end": 50
+                },
+                {
+                    "routes": [],
                     "name": "filterContent",
                     "static": false,
                     "visibility": "public",
@@ -47261,8 +47277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 55
+                    "line": 57,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -47281,8 +47297,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 62
+                    "line": 68,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -47293,8 +47309,8 @@
                     "doc": "What the extensions add to the head.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -47305,8 +47321,8 @@
                     "doc": "What the extensions add to the footer.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 74
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -47319,8 +47335,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 81,
-                    "end": 84
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -47339,8 +47355,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 93
+                    "line": 97,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -47373,8 +47389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 106,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -47387,8 +47403,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 107,
-                    "end": 110
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -47401,8 +47417,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 127,
+                    "end": 130
                 }
             ]
         },
@@ -122495,12 +122511,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RenderedFields.php",
-            "lines": 68,
+            "lines": 77,
             "doc": "A post's rendered title, content and excerpt as a REST response carries\nthem. Without plugins they are Minn's own render. With plugins loaded\nthey pass the filters the reference's controller runs, with the post set\nup as it sets it up: the_title over the stored title, the engine's\nrender of the content then the rest of the_content (shortcodes and every\nplugin's callback), and get_the_excerpt then the_excerpt.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
+                "Minn\\Extension\\Extensions",
                 "Minn\\Objects\\Post",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostData",
@@ -122534,8 +122551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 29
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
@@ -122554,8 +122571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 36
+                    "line": 33,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -122574,8 +122591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -122594,8 +122611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 54
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -122624,8 +122641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 89
+                    "line": 93,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -122651,8 +122668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 73
+                    "line": 66,
+                    "end": 83
                 }
             ]
         },
@@ -175304,11 +175321,12 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Shortcodes.php",
-            "lines": 333,
+            "lines": 335,
             "doc": "The shortcode registry plugin code fills with add_shortcode, and the\nexpansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]\n(the first closing tag wins; content is not expanded again), [[tag]] as\nthe literal, unregistered tags left as written.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Extension\\Extensions",
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\KsesRules",
@@ -175704,7 +175722,7 @@
                         }
                     ],
                     "line": 252,
-                    "end": 261
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -175725,8 +175743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 267
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -175747,8 +175765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 297
+                    "line": 280,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -175777,8 +175795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 318
+                    "line": 313,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -175806,8 +175824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 346
+                    "line": 327,
+                    "end": 348
                 }
             ]
         },

@@ -10,7 +10,7 @@ the extension contract and its seams
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
 | [`Manifest`](#manifest) | final readonly class | 101 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 45 | Everything the extensions registered for this request, handed from Seams to the runner once. |
-| [`SeamRunner`](#seamrunner) | final readonly class | 106 | The engine's side of the seams: what the loader collected, called at the |
+| [`SeamRunner`](#seamrunner) | final readonly class | 116 | The engine's side of the seams: what the loader collected, called at the |
 | [`Seams`](#seams) | final class | 294 | Where an extension can take part in a request: thirteen typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 | [`SignedIn`](#signedin) | final readonly class | 8 | A sign-in that worked (Accounts::signIn): who, and the response carrying the session's cookies. |
@@ -182,7 +182,7 @@ and a request cannot inherit the extensions of the one before it.
 Before the front or a REST request has loaded any (the command line
 never does) there are none.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\RenderedFields`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 ### static `set(Minn\Extension\Seams $seams): void`
 
@@ -404,6 +404,12 @@ Whether every block gate lets a block render.
 ### `filterBlock(Minn\Blocks\Block $block, string $html): string`
 
 A block's HTML through every block filter.
+
+### `shortcodeNames(): array`
+
+The extensions' shortcode names, which strip_shortcodes takes out too.
+
+- `@return list<string>`
 
 ### `filterContent(string $html, Minn\Content\PostRecord $post): string`
 

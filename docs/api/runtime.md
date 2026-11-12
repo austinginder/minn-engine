@@ -140,7 +140,7 @@ the WordPress runtime plugins load against
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 490 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
-| [`Shortcodes`](#shortcodes) | final class | 333 | The shortcode registry plugin code fills with add_shortcode, and the |
+| [`Shortcodes`](#shortcodes) | final class | 335 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SiteInfo`](#siteinfo) | final class | 63 | What WordPress tells about the site (get_bloginfo): its name and tagline, |
 | [`SiteOptions`](#siteoptions) | final class | 76 | The network's options, as a single site keeps them: options stored not |
 | [`SiteTime`](#sitetime) | final class | 90 | Time as the site keeps it: its timezone (the named one, else the UTC |
@@ -8227,7 +8227,7 @@ whole tags becomes "".
 
 - `@return array<int|string, string>`
 
-Internals: `present()` (private, line 311), `attributesRun()` (private, line 325)
+Internals: `present()` (private, line 313), `attributesRun()` (private, line 327)
 
 
 ## SiteInfo

@@ -68,7 +68,7 @@ the wp/v2 surface: shapes and controllers
 | [`RegisteredFields`](#registeredfields) | final class | 135 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
-| [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
+| [`RenderedFields`](#renderedfields) | final class | 77 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 63 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 296 | An object's meta field over REST, from the keys registered to show |
@@ -2960,7 +2960,7 @@ stock and type): the filter's answer without repeats, in order.
 - `@param list<string> $classes`
 - `@return list<string>`
 
-Internals: `withPost()` (private, line 56)
+Internals: `withPost()` (private, line 66)
 
 
 ## Reply

@@ -40,6 +40,16 @@ final readonly class SeamRunner
     }
 
     /**
+     * The extensions' shortcode names, which strip_shortcodes takes out too.
+     *
+     * @return list<string>
+     */
+    public function shortcodeNames(): array
+    {
+        return array_map('strval', array_keys($this->registered->shortcodes));
+    }
+
+    /**
      * Shortcodes, then the content filters, over rendered post content. An
      * extension's filter is promised the post as a row (contracts/extensions.md),
      * so a record is handed over as one.
