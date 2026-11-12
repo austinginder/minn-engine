@@ -1,6 +1,8 @@
 # Changelog
 
-## **v0.2.0** - Unreleased
+## **v0.2.0** - 2026-11-12
+
+Minn now reports WordPress 7.1.4 and carries the fixes from that security release that apply to it. Extensions, the folders with a `minn.json` that run on Minn alone, can answer pages and REST routes, bring their own blocks, tables, content types and theme, and run a sign-in of their own. `MINN_WP_API` lets a site keep plugins off its public pages, or off entirely. Sites behind nginx, a page cache, or a host that disables PHP functions work where 0.1.0 failed. A security review of this release closed every finding before it shipped; see Security.
 
 ### Added
 

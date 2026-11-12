@@ -8,7 +8,7 @@ It is not a fork. No WordPress code appears in this repository, which is what ma
 
 ## Status
 
-0.1.0, the first release, and a pre-alpha: not ready for production sites yet. Five of the fifteen measures 1.0 waits on are still open; [minn.run](https://minn.run/#where-minn-stands) lists them, and `docs/audit-2026-10-22.md` has the figures. Minn swaps into an existing WordPress site's webroot in one command and back out in one, beside the site's untouched `wp-config.php` and database and its own `wp-content/`. Visitors read the site through its theme, [Minn Admin](https://github.com/austinginder/minn-admin) is the admin, plugins written for WordPress load against Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working. What it does is listed in `changelog.md`.
+0.2.0, a pre-alpha: not ready for production sites yet. Some of the measures 1.0 waits on are still open; [minn.run](https://minn.run/#where-minn-stands) lists them, and `docs/audit-2026-10-22.md` has the figures. Minn swaps into an existing WordPress site's webroot in one command and back out in one, beside the site's untouched `wp-config.php` and database and its own `wp-content/`. Visitors read the site through its theme, [Minn Admin](https://github.com/austinginder/minn-admin) is the admin, plugins written for WordPress load against Minn's own implementation of the functions and hooks they call, and backup, migration and WP-CLI tooling keep working. What it does is listed in `changelog.md`.
 
 Measured against WordPress 7.1.3 on the same database:
 
