@@ -337,7 +337,8 @@ final readonly class Engine
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, $context->themesDir());
         // MINN_WP_API: under 'auto' and 'off' a public page an extension route answers needs no runtime at all.
-        $mode = WpApiMode::configured();
+        // While Minn Admin's maintenance mode is on, every request boots in full so its holds answer (none is spared).
+        $mode = self::maintenance() ? WpApiMode::On : WpApiMode::configured();
         $parts = null;
         if ($mode->sparesRuntime($request)) {
             $parts = FrontParts::build($db, $site, $request, $reader, $capabilities, $users, $app, $session, $permalinks, ABSPATH . 'wp-content');
@@ -425,11 +426,18 @@ final readonly class Engine
             new CommentPostController(),
             new EntryScriptsController($resolver, $bridge),
             // An extension's own pages: after every engine route (FRONT_ROUTES), before the themed front's catch-all.
-            ...$seams->registrations()->routes,
+            // Under maintenance only someone Minn Admin lets in reaches them; anyone else meets the themed front's hold.
+            ...(self::maintenance() && !$capabilities->can($runtime->reader->userId, 'edit_posts') ? [] : $seams->registrations()->routes),
             $front,
         ]);
         $response = (new Kernel($router))->handle($request);
         return $response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404);
+    }
+
+    /** Whether Minn Admin's maintenance mode is on (its holds decide who it keeps out). */
+    private static function maintenance(): bool
+    {
+        return !in_array((string) Runtime::options()->raw('minn_admin_maintenance'), ['', '0'], true);
     }
 
     /** The engine's routes a public page meets ahead of the extensions' own, in the front pipeline's order. */

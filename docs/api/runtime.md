@@ -101,7 +101,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 140 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 290 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 288 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostCaches`](#postcaches) | final class | 27 | A post's cached rows let go as WordPress lets them go: its row, its meta |
 | [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
@@ -5479,10 +5479,10 @@ site keeps rendering. The lifecycle actions fire between the phases.
 
 - const `MINN_ADMIN` = `'minn-admin/minn-admin.php'` — Minn Admin loads as code for its adapters (surfaces, licenses,
 connectors, custom CSS, the plugin routes the engine has no
-controller for), but the engine owns the shell, the front bar, the
-sign-in flow, and maintenance: those hooks come off right after the
-include so the two never print twice or disagree.
-- const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_maintenance_mode',     ),     2 => 1,   ),   2 =>    array (     0 => 'rest_authentication_errors',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maintenance_rest',     ),     2 => 20,   ),   3 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   4 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   5 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   6 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   7 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   8 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
+controller for, and maintenance mode's holds), but the engine owns the
+shell, the front bar and the sign-in flow: those hooks come off right
+after the include so the two never print twice or disagree.
+- const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   3 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   4 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   5 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   6 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
 
 Used by: `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Runtime\Constants`, `Minn\Runtime\PluginActivation`, `Minn\Theme\ClassicRenderer`
 
@@ -5530,7 +5530,7 @@ gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 71), `loadThemeFunctions()` (private, line 173), `rememberThemeDomain()` (private, line 196), `includeFile()` (private, line 259), `registerRealpath()` (private, line 290), `isolatedInclude()` (private, line 303)
+Internals: `boot()` (private, line 69), `loadThemeFunctions()` (private, line 171), `rememberThemeDomain()` (private, line 194), `includeFile()` (private, line 257), `registerRealpath()` (private, line 288), `isolatedInclude()` (private, line 301)
 
 
 ## PostCaches

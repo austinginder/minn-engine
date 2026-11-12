@@ -44606,7 +44606,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 407,
+            "lines": 415,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -44967,7 +44967,7 @@
                         }
                     ],
                     "line": 292,
-                    "end": 371
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -45077,8 +45077,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 433
+                    "line": 375,
+                    "end": 435
+                },
+                {
+                    "routes": [],
+                    "name": "maintenance",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "maintenance(): bool",
+                    "doc": "Whether Minn Admin's maintenance mode is on (its holds decide who it keeps out).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 438,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -45111,8 +45123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 444,
-                    "end": 453
+                    "line": 452,
+                    "end": 461
                 },
                 {
                     "routes": [],
@@ -45145,8 +45157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 473
+                    "line": 467,
+                    "end": 481
                 }
             ]
         },
@@ -46037,7 +46049,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Extensions.php",
-            "lines": 70,
+            "lines": 71,
             "doc": "Where the engine looks for the seams an extension registered. The\nrequest's runtime holds them, so nothing here keeps state of its own\nand a request cannot inherit the extensions of the one before it.\nBefore the front or a REST request has loaded any (the command line\nnever does) there are none.",
             "implements": [],
             "extends": null,
@@ -46086,7 +46098,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "setBlocks(Minn\\Extension\\Seams $seams): void",
-                    "doc": "Installs only the extensions' blocks, for a REST request: its answers\n(content.rendered, the editor's previews) draw them, while the filters\nand the rest stay with the themed front.",
+                    "doc": "Installs the extensions' blocks and content rules, for a REST request:\nits answers (content.rendered, the editor's previews) draw the blocks\nand hide what the page hides, while the page's own parts stay with\nthe themed front.",
                     "shapes": [],
                     "params": [
                         {
@@ -46097,8 +46109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -46109,8 +46121,8 @@
                     "doc": "The engine side of the seams, if any.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 85
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -46129,8 +46141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 56
+                    "line": 43,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -46152,8 +46164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 79
+                    "line": 67,
+                    "end": 80
                 }
             ]
         },
@@ -46749,7 +46761,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Registrations.php",
-            "lines": 39,
+            "lines": 45,
             "doc": "Everything the extensions registered for this request, handed from Seams to the runner once.",
             "implements": [],
             "extends": null,
@@ -47000,11 +47012,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "onlyBlocks(): self",
-                    "doc": "Only the blocks and what previews them, for a request that draws content but is no themed page (REST).",
+                    "doc": "What a request that draws content but is no themed page (REST) keeps:\nthe blocks and what previews them, and everything that decides what\ncontent shows (block gates and filters, shortcodes, content filters),\nso content.rendered hides what the page hides. The page's own parts\n(head, footer, classes, routes) stay with the themed front.",
                     "shapes": [],
                     "params": [],
-                    "line": 44,
-                    "end": 47
+                    "line": 50,
+                    "end": 53
                 }
             ]
         },
@@ -161013,7 +161025,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 290,
+            "lines": 288,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -161049,12 +161061,12 @@
                 {
                     "name": "MINN_ADMIN",
                     "value": "'minn-admin/minn-admin.php'",
-                    "doc": "Minn Admin loads as code for its adapters (surfaces, licenses,\nconnectors, custom CSS, the plugin routes the engine has no\ncontroller for), but the engine owns the shell, the front bar, the\nsign-in flow, and maintenance: those hooks come off right after the\ninclude so the two never print twice or disagree.",
+                    "doc": "Minn Admin loads as code for its adapters (surfaces, licenses,\nconnectors, custom CSS, the plugin routes the engine has no\ncontroller for, and maintenance mode's holds), but the engine owns the\nshell, the front bar and the sign-in flow: those hooks come off right\nafter the include so the two never print twice or disagree.",
                     "visibility": "private"
                 },
                 {
                     "name": "MINN_ADMIN_HOOKS",
-                    "value": "array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_maintenance_mode',     ),     2 => 1,   ),   2 =>    array (     0 => 'rest_authentication_errors',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maintenance_rest',     ),     2 => 20,   ),   3 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   4 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   5 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   6 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   7 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   8 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )",
+                    "value": "array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   3 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   4 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   5 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   6 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -161104,8 +161116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 69
+                    "line": 54,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -161124,8 +161136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 164
+                    "line": 152,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -161138,8 +161150,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 210,
-                    "end": 213
+                    "line": 208,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -161152,8 +161164,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 220,
-                    "end": 223
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -161179,8 +161191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 251
+                    "line": 231,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -161199,8 +161211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 257
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -161226,8 +161238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 145
+                    "line": 69,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -161246,8 +161258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 189
+                    "line": 171,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -161273,8 +161285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 203
+                    "line": 194,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -161307,8 +161319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 282
+                    "line": 257,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -161341,8 +161353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 300
+                    "line": 288,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -161361,8 +161373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 308
+                    "line": 301,
+                    "end": 306
                 }
             ]
         },

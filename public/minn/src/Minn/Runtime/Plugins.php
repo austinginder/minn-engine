@@ -22,15 +22,13 @@ final class Plugins
     /**
      * Minn Admin loads as code for its adapters (surfaces, licenses,
      * connectors, custom CSS, the plugin routes the engine has no
-     * controller for), but the engine owns the shell, the front bar, the
-     * sign-in flow, and maintenance: those hooks come off right after the
-     * include so the two never print twice or disagree.
+     * controller for, and maintenance mode's holds), but the engine owns the
+     * shell, the front bar and the sign-in flow: those hooks come off right
+     * after the include so the two never print twice or disagree.
      */
     private const MINN_ADMIN = 'minn-admin/minn-admin.php';
     private const MINN_ADMIN_HOOKS = [
         ['template_redirect', ['Minn_Admin', 'maybe_render_app'], 0],
-        ['template_redirect', ['Minn_Admin', 'maybe_maintenance_mode'], 1],
-        ['rest_authentication_errors', ['Minn_Admin', 'maintenance_rest'], 20],
         ['login_redirect', ['Minn_Admin', 'login_redirect'], 20],
         ['show_admin_bar', ['Minn_Admin', 'enforce_toolbar_policy'], 99],
         ['show_admin_bar', ['Minn_Admin_Bar', 'suppress_core_bar'], 100],

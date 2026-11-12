@@ -6,10 +6,10 @@ the extension contract and its seams
 |---|---|---|---|
 | [`Accounts`](#accounts) | final readonly class | 354 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
-| [`Extensions`](#extensions) | final class | 70 | Where the engine looks for the seams an extension registered. The |
+| [`Extensions`](#extensions) | final class | 71 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
 | [`Manifest`](#manifest) | final readonly class | 101 | minn.json, read as data. A folder under wp-content/plugins (or |
-| [`Registrations`](#registrations) | final readonly class | 39 | Everything the extensions registered for this request, handed from Seams to the runner once. |
+| [`Registrations`](#registrations) | final readonly class | 45 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 106 | The engine's side of the seams: what the loader collected, called at the |
 | [`Seams`](#seams) | final class | 294 | Where an extension can take part in a request: thirteen typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
@@ -185,15 +185,16 @@ Installs the seams for this request.
 
 ### static `setBlocks(Minn\Extension\Seams $seams): void`
 
-Installs only the extensions' blocks, for a REST request: its answers
-(content.rendered, the editor's previews) draw them, while the filters
-and the rest stay with the themed front.
+Installs the extensions' blocks and content rules, for a REST request:
+its answers (content.rendered, the editor's previews) draw the blocks
+and hide what the page hides, while the page's own parts stay with
+the themed front.
 
 ### static `runner(): ?Minn\Extension\SeamRunner`
 
 The engine side of the seams, if any.
 
-Internals: `install()` (private, line 42), `typeArgs()` (private, line 66)
+Internals: `install()` (private, line 43), `typeArgs()` (private, line 67)
 
 
 ## Loader
@@ -369,7 +370,11 @@ __construct(array $blockGates, array $blockFilters, array $shortcodes, array $co
 
 ### `onlyBlocks(): self`
 
-Only the blocks and what previews them, for a request that draws content but is no themed page (REST).
+What a request that draws content but is no themed page (REST) keeps:
+the blocks and what previews them, and everything that decides what
+content shows (block gates and filters, shortcodes, content filters),
+so content.rendered hides what the page hides. The page's own parts
+(head, footer, classes, routes) stay with the themed front.
 
 
 ## SeamRunner

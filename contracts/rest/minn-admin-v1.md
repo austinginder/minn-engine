@@ -509,10 +509,12 @@ Minn Admin's app still hides the catalog on `B.engine`; lifting that gate is an 
 
 The plugin folder passes the runtime's symbol gate with nothing missing, so the runtime
 loads `minn-admin/minn-admin.php` like any other plugin. The engine keeps the shell, the
-front bar, the sign-in flow, and maintenance: right after the include the runtime removes
-`Minn_Admin::maybe_render_app`, `maybe_maintenance_mode`, `maintenance_rest`,
-`login_redirect`, `enforce_toolbar_policy` and the four `Minn_Admin_Bar` hooks
-(`Runtime\Plugins::MINN_ADMIN_HOOKS`). The engine's own `minn-admin/v1` and `wp/v2`
+front bar and the sign-in flow: right after the include the runtime removes
+`Minn_Admin::maybe_render_app`, `login_redirect`, `enforce_toolbar_policy` and the four
+`Minn_Admin_Bar` hooks (`Runtime\Plugins::MINN_ADMIN_HOOKS`). Maintenance mode is the
+plugin's own: its page, REST and entry-script holds stay, and while `minn_admin_maintenance`
+is on every request boots in full whatever `MINN_WP_API` says, and an extension's page
+routes answer only someone with `edit_posts` (security sweep 2026-11-12). The engine's own `minn-admin/v1` and `wp/v2`
 controllers answer first; every route the plugin registers that the engine has no
 controller for (`surfaces`, `stream/*`, `licenses`, `connectors`, `custom-css`, `db/*`,
 the adapter routes) answers through the runtime fallback. The boot payload gains the

@@ -169,5 +169,18 @@ for ($i = 0; $i < 10 && $ran === ''; $i++) {
 }
 $check('auto: wp-cron.php runs it, with the plugin loaded', $ran !== '' && $wp("eval 'echo wp_next_scheduled(\"zz_wp_api_event\") ? \"yes\" : \"no\";'") === 'no');
 
+// 6. Minn Admin's maintenance mode holds every mode: a visitor meets the 503 on a themed page, an extension page and
+// REST, where the reference holds all three; a signed-in editor still reaches the extension page (security sweep
+// 2026-11-12: the spared lane and extension routes answered, and the engine took Minn Admin's REST hold off).
+$wp('option update minn_admin_maintenance 1');
+register_shutdown_function(static fn () => $wp('option delete minn_admin_maintenance'));
+foreach ($modes as $mode) {
+    $held = [$get($mode, '/')['status'], $get($mode, '/seam-probe/hello-there/')['status'], $get($mode, '/wp-json/wp/v2/posts?per_page=1')['status']];
+    $check("{$mode}: under maintenance a visitor meets the hold on a themed page, an extension page and REST", $held === [503, 503, 503], json_encode($held));
+    $editor = $get($mode, '/seam-probe/hello-there/', $cookie);
+    $check("{$mode}: under maintenance a signed-in editor still reaches the extension page", $editor['status'] === 200 && str_contains($editor['body'], 'reader-1'), (string) $editor['status']);
+}
+$wp('option delete minn_admin_maintenance');
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);
