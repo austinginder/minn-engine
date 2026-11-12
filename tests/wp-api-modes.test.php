@@ -103,7 +103,9 @@ if ($themed['on']['status'] !== 200) {
     echo "SKIP: the test site did not answer under php -S ({$themed['on']['status']})\n";
     exit(0);
 }
-$check('no MINN_WP_API is on: the site\'s code runs on a public page', $marked($themed['']) && $themed[''] == $themed['on']);
+// The server's Date header ticks over between two requests now and then; everything else must match.
+$undated = static fn (array $r): array => ['headers' => array_diff_key($r['headers'], ['date' => true])] + $r;
+$check('no MINN_WP_API is on: the site\'s code runs on a public page', $marked($themed['']) && $undated($themed['']) == $undated($themed['on']));
 $check('on: the must-use plugin runs on a themed page', $marked($themed['on']));
 $check('auto: the must-use plugin does not run on a themed page', !$marked($themed['auto']));
 $check('off: the must-use plugin does not run on a themed page', !$marked($themed['off']));
