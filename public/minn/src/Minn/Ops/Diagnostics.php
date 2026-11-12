@@ -124,7 +124,9 @@ final readonly class Diagnostics
 
     /**
      * The MINN_WP_API row: which mode the site runs in, and what it keeps out.
-     * Off with plugins still active warns: they are switched on and never run.
+     * Auto and off with plugins active warn: on public pages a membership,
+     * private-site, firewall or maintenance plugin no longer decides who reads
+     * what (security sweep 2026-11-12, finding 2.9), and under off they never run.
      *
      * @return array{string, string} status, text
      */
@@ -136,7 +138,7 @@ final readonly class Diagnostics
         $plugins = $count === 1 ? '1 plugin' : "{$count} plugins";
         return match (WpApiMode::configured()) {
             WpApiMode::On => ['pass', 'on: every request boots the site\'s plugins, as WordPress does'],
-            WpApiMode::Auto => ['pass', $count === 0 ? 'auto: public pages skip the plugin boot' : "auto: {$plugins} run behind the pages, not on public pages; their scheduled events run on wp-cron.php"],
+            WpApiMode::Auto => $count === 0 ? ['pass', 'auto: public pages skip the plugin boot'] : ['warn', "auto: {$plugins} run behind the pages, not on public pages, so none of them (a membership, private-site or firewall plugin among them) decides who reads a public page; their scheduled events run on wp-cron.php"],
             WpApiMode::Off => $count === 0 ? ['pass', 'off: no plugins run'] : ['warn', "off: {$plugins} active but never run"],
         };
     }

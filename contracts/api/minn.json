@@ -97148,7 +97148,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Diagnostics.php",
-            "lines": 429,
+            "lines": 431,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
@@ -97331,8 +97331,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 193,
-                    "end": 226
+                    "line": 195,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -97343,8 +97343,8 @@
                     "doc": "The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 229,
-                    "end": 246
+                    "line": 231,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -97355,8 +97355,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 296,
-                    "end": 315
+                    "line": 298,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -97438,13 +97438,13 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "wpApi(): array",
-                    "doc": "The MINN_WP_API row: which mode the site runs in, and what it keeps out.\nOff with plugins still active warns: they are switched on and never run.",
+                    "doc": "The MINN_WP_API row: which mode the site runs in, and what it keeps out.\nAuto and off with plugins active warn: on public pages a membership,\nprivate-site, firewall or maintenance plugin no longer decides who reads\nwhat (security sweep 2026-11-12, finding 2.9), and under off they never run.",
                     "shapes": [
                         "@return array{string, string} status, text"
                     ],
                     "params": [],
-                    "line": 131,
-                    "end": 142
+                    "line": 133,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -97457,8 +97457,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 145,
-                    "end": 165
+                    "line": 147,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -97479,8 +97479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 184
+                    "line": 170,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -97491,8 +97491,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 190
+                    "line": 188,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -97505,8 +97505,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 254,
-                    "end": 274
+                    "line": 256,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -97525,8 +97525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 293
+                    "line": 279,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -97537,8 +97537,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 317,
-                    "end": 329
+                    "line": 319,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -97551,8 +97551,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 332,
-                    "end": 347
+                    "line": 334,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -97565,8 +97565,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 350,
-                    "end": 355
+                    "line": 352,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -97579,8 +97579,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 358,
-                    "end": 394
+                    "line": 360,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -97620,8 +97620,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 399
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -97642,8 +97642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 409
+                    "line": 404,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -97662,8 +97662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 424
+                    "line": 413,
+                    "end": 426
                 },
                 {
                     "routes": [],
@@ -97682,8 +97682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 432
+                    "line": 428,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -97702,8 +97702,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 434,
-                    "end": 447
+                    "line": 436,
+                    "end": 449
                 }
             ]
         },

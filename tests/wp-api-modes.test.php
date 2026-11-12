@@ -169,6 +169,29 @@ for ($i = 0; $i < 10 && $ran === ''; $i++) {
 }
 $check('auto: wp-cron.php runs it, with the plugin loaded', $ran !== '' && $wp("eval 'echo wp_next_scheduled(\"zz_wp_api_event\") ? \"yes\" : \"no\";'") === 'no');
 
+// 5b. Minn Admin's System view: under auto with plugins active the runtime row warns, since none of them decides who
+// reads a public page (security sweep 2026-11-12, finding 2.9); under on it passes.
+$statusOf = static function (mixed $node) use (&$statusOf): ?string {
+    if (!is_array($node)) {
+        return null;
+    }
+    if (($node['key'] ?? null) === 'wp_api' && isset($node['status'])) {
+        return (string) $node['status'];
+    }
+    foreach ($node as $child) {
+        $found = $statusOf($child);
+        if ($found !== null) {
+            return $found;
+        }
+    }
+    return null;
+};
+$rows = [];
+foreach (['on', 'auto'] as $mode) {
+    $rows[$mode] = $statusOf(json_decode($get($mode, '/wp-json/minn-admin/v1/system', array_merge($cookie, ['X-WP-Nonce: ' . ($mint['nonce'] ?? '')]))['body'], true));
+}
+$check('the System view warns under auto while plugins are active, and passes under on', $rows === ['on' => 'pass', 'auto' => 'warn'], json_encode($rows));
+
 // 6. Minn Admin's maintenance mode holds every mode: a visitor meets the 503 on a themed page, an extension page and
 // REST, where the reference holds all three; a signed-in editor still reaches the extension page (security sweep
 // 2026-11-12: the spared lane and extension routes answered, and the engine took Minn Admin's REST hold off).
