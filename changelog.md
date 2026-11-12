@@ -58,6 +58,8 @@
 
 * **`minn install --help` prints help** where it installed.
 
+* **Odd requests no longer answer with an error page**: a page number at PHP's smallest integer, `wp-includes/pluggable.php` asked for on its own (it now answers an empty page, as WordPress's does), and a pattern directory answer of the wrong shape.
+
 * **The post's author may edit an ordinary comment on their own post over REST**, as WordPress lets them.
 
 * **The Post Navigation Link block's chevrons are » and «**, its label wraps the title as WordPress's does, and it renders on a single post reached any way.
@@ -82,6 +84,24 @@
 
 ### Security
 
+* **The default install no longer parks WordPress where the web can reach it.** Install moves WordPress's own files to `wp-parked` beside the webroot. Where that folder sits inside another served one (an addon domain in `public_html`), the parked copy answered at `/wp-parked/`, its setup page included. Install now refuses that default and asks for `--park=<dir>` outside every webroot, and a park refuses web requests on Apache.
+
+* **Minn's interactivity script never binds a `javascript:` or `data:` address**, as WordPress's does not, so an author's block context cannot turn a link into script. It binds no frame `srcdoc` or button form target either, and a style binding sets no `url()`.
+
+* **Maintenance mode holds every request again.** With Minn Admin's maintenance on, REST answered in every mode, and extension pages and (under `MINN_WP_API` auto or off) public pages answered too. They now get the holding page, while editors still get in.
+
+* **REST hides what a page hides.** A block an extension hides, such as one Block Visibility keeps from signed-out readers, came back in `content.rendered` over REST.
+
+* **A post's author can no longer give a comment on it to another user.** Over REST, an author could reassign a comment on their post to any user and read that user's email in the reply; WordPress allows it, and Minn now leaves it to moderators.
+
+* **Extension sign-ins are stricter**: a sign-up never takes a role above the site's default role, and signing out ends a session only for a request with its REST nonce, so another site cannot sign a player out.
+
+* **A failure in the database or a cache drop-in never pauses a plugin.** A full disk, a deadlock or a cache server going down was blamed on whichever plugin wrote first, which could switch off a firewall or two-factor plugin. Recovery's records no longer grow with every failure or load on every request.
+
+* **`minn login` builds its link on the site's `WP_HOME`**, so a moved site's old domain never receives a live sign-in token.
+
+* **Smaller fixes**: a page cache's early file reads the request path the engine routes; the upgrade folder is guarded from its first package, and a failed install's files are removed; editorial notes stay out of Minn Admin's notifications; with canonical redirects off, page links never point at another host; an extension's tables never take a core table's name; the Minn bar follows the user plugins settle on; and `wp_kses_one_attr` refuses the bindings the rest of kses refuses.
+
 * **Interactivity bindings cannot add event handlers or change what an object loads** (WordPress 7.1.4). A `data-wp-bind--onclick` printed a handler from state, and a binding on an `<object>`'s `data` or `type` changed the file it loads; both are now ignored and reported as WordPress reports them, and an address that is not safe for a link leaves the link's own address in place.
 
 * **Minn's interactivity script ignores `__proto__` in state and context**, reads server state only from its own script element, and never sets an `on…` attribute in the browser (WordPress 7.1.4).
@@ -98,7 +118,7 @@
 
 * **A visitor can no longer switch a plugin off.** Minn pauses a plugin that fails while the site starts, so one bad plugin cannot take the site down. A request built to make a plugin fail (an odd path, header or value) could pause it, a security plugin included. Such a request now only notes the failure, and Minn pauses the plugin when its own request to the site fails the same way.
 
-* **Five wrong guesses burn a one-time sign-in link.** A link minted by the CaptainCore helper carries only seven characters, and Minn accepts those links too. Minn now forgets a user's link after five wrong tries, from any mix of addresses, as the helper does on WordPress.
+* **Wrong guesses burn a one-time sign-in link.** A link minted by the CaptainCore helper carries only seven characters, and Minn accepts those links too. Minn now forgets such a link at its first wrong guess, from any address (guesses sent at once could each slip past a count), and Minn's own longer links after five; a stored hash of a token no longer opens one.
 
 * **Database quoting follows the connection's character set.** On a site whose `DB_CHARSET` is a multibyte one (gbk, big5, sjis), a crafted search could close a quoted value; Minn now quotes on the connection the query runs on, a database drop-in's own included.
 
