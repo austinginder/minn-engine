@@ -104,6 +104,18 @@ $unpacked = \Minn\Runtime\Upgrade::unpack(new Plugin_Upgrader(), "{$tmp}/again2.
 \Minn\Runtime\Upgrade::install(new Plugin_Upgrader(), ['source' => is_string($unpacked) ? $unpacked : '', 'destination' => "{$contentDir}/plugins"]);
 $GLOBALS['wp_filesystem'] = $realFilesystem;
 $check('the upgrade folder, its index and a refused install\'s cleanup go through the site\'s filesystem', count(array_intersect(['mkdir', 'put_contents', 'delete'], array_unique($recorder->calls))) === 3 && is_string($unpacked) && !is_dir($unpacked), json_encode($recorder->calls));
+// Final pass: when the site's filesystem fails to delete (a dropped FTP connection), the package is still removed.
+$GLOBALS['wp_filesystem'] = new class ($realFilesystem) {
+    public function __construct(public object $real) {}
+    public function __call(string $name, array $args): mixed { return $this->real->$name(...$args); }
+    public function __get(string $name): mixed { return $this->real->$name; }
+    public function delete(...$args): bool { return false; }
+};
+$zip('again3.zip', ['zz-upg-plugin/zz-upg-plugin.php' => $plugin('2.0')]);
+$unpacked = \Minn\Runtime\Upgrade::unpack(new Plugin_Upgrader(), "{$tmp}/again3.zip");
+\Minn\Runtime\Upgrade::install(new Plugin_Upgrader(), ['source' => is_string($unpacked) ? $unpacked : '', 'destination' => "{$contentDir}/plugins"]);
+$GLOBALS['wp_filesystem'] = $realFilesystem;
+$check('a refused package is removed even when the site\'s filesystem fails to delete it', is_string($unpacked) && !is_dir($unpacked), is_string($unpacked) ? $unpacked : 'not unpacked');
 // Security sweep 2026-11-12 (2.6): a refused install leaves no unpacked package in the upgrade folder, which keeps its index.
 $left = array_values(array_diff(scandir("{$contentDir}/upgrade") ?: [], ['.', '..']));
 $check('a refused install leaves only the upgrade folder\'s index behind', $left === ['index.php'], json_encode($left));

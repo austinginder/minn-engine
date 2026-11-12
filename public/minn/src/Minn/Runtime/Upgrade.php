@@ -145,13 +145,7 @@ final class Upgrade
         $working = realpath(rtrim((string) ($args['source'] ?? ''), '/'));
         $upgrade = realpath(WP_CONTENT_DIR . '/upgrade');
         if ($installed instanceof Errors && $working !== false && $upgrade !== false && str_starts_with($working, $upgrade . '/')) {
-            // Through the site's filesystem when there is one, as it is what unzipped the package (FTP or SSH).
-            $filesystem = $GLOBALS['wp_filesystem'] ?? null;
-            if (is_object($filesystem) && method_exists($filesystem, 'delete')) {
-                $filesystem->delete($working, true);
-            } else {
-                Files::deleteTree($working);
-            }
+            self::remove($working);
         }
         return $installed;
     }
@@ -209,6 +203,22 @@ final class Upgrade
         return $upgrader->result;
     }
 
+    /**
+     * Removes a path in the upgrade folder through the site's filesystem, as
+     * that is what unzipped it (FTP or SSH), and straight from disk when the
+     * filesystem left it there.
+     */
+    private static function remove(string $path): void
+    {
+        $filesystem = $GLOBALS['wp_filesystem'] ?? null;
+        if (is_object($filesystem) && method_exists($filesystem, 'delete')) {
+            $filesystem->delete($path, true);
+        }
+        if (file_exists($path) || is_link($path)) {
+            Files::deleteTree($path);
+        }
+    }
+
     /** An archive unpacked into a folder through the site's filesystem (unzip_file): true, or the error why not. */
     public static function unzip(mixed $file, mixed $to): mixed
     {
@@ -231,7 +241,7 @@ final class Upgrade
         $upgrader->skin->feedback('unpack_package');
         $folder = WP_CONTENT_DIR . '/upgrade';
         foreach (array_diff(self::listing($folder), ['index.php']) as $left) {
-            Files::deleteTree("{$folder}/{$left}");
+            self::remove("{$folder}/{$left}");
         }
         // The folder never lists itself, and an unzipped package is not where anyone could guess while it is
         // there: the package's name and sixteen random letters and digits (probe patch-714).
@@ -245,14 +255,16 @@ final class Upgrade
             $silence = "<?php\n// Silence is golden.\n";
             if (is_object($filesystem) && method_exists($filesystem, 'put_contents')) {
                 $filesystem->put_contents("{$folder}/index.php", $silence, defined('FS_CHMOD_FILE') ? FS_CHMOD_FILE : 0644);
-            } else {
+            }
+            // Written straight to disk when the site's filesystem could not (a dropped FTP connection).
+            if (!is_file("{$folder}/index.php")) {
                 @file_put_contents("{$folder}/index.php", $silence);
             }
         }
         $working = $folder . '/' . basename(basename($package, '.tmp'), '.zip') . '-' . self::randomName(16);
         $unzipped = self::unzip($package, $working);
         if ($unzipped instanceof Errors) {
-            Files::deleteTree($working);
+            self::remove($working);
             return $unzipped->get_error_code() === 'incompatible_archive'
                 ? Handoff::newError('incompatible_archive', $upgrader->strings['incompatible_archive'], $unzipped->get_error_data())
                 : $unzipped;

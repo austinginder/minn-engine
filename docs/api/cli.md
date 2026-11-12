@@ -11,7 +11,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 495 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 501 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`LoginLink`](#loginlink) | final class | 87 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
@@ -320,9 +320,9 @@ prints nothing, and it names the webroot it belongs to.
 - const `PARK_GUARD` = `'.htaccess'` — Apache's refusal for the whole park, for a host whose park still sits under a served folder (nginx ignores it).
 - const `PARK_GUARD_TEXT` = `'# Minn: WordPress\'s own files, parked by the engine. Nothing here is served. <IfModule mod_authz_core.c> 	Require all denied </IfModule> <IfModule !mod_authz_core.c> 	Deny from all </IfModule> '`
 - const `SERVED_FILES` = `array (   0 => 'index.php',   1 => 'index.html',   2 => 'index.htm',   3 => 'wp-load.php',   4 => '.htaccess',   5 => 'web.config', )` — What marks a folder as a site's own webroot, and the names hosts give one.
-- const `SERVED_NAMES` = `array (   0 => 'public_html',   1 => 'htdocs',   2 => 'httpdocs',   3 => 'wwwroot',   4 => 'html',   5 => 'public',   6 => 'web', )` — Names hosts give a served folder, read on the webroot's parent and the folders above it, where the usual
-layouts (/var/www/html, /www/site/public, ~/Sites/site/public) never carry one; www alone is left out, as the
-unserved parent of /var/www/html.
+- const `SERVED_NAMES` = `array (   0 => 'public_html',   1 => 'htdocs',   2 => 'httpdocs',   3 => 'wwwroot', )` — Names only a served folder carries, on the webroot's parent or any folder above it.
+- const `INDEXED_NAMES` = `array (   0 => 'html',   1 => 'public',   2 => 'web', )` — Names that are a served folder only when it holds an index of its own (nginx's /var/www/html and its default
+page); without one they are a project's or a panel's folder (HestiaCP's ~/web, DevKinsta's ~/DevKinsta/public).
 - const `RECORD_HEAD` = `'<?php return; // Minn Engine\'s install record: what `wp minn eject` puts back. ?> '`
 - const `LEGACY_RECORD` = `'.install.json'` — Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.
 - const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
@@ -417,7 +417,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 143), `served()` (private, line 284), `recordedPark()` (private, line 340), `inside()` (private, line 457), `move()` (private, line 466), `copyTree()` (private, line 489), `version()` (private, line 508), `say()` (private, line 513)
+Internals: `help()` (private, line 144), `served()` (private, line 285), `recordedPark()` (private, line 346), `inside()` (private, line 463), `move()` (private, line 472), `copyTree()` (private, line 495), `version()` (private, line 514), `say()` (private, line 519)
 
 
 ## LoginLink

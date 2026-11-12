@@ -13,7 +13,7 @@
 | [`Directory`](#directory) | final class | 76 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
-| [`EngineUpdate`](#engineupdate) | final readonly class | 181 | Replaces the running engine with a published release. The release's |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 184 | Replaces the running engine with a published release. The release's |
 | [`FilesystemCredentials`](#filesystemcredentials) | final class | 225 | How the site reaches its own files, and the connection it asks for when |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |

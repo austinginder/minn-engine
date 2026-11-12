@@ -154,10 +154,10 @@ $check('one session is stored for the user', substr_count($wp('user meta get zz-
 // 3. Signing out. A request carrying the cookie alone, as a page on another site can send it, clears cookies but
 // ends no session (security sweep 2026-11-12, finding 1.4); with the nonce the gate accepts, the session ends.
 $crossSite = (string) shell_exec('/usr/bin/curl -sk -o /dev/null -w "%{http_code}" -X DELETE -b ' . escapeshellarg($jar) . ' ' . escapeshellarg("{$ENGINE}/wp-json/minn-test/v1/session"));
-$check('a sign-out carrying the cookie without its nonce ends no session', $crossSite === '200' && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, $crossSite);
+$check('a sign-out carrying the cookie without its nonce is refused (403) and ends no session', $crossSite === '403' && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, $crossSite);
 // The same from an extension page that signs out on a plain GET, as a navigation from another site reaches it.
 $navigated = (string) shell_exec('/usr/bin/curl -sk -D - -o /dev/null -b ' . escapeshellarg($jar) . ' ' . escapeshellarg("{$ENGINE}/minn-test-records/sign-out/"));
-$check('a sign-out page reached without the nonce ends no session', str_starts_with($navigated, 'HTTP/') && str_contains(strtok($navigated, "\n"), ' 200') && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, strtok($navigated, "\n"));
+$check('a sign-out page reached without the nonce is refused and ends no session', str_starts_with($navigated, 'HTTP/') && str_contains(strtok($navigated, "\n"), ' 403') && substr_count($wp('user meta get zz-acct-one session_tokens --format=json'), 'expiration') === 1, strtok($navigated, "\n"));
 $check('and leaves the browser signed in: no sign-in cookie is expired', preg_match('/set-cookie: wordpress_logged_in_/i', $navigated) !== 1, $navigated);
 [$status, , $head] = $call('DELETE', '/minn-test/v1/session', null, ["X-WP-Nonce: {$fresh}"]);
 $expired = preg_match('/set-cookie: wordpress_logged_in_[0-9a-f]{32}=[^\n]*expires=([^;\n]+)/i', $head, $gone) === 1 && strtotime($gone[1]) < time();

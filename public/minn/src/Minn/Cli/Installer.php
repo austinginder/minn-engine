@@ -36,12 +36,13 @@ final class Installer
     private const PARK_GUARD_TEXT = "# Minn: WordPress's own files, parked by the engine. Nothing here is served.\n<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n";
     /** What marks a folder as a site's own webroot, and the names hosts give one. */
     private const SERVED_FILES = ['index.php', 'index.html', 'index.htm', 'wp-load.php', '.htaccess', 'web.config'];
+    /** Names only a served folder carries, on the webroot's parent or any folder above it. */
+    private const SERVED_NAMES = ['public_html', 'htdocs', 'httpdocs', 'wwwroot'];
     /**
-     * Names hosts give a served folder, read on the webroot's parent and the folders above it, where the usual
-     * layouts (/var/www/html, /www/site/public, ~/Sites/site/public) never carry one; www alone is left out, as the
-     * unserved parent of /var/www/html.
+     * Names that are a served folder only when it holds an index of its own (nginx's /var/www/html and its default
+     * page); without one they are a project's or a panel's folder (HestiaCP's ~/web, DevKinsta's ~/DevKinsta/public).
      */
-    private const SERVED_NAMES = ['public_html', 'htdocs', 'httpdocs', 'wwwroot', 'html', 'public', 'web'];
+    private const INDEXED_NAMES = ['html', 'public', 'web'];
     private const RECORD_HEAD = "<?php return; // Minn Engine's install record: what `wp minn eject` puts back. ?>\n";
     /** Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink. */
     private const LEGACY_RECORD = '.install.json';
@@ -289,7 +290,8 @@ final class Installer
             }
         }
         for ($above = $folder; $above !== dirname($above); $above = dirname($above)) {
-            if (in_array(strtolower(basename($above)), self::SERVED_NAMES, true)) {
+            $name = strtolower(basename($above));
+            if (in_array($name, self::SERVED_NAMES, true) || (in_array($name, self::INDEXED_NAMES, true) && (glob("{$above}/index.*") ?: []) !== [])) {
                 return 'it lies in ' . $above . ', a folder hosts serve';
             }
         }
@@ -325,9 +327,13 @@ final class Installer
         if ($named === '') {
             return ['pass', 'No park on record: minn install did not park WordPress here'];
         }
+        // A park outside open_basedir cannot run its PHP from the web either: PHP refuses to execute files there.
+        if (str_starts_with($named, '/') && !\Minn\Ops\EngineUpdate::reachable($named)) {
+            return ['pass', "Outside what PHP may open here (open_basedir), so its files cannot run from the web"];
+        }
         $park = self::recordedPark($root);
         if ($park === null) {
-            return ['warn', "Not checked: {$named} is out of PHP's reach here (open_basedir) or does not carry this site's mark"];
+            return ['warn', "Not checked: {$named} is not where the install record says, or does not carry this site's mark as PHP sees it here"];
         }
         $served = self::served(dirname($park));
         if ($served !== null) {

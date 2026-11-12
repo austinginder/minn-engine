@@ -273,6 +273,9 @@ $check('a WP_HOME defined with DEFINE in capitals is read', $code === 0 && str_s
 $check('a WP_HOME set by const is refused rather than read from the database', $code === 1 && str_contains($out, 'cannot read'), $out);
 [$out, $code] = $movedLogin("define( 'WP_HOME', \"https://\$zz_host\" );");
 $check('a WP_HOME interpolated at run time is refused', $code === 1 && str_contains($out, 'cannot read'), $out);
+// Final pass: a lower-case wp_home is another constant, so it neither counts as a second WP_HOME nor blocks the link.
+[$out, $code] = $movedLogin("define( 'wp_home', 'https://lower.example' );\ndefine( 'WP_HOME', 'https://moved.example' );");
+$check('a lower-case wp_home beside WP_HOME does not stop minn login', $code === 0 && str_starts_with($out, 'https://moved.example/'), $out);
 @unlink("{$moved}/wp-config.php");
 @rmdir($moved);
 [$out, $code] = $run($ENGINE_DIR, 'minn version');

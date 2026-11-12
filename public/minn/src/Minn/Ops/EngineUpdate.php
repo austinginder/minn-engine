@@ -202,6 +202,9 @@ final readonly class EngineUpdate
             return true;
         }
         foreach (explode(PATH_SEPARATOR, $allowed) as $root) {
+            if ($root === '/') {
+                return true;
+            }
             $root = rtrim($root, '/');
             if ($root !== '' && ($dir === $root || str_starts_with($dir . '/', $root . '/'))) {
                 return true;

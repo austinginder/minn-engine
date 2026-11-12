@@ -173,7 +173,7 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 152 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 67 | The updates waiting, as wp_get_update_data counts them for the user |
-| [`Upgrade`](#upgrade) | final class | 437 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
+| [`Upgrade`](#upgrade) | final class | 449 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserCounts`](#usercounts) | final class | 75 | The user counts WordPress's user functions give: how many users hold each |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 118 | The decisions behind wp_insert_user: what a new account needs, which email |
@@ -10143,7 +10143,7 @@ when it is not to be retried.
 
 Maintenance mode off; said only when it was on.
 
-Internals: `installUnpacked()` (private, line 160), `destinationFor()` (private, line 319), `clearOrRefuse()` (private, line 328), `move()` (private, line 349), `copyInto()` (private, line 360), `report()` (private, line 374), `setAside()` (private, line 392), `putBack()` (private, line 405), `forget()` (private, line 417), `backedUp()` (private, line 426), `randomName()` (private, line 438), `listing()` (private, line 454)
+Internals: `installUnpacked()` (private, line 154), `remove()` (private, line 211), `destinationFor()` (private, line 331), `clearOrRefuse()` (private, line 340), `move()` (private, line 361), `copyInto()` (private, line 372), `report()` (private, line 386), `setAside()` (private, line 404), `putBack()` (private, line 417), `forget()` (private, line 429), `backedUp()` (private, line 438), `randomName()` (private, line 450), `listing()` (private, line 466)
 
 
 ## UserCounts

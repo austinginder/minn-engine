@@ -23,6 +23,7 @@ use Minn\Json;
 use Minn\Http\Response;
 use Minn\Login\LoginHooks;
 use Minn\Objects\Errors;
+use Minn\RestError;
 use Minn\Runtime\AccountFlows;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Refusal;
@@ -103,9 +104,11 @@ final readonly class Accounts
      * when the request carries that session's REST nonce (the X-WP-Nonce
      * header or a form's _wpnonce, as the sign-in page's sign-out asks for
      * its own); with no live session it only clears the cookies. A request
-     * naming a live session without its nonce changes nothing, so a page on
-     * another site, or a navigation to an extension page that signs out,
-     * signs nobody out, cookies included (security sweep 2026-11-12,
+     * naming a live session without its nonce, or with a lapsed one, is
+     * refused (rest_cookie_invalid_nonce, 403) and changes nothing, so a page
+     * on another site, or a navigation to an extension page that signs out,
+     * signs nobody out, cookies included, while a client whose nonce lapsed
+     * can fetch a fresh one and ask again (security sweep 2026-11-12,
      * finding 1.4, closed by the fix-delta review).
      */
     public function signOut(Response $response): Response
@@ -114,10 +117,13 @@ final readonly class Accounts
         if (!$session instanceof Authenticated) {
             return $this->signIn->clear($response);
         }
-        // Never from the query string, so the nonce never lands in an address, a history or a log.
-        $nonce = (string) ($this->request->header('x-wp-nonce') ?? (is_scalar($this->request->form['_wpnonce'] ?? null) ? $this->request->form['_wpnonce'] : ''));
+        // Never from the query string, so the nonce never lands in an address, a history or a log; an empty header
+        // is no header.
+        $header = (string) ($this->request->header('x-wp-nonce') ?? '');
+        $nonce = $header !== '' ? $header : (is_scalar($this->request->form['_wpnonce'] ?? null) ? (string) $this->request->form['_wpnonce'] : '');
         if ($nonce === '' || !Nonce::verify($nonce, $session->id(), $session->token)) {
-            return $response;
+            // Refused in the REST gate's own words, so a client whose nonce lapsed fetches a fresh one and asks again.
+            throw new RestError('rest_cookie_invalid_nonce', 'Cookie check failed', 403);
         }
         $response = $this->signIn->end($response, $session);
         (new LoginHooks($this->users))->signedOut($session->id());

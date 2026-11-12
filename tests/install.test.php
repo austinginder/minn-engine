@@ -211,10 +211,18 @@ rename("$PARK/.htaccess", "$PARK/.htaccess-zz");
 $unguarded = Minn\Cli\Installer::parkStatus($WEBROOT);
 rename("$PARK/.htaccess-zz", "$PARK/.htaccess");
 $check('a park without its refusal warns in the System view', $unguarded[0] === 'warn' && str_contains($unguarded[1], 'no web refusal'), json_encode($unguarded));
+// Final pass: under an open_basedir that leaves the park out (Kinsta's), PHP cannot run the park's files, so the row
+// passes, and reading it raises no open_basedir warning.
+$basedir = (string) shell_exec(PHP_BINARY . ' -d open_basedir=' . escapeshellarg(realpath($WEBROOT) . PATH_SEPARATOR . $ENGINE_DIR) . ' -d display_errors=1 -d error_reporting=-1 -r ' . escapeshellarg('require ' . var_export("{$ENGINE_DIR}/src/Minn/Autoloader.php", true) . '; Minn\Autoloader::register(); echo json_encode(Minn\Cli\Installer::parkStatus(' . var_export(realpath($WEBROOT), true) . '));') . ' 2>&1');
+$check('a park outside open_basedir passes, with no warning raised', str_starts_with($basedir, '["pass","Outside what PHP may open here'), $basedir);
 $check('a webroot with no install record says so, and passes', Minn\Cli\Installer::parkStatus($SCRATCH)[0] === 'pass' && str_contains(Minn\Cli\Installer::parkStatus($SCRATCH)[1], 'No park on record'));
 $served = new ReflectionMethod(Minn\Cli\Installer::class, 'served');
-$layouts = array_map(static fn (string $folder): bool => $served->invoke(null, $folder) !== null, ['/var/www' => '/var/www', '/www/site_123' => '/www/site_123', '/home/u/public_html/sites' => '/home/u/public_html/sites', '/home/u/public_html' => '/home/u/public_html', '/srv/htdocs' => '/srv/htdocs', '/home/u' => '/home/u', '/var/www/html' => '/var/www/html']);
-$check('the served test passes /var/www and Kinsta\'s /www/site, and refuses anything inside public_html, htdocs or nginx\'s /var/www/html', $layouts === ['/var/www' => false, '/www/site_123' => false, '/home/u/public_html/sites' => true, '/home/u/public_html' => true, '/srv/htdocs' => true, '/home/u' => false, '/var/www/html' => true], json_encode($layouts));
+// html, public and web count only when they hold an index: nginx's default page does, HestiaCP's ~/web does not.
+@mkdir("{$SCRATCH}/nginx/html", 0755, true);
+file_put_contents("{$SCRATCH}/nginx/html/index.nginx-debian.html", 'Welcome to nginx!');
+@mkdir("{$SCRATCH}/hestia/web/example.com", 0755, true);
+$layouts = array_map(static fn (string $folder): bool => $served->invoke(null, $folder) !== null, ['/var/www' => '/var/www', '/www/site_123' => '/www/site_123', '/home/u/public_html/sites' => '/home/u/public_html/sites', '/home/u/public_html' => '/home/u/public_html', '/srv/htdocs' => '/srv/htdocs', '/home/u' => '/home/u', 'nginx html' => "{$SCRATCH}/nginx/html", 'hestia web' => "{$SCRATCH}/hestia/web/example.com"]);
+$check('the served test passes /var/www and Kinsta\'s /www/site, and refuses anything inside public_html, htdocs or an html folder serving its own index, but not HestiaCP\'s ~/web', $layouts === ['/var/www' => false, '/www/site_123' => false, '/home/u/public_html/sites' => true, '/home/u/public_html' => true, '/srv/htdocs' => true, '/home/u' => false, 'nginx html' => true, 'hestia web' => false], json_encode($layouts));
 
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject succeeds', $code === 0 && str_contains($out, 'Ejected.'), $out);
