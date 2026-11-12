@@ -19,7 +19,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 355 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 360 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredRevisionsController`](#declaredrevisionscontroller) | final readonly class | 58 | wp/v2 revisions and autosaves under a post type plugin code or an |
@@ -907,7 +907,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (moderate_comments (not on a note) or 
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 81), `events()` (private, line 169), `allowed()` (private, line 238), `readablePost()` (private, line 279), `readable()` (private, line 292), `commentOrNote()` (private, line 305), `note()` (private, line 318), `editsListed()` (private, line 334), `prepared()` (private, line 362)
+Internals: `totals()` (private, line 81), `events()` (private, line 169), `allowed()` (private, line 243), `readablePost()` (private, line 284), `readable()` (private, line 297), `commentOrNote()` (private, line 310), `note()` (private, line 323), `editsListed()` (private, line 339), `prepared()` (private, line 367)
 
 
 ## Context

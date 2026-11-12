@@ -183,6 +183,11 @@ final readonly class CommentsController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this comment.');
         }
         $body = $request->json();
+        // Only a moderator gives a comment to another user. The reference lets a post's author do it, and read back
+        // that user's email in the reply; Minn refuses it as create() does (security sweep 2026-11-12, finding 3.2).
+        if (isset($body['author']) && (int) $body['author'] !== $comment->userId && !$this->caller->can('moderate_comments')) {
+            throw $this->caller->refuse('rest_comment_invalid_author', "Sorry, you are not allowed to edit 'author' for comments.");
+        }
         if (isset($body['status'])) {
             $tokens = Comments::tokensFor((string) $body['status']);
             if ($tokens === null || count($tokens) > 1) {

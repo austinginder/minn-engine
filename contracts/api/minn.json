@@ -109557,7 +109557,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentsController.php",
-            "lines": 355,
+            "lines": 360,
             "doc": "wp/v2/comments: the status tabs with pagination headers, single,\nsigned-in replies, moderation updates, trash, and force delete.",
             "implements": [],
             "extends": null,
@@ -109793,7 +109793,7 @@
                         }
                     ],
                     "line": 178,
-                    "end": 196
+                    "end": 201
                 },
                 {
                     "routes": [
@@ -109821,8 +109821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 228
+                    "line": 205,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -109904,8 +109904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 272
+                    "line": 243,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -109931,8 +109931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 285
+                    "line": 284,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -109958,8 +109958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 302
+                    "line": 297,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -109978,8 +109978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 312
+                    "line": 310,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -110005,8 +110005,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 327
+                    "line": 323,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -110025,8 +110025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 346
+                    "line": 339,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -110055,8 +110055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 387
+                    "line": 367,
+                    "end": 392
                 }
             ]
         },

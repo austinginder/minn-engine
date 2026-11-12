@@ -247,5 +247,28 @@ $engine = $multibyte('engine');
 $reference = $multibyte('reference');
 $check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
 
+// 2026-11-12 (finding 3.2): a post's author may edit a comment on their post, but only a moderator gives it to
+// another user. The reference lets the author do it and read back that user's email; Minn refuses, as create does.
+$author = $wp('user create zz-sweep-author zz-sweep-author@example.com --role=author --porcelain');
+$authorPass = $wp("user application-password create {$author} zz-sweep --porcelain");
+$authorPost = $wp("post create --post_title='zz sweep author post' --post_status=publish --post_author={$author} --porcelain");
+$authorComment = $wp("comment create --comment_post_ID={$authorPost} --comment_author=Visitor --comment_author_email=visitor@example.com --comment_content=hello --comment_approved=1 --porcelain");
+register_shutdown_function(static function () use ($wp, $author, $authorPost): void {
+    $wp("post delete {$authorPost} --force");
+    $wp("user delete {$author} --yes");
+});
+$basic = ['Authorization: Basic ' . base64_encode("zz-sweep-author:{$authorPass}"), 'Content-Type: application/json'];
+$commentUrl = "{$ENGINE}/wp-json/wp/v2/comments/{$authorComment}?context=edit";
+$curlJson = static function (string $url, array $body) use ($basic): array {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_POST => true, CURLOPT_POSTFIELDS => json_encode($body), CURLOPT_HTTPHEADER => $basic]);
+    $answer = (string) curl_exec($ch);
+    return [(int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE), $answer];
+};
+[$status, $body] = $curlJson($commentUrl, ['author' => 1]);
+$check('a post\'s author cannot give a comment on it to another user, nor read their email', $status === 403 && str_contains($body, 'rest_comment_invalid_author') && !str_contains($body, 'author_email'), "{$status} " . substr($body, 0, 160));
+[$status, $body] = $curlJson($commentUrl, ['content' => 'edited by the post\'s author']);
+$check('a post\'s author still edits a comment on it', $status === 200 && str_contains($body, 'edited by the post'), "{$status} " . substr($body, 0, 160));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);
