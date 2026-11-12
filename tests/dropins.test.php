@@ -102,6 +102,24 @@ foreach ($stacks as $name => $dir) {
 $unstage();
 $check('a page request loads advanced-cache.php as the reference does', $front['engine'] === $front['reference'] && str_contains($front['reference'], '"top-level variable is global":true'), json_encode($front));
 
+// 2b'. A signed-in page request with the page cache's early file in place. That file loads part of the
+// facade before boot, so the sign-in check must not take its bindings for a loaded facade (every signed-in
+// request answered 500, Class "WP_Session_Tokens" not found, on a site with WP Rocket).
+foreach ($stacks as $dir) {
+    $stage("{$fixtures}/advanced-cache-early.php", "{$dir}/wp-content/advanced-cache.php");
+}
+[$cookieName, $cookieValue] = explode("\n", $wp($stacks['reference'], "eval 'echo LOGGED_IN_COOKIE, \"\\n\", wp_generate_auth_cookie(1, time() + 3600, \"logged_in\");'") . "\n");
+$signedIn = [];
+foreach ($stacks as $name => $dir) {
+    $boot = 'define("WP_CACHE", true); $_SERVER["HTTP_HOST"] = "minn.localhost"; $_SERVER["REQUEST_URI"] = "/"; $_SERVER["REQUEST_METHOD"] = "GET"; $_SERVER["SERVER_NAME"] = "minn.localhost"; $_SERVER["HTTPS"] = "on"; '
+        . '$_COOKIE[' . var_export($cookieName, true) . '] = ' . var_export($cookieValue, true) . '; '
+        . 'register_shutdown_function(static function () { fwrite(STDERR, "\nMINN-STATUS " . http_response_code() . "\n"); }); require "index.php";';
+    $stderr = (string) shell_exec('cd ' . escapeshellarg($dir) . ' && php -r ' . escapeshellarg($boot) . ' 2>&1 >/dev/null');
+    $signedIn[$name] = preg_match('/^MINN-STATUS (\d+)$/m', $stderr, $m) ? (int) $m[1] : 'no status: ' . substr($stderr, -300);
+}
+$unstage();
+$check('a signed-in page request with advanced-cache.php answers as the reference does', $cookieValue !== '' && $signedIn['engine'] === 200 && $signedIn['reference'] === 200, json_encode($signedIn));
+
 // 2c. Option reads kept in a drop-in's options group, as the api probe
 // option-cache sees them without one.
 foreach ($stacks as $dir) {
