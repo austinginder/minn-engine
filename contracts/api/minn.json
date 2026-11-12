@@ -44773,7 +44773,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 415,
+            "lines": 417,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -45253,11 +45253,11 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "maintenance(): bool",
-                    "doc": "Whether Minn Admin's maintenance mode is on (its holds decide who it keeps out).",
+                    "doc": "Whether Minn Admin's maintenance mode is on: the option set and Minn Admin active (its holds decide who it keeps out).",
                     "shapes": [],
                     "params": [],
                     "line": 438,
-                    "end": 441
+                    "end": 443
                 },
                 {
                     "routes": [],
@@ -45290,8 +45290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 452,
-                    "end": 461
+                    "line": 454,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -45324,8 +45324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 481
+                    "line": 469,
+                    "end": 483
                 }
             ]
         },
@@ -161269,7 +161269,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 288,
+            "lines": 289,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -161305,12 +161305,12 @@
                 {
                     "name": "MINN_ADMIN",
                     "value": "'minn-admin/minn-admin.php'",
-                    "doc": "Minn Admin loads as code for its adapters (surfaces, licenses,\nconnectors, custom CSS, the plugin routes the engine has no\ncontroller for, and maintenance mode's holds), but the engine owns the\nshell, the front bar and the sign-in flow: those hooks come off right\nafter the include so the two never print twice or disagree.",
+                    "doc": "Minn Admin loads as code for its adapters (surfaces, licenses,\nconnectors, custom CSS, the plugin routes the engine has no\ncontroller for, and maintenance mode's holds), but the engine owns the\nshell, the front bar and the sign-in flow: those hooks come off right\nafter the include so the two never print twice or disagree. The\nplugin's own app route (maybe_render_app) stays: the engine answers\n/minn-admin/ before template_redirect runs, so it is never reached.",
                     "visibility": "private"
                 },
                 {
                     "name": "MINN_ADMIN_HOOKS",
-                    "value": "array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   3 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   4 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   5 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   6 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )",
+                    "value": "array (   0 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   1 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   3 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   4 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   5 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -161360,8 +161360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 67
+                    "line": 55,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -161380,8 +161380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 162
+                    "line": 153,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -161394,8 +161394,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 208,
-                    "end": 211
+                    "line": 209,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -161408,8 +161408,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -161435,8 +161435,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 249
+                    "line": 232,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -161455,8 +161455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -161482,8 +161482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 143
+                    "line": 70,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -161502,8 +161502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 187
+                    "line": 172,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -161529,8 +161529,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 201
+                    "line": 195,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -161563,8 +161563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 280
+                    "line": 258,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -161597,8 +161597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 298
+                    "line": 289,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -161617,8 +161617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 306
+                    "line": 302,
+                    "end": 307
                 }
             ]
         },
@@ -169562,7 +169562,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Recovery.php",
-            "lines": 351,
+            "lines": 353,
             "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills the boot of a request, the file it died in names it (or, when that\nfile is the engine's or core's, the first plugin or theme file the trace\npasses through); the failure is noted, and the engine asks the site once\nitself (check()): one request to the home page carrying nothing a visitor\nchose. If that request fails at boot on the same extension, it is paused,\nand the next request loads without it: the site comes back on its own\ninstead of staying down until a human reads the log. A visitor's request\nnever pauses anything by itself: a pause is a site-wide decision, and a\nrequest's path, headers and their values are the visitor's to choose, so\nan extension that fails on some input fails for that input alone.\nFailures after boot (a route, a template) never pause anything; see\nFailure::armRecovery().\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with. The strikes live in the\nengine's own `minn_recovery_strikes` option.",
             "implements": [],
             "extends": null,
@@ -169786,8 +169786,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 190
+                    "line": 176,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -169808,8 +169808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 212
+                    "line": 203,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -169830,8 +169830,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 248
+                    "line": 232,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -169859,8 +169859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 265
+                    "line": 259,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -169873,8 +169873,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 307,
-                    "end": 310
+                    "line": 309,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -169887,8 +169887,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 317,
-                    "end": 320
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -169909,8 +169909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 330
+                    "line": 329,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -169929,8 +169929,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 340
+                    "line": 335,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -169956,8 +169956,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 354
+                    "line": 345,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -169968,8 +169968,8 @@
                     "doc": "Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.",
                     "shapes": [],
                     "params": [],
-                    "line": 357,
-                    "end": 365
+                    "line": 359,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -169977,7 +169977,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "storageFailure(string $file): bool",
-                    "doc": "Whether a failure's own file is the engine's storage (database, options, transients) or a drop-in.",
+                    "doc": "Whether a failure's own file is the engine's database door or a storage drop-in.",
                     "shapes": [],
                     "params": [
                         {
@@ -169989,7 +169989,7 @@
                         }
                     ],
                     "line": 128,
-                    "end": 137
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -170018,8 +170018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 158
+                    "line": 149,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -170032,8 +170032,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 161,
-                    "end": 164
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -170046,8 +170046,8 @@
                         "@return array<string, mixed>|null"
                     ],
                     "params": [],
-                    "line": 272,
-                    "end": 276
+                    "line": 274,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -170060,8 +170060,8 @@
                         "@return array<string, int>"
                     ],
                     "params": [],
-                    "line": 284,
-                    "end": 288
+                    "line": 286,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -170082,8 +170082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 300
+                    "line": 293,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -170104,8 +170104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 373
+                    "line": 370,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -170133,8 +170133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 383
+                    "line": 378,
+                    "end": 385
                 }
             ]
         },

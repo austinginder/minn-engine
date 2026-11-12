@@ -203,6 +203,12 @@ foreach ($modes as $mode) {
     $editor = $get($mode, '/seam-probe/hello-there/', $cookie);
     $check("{$mode}: under maintenance a signed-in editor still reaches the extension page", $editor['status'] === 200 && str_contains($editor['body'], 'reader-1'), (string) $editor['status']);
 }
+// Fix-delta review: the option means nothing without Minn Admin, so with the plugin inactive an extension page
+// answers as always (no hold, and none to fall back on).
+$wp('plugin deactivate minn-admin');
+$inactive = $get('auto', '/seam-probe/hello-there/');
+$wp('plugin activate minn-admin');
+$check('with Minn Admin inactive, the maintenance option holds nothing back', $inactive['status'] === 200 && str_contains($inactive['body'], 'hello-there'), (string) $inactive['status']);
 $wp('option delete minn_admin_maintenance');
 
 echo "\n{$pass} passed, {$fail} failed\n";

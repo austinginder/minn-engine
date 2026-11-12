@@ -101,7 +101,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 140 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 288 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 289 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostCaches`](#postcaches) | final class | 27 | A post's cached rows let go as WordPress lets them go: its row, its meta |
 | [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
@@ -127,7 +127,7 @@ the WordPress runtime plugins load against
 | [`QueryFlags`](#queryflags) | final readonly class | 202 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`RecipientLocale`](#recipientlocale) | final class | 30 | An email written in its reader's language, as the reference writes each: |
 | [`Records`](#records) | final class | 140 | Posts, terms and comments as WordPress hands them to plugins: found by |
-| [`Recovery`](#recovery) | final readonly class | 351 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 353 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 200 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 108 | Settings as register_setting keeps them (probe rest-settings): the |
@@ -5481,8 +5481,10 @@ site keeps rendering. The lifecycle actions fire between the phases.
 connectors, custom CSS, the plugin routes the engine has no
 controller for, and maintenance mode's holds), but the engine owns the
 shell, the front bar and the sign-in flow: those hooks come off right
-after the include so the two never print twice or disagree.
-- const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   3 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   4 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   5 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   6 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
+after the include so the two never print twice or disagree. The
+plugin's own app route (maybe_render_app) stays: the engine answers
+/minn-admin/ before template_redirect runs, so it is never reached.
+- const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   1 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   3 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   4 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   5 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
 
 Used by: `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Runtime\Constants`, `Minn\Runtime\PluginActivation`, `Minn\Theme\ClassicRenderer`
 
@@ -5530,7 +5532,7 @@ gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 69), `loadThemeFunctions()` (private, line 171), `rememberThemeDomain()` (private, line 194), `includeFile()` (private, line 257), `registerRealpath()` (private, line 288), `isolatedInclude()` (private, line 301)
+Internals: `boot()` (private, line 70), `loadThemeFunctions()` (private, line 172), `rememberThemeDomain()` (private, line 195), `includeFile()` (private, line 258), `registerRealpath()` (private, line 289), `isolatedInclude()` (private, line 302)
 
 
 ## PostCaches
@@ -7047,7 +7049,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.
 
-Internals: `storageFailure()` (private, line 128), `pluginFile()` (private, line 147), `activePlugins()` (private, line 161), `kept()` (private, line 272), `strikes()` (private, line 284), `forgetStrikes()` (private, line 291), `read()` (private, line 368), `write()` (private, line 376)
+Internals: `storageFailure()` (private, line 128), `pluginFile()` (private, line 149), `activePlugins()` (private, line 163), `kept()` (private, line 274), `strikes()` (private, line 286), `forgetStrikes()` (private, line 293), `read()` (private, line 370), `write()` (private, line 378)
 
 
 ## Refusal

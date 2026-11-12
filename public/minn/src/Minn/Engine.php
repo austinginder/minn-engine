@@ -434,10 +434,12 @@ final readonly class Engine
         return $response ?? Response::html('<!doctype html><title>Not Found</title><p>Not found.', 404);
     }
 
-    /** Whether Minn Admin's maintenance mode is on (its holds decide who it keeps out). */
+    /** Whether Minn Admin's maintenance mode is on: the option set and Minn Admin active (its holds decide who it keeps out). */
     private static function maintenance(): bool
     {
-        return !in_array((string) Runtime::options()->raw('minn_admin_maintenance'), ['', '0'], true);
+        $options = Runtime::options();
+        return !in_array((string) $options->raw('minn_admin_maintenance'), ['', '0'], true)
+            && in_array('minn-admin/minn-admin.php', (array) $options->get('active_plugins'), true);
     }
 
     /** The engine's routes a public page meets ahead of the extensions' own, in the front pipeline's order. */

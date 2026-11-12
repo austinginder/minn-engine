@@ -24,11 +24,12 @@ final class Plugins
      * connectors, custom CSS, the plugin routes the engine has no
      * controller for, and maintenance mode's holds), but the engine owns the
      * shell, the front bar and the sign-in flow: those hooks come off right
-     * after the include so the two never print twice or disagree.
+     * after the include so the two never print twice or disagree. The
+     * plugin's own app route (maybe_render_app) stays: the engine answers
+     * /minn-admin/ before template_redirect runs, so it is never reached.
      */
     private const MINN_ADMIN = 'minn-admin/minn-admin.php';
     private const MINN_ADMIN_HOOKS = [
-        ['template_redirect', ['Minn_Admin', 'maybe_render_app'], 0],
         ['login_redirect', ['Minn_Admin', 'login_redirect'], 20],
         ['show_admin_bar', ['Minn_Admin', 'enforce_toolbar_policy'], 99],
         ['show_admin_bar', ['Minn_Admin_Bar', 'suppress_core_bar'], 100],

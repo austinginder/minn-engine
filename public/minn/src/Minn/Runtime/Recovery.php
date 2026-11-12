@@ -124,11 +124,13 @@ final readonly class Recovery
         return null;
     }
 
-    /** Whether a failure's own file is the engine's storage (database, options, transients) or a drop-in. */
+    /** Whether a failure's own file is the engine's database door or a storage drop-in. */
     private static function storageFailure(string $file): bool
     {
         $file = str_replace('\\', '/', $file);
-        foreach (['/src/Minn/Db.php', '/src/Minn/Runtime/Options.php', '/src/Minn/Runtime/OptionWrites.php', '/src/Minn/Runtime/Transients.php', '/wp-content/db.php', '/wp-content/object-cache.php', '/wp-content/advanced-cache.php'] as $storage) {
+        // A database error is raised where the query runs (Db.php); a failure in the options or transients code is
+        // a plugin's own input there, and still its own.
+        foreach (['/src/Minn/Db.php', '/wp-content/db.php', '/wp-content/object-cache.php', '/wp-content/advanced-cache.php'] as $storage) {
             if (str_ends_with($file, $storage)) {
                 return true;
             }
