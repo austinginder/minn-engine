@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Objects\Query;
 use Minn\Support\Sanitize;
 use Minn\Support\Text;
+use Minn\Support\Whole;
 
 /**
  * The taxonomy side of WP_Query as the reference runs it (probe
@@ -91,7 +92,7 @@ final class PostQueryTax
         if (!empty($q['category__and']) && count((array) $q['category__and']) === 1) {
             $q['category__and'] = (array) $q['category__and'];
             $q['category__in'] ??= [];
-            $q['category__in'][] = abs((int) (reset($q['category__and'])));
+            $q['category__in'][] = Whole::abs((reset($q['category__and'])));
             unset($q['category__and']);
         }
         $clauses = [];
@@ -99,7 +100,7 @@ final class PostQueryTax
             if (empty($q[$var])) {
                 continue;
             }
-            $q[$var] = array_map(static fn (mixed $value): int => abs((int) $value), array_unique((array) $q[$var]));
+            $q[$var] = array_map(static fn (mixed $value): int => Whole::abs($value), array_unique((array) $q[$var]));
             sort($q[$var]);
             $clause = ['taxonomy' => 'category', 'terms' => $q[$var]];
             $clause += $var === 'category__not_in' ? [] : ['field' => 'term_id'];
@@ -133,14 +134,14 @@ final class PostQueryTax
     {
         $clauses = [];
         if (!empty($q['tag_id'])) {
-            $q['tag_id'] = abs((int) ($q['tag_id']));
+            $q['tag_id'] = Whole::abs(($q['tag_id']));
             $clauses[] = ['taxonomy' => 'post_tag', 'terms' => $q['tag_id']];
         }
         foreach (['tag__in' => null, 'tag__not_in' => 'NOT IN', 'tag__and' => 'AND', 'tag_slug__in' => null, 'tag_slug__and' => 'AND'] as $var => $operator) {
             if (empty($q[$var])) {
                 continue;
             }
-            $q[$var] = array_map(str_starts_with($var, 'tag_slug') ? static fn (mixed $title): string => Sanitize::title($title, '', 'query') : static fn (mixed $value): int => abs((int) $value), array_unique((array) $q[$var]));
+            $q[$var] = array_map(str_starts_with($var, 'tag_slug') ? static fn (mixed $title): string => Sanitize::title($title, '', 'query') : static fn (mixed $value): int => Whole::abs($value), array_unique((array) $q[$var]));
             sort($q[$var]);
             $clause = ['taxonomy' => 'post_tag', 'terms' => $q[$var]];
             $clause += str_starts_with($var, 'tag_slug') ? ['field' => 'slug'] : [];

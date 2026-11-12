@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Auth\Can;
 use Minn\Support\Serialized;
+use Minn\Support\Whole;
 
 /**
  * The user counts WordPress's user functions give: how many users hold each
@@ -68,7 +69,7 @@ final class UserCounts
         if ($pre !== null) {
             return $pre;
         }
-        $ids = array_map(static fn (mixed $id): int => abs((int) $id), $users);
+        $ids = array_map(static fn (mixed $id): int => Whole::abs($id), $users);
         $types = array_map('strval', (array) $postType);
         $lookup = new PostLookup(Runtime::current()->db);
         $counts = $lookup->countsByAuthors($ids, $types, ['publish']);

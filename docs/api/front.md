@@ -579,7 +579,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 123)
+Internals: `enclosures()` (private, line 124)
 
 
 ## FeedTemplates
@@ -736,7 +736,7 @@ Used by: `Minn\Front\EntryScriptsController`
 
 The page for a request's query (its link_cat), under its content type.
 
-Internals: `categoryArgs()` (private, line 47), `category()` (private, line 57)
+Internals: `categoryArgs()` (private, line 48), `category()` (private, line 58)
 
 
 ## ListingLinks
@@ -1138,7 +1138,7 @@ The page of listing a query string asks for as ?paged=, as a whole
 number read the way the reference reads it (02, -2 and 2x are 2); 0
 when it asks for none (absent, 0, not a number, not one value).
 
-Internals: `date()` (private, line 83), `author()` (private, line 97), `feed()` (private, line 114), `term()` (private, line 132), `oneTerm()` (private, line 145), `lastSlug()` (private, line 177)
+Internals: `date()` (private, line 84), `author()` (private, line 98), `feed()` (private, line 115), `term()` (private, line 133), `oneTerm()` (private, line 146), `lastSlug()` (private, line 178)
 
 
 ## RecordedRedirect
@@ -1637,7 +1637,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 82), `notFound()` (private, line 99)
+Internals: `page()` (private, line 83), `notFound()` (private, line 100)
 
 
 ## SitemapXml

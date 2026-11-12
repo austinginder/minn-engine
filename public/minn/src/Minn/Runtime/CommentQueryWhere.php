@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Objects\CommentsQuery;
 use Minn\Query\Sql;
 use Minn\Support\Lists;
+use Minn\Support\Whole;
 
 /**
  * WP_Comment_Query's WHERE pieces and the posts join, in the reference's
@@ -97,7 +98,7 @@ final class CommentQueryWhere
     private function post(array $qv): string
     {
         ['post_id' => $post] = $qv + ['post_id' => 0];
-        $post = abs((int) ($post));
+        $post = Whole::abs(($post));
         return $post > 0 ? "comment_post_ID = {$post}" : '';
     }
 

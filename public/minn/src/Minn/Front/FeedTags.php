@@ -28,6 +28,7 @@ use Minn\Support\Escape;
 use Minn\Support\Text;
 use Minn\Support\Url;
 use Minn\Runtime\TermFields;
+use Minn\Support\Whole;
 
 /**
  * The template tags a feed is written with that take more than a line, as
@@ -138,7 +139,7 @@ final class FeedTags
                 continue;
             }
             $type = preg_split('/[ \t]/', trim($lines[2]))[0] ?? '';
-            $out .= Runtime::hooks()->filter('rss_enclosure', ['<enclosure url="' . Escape::url(trim($lines[0])) . '" length="' . abs((int) (trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n"]);
+            $out .= Runtime::hooks()->filter('rss_enclosure', ['<enclosure url="' . Escape::url(trim($lines[0])) . '" length="' . Whole::abs((trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n"]);
         }
         return $out;
     }

@@ -10,6 +10,7 @@ use Minn\Objects\Errors;
 use Minn\Objects\User;
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
+use Minn\Support\Whole;
 
 /**
  * The comment form's submission with plugins loaded
@@ -41,7 +42,7 @@ final class CommentForm
         $email = $text('email');
         $url = $text('url');
         $content = $text('comment');
-        $parent = abs((int) ($text('comment_parent')));
+        $parent = Whole::abs(($text('comment_parent')));
         if ($parent > 0) {
             $replied = Records::comment($parent);
             // Held, spam and trashed parents alike: as a number, their status is 0 (comment-form suite).

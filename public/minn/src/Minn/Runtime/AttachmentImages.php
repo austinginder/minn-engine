@@ -11,6 +11,7 @@ use Minn\Media\Sizing;
 use Minn\Support\Escape;
 use Minn\Support\Lists;
 use Minn\Support\Text;
+use Minn\Support\Whole;
 
 /**
  * An attachment's image as WordPress's media functions make it: the
@@ -187,10 +188,10 @@ final class AttachmentImages
     public static function sizeFromMeta(mixed $sizeName, mixed $imageMeta): mixed
     {
         if ($sizeName === 'full') {
-            return [abs((int) $imageMeta['width']), abs((int) $imageMeta['height'])];
+            return [Whole::abs($imageMeta['width']), Whole::abs($imageMeta['height'])];
         }
         if (!empty($imageMeta['sizes'][$sizeName])) {
-            return [abs((int) $imageMeta['sizes'][$sizeName]['width']), abs((int) $imageMeta['sizes'][$sizeName]['height'])];
+            return [Whole::abs($imageMeta['sizes'][$sizeName]['width']), Whole::abs($imageMeta['sizes'][$sizeName]['height'])];
         }
         return false;
     }
@@ -251,7 +252,7 @@ final class AttachmentImages
     {
         $width = 0;
         if (is_array($size)) {
-            $width = abs((int) $size[0]);
+            $width = Whole::abs($size[0]);
         } elseif (is_string($size)) {
             if (!$imageMeta && $attachmentId) {
                 $imageMeta = Attachments::metadata($attachmentId);
@@ -259,7 +260,7 @@ final class AttachmentImages
             if (is_array($imageMeta)) {
                 $dimensions = self::sizeFromMeta($size, $imageMeta);
                 if ($dimensions) {
-                    $width = abs((int) $dimensions[0]);
+                    $width = Whole::abs($dimensions[0]);
                 }
             }
         }

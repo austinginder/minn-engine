@@ -8,6 +8,7 @@ use Minn\Objects\UsersQuery;
 use Minn\Query\Sql;
 use Minn\Support\Lists;
 use Minn\Support\Sanitize;
+use Minn\Support\Whole;
 
 /**
  * WP_User_Query as the reference runs it (probe wp-user-query-sql): the
@@ -55,7 +56,7 @@ final class UserQueryRunner
         $query->query_from = "FROM {$users}";
         $query->query_where = 'WHERE 1=1';
         $include = !empty($qv['include']) ? Lists::ids($qv['include']) : [];
-        $blog = isset($qv['blog_id']) ? abs((int) ($qv['blog_id'])) : 0;
+        $blog = isset($qv['blog_id']) ? Whole::abs(($qv['blog_id'])) : 0;
         $query->query_where .= $this->published($qv, $blog) . $this->names($qv);
         $this->meta($query, $qv, $blog);
         $query->query_orderby = $this->order($query, $qv);

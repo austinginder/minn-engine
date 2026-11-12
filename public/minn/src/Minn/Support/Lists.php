@@ -121,7 +121,7 @@ final class Lists
      */
     public static function ids(mixed $input): array
     {
-        return array_values(array_unique(array_map(static fn (string $id): int => abs((int) $id), self::items($input))));
+        return array_values(array_unique(array_map(static fn (string $id): int => Whole::abs($id), self::items($input))));
     }
 
     /**

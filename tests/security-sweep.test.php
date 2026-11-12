@@ -247,6 +247,13 @@ $engine = $multibyte('engine');
 $reference = $multibyte('reference');
 $check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
 
+// 2026-11-12 (finding 3.7): the smallest integer as a page, comment page or hour answers without a server error;
+// the reference's absint() makes it a float, which the engine's typed code could not hold (a 500).
+foreach (['/?paged=-9223372036854775808', '/category/uncategorized/?paged=-9223372036854775808', '/?hour=-9223372036854775808', '/wp-sitemap-posts-post-1.xml?paged=-9223372036854775808'] as $path) {
+    [$status] = $http($ENGINE . $path);
+    $check("{$path} answers without a server error", $status > 0 && $status < 500, (string) $status);
+}
+
 // 2026-11-12 (finding 1.7): the Minn bar and its nonce follow the reader plugins settle on, not the cookie's session:
 // a plugin that settles on nobody for a request leaves the page without the bar.
 $nobody = "{$PUBLIC}/wp-content/mu-plugins/zz-sweep-nobody.php";

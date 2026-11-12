@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\RestRequest;
+use Minn\Support\Whole;
 
 /**
  * The get_terms arguments a term list request makes, as the reference
@@ -32,7 +33,7 @@ final class TermListArgs
                 $args[$var] = $param === 'orderby' && $wp[$param] === 'include_slugs' ? 'slug__in' : $wp[$param];
             }
         }
-        $args['offset'] = isset($registered['offset'], $wp['offset']) ? $wp['offset'] : (int) ($args['number'] ?? 0) * (abs((int) ($wp['page'])) - 1);
+        $args['offset'] = isset($registered['offset'], $wp['offset']) ? $wp['offset'] : (int) ($args['number'] ?? 0) * (Whole::abs(($wp['page'])) - 1);
         if (isset($registered['parent'], $wp['parent'])) {
             $args['parent'] = $wp['parent'];
         }

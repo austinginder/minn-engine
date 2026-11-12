@@ -12,6 +12,7 @@ use Minn\Query\AuthorPostsSql;
 use Minn\Query\MimeWhere;
 use Minn\Support\Lists;
 use Minn\Support\Url;
+use Minn\Support\Whole;
 
 /**
  * What WordPress's post functions tell about posts: a page's path and a
@@ -369,7 +370,7 @@ final class PostReads
     /** @return array<int, int> ids from a list or a string, each once, as positive integers */
     private static function idList(mixed $list): array
     {
-        return array_unique(array_map(static fn (mixed $id): int => abs((int) $id), is_array($list) ? $list : Lists::items($list)));
+        return array_unique(array_map(static fn (mixed $id): int => Whole::abs($id), is_array($list) ? $list : Lists::items($list)));
     }
 
     private static function store(): Posts

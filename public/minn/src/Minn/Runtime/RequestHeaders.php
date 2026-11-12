@@ -8,6 +8,7 @@ use Minn\Http\NoCache;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\StatusText;
+use Minn\Support\Whole;
 
 /**
  * What WordPress's request functions say and send: the protocol the
@@ -31,7 +32,7 @@ final class RequestHeaders
      */
     public static function status(mixed $code, mixed $description = ''): void
     {
-        $description = $description ?: StatusText::of(abs((int) $code));
+        $description = $description ?: StatusText::of(Whole::abs($code));
         if ($description === '') {
             return;
         }

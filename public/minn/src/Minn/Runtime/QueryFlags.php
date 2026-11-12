@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Sanitize;
+use Minn\Support\Whole;
 
 /**
  * The conditional flags a set of query variables implies (is_single, is_archive,
@@ -134,7 +135,7 @@ final readonly class QueryFlags
         }
         foreach (['hour', 'minute', 'second', 'menu_order'] as $key) {
             if ($vars[$key] !== '') {
-                $vars[$key] = abs((int) $vars[$key]);
+                $vars[$key] = Whole::abs($vars[$key]);
             }
         }
         if (!is_scalar($vars['s']) || ($vars['s'] !== '' && strlen((string) $vars['s']) > 1600)) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Support\Whole;
+
 /**
  * The query variables a Query Loop block's context asks for, the way the
  * reference's build_query_vars_from_query_block builds them (probe
@@ -37,8 +39,8 @@ final class QueryVars
             $query['post__not_in'] = array_merge($query['post__not_in'], array_filter(array_map('intval', (array) $context['exclude'])));
         }
         if (isset($context['perPage']) && is_numeric($context['perPage'])) {
-            $perPage = abs((int) $context['perPage']);
-            $offset = isset($context['offset']) && is_numeric($context['offset']) ? abs((int) $context['offset']) : 0;
+            $perPage = Whole::abs($context['perPage']);
+            $offset = isset($context['offset']) && is_numeric($context['offset']) ? Whole::abs($context['offset']) : 0;
             $query['offset'] = ($perPage * ($page - 1)) + $offset;
             $query['posts_per_page'] = $perPage;
         }

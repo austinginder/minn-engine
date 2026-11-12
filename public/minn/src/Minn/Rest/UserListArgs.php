@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\RestRequest;
+use Minn\Support\Whole;
 
 /**
  * The WP_User_Query arguments a user list request makes, as the reference
@@ -39,7 +40,7 @@ final class UserListArgs
                 $args[$var] = $param === 'search' ? '*' . $wp[$param] . '*' : $wp[$param];
             }
         }
-        $args['offset'] = isset($wp['offset']) ? $wp['offset'] : (int) ($args['number'] ?? 0) * (abs((int) ($wp['page'])) - 1);
+        $args['offset'] = isset($wp['offset']) ? $wp['offset'] : (int) ($args['number'] ?? 0) * (Whole::abs(($wp['page'])) - 1);
         $args['orderby'] = self::ORDERBY[(string) $wp['orderby']] ?? 'display_name';
         $published = $wp['has_published_posts'];
         if ($published === true || (is_array($published) && $published !== [])) {

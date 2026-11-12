@@ -16,6 +16,7 @@ use Minn\Runtime\Shortcodes;
 use Minn\Support\Escape;
 use Minn\Support\Flag;
 use Minn\Runtime\AssetQueue;
+use Minn\Support\Whole;
 
 /**
  * The [video] and [audio] shortcodes as the reference prints them: a
@@ -66,7 +67,7 @@ final class MediaShortcodes
         [$atts['width'], $atts['height']] = self::fitted((int) $atts['width'], (int) $atts['height']);
         $library = self::library('video');
         $atts['class'] = Runtime::hooks()->filter('wp_video_shortcode_class', [$atts['class'], $atts]);
-        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => abs((int) ($atts['width'])), 'height' => abs((int) ($atts['height'])), 'poster' => Escape::url((string) $atts['poster']), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
+        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => Whole::abs(($atts['width'])), 'height' => Whole::abs(($atts['height'])), 'poster' => Escape::url((string) $atts['poster']), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
         $html = '<video ' . $attributes . ' controls="controls">' . self::sourceTags($atts, $sources['order'], $instance, $hosted) . self::fallback($sources['file'], $library) . '</video>';
         $output = sprintf('<div style="%s" class="wp-video">%s</div>', empty($atts['width']) ? '' : sprintf('width: %dpx;', $atts['width']), $html);
         return (string) Runtime::hooks()->filter('wp_video_shortcode', [$output, $atts, $video, $postId, $library]);

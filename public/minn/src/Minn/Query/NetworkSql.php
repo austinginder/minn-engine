@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Query;
 
+use Minn\Support\Whole;
+
 /**
  * The SQL WP_Site_Query and WP_Network_Query build from their variables
  * (probe multisite-classes). A site query names only blog_id through its
@@ -52,7 +54,7 @@ final class NetworkSql
         }
         foreach (self::SITE_FLAGS as $flag => $format) {
             if (is_numeric($qv[$flag] ?? null)) {
-                $where[] = $this->wpdb->prepare("{$flag} = {$format} ", abs((int) $qv[$flag]));
+                $where[] = $this->wpdb->prepare("{$flag} = {$format} ", Whole::abs($qv[$flag]));
             }
         }
         $where = [...$where, ...$this->ints('lang_id', $qv['lang__in'] ?? '', $qv['lang__not_in'] ?? '')];
@@ -158,8 +160,8 @@ final class NetworkSql
     /** The LIMIT for a number and an offset; none without a number. @param array<string, mixed> $qv */
     public static function limits(array $qv): string
     {
-        $number = abs((int) ($qv['number'] ?? 0));
-        $offset = abs((int) ($qv['offset'] ?? 0));
+        $number = Whole::abs(($qv['number'] ?? 0));
+        $offset = Whole::abs(($qv['offset'] ?? 0));
         if ($number === 0) {
             return '';
         }

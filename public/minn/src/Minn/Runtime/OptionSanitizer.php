@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\I18n\TranslationFiles;
 use Minn\Support\Escape;
 use Minn\Support\Sanitize;
+use Minn\Support\Whole;
 
 /**
  * A core option's value cleaned as the reference's sanitize_option cleans
@@ -55,7 +56,7 @@ final class OptionSanitizer
         $text = is_scalar($value) ? (string) $value : '';
         return match (true) {
             in_array($option, ['admin_email', 'new_admin_email'], true) => self::email($text),
-            in_array($option, self::COUNTS, true) => [abs((int) ($value)), null],
+            in_array($option, self::COUNTS, true) => [Whole::abs(($value)), null],
             in_array($option, ['posts_per_page', 'posts_per_rss'], true) => [self::perPage($value), null],
             in_array($option, ['default_ping_status', 'default_comment_status'], true) => [$text === '' || $text === '0' ? 'closed' : $value, null],
             in_array($option, ['blogdescription', 'blogname'], true) => [Escape::html($text), null],

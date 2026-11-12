@@ -2387,7 +2387,7 @@ Route: `GET /wp/v2/pattern-directory/patterns (cap edit_posts)`
 
 The directory's patterns for a query, a page at a time.
 
-Internals: `upstreamQuery()` (private, line 85), `fetch()` (private, line 121), `item()` (private, line 144)
+Internals: `upstreamQuery()` (private, line 86), `fetch()` (private, line 122), `item()` (private, line 145)
 
 
 ## PluginsController

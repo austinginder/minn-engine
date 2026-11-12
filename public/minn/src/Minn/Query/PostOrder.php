@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Query;
 
 use Minn\Support\Sanitize;
+use Minn\Support\Whole;
 
 /**
  * WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the
@@ -126,7 +127,7 @@ final class PostOrder
         if (empty($given)) {
             return '';
         }
-        $ids = static fn (array $values): array => array_map(static fn ($v) => abs((int) $v), $values);
+        $ids = static fn (array $values): array => array_map(static fn ($v) => Whole::abs($v), $values);
         return match ($orderby) {
             'post__in' => "FIELD({$table}.ID," . implode(',', $ids((array) $given)) . ')',
             'post_parent__in' => "FIELD( {$table}.post_parent," . implode(', ', $ids((array) $given)) . ' )',

@@ -12,6 +12,7 @@ use Minn\Runtime\RequestHeaders;
 use Minn\Runtime\Runtime;
 use Minn\Support\Sanitize;
 use Minn\Theme\Printed;
+use Minn\Support\Whole;
 
 /**
  * A sitemap request at template_redirect, as the reference's sitemaps
@@ -34,7 +35,7 @@ final class SitemapRequest
         }
         $provider = $sitemaps->registry->get_provider($name);
         $offered = $provider && (!$subtypeName || in_array($subtypeName, array_keys($provider->get_object_subtypes()), true));
-        return $offered ? $provider->get_sitemap_url($subtypeName, max(1, abs((int) $page))) : false;
+        return $offered ? $provider->get_sitemap_url($subtypeName, max(1, Whole::abs($page))) : false;
     }
 
     /** The canonical step: a sitemap asked for by another address is sent to its own. */
@@ -86,7 +87,7 @@ final class SitemapRequest
             self::notFound();
             return;
         }
-        $urls = $provider->get_url_list(max(1, (int) abs((int) (MainQuery::current()->get('paged')))), $subtype);
+        $urls = $provider->get_url_list(max(1, (int) Whole::abs((MainQuery::current()->get('paged')))), $subtype);
         if (empty($urls)) {
             self::notFound();
             return;

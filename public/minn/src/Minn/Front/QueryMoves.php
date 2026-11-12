@@ -10,6 +10,7 @@ use Minn\Content\UserRecord;
 use Minn\Db;
 use Minn\Http\Request;
 use Minn\Runtime\Runtime;
+use Minn\Support\Whole;
 
 /**
  * Where the root's archive query forms move under pretty permalinks, as
@@ -77,7 +78,7 @@ final readonly class QueryMoves
     public static function askedPage(Request $request): int
     {
         $paged = $request->query['paged'] ?? null;
-        return is_scalar($paged) ? abs((int) $paged) : 0;
+        return is_scalar($paged) ? Whole::abs($paged) : 0;
     }
 
     private function date(Request $request): ?Resolution

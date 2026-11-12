@@ -9,6 +9,7 @@ use Minn\Content\RowCache;
 use Minn\Objects\Comment;
 use Minn\Objects\CommentsQuery;
 use Minn\Query\CommentOrder;
+use Minn\Support\Whole;
 
 /**
  * WP_Comment_Query as the reference runs it (probe wp-comment-query-sql):
@@ -76,7 +77,7 @@ final class CommentQueryRunner
         // An empty page counts nothing: the found rows are read only when the query found some.
         if ($found && $ids !== []) {
             $query->found_comments = (int) $this->wpdb->get_var(Runtime::hooks()->filterRefArray('found_comments_query', ['SELECT FOUND_ROWS()', &$query]));
-            $query->max_num_pages = (int) ceil($query->found_comments / max(1, abs((int) ($qv['number']))));
+            $query->max_num_pages = (int) ceil($query->found_comments / max(1, Whole::abs(($qv['number']))));
         }
         return $ids;
     }

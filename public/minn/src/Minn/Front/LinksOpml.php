@@ -10,6 +10,7 @@ use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteInfo;
 use Minn\Runtime\TermLookup;
 use Minn\Support\Escape;
+use Minn\Support\Whole;
 
 /**
  * wp-links-opml.php: the site's links as an OPML outline, as the reference
@@ -48,7 +49,7 @@ final class LinksOpml
     {
         $args = ['taxonomy' => 'link_category', 'hierarchical' => 0];
         if (is_string($asked) && $asked !== '' && $asked !== '0') {
-            $args['include'] = $asked === 'all' ? 'all' : abs((int) $asked);
+            $args['include'] = $asked === 'all' ? 'all' : Whole::abs($asked);
         }
         return $args;
     }

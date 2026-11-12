@@ -9,6 +9,7 @@ use Minn\I18n\Gettext;
 use Minn\Runtime\Notices;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteTime;
+use Minn\Support\Whole;
 
 /**
  * The WHERE fragment of a date query in the reference's shape: before and
@@ -302,7 +303,7 @@ final class DateSql
             $date = date_create($value, $zone);
             return $date === false ? gmdate('Y-m-d H:i:s', 0) : ($zone === null ? $date : $date->setTimezone($zone))->format('Y-m-d H:i:s');
         }
-        $value = array_map(static fn (mixed $value): int => abs((int) $value), $value);
+        $value = array_map(static fn (mixed $value): int => Whole::abs($value), $value);
         $year = (int) ($value['year'] ?? (Runtime::facadeLoaded() ? SiteTime::now('Y') : date('Y')));
         $month = (int) ($value['month'] ?? ($endOfUnit ? 12 : 1));
         $day = (int) ($value['day'] ?? ($endOfUnit ? (int) gmdate('t', (int) mktime(0, 0, 0, $month, 1, $year)) : 1));

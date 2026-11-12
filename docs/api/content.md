@@ -637,7 +637,7 @@ class, library and final HTML through their filters.
 
 get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them.
 
-Internals: `sources()` (private, line 118), `anyOwnFormat()` (private, line 146), `sourceTags()` (private, line 157), `attributes()` (private, line 171), `fitted()` (private, line 184), `library()` (private, line 191), `fallback()` (private, line 206), `postId()` (private, line 211), `instance()` (private, line 217)
+Internals: `sources()` (private, line 119), `anyOwnFormat()` (private, line 147), `sourceTags()` (private, line 158), `attributes()` (private, line 172), `fitted()` (private, line 185), `library()` (private, line 192), `fallback()` (private, line 207), `postId()` (private, line 212), `instance()` (private, line 218)
 
 
 ## MenuItem

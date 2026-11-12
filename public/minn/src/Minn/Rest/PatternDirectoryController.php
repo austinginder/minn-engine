@@ -19,6 +19,7 @@ use Minn\Runtime\KsesRules;
 use Minn\Runtime\Transients;
 use Minn\Runtime\Translations;
 use Minn\Support\Sanitize;
+use Minn\Support\Whole;
 
 /**
  * wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the
@@ -146,13 +147,13 @@ final readonly class PatternDirectoryController
         $meta = (array) ($raw->meta ?? []);
         $text = static fn (mixed $value): string => Sanitize::textField((string) $value);
         return [
-            'id' => abs((int) ($raw->id ?? 0)),
+            'id' => Whole::abs(($raw->id ?? 0)),
             'title' => $text(((array) ($raw->title ?? []))['rendered'] ?? ''),
             'content' => KsesRules::post((string) ($raw->pattern_content ?? '')),
             'categories' => array_map(static fn (mixed $slug): string => Sanitize::title((string) $slug), array_values((array) ($raw->category_slugs ?? []))),
             'keywords' => array_map($text, explode(',', (string) ($meta['wpop_keywords'] ?? ''))),
             'description' => $text($meta['wpop_description'] ?? ''),
-            'viewport_width' => abs((int) ($meta['wpop_viewport_width'] ?? 0)),
+            'viewport_width' => Whole::abs(($meta['wpop_viewport_width'] ?? 0)),
             'block_types' => array_map($text, array_values((array) ($meta['wpop_block_types'] ?? []))),
         ];
     }

@@ -1109,7 +1109,7 @@ How many images in a page's content load eagerly
 (wp_omit_loading_attr_threshold): 3, as the filter leaves it, asked
 once and then kept unless forced (probe: the loading threshold).
 
-Internals: `asked()` (private, line 431), `byPlace()` (private, line 480)
+Internals: `asked()` (private, line 432), `byPlace()` (private, line 481)
 
 
 ## AttachmentModel
@@ -1967,7 +1967,7 @@ The stored comment, or the refusal the form answers with.
 
 - `@param array<string, mixed> $form the posted fields, unslashed`
 
-Internals: `store()` (private, line 78), `postRefusal()` (private, line 96), `fieldRefusal()` (private, line 125)
+Internals: `store()` (private, line 79), `postRefusal()` (private, line 97), `fieldRefusal()` (private, line 126)
 
 
 ## CommentPages
@@ -2068,7 +2068,7 @@ the request counts them and found some.
 - `@param array{join?: string, where?: string} $meta`
 - `@return list<int>|int`
 
-Internals: `request()` (private, line 91), `comments()` (private, line 123)
+Internals: `request()` (private, line 92), `comments()` (private, line 124)
 
 
 ## CommentQueryWhere
@@ -2110,7 +2110,7 @@ A LIKE test over the columns (get_search_sql), as an AND clause. @param list<str
 
 - `@param list<string> $columns`
 
-Internals: `approved()` (private, line 77), `post()` (private, line 97), `types()` (private, line 112), `parentAndUser()` (private, line 140), `search()` (private, line 153), `posts()` (private, line 176), `given()` (private, line 196), `listOf()` (private, line 202), `bare()` (private, line 211)
+Internals: `approved()` (private, line 78), `post()` (private, line 98), `types()` (private, line 113), `parentAndUser()` (private, line 141), `search()` (private, line 154), `posts()` (private, line 177), `given()` (private, line 197), `listOf()` (private, line 203), `bare()` (private, line 212)
 
 
 ## CommentReads
@@ -4323,7 +4323,7 @@ read.
 
 - `@param list<int> $ids`
 
-Internals: `column()` (private, line 395), `store()` (private, line 400), `announce()` (private, line 406), `rows()` (private, line 414)
+Internals: `column()` (private, line 396), `store()` (private, line 401), `announce()` (private, line 407), `rows()` (private, line 415)
 
 
 ## MetaKeys
@@ -4751,7 +4751,7 @@ Used by: `Minn\Runtime\OptionWrites`
 
 The value as sanitize_option leaves it, through sanitize_option_{$option}.
 
-Internals: `rule()` (private, line 53), `lists()` (private, line 73), `email()` (private, line 89), `perPage()` (private, line 96), `structure()` (private, line 104), `words()` (private, line 112), `domains()` (private, line 119), `languages()` (private, line 126)
+Internals: `rule()` (private, line 54), `lists()` (private, line 74), `email()` (private, line 90), `perPage()` (private, line 97), `structure()` (private, line 105), `words()` (private, line 113), `domains()` (private, line 120), `languages()` (private, line 127)
 
 
 ## OptionWrites
@@ -6018,7 +6018,7 @@ The search stopwords, translated and filtered. @return list<string>
 
 - `@return list<string>`
 
-Internals: `prepare()` (private, line 64), `defaults()` (private, line 86), `pageSize()` (private, line 135), `clauses()` (private, line 165), `taxonomies()` (private, line 199), `searchOrder()` (private, line 264), `filtered()` (private, line 282), `through()` (private, line 305), `paging()` (private, line 315), `execute()` (private, line 331), `idsOnly()` (private, line 366), `select()` (private, line 388), `answered()` (private, line 415), `foundPosts()` (private, line 430)
+Internals: `prepare()` (private, line 65), `defaults()` (private, line 87), `pageSize()` (private, line 136), `clauses()` (private, line 166), `taxonomies()` (private, line 200), `searchOrder()` (private, line 265), `filtered()` (private, line 283), `through()` (private, line 306), `paging()` (private, line 316), `execute()` (private, line 332), `idsOnly()` (private, line 367), `select()` (private, line 389), `answered()` (private, line 416), `foundPosts()` (private, line 431)
 
 
 ## PostQueryParts
@@ -6170,7 +6170,7 @@ when none is set, and cat, category_name and tag_id from those two.
 
 - `@param array<string, array{terms?: list<mixed>, field?: string}> $queried`
 
-Internals: `queryVar()` (private, line 57), `cat()` (private, line 72), `categoryLists()` (private, line 89), `tag()` (private, line 112), `tagLists()` (private, line 132)
+Internals: `queryVar()` (private, line 58), `cat()` (private, line 73), `categoryLists()` (private, line 90), `tag()` (private, line 113), `tagLists()` (private, line 133)
 
 
 ## PostQueryWhere
@@ -6221,7 +6221,7 @@ A password, or whether there is one, and comment and ping status. @param array<s
 
 - `@param array<string, mixed> $q`
 
-Internals: `nameList()` (private, line 90), `typeQueryVar()` (private, line 100), `pagename()` (private, line 122), `ids()` (private, line 161), `authorName()` (private, line 236), `commentCount()` (private, line 249)
+Internals: `nameList()` (private, line 91), `typeQueryVar()` (private, line 101), `pagename()` (private, line 123), `ids()` (private, line 162), `authorName()` (private, line 237), `commentCount()` (private, line 250)
 
 
 ## PostReads
@@ -6321,7 +6321,7 @@ The post an address names (url_to_postid): a ?p= or ?page_id= id, else
 with pretty permalinks a page by its path, a post whose own address it
 is, or an attachment by its own; 0 for none.
 
-Internals: `filledArguments()` (private, line 157), `chosenPosts()` (private, line 175), `termsPrimed()` (private, line 290), `idList()` (private, line 370), `store()` (private, line 375)
+Internals: `filledArguments()` (private, line 158), `chosenPosts()` (private, line 176), `termsPrimed()` (private, line 291), `idList()` (private, line 371), `store()` (private, line 376)
 
 
 ## PostRevisions
@@ -6828,7 +6828,7 @@ query variable carries a value, as [taxonomy name, query var].
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `sanitize()` (private, line 125), `archiveFlags()` (private, line 160)
+Internals: `sanitize()` (private, line 126), `archiveFlags()` (private, line 161)
 
 
 ## RecipientLocale
@@ -10366,7 +10366,7 @@ by LIKE with wildcards at the leading or trailing end, or both.
 
 Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape.
 
-Internals: `fields()` (private, line 82), `published()` (private, line 97), `names()` (private, line 108), `meta()` (private, line 125), `order()` (private, line 158), `search()` (private, line 184), `lastChanged()` (private, line 262)
+Internals: `fields()` (private, line 83), `published()` (private, line 98), `names()` (private, line 109), `meta()` (private, line 126), `order()` (private, line 159), `search()` (private, line 185), `lastChanged()` (private, line 263)
 
 
 ## UserSave

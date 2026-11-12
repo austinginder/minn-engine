@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
+use Minn\Support\Whole;
 
 /**
  * Metadata as WordPress's meta functions read and write it, for posts,
@@ -34,7 +35,7 @@ final class MetaData
         if (!$type || !is_numeric($objectId)) {
             return false;
         }
-        $objectId = abs((int) $objectId);
+        $objectId = Whole::abs($objectId);
         if (!$objectId) {
             return false;
         }

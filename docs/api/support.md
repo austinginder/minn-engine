@@ -42,6 +42,7 @@ escaping, serialized readers, small helpers
 | [`TimezoneChoice`](#timezonechoice) | final class | 109 | The timezone choices a settings form offers (wp_timezone_choice, probe |
 | [`Url`](#url) | final class | 271 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 182 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
+| [`Whole`](#whole) | final class | 9 | Whole numbers read from outside: the reference's absint() turns the |
 
 ## Accents
 
@@ -1509,4 +1510,20 @@ The UTF-8 bytes for a code point, or null for a negative one, a surrogate, or on
 ### static `firstCodePoint(string $bytes): ?int`
 
 The code point of the first character, or null when the bytes do not start with a whole, well-formed one.
+
+
+## Whole
+
+`final class Minn\Support\Whole` · `public/minn/src/Minn/Support/Whole.php`
+
+Whole numbers read from outside: the reference's absint() turns the
+smallest integer into a float (it has no whole-number opposite), which
+a typed int, a LIMIT or a page number cannot hold. Here it reads as 0,
+as asking for nothing (security sweep 2026-11-12, finding 3.7).
+
+Used by: `Minn\Blocks\QueryVars`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\LinksOpml`, `Minn\Front\QueryMoves`, `Minn\Front\SitemapRequest`, `Minn\I18n\Numbers`, `Minn\Query\CommentOrder`, `Minn\Query\DateSql`, `Minn\Query\NetworkSql`, `Minn\Query\PostOrder`, `Minn\Rest\CommentListArgs`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\TermListArgs`, `Minn\Rest\UserListArgs`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\UserCounts`, `Minn\Runtime\UserQueryRunner`, `Minn\Support\Lists`
+
+### static `abs(mixed $value): int`
+
+A value as a non-negative int: its integer reading without its sign, 0 for the smallest integer.
 

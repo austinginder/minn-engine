@@ -9,6 +9,7 @@ use Minn\Objects\Query;
 use Minn\Query\PostOrder;
 use Minn\Query\PostSearch;
 use Minn\I18n\Gettext;
+use Minn\Support\Whole;
 
 /**
  * WP_Query::get_posts as the reference runs it (probe wp-query-sql): the
@@ -120,7 +121,7 @@ final class PostQuery
             }
         }
         if (isset($q['page'])) {
-            $q['page'] = is_scalar($q['page']) ? abs((int) (trim((string) $q['page'], '/'))) : 0;
+            $q['page'] = is_scalar($q['page']) ? Whole::abs((trim((string) $q['page'], '/'))) : 0;
         }
         $q['no_found_rows'] = isset($q['no_found_rows']) && $q['no_found_rows'];
         $t = $this->parts->table;
@@ -317,12 +318,12 @@ final class PostQuery
         if (!empty($q['nopaging']) || $this->query->is_singular) {
             return;
         }
-        $this->parts->page = abs((int) ($q['paged'])) ?: 1;
+        $this->parts->page = Whole::abs(($q['paged'])) ?: 1;
         if (isset($q['offset']) && is_numeric($q['offset'])) {
-            $q['offset'] = abs((int) ($q['offset']));
+            $q['offset'] = Whole::abs(($q['offset']));
             $start = $q['offset'] . ', ';
         } else {
-            $start = abs((int) (($this->parts->page - 1) * $q['posts_per_page'])) . ', ';
+            $start = Whole::abs((($this->parts->page - 1) * $q['posts_per_page'])) . ', ';
         }
         $this->parts->limits = 'LIMIT ' . $start . $q['posts_per_page'];
     }

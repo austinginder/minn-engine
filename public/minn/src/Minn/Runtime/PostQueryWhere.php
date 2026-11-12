@@ -8,6 +8,7 @@ use Minn\Objects\Query;
 use Minn\Query\Sql;
 use Minn\Support\Sanitize;
 use Minn\Support\Text;
+use Minn\Support\Whole;
 
 /**
  * The WHERE fragments WP_Query writes from its variables, in the reference's
@@ -81,7 +82,7 @@ final class PostQueryWhere
             $this->nameList($q, $names);
         }
         if ($q['attachment_id']) {
-            $q['p'] = abs((int) ($q['attachment_id']));
+            $q['p'] = Whole::abs(($q['attachment_id']));
         }
         $this->ids($q);
     }
@@ -161,7 +162,7 @@ final class PostQueryWhere
     private function ids(array &$q): void
     {
         $t = $this->table;
-        $ids = static fn ($values): array => array_map(static fn ($v) => abs((int) $v), (array) $values);
+        $ids = static fn ($values): array => array_map(static fn ($v) => Whole::abs($v), (array) $values);
         $sorted = static function ($values) use ($ids): array {
             $values = array_unique($ids($values));
             sort($values);
@@ -217,7 +218,7 @@ final class PostQueryWhere
             // Only ids reach the SQL, as the reference reads them (probe audit 2026-10-13): a list, or a string excluded as an id
             // list (split on commas and spaces), or a string included as the one id it starts with.
             $ids = is_array($q[$var]) ? $q[$var] : ($var === 'author__not_in' ? (preg_split('/[\s,]+/', (string) $q[$var], -1, PREG_SPLIT_NO_EMPTY) ?: []) : [(string) $q[$var]]);
-            $q[$var] = array_values(array_unique(array_map(static fn (mixed $value): int => abs((int) $value), $ids)));
+            $q[$var] = array_values(array_unique(array_map(static fn (mixed $value): int => Whole::abs($value), $ids)));
             sort($q[$var]);
             $this->parts->where .= " AND {$t}.post_author {$operator} (" . implode(',', (array) $q[$var]) . ') ';
             break;
@@ -242,7 +243,7 @@ final class PostQueryWhere
         $q['author_name'] = Sanitize::title($q['author_name'], '', 'query');
         $user = Handoff::userBy('slug', $q['author_name']);
         $q['author'] = $user ? $user->ID : false;
-        $this->parts->whichauthor .= " AND ({$this->table}.post_author = " . abs((int) ($q['author'])) . ')';
+        $this->parts->whichauthor .= " AND ({$this->table}.post_author = " . Whole::abs(($q['author'])) . ')';
     }
 
     /** @param array<string, mixed> $q */

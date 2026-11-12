@@ -702,7 +702,7 @@ The query vars a query block's context amounts to.
 - `@param list<int> $sticky the site's sticky post ids`
 - `@param array{viewableType: callable(string): bool, hierarchicalType: callable(string): bool, viewableTaxonomy: callable(string): bool, formats: list<string>} $site what the site says about types, taxonomies and formats`
 
-Internals: `sticky()` (private, line 64), `idTerms()` (private, line 75), `taxonomyTerms()` (private, line 87), `formats()` (private, line 106), `author()` (private, line 129)
+Internals: `sticky()` (private, line 66), `idTerms()` (private, line 77), `taxonomyTerms()` (private, line 89), `formats()` (private, line 108), `author()` (private, line 131)
 
 
 ## RenderState
