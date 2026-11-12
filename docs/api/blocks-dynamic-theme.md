@@ -8,7 +8,7 @@ the template blocks a block theme composes with
 | [`Navigation`](#navigation) | final readonly class | 554 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`NavigationParts`](#navigationparts) | final class | 197 | The navigation family's small answers for the block_core_navigation_* |
 | [`PostBlocks`](#postblocks) | final readonly class | 332 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 383 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`QueryBlocks`](#queryblocks) | final class | 386 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -201,7 +201,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 68), `navigating()` (private, line 91), `enhanced()` (private, line 99), `queried()` (private, line 114), `page()` (private, line 123), `loop()` (private, line 139), `current()` (private, line 160), `total()` (private, line 177), `postTemplate()` (private, line 201), `queryTitle()` (private, line 245), `noResults()` (private, line 266), `pagination()` (private, line 287), `paginationBase()` (private, line 362), `numbers()` (private, line 383), `archiveTitle()` (private, line 408)
+Internals: `query()` (private, line 68), `navigating()` (private, line 91), `enhanced()` (private, line 99), `queried()` (private, line 114), `page()` (private, line 123), `loop()` (private, line 139), `current()` (private, line 160), `total()` (private, line 177), `postTemplate()` (private, line 201), `queryTitle()` (private, line 245), `noResults()` (private, line 266), `pagination()` (private, line 287), `paginationBase()` (private, line 365), `numbers()` (private, line 386), `archiveTitle()` (private, line 411)
 
 
 ## Structure

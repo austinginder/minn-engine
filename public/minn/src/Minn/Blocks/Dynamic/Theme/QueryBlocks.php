@@ -302,7 +302,10 @@ final class QueryBlocks
             $limit = (int) ($renderer->blockContext()['query']['pages'] ?? 0);
             $pages = (int) ($query['query']->max_num_pages ?? 0);
             $pages = $limit > 0 ? min($limit, $pages) : $pages;
-            $here = (string) (Runtime::current()->request?->path ?? '/');
+            // Leading slashes (or backslashes, which browsers read as slashes) collapse to one, so a link can never be
+            // an address on another host (//elsewhere.example/?query-0-page=2) where canonical redirects are off
+            // (security sweep 2026-11-12, finding 3.5).
+            $here = (string) preg_replace('#^[/\\\\]+#', '/', (string) (Runtime::current()->request?->path ?? '/'));
             // Previous and next replace the page in the address, or add it after the rest.
             $link = static fn (int $page): string => $here . '?' . http_build_query(array_key_exists($key, $request) ? array_replace($request, [$key => $page]) : $request + [$key => $page]);
             $others = array_diff_key($request, [$key => true]);

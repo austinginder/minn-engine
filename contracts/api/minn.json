@@ -18510,7 +18510,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 383,
+            "lines": 386,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, query-total.",
             "implements": [],
             "extends": null,
@@ -18947,7 +18947,7 @@
                         }
                     ],
                     "line": 287,
-                    "end": 359
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -18966,8 +18966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 374
+                    "line": 365,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -19009,8 +19009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 405
+                    "line": 386,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -19029,8 +19029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 412
+                    "line": 411,
+                    "end": 415
                 }
             ]
         },

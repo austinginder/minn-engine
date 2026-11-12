@@ -247,6 +247,20 @@ $engine = $multibyte('engine');
 $reference = $multibyte('reference');
 $check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
 
+// 2026-11-12 (finding 3.5): with canonical redirects off, a page's own query loop builds its page links from the path
+// with its leading slashes collapsed, so //elsewhere/ never becomes a link to another host.
+$noCanonical = "{$PUBLIC}/wp-content/mu-plugins/zz-sweep-nocanon.php";
+file_put_contents($noCanonical, "<?php\nremove_action('template_redirect', 'redirect_canonical');\n");
+$queryPage = $wp("post create --post_type=page --post_title='zz sweep query' --post_name=zz-sweep-query --post_status=publish --post_content=" . escapeshellarg('<!-- wp:query {"queryId":7,"query":{"perPage":1,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":false}} --><div class="wp-block-query"><!-- wp:post-template --><!-- wp:post-title /--><!-- /wp:post-template --><!-- wp:query-pagination --><!-- wp:query-pagination-next /--><!-- /wp:query-pagination --></div><!-- /wp:query -->') . ' --porcelain');
+register_shutdown_function(static function () use ($wp, $queryPage, $noCanonical): void {
+    @unlink($noCanonical);
+    $wp("post delete {$queryPage} --force");
+});
+[, $doubled] = $http($ENGINE . '//zz-sweep-query/');
+@unlink($noCanonical);
+$wp("post delete {$queryPage} --force");
+$check('a query loop\'s page links never point at another host from a //path', str_contains($doubled, 'href="/zz-sweep-query/?query-7-page=2"') && !str_contains($doubled, 'href="//'), (string) (preg_match('/href="[^"]*query-7-page[^"]*"/', $doubled, $m) ? $m[0] : 'no link'));
+
 // 2026-11-12 (finding 3.8): a pattern directory answer with a list or an object where text belongs maps to empty
 // fields, never a failure that would answer 500 for as long as the answer is kept.
 $directoryItem = trim((string) shell_exec('MINN_SALT_ROOT=' . escapeshellarg($ROOT) . ' php -d display_errors=0 -r ' . escapeshellarg('require getenv("MINN_SALT_ROOT") . "/tests/tools/engine-runtime.php";
