@@ -21,7 +21,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 134 | The public site. One catch-all route: resolve the URL, then either |
-| [`FrontParts`](#frontparts) | final class | 38 | What the front builds before its routes: the extensions' seams for the |
+| [`FrontParts`](#frontparts) | final class | 41 | What the front builds before its routes: the extensions' seams for the |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`LinksOpml`](#linksopml) | final class | 47 | wp-links-opml.php: the site's links as an OPML outline, as the reference |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |

@@ -53742,7 +53742,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/FrontParts.php",
-            "lines": 38,
+            "lines": 41,
             "doc": "What the front builds before its routes: the extensions' seams for the\nrequest's reader, the Minn bar they may carry, and the admin's types and\nappearance the bar and the shell read. Built once a request, whether the\nruntime has booted or not (MINN_WP_API lets an extension route answer\nwithout it), and the extensions register on it once.",
             "implements": [],
             "extends": null,
@@ -53968,7 +53968,7 @@
                         }
                     ],
                     "line": 44,
-                    "end": 55
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -53979,8 +53979,8 @@
                     "doc": "The seams with every active extension registered on them; the first call registers.",
                     "shapes": [],
                     "params": [],
-                    "line": 58,
-                    "end": 65
+                    "line": 61,
+                    "end": 68
                 }
             ]
         },

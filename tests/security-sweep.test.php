@@ -247,6 +247,18 @@ $engine = $multibyte('engine');
 $reference = $multibyte('reference');
 $check('a gbk connection: a lead byte cannot close the engine\'s quote (quoted as the reference quotes it, the literal back whole)', $engine === $reference && str_ends_with($engine, ' ' . bin2hex("\xbf\x27 OR 1=1 -- ")), "engine {$engine}, reference {$reference}");
 
+// 2026-11-12 (finding 1.7): the Minn bar and its nonce follow the reader plugins settle on, not the cookie's session:
+// a plugin that settles on nobody for a request leaves the page without the bar.
+$nobody = "{$PUBLIC}/wp-content/mu-plugins/zz-sweep-nobody.php";
+file_put_contents($nobody, "<?php\nadd_filter('determine_current_user', static fn (\$id) => isset(\$_SERVER['HTTP_X_ZZ_NOBODY']) ? 0 : \$id, 99);\n");
+register_shutdown_function(static fn () => @unlink($nobody));
+$mint = (array) json_decode((string) shell_exec('cd ' . escapeshellarg("{$SITE}/wp-reference") . ' && wp eval-file ' . escapeshellarg("{$ROOT}/tests/tools/mint-session.php") . ' 1 2>/dev/null'), true);
+$adminCookie = ($mint['cookie_name'] ?? '') . '=' . ($mint['cookie'] ?? '');
+[, $withBar] = $http($ENGINE . '/', 'GET', [], $adminCookie);
+[, $settledNobody] = $http($ENGINE . '/', 'GET', [], $adminCookie, ['X-Zz-Nobody: 1']);
+@unlink($nobody);
+$check('the Minn bar follows the reader plugins settle on: none when they settle on nobody', str_contains($withBar, 'minn-cornerbar') && !str_contains($settledNobody, 'minn-cornerbar'), (str_contains($withBar, 'minn-cornerbar') ? 'bar' : 'no bar') . ' / ' . (str_contains($settledNobody, 'minn-cornerbar') ? 'bar' : 'no bar'));
+
 // 2026-11-12 (finding 2.8): the laid wp-includes/pluggable.php asked for on its own answers as the reference's does,
 // an empty 200, where it failed with a 500 that named the engine and the file's path.
 [$engineStatus, $engineBody] = $http($ENGINE . '/wp-includes/pluggable.php');

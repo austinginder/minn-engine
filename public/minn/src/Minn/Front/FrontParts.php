@@ -48,7 +48,10 @@ final class FrontParts
         $appearance = new Appearance($users, $site);
         $adminTypes = new AdminTypes(new Types(new RestUrl($permalinks), $loader->declaredTypes()), $capabilities);
         $adminOff = App::switchedOff($contentDir, $site);
-        $bar = $adminOff ? null : AdminBar::forReader($session instanceof Authenticated ? $session : null, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
+        // The bar, and the nonce it carries, follow the reader: when plugins settle on someone other than the cookie's
+        // session (nobody, say), the cookie's session gets no bar (security sweep 2026-11-12, finding 1.7).
+        $own = $session instanceof Authenticated && $session->id() === $reader->userId ? $session : null;
+        $bar = $adminOff ? null : AdminBar::forReader($own, $capabilities, $site, $permalinks, $app, $appearance, $adminTypes);
         // The bar is known before extensions register, so their own pages can carry it (Seams::frontBar).
         $seams->useFrontBar($bar);
         return new self($seams, $loader, $appearance, $adminTypes, $adminOff, $bar);
