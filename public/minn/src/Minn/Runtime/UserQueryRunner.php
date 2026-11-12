@@ -221,6 +221,13 @@ final class UserQueryRunner
         }
         $results = Runtime::hooks()->filterRefArray('users_pre_query', [null, &$query]);
         if ($results === null) {
+            if (!empty($qv['cache_results'])) {
+                // The stamps a cached answer would be salted with are read, though nothing is kept.
+                self::lastChanged('users');
+                if (!empty($qv['has_published_posts']) || in_array('post_count', (array) ($qv['orderby'] ?? []), true)) {
+                    self::lastChanged('posts');
+                }
+            }
             $break = "\n\t\t\t\t ";
             $query->request = "SELECT {$query->query_fields}{$break}{$query->query_from}{$break}{$query->query_where}{$break}{$query->query_orderby}{$break}{$query->query_limit}";
             $results = is_array($qv['fields']) ? $this->wpdb->get_results($query->request) : $this->wpdb->get_col($query->request);
@@ -249,5 +256,17 @@ final class UserQueryRunner
             }
             $query->results = $users;
         }
+    }
+
+    /** Reads a group's last-changed stamp from the object cache, setting it (wp_cache_set_last_changed) when the cache has none. */
+    private static function lastChanged(string $group): void
+    {
+        $previous = Handoff::cacheGet('last_changed', $group);
+        if ($previous) {
+            return;
+        }
+        $last = microtime();
+        Handoff::cacheSet('last_changed', $last, $group);
+        Runtime::hooks()->action('wp_cache_set_last_changed', [$group, $last, $previous]);
     }
 }

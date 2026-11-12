@@ -61,6 +61,7 @@ final readonly class PolicyGate
             Access::SignedIn => $this->caller->require($policy->signIn, $policy->signInMessage, $policy->signInStatus),
             Access::Cap, Access::Floor => $this->capabilities($policy),
             Access::Own => $this->own($policy, $captures),
+            Access::CommentEditor => $this->commentEditor($policy, $captures),
             Access::Type => $this->type($policy, $captures),
             Access::Taxonomy => $this->taxonomy($policy, $captures),
         };
@@ -183,6 +184,16 @@ final readonly class PolicyGate
         }
         $object = Registered::postType($policy->of) ?? Registered::taxonomy($policy->of);
         return is_object($object) ? (string) ($object->cap->{$capability} ?? $capability) : $capability;
+    }
+
+    /** @param array<string, string> $captures */
+    private function commentEditor(Policy $policy, array $captures): void
+    {
+        $this->caller->require($policy->signIn, $policy->signInMessage);
+        $id = (int) ($captures[(string) $policy->param] ?? 0);
+        if (!$this->caller->mayChangeComment($id, $this->subjects->commentType($id) ?? '')) {
+            throw new RestError($policy->refuse, $policy->message, 403);
+        }
     }
 
     /** @param array<string, string> $captures */

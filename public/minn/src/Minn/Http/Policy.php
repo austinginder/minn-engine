@@ -123,6 +123,7 @@ final readonly class Policy
             Access::Cap => 'cap ' . implode(' + ', $this->capabilities()),
             Access::Floor => 'floor ' . implode(' + ', $this->capabilities()),
             Access::Own => "cap {$this->cap} on {{$this->param}}",
+            Access::CommentEditor => "moderate_comments (not on a note) or edit_comment on {{$this->param}}",
             Access::Type => 'declared type {' . $this->param . '}',
             Access::Taxonomy => 'registered taxonomy {' . $this->param . '}',
         };

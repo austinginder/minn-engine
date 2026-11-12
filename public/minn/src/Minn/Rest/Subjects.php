@@ -47,6 +47,13 @@ final readonly class Subjects
         };
     }
 
+    /** A comment's stored type ("" for an ordinary one), or null when there is no such comment. */
+    public function commentType(int $id): ?string
+    {
+        $type = $this->db->value("SELECT comment_type FROM {$this->db->table('comments')} WHERE comment_ID = ?", [$id]);
+        return $type === null ? null : (string) $type;
+    }
+
     /** Whether a post of the type exists. */
     public function postOfType(int $id, string $type): bool
     {

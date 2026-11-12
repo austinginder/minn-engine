@@ -8,6 +8,7 @@
     "styles": [],
     "minn_modified": false,
     "minn_lock": null,
+    "minn_can_delete": true,
     "_links": {
         "self": [
             {

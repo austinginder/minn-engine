@@ -1,9 +1,9 @@
 {
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
-        "functions": 3495,
+        "functions": 3497,
         "methods": 3812,
-        "delegates": 3568,
+        "delegates": 3570,
         "logicFunctions": 1772,
         "logicMethods": 1967,
         "logicLines": 29198,
@@ -14746,7 +14746,7 @@
         },
         "_wp_add_global_attributes": {
             "file": "kses.php",
-            "line": 271,
+            "line": 281,
             "statements": 3,
             "lines": 5
         },
@@ -15004,7 +15004,7 @@
         },
         "_wp_kses_split_callback": {
             "file": "kses.php",
-            "line": 377,
+            "line": 387,
             "statements": 2,
             "lines": 2
         },
@@ -18160,19 +18160,19 @@
         },
         "kses_init": {
             "file": "kses.php",
-            "line": 231,
+            "line": 241,
             "statements": 2,
             "lines": 4
         },
         "kses_init_filters": {
             "file": "kses.php",
-            "line": 204,
+            "line": 214,
             "statements": 8,
             "lines": 10
         },
         "kses_remove_filters": {
             "file": "kses.php",
-            "line": 219,
+            "line": 229,
             "statements": 6,
             "lines": 8
         },
@@ -20644,7 +20644,7 @@
         },
         "wp_filter_global_styles_post": {
             "file": "kses.php",
-            "line": 388,
+            "line": 398,
             "statements": 6,
             "lines": 8
         },
@@ -21628,7 +21628,7 @@
         },
         "wp_kses_array_lc": {
             "file": "kses.php",
-            "line": 193,
+            "line": 203,
             "statements": 3,
             "lines": 5
         },
@@ -21640,13 +21640,13 @@
         },
         "wp_kses_bad_protocol_once2": {
             "file": "kses.php",
-            "line": 341,
+            "line": 351,
             "statements": 3,
             "lines": 7
         },
         "wp_kses_hair": {
             "file": "kses.php",
-            "line": 163,
+            "line": 173,
             "statements": 3,
             "lines": 14
         },
@@ -21658,25 +21658,25 @@
         },
         "wp_kses_named_entities": {
             "file": "kses.php",
-            "line": 299,
+            "line": 309,
             "statements": 2,
             "lines": 4
         },
         "wp_kses_normalize_entities2": {
             "file": "kses.php",
-            "line": 321,
+            "line": 331,
             "statements": 3,
             "lines": 5
         },
         "wp_kses_normalize_entities3": {
             "file": "kses.php",
-            "line": 331,
+            "line": 341,
             "statements": 3,
             "lines": 5
         },
         "wp_kses_xml_named_entities": {
             "file": "kses.php",
-            "line": 308,
+            "line": 318,
             "statements": 4,
             "lines": 8
         },
@@ -23038,7 +23038,7 @@
         },
         "wp_strip_custom_css_from_blocks": {
             "file": "kses.php",
-            "line": 245,
+            "line": 255,
             "statements": 6,
             "lines": 20
         },

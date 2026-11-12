@@ -346,7 +346,7 @@
         {
             "answer": {
                 "error": "plugin_php_incompatible",
-                "message": "<p><strong>Error:</strong> Current PHP version (8.3.35) does not meet minimum requirements for ZZ Activate PHP. The plugin requires PHP 99.0.</p><p><a href=\"https://wordpress.org/support/update-php/\">Learn more about updating PHP</a>.</p>",
+                "message": "<p><strong>Error:</strong> Current PHP version (8.3.36) does not meet minimum requirements for ZZ Activate PHP. The plugin requires PHP 99.0.</p><p><a href=\"https://wordpress.org/support/update-php/\">Learn more about updating PHP</a>.</p>",
                 "data": null
             },
             "heard": [],
@@ -361,7 +361,7 @@
         {
             "answer": {
                 "error": "plugin_wp_incompatible",
-                "message": "<p><strong>Error:</strong> Current WordPress version (7.1.3) does not meet minimum requirements for ZZ Activate WP. The plugin requires WordPress 99.0.</p>",
+                "message": "<p><strong>Error:</strong> Current WordPress version (7.1.4) does not meet minimum requirements for ZZ Activate WP. The plugin requires WordPress 99.0.</p>",
                 "data": null
             },
             "heard": [],
@@ -395,7 +395,7 @@
         {
             "answer": {
                 "error": "plugin_wp_php_incompatible",
-                "message": "<p><strong>Error:</strong> Current versions of WordPress (7.1.3) and PHP (8.3.35) do not meet minimum requirements for ZZ Activate Both. The plugin requires WordPress 99.0 and PHP 99.0.</p><p><a href=\"https://wordpress.org/support/update-php/\">Learn more about updating PHP</a>.</p>",
+                "message": "<p><strong>Error:</strong> Current versions of WordPress (7.1.4) and PHP (8.3.36) do not meet minimum requirements for ZZ Activate Both. The plugin requires WordPress 99.0 and PHP 99.0.</p><p><a href=\"https://wordpress.org/support/update-php/\">Learn more about updating PHP</a>.</p>",
                 "data": null
             },
             "heard": [],
@@ -686,7 +686,7 @@
         {
             "answer": {
                 "error": "plugin_php_incompatible",
-                "message": "<p><strong>Error:</strong> Current PHP version (8.3.35) does not meet minimum requirements for ZZ Activate PHP. The plugin requires PHP 99.0.</p><p><a href=\"https://wordpress.org/support/update-php/\">Learn more about updating PHP</a>.</p>",
+                "message": "<p><strong>Error:</strong> Current PHP version (8.3.36) does not meet minimum requirements for ZZ Activate PHP. The plugin requires PHP 99.0.</p><p><a href=\"https://wordpress.org/support/update-php/\">Learn more about updating PHP</a>.</p>",
                 "data": null
             },
             "heard": [],

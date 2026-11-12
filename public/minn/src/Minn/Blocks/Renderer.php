@@ -522,7 +522,8 @@ final class Renderer
         if ($class === $default || $html === '') {
             return $html;
         }
-        return (string) preg_replace('/^(\s*<[a-z][^>]*?\sclass="(?:[^"]*\s)?)' . preg_quote($default, '/') . '(?=[\s"])/', '${1}' . $class, $html, 1);
+        // A callback, so a $1 or \1 in the filtered class is text, not a reference into the match.
+        return (string) preg_replace_callback('/^(\s*<[a-z][^>]*?\sclass="(?:[^"]*\s)?)' . preg_quote($default, '/') . '(?=[\s"])/', static fn (array $m): string => $m[1] . $class, $html, 1);
     }
 
     /** A core block's wp-elements-N class (rules recorded) and numbered style variation, with no block filters about to add them (probe block-class-stages). @return array{0: ?string, 1: ?string} */

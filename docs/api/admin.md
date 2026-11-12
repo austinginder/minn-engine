@@ -4,8 +4,8 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
-| [`ActivityFeed`](#activityfeed) | final readonly class | 213 | What happened lately, as the overview and the bell tell it: the caller's |
+| [`ActivityChart`](#activitychart) | final readonly class | 66 | The overview's activity chart: published writing (OverviewTypes) plus every |
+| [`ActivityFeed`](#activityfeed) | final readonly class | 217 | What happened lately, as the overview and the bell tell it: recent |
 | [`AdminArgs`](#adminargs) | final class | 29 | The arguments Minn Admin's own routes register, as the reference lists |
 | [`AdminMenu`](#adminmenu) | final class | 75 | The admin menu's arithmetic, as plugins' menu calls see it on the |
 | [`AdminNotice`](#adminnotice) | final class | 25 | An admin notice's markup, as wp_get_admin_notice builds it on the |
@@ -14,10 +14,10 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
 | [`AppController`](#appcontroller) | final readonly class | 180 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 121 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 259 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 288 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`CodeEditor`](#codeeditor) | final class | 96 | The code editor's settings as wp_get_code_editor_settings gives them |
-| [`Dashboard`](#dashboard) | final readonly class | 274 | The overview payload: stat cards, the activity chart, and the recent |
+| [`Dashboard`](#dashboard) | final readonly class | 278 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 31 | The editor's edit lock in minn-admin/v1. Its template and pattern lists |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
@@ -29,6 +29,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`MetaBoxes`](#metaboxes) | final class | 56 | One screen's meta boxes as add_meta_box files them on the reference |
 | [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 140 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
+| [`OverviewTypes`](#overviewtypes) | final class | 38 | What the overview counts as writing: posts, pages and the public custom |
 | [`PackagesController`](#packagescontroller) | final readonly class | 119 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 133 | A person's own settings in minn-admin/v1: their appearance, the views |
@@ -50,7 +51,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 
 `final readonly class Minn\Admin\ActivityChart` · `public/minn/src/Minn/Admin/ActivityChart.php`
 
-The overview's activity chart: published posts and pages plus every
+The overview's activity chart: published writing (OverviewTypes) plus every
 comment, counted per bar. A window over 45 days is drawn in weeks,
 anything shorter in days; each bar carries the (from, to] GMT bounds
 the drill-down asks for.
@@ -81,8 +82,8 @@ for daily bars, "Week of" the bar's first day for weekly ones.
 
 `final readonly class Minn\Admin\ActivityFeed` · `public/minn/src/Minn/Admin/ActivityFeed.php`
 
-What happened lately, as the overview and the bell tell it: the caller's
-own recent posts and the latest comments, and the events behind one
+What happened lately, as the overview and the bell tell it: recent
+writing and the latest comments, and the events behind one
 chart bar. Also the visibility rule every comment row is put through.
 
 Used by: `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Rest\Services`
@@ -95,12 +96,6 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Capabilities $capa
 ### `recent(int $userId, int $now, int $offset): array`
 
 The overview's four most recent items, times already worded ("2 hours ago").
-
-Oracle-caught quirk: the reference's recent-activity query runs with a
-multi-type post_type plus perm=editable, and on that combination it
-restricts EVERY status to post_author = caller, admins included,
-published posts included. Authorless posts appear for nobody. The
-engine reproduces the observed behavior, not the intent.
 
 - `@return list<array>`
 
@@ -124,7 +119,7 @@ A post's stored title, empty when the post is gone.
 
 A user's display name, empty when the user is gone.
 
-Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 172), `commentsBetween()` (private, line 197)
+Internals: `recentPosts()` (private, line 96), `latestComments()` (private, line 145), `publishedBetween()` (private, line 174), `commentsBetween()` (private, line 201)
 
 
 ## AdminArgs
@@ -498,7 +493,7 @@ plugin is not running as code.
 
 - `@return array<string, mixed>|null`
 
-Internals: `userSlice()` (private, line 103), `siteSlice()` (private, line 120), `commerce()` (private, line 146), `caps()` (private, line 158), `standHomeQuery()` (private, line 242), `adapterSlices()` (private, line 260)
+Internals: `userSlice()` (private, line 107), `siteSlice()` (private, line 124), `commerce()` (private, line 150), `caps()` (private, line 162), `standHomeQuery()` (private, line 246), `newMenuSlices()` (private, line 266), `adapterSlices()` (private, line 293)
 
 
 ## BundleController
@@ -604,7 +599,7 @@ At most six unique sanitize_key metric ids; anything else drops.
 
 The events behind one chart bar, (from, to] GMT.
 
-Internals: `postsCard()` (private, line 69), `pagesCard()` (private, line 86), `usersCard()` (private, line 91), `commentsCard()` (private, line 97), `mediaCard()` (private, line 113), `metricCatalog()` (private, line 131), `overlayMetricKeys()` (private, line 225), `statusCounts()` (private, line 267), `commentCounts()` (private, line 278)
+Internals: `postsCard()` (private, line 74), `pagesCard()` (private, line 91), `usersCard()` (private, line 96), `commentsCard()` (private, line 102), `mediaCard()` (private, line 118), `metricCatalog()` (private, line 136), `overlayMetricKeys()` (private, line 230), `statusCounts()` (private, line 272), `commentCounts()` (private, line 283)
 
 
 ## EditorController
@@ -962,6 +957,36 @@ Route: `POST /minn-admin/v1/overview/metric-defaults (floor edit_posts + manage_
 Saves the site's default overview cards.
 
 Internals: `metricKeysFrom()` (private, line 82), `storedMetricLayout()` (private, line 99), `days()` (private, line 114), `window()` (private, line 131), `parameterError()` (private, line 157)
+
+
+## OverviewTypes
+
+`final class Minn\Admin\OverviewTypes` · `public/minn/src/Minn/Admin/OverviewTypes.php`
+
+What the overview counts as writing: posts, pages and the public custom
+types shown in REST, as post type => REST base. Stores and page builders
+keep their own screens and stay out, as does a type whose REST base is a
+nested path. A plugin's types count once plugins are loaded.
+
+- const `LEFT_OUT` = `array (   0 => 'attachment',   1 => 'product',   2 => 'product_variation',   3 => 'shop_coupon',   4 => 'shop_subscription',   5 => 'elementor_library',   6 => 'e-floating-buttons',   7 => 'e-landing-page',   8 => 'jet-theme-core',   9 => 'jet-engine',   10 => 'jet-menu', )`
+
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`
+
+### static `all(): array`
+
+The types, post and page first.
+
+- `@return array<string, string> post type => REST base`
+
+### static `othersCap(string $type): string`
+
+The capability that lets a caller see everyone's records of a type, not only their own.
+
+### static `in(array $types): array`
+
+The types as SQL placeholders and their values.
+
+- `@return array{0: string, 1: list<string>}`
 
 
 ## PackagesController

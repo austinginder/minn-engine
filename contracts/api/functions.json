@@ -3395,6 +3395,28 @@
             }
         ]
     },
+    "_wp_kses_directive_binds_value_restricted_attribute": {
+        "file": "wp-includes/kses.php",
+        "params": [
+            {
+                "name": "directive_name",
+                "type": "string"
+            },
+            {
+                "name": "allowed_attributes"
+            }
+        ],
+        "returns": "bool"
+    },
+    "_wp_kses_restricts_attribute_values": {
+        "file": "wp-includes/kses.php",
+        "params": [
+            {
+                "name": "allowed_attributes"
+            }
+        ],
+        "returns": "bool"
+    },
     "_wp_kses_sanitize_note_mention_classes": {
         "file": "wp-includes/kses.php",
         "params": [

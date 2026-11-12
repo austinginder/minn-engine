@@ -6,11 +6,29 @@
 
 * **`minn login` prints a one-time sign-in link without WP-CLI.** `php minn/bin/minn login <webroot> [<user>]` signs in the user named, or the first administrator, through Minn's own sign-in page, and works whatever `MINN_WP_API` is set to. `--to=<path>` lands somewhere other than the admin, and `--format=json` adds the user, their roles and when the link expires. Cove uses it for `cove login`.
 
+### Changed
+
+* **Minn reports WordPress 7.1.4**, the security release of November 11, so a host that compares versions with wordpress.org does not offer to update the site. Its fixes are carried where they apply to Minn (see Security); the rest touch screens Minn does not have (the Customizer, multisite, the erasure screen).
+
 ### Fixed
 
 * **Sites on nginx reach every WordPress entry point.** Hosts such as Kinsta run a request for a `.php` file only when the file exists, so after an install `wp-cron.php` (the host's own cron), `wp-comments-post.php`, `wp-admin/admin-ajax.php`, `wp-admin/admin-post.php` and the rest answered 404 before Minn saw them. The install now lays a small file under each of those names that hands the request to Minn, an update lays any that are missing, and eject removes them before WordPress's own come back.
 
-* **Hosts that disable `getmyuid()` no longer take the site down.** Kinsta turns that PHP function off; Minn's check of how the site writes its own files called it, so a plugin that asks (Code Snippets) made every request fail. Minn now reads the owner from the running script, and answers `direct` there as WordPress does.
+* **Hosts that disable `getmyuid()` no longer take the site down.** Kinsta turns that PHP function off; Minn's check of how the site writes its own files called it, so a plugin that asks (Code Snippets) made every request fail. Minn now reads the owner of its own files instead, and answers `direct` there as WordPress does.
+
+* **Signed-in visitors reach sites with a page cache.** On a site whose page cache installs `advanced-cache.php` (WP Rocket and others), every request from someone signed in answered with an error page in 0.1.0: the sign-in check took the early files Minn loads for that drop-in for the whole WordPress layer. It now asks WordPress's session manager only once that layer has loaded.
+
+* **Minn Admin updates itself on hosts with a prepend loader.** Where `getmyuid()` was off, Minn took the owner from the first script PHP ran, which on Kinsta is a loader owned by root, so it decided it could not write the site's files and every plugin, theme and Minn Admin update failed without a reason. It reads its own files' owner, and an update that cannot write now says which file method it would need.
+
+* **Minn Admin's newer screens have what they ask for.** Items say whether you may delete them (`minn_can_delete`), so Move to trash and Duplicate show only where they work; the Overview counts and lists custom content types, shows an Editor everyone's recent work, and takes a plugin's own stat cards (`minn_admin_overview_stats`); and the app is told which types you cannot add to, which a plugin puts first in the New menu, and what plugin blocks are called.
+
+* **The post's author may edit an ordinary comment on their own post over REST**, as WordPress lets them.
+
+* **The Post Navigation Link block's chevrons are » and «**, its label wraps the title as WordPress's does, and it renders on a single post reached any way.
+
+* **A `$1` or `\1` in a block's class or an image's `srcset` stays text**, where it was read as a reference into the markup.
+
+* **The language list offers Balochi**, which wordpress.org added.
 
 * **The curl installer purges page caches.** It waits until the site answers as Minn (an opcode cache can keep running the old `index.php` for half a minute), then runs `wp cache flush`, which runs the host's purge hooks, so visitors stop getting WordPress's cached pages. `--no-cache-flush` skips it.
 
@@ -27,6 +45,20 @@
 * **Mail addresses with accented or other non-ASCII letters** are accepted by PHPMailer once one has been added, as WordPress accepts them.
 
 ### Security
+
+* **Interactivity bindings cannot add event handlers or change what an object loads** (WordPress 7.1.4). A `data-wp-bind--onclick` printed a handler from state, and a binding on an `<object>`'s `data` or `type` changed the file it loads; both are now ignored and reported as WordPress reports them, and an address that is not safe for a link leaves the link's own address in place.
+
+* **Minn's interactivity script ignores `__proto__` in state and context**, reads server state only from its own script element, and never sets an `on…` attribute in the browser (WordPress 7.1.4).
+
+* **Content filtering drops a binding to an attribute that only takes certain values** (WordPress 7.1.4). Where kses allows an attribute only with listed values, a `data-wp-bind--` directive for it could set any value in the browser, so it is removed.
+
+* **The Categories and Comments Pagination blocks escape their labels** (WordPress 7.1.4), which an author without unfiltered HTML could fill with markup.
+
+* **Editorial notes keep to their post's editors over REST** (WordPress 7.1.4). A comment moderator who cannot edit the post can no longer change or delete a note on it, and listing notes needs edit access to each post asked for. Its post's editors can now read a note by its id, which answered 404 for everyone.
+
+* **The block parser accepts only the whitespace WordPress does inside a block's delimiter** (WordPress 7.1.4): a vertical tab no longer starts or ends one, so content cannot read as a block to Minn and as text to an editor.
+
+* **Upgrades unpack into a folder with a random name** and keep `wp-content/upgrade/index.php` (WordPress 7.1.4), so a package's files cannot be reached at an address someone could guess while it installs.
 
 * **Five wrong guesses burn a one-time sign-in link.** A link minted by the CaptainCore helper carries only seven characters, and Minn accepts those links too. Minn now forgets a user's link after five wrong tries, from any mix of addresses, as the helper does on WordPress.
 

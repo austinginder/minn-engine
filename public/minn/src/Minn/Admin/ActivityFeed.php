@@ -10,8 +10,8 @@ use Minn\Content\Users;
 use Minn\Db;
 
 /**
- * What happened lately, as the overview and the bell tell it: the caller's
- * own recent posts and the latest comments, and the events behind one
+ * What happened lately, as the overview and the bell tell it: recent
+ * writing and the latest comments, and the events behind one
  * chart bar. Also the visibility rule every comment row is put through.
  */
 final readonly class ActivityFeed
@@ -26,17 +26,11 @@ final readonly class ActivityFeed
     /**
      * The overview's four most recent items, times already worded ("2 hours ago").
      *
-     * Oracle-caught quirk: the reference's recent-activity query runs with a
-     * multi-type post_type plus perm=editable, and on that combination it
-     * restricts EVERY status to post_author = caller, admins included,
-     * published posts included. Authorless posts appear for nobody. The
-     * engine reproduces the observed behavior, not the intent.
-     *
      * @return list<array>
      */
     public function recent(int $userId, int $now, int $offset): array
     {
-        $items = [...$this->ownPosts($userId, $offset), ...$this->latestComments($userId)];
+        $items = [...$this->recentPosts($userId, $offset), ...$this->latestComments($userId)];
         usort($items, static fn (array $a, array $b) => $b['time'] - $a['time']);
         $items = array_slice($items, 0, 4);
         foreach ($items as &$item) {
@@ -91,23 +85,31 @@ final readonly class ActivityFeed
     }
 
     /**
-     * The caller's own posts, merged from a by-modified and a by-date window.
+     * Recent writing, one type at a time (OverviewTypes), each merged from a
+     * by-modified and a by-date window of five: everyone's records for a
+     * caller who may edit others' of that type, only their own otherwise.
+     * An authorless record shows to the first kind with no name before
+     * the verb, as the reference words it.
      *
      * @return list<array>
      */
-    private function ownPosts(int $userId, int $offset): array
+    private function recentPosts(int $userId, int $offset): array
     {
+        $types = OverviewTypes::all();
         $rows = [];
-        foreach (['post_modified', 'post_date'] as $order) {
-            $found = $this->db->rows(
-                "SELECT ID, post_type, post_status, post_author, post_title, post_date, post_modified_gmt
-                 FROM {$this->db->table('posts')}
-                 WHERE post_type IN ('post','page') AND post_status IN ('publish','draft','future','pending') AND post_author = ?
-                 ORDER BY {$order} DESC LIMIT 5",
-                [$userId],
-            );
-            foreach ($found as $post) {
-                $rows[(int) $post['ID']] ??= $post;
+        foreach (array_keys($types) as $type) {
+            $everyone = $this->capabilities->can($userId, OverviewTypes::othersCap($type));
+            foreach (['post_modified', 'post_date'] as $order) {
+                $found = $this->db->rows(
+                    "SELECT ID, post_type, post_status, post_author, post_title, post_date, post_modified_gmt
+                     FROM {$this->db->table('posts')}
+                     WHERE post_type = ? AND post_status IN ('publish','draft','future','pending')" . ($everyone ? '' : ' AND post_author = ?') . "
+                     ORDER BY {$order} DESC LIMIT 5",
+                    $everyone ? [$type] : [$type, $userId],
+                );
+                foreach ($found as $post) {
+                    $rows[(int) $post['ID']] ??= $post;
+                }
             }
         }
         $items = [];
@@ -133,7 +135,7 @@ final readonly class ActivityFeed
                 'text' => sprintf($template, $this->displayName((int) $post['post_author']), Format::plainTitle((string) $post['post_title'])),
                 'time' => $time,
                 'color' => match ($post['post_status']) { 'publish' => 'green', 'future' => 'blue', default => 'accent' },
-                'goto' => ['kind' => 'editor', 'type' => $post['post_type'] === 'page' ? 'pages' : 'posts', 'id' => (int) $post['ID']],
+                'goto' => ['kind' => 'editor', 'type' => $types[$post['post_type']] ?? 'posts', 'id' => (int) $post['ID']],
             ];
         }
         return $items;
@@ -171,12 +173,14 @@ final readonly class ActivityFeed
     /** @return list<array> */
     private function publishedBetween(string $from, string $to): array
     {
+        $types = OverviewTypes::all();
+        [$in, $names] = OverviewTypes::in($types);
         $posts = $this->db->rows(
             "SELECT ID, post_title, post_type, post_author, post_date_gmt FROM {$this->db->table('posts')}
-             WHERE post_status = 'publish' AND post_type IN ('post','page')
+             WHERE post_status = 'publish' AND post_type IN ({$in})
              AND post_date_gmt > ? AND post_date_gmt <= ?
              ORDER BY post_date_gmt DESC LIMIT 100",
-            [$from, $to],
+            [...$names, $from, $to],
         );
         $items = [];
         foreach ($posts as $post) {
@@ -184,7 +188,7 @@ final readonly class ActivityFeed
             $items[] = [
                 'kind' => 'post',
                 'id' => (int) $post['ID'],
-                'type' => $post['post_type'] === 'page' ? 'pages' : 'posts',
+                'type' => $types[$post['post_type']] ?? 'posts',
                 'text' => sprintf('%1$s published “%2$s”', $author !== '' ? $author : 'Someone', html_entity_decode($post['post_title'] !== '' ? $post['post_title'] : '(no title)', ENT_QUOTES)),
                 'time' => (int) strtotime($post['post_date_gmt'] . ' UTC'),
                 'color' => 'green',

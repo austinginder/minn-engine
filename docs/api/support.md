@@ -17,13 +17,14 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 580 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 562 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
+| [`KsesDirectives`](#ksesdirectives) | final class | 44 | The Interactivity API's bindings under kses (probe patch-714). A tag |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
-| [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
+| [`KsesPolicy`](#ksespolicy) | final readonly class | 125 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesProtocols`](#ksesprotocols) | final class | 67 | The protocols an address may use, as kses judges them: the site's list |
-| [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
+| [`KsesValues`](#ksesvalues) | final class | 59 | The value rules an allowlist attribute may carry, as the reference judges |
 | [`Lists`](#lists) | final class | 201 | List shaping behind the facade's array utilities: arguments over their |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
@@ -186,7 +187,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\EntryScriptsController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\LinksOpml`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Ops\FilesystemCredentials`, `Minn\Rest\FontSettings`, `Minn\Rest\FontWritesController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\WpdbReads`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\EntryScriptsController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\LinksOpml`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Ops\FilesystemCredentials`, `Minn\Rest\FontSettings`, `Minn\Rest\FontWritesController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\Interactivity`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\WpdbReads`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -419,7 +420,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Interactivity`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
 
 
 ### static `post(string $html): string`
@@ -553,13 +554,7 @@ Whether a code point is one a reference may name (valid_unicode): tab,
 line feed, carriage return, and the rest of Unicode from space up,
 except the surrogates and U+FFFE and U+FFFF.
 
-### static `pdfObject(string $url, string $uploadsUrl): bool`
-
-Whether a URL may be an object's data in post content: an http or https
-URL on the uploads host and port, no credentials, query or fragment,
-whose path ends in ".pdf".
-
-Internals: `cleaned()` (private, line 159), `cleanValue()` (private, line 164), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 304), `deepDecode()` (private, line 424), `visible()` (private, line 437), `normalizeText()` (private, line 452), `normalizeAttribute()` (private, line 475), `named()` (private, line 495), `codePoint()` (private, line 502), `attributes()` (private, line 527), `rendered()` (private, line 552), `srcset()` (private, line 590)
+Internals: `cleaned()` (private, line 159), `cleanValue()` (private, line 164), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 304), `deepDecode()` (private, line 424), `visible()` (private, line 437), `normalizeText()` (private, line 452), `normalizeAttribute()` (private, line 475), `named()` (private, line 495), `codePoint()` (private, line 502), `attributes()` (private, line 527), `rendered()` (private, line 555), `srcset()` (private, line 572)
 
 
 ## KsesAttributes
@@ -638,6 +633,36 @@ The facade sets these as it loads.
 Internals: `css()` (private, line 86), `cssTestString()` (private, line 116)
 
 
+## KsesDirectives
+
+`final class Minn\Support\KsesDirectives` · `public/minn/src/Minn/Support/KsesDirectives.php`
+
+The Interactivity API's bindings under kses (probe patch-714). A tag
+whose allowlist checks some attribute's value cannot let post content
+bind an attribute kses did not allow plainly: a binding would set at
+render time the value kses judged, or never saw. Directives other than
+data-wp-bind-- are left to the allowlist.
+
+- const `BIND` = `'data-wp-bind--'`
+- const `NOT_VALUE_RULES` = `array (   0 => 'required',   1 => 'valueless', )` — The rule keys that say nothing about an attribute's value.
+
+Used by: `Minn\Support\KsesPolicy`
+
+### static `restrictsValues(mixed $attributes): bool`
+
+Whether a tag's attribute allowlist checks any value: some attribute's
+rules are a list holding a key other than required and valueless
+(_wp_kses_restricts_attribute_values).
+
+### static `bindsRestricted(string $directive, mixed $attributes): bool`
+
+Whether a directive, as written, binds an attribute the tag may not
+take from a binding (_wp_kses_directive_binds_value_restricted_attribute):
+a data-wp-bind-- directive on a tag that checks values, naming an
+attribute (compared as written) that is not allowed plainly. Allowed
+plainly is a rule of exactly true, or a data- name under "data-*".
+
+
 ## KsesEntities
 
 `final class Minn\Support\KsesEntities` · `public/minn/src/Minn/Support/KsesEntities.php`
@@ -703,6 +728,10 @@ The rules an attribute carries on a tag: an empty list when it is
 allowed plainly, null when it is not allowed.
 
 - `@return array<array-key, mixed>|null`
+
+### `bindsRestricted(string $tag, string $name): bool`
+
+Whether an attribute (its name lowercased, as kses reads it) is a binding the tag may not take (KsesDirectives).
 
 ### `required(string $tag): array`
 
@@ -776,6 +805,12 @@ the tag's concern, so it is skipped here.
 ### static `check(string $value, string $valueless, string $rule, mixed $expected): bool`
 
 One rule against one value; $valueless is "y" for a bare attribute and "n" for one with a value.
+
+### static `pdfObject(string $url, string $uploadsUrl): bool`
+
+Whether a URL may be an object's data in post content: an http or https
+URL on the uploads host and port, no credentials, query or fragment,
+whose path ends in ".pdf".
 
 Internals: `wholeNumber()` (private, line 48)
 

@@ -68,7 +68,7 @@ use Minn\Extension\Seams;
 final readonly class Engine
 {
     /** The WordPress release whose contracts the runtime speaks; wp-includes/version.php says the same. */
-    public const WP_VERSION = '7.1.3';
+    public const WP_VERSION = '7.1.4';
 
     public function __construct(
         private string $version,

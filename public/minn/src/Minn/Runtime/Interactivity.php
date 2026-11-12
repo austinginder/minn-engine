@@ -6,6 +6,8 @@ namespace Minn\Runtime;
 
 use Minn\Html\Decoder;
 use Minn\Json;
+use Minn\Support\Escape;
+use Minn\Support\Kses;
 
 /**
  * Server-side directive processing for the Interactivity API: the state and
@@ -310,7 +312,7 @@ final class Interactivity
         $editor = new TagEditor($tag, self::relative($attrs, $token['start']));
         foreach ($directives as [$name, $value]) {
             if (str_starts_with($name, 'data-wp-bind--')) {
-                $this->bind($editor, substr($name, 14), $value);
+                $this->bind($editor, substr($name, 14), $value, strtolower((string) $token['name']));
             } elseif (str_starts_with($name, 'data-wp-class--')) {
                 $result = $this->evaluate($value, 'class');
                 if ($result !== self::UNRESOLVED) {
@@ -336,14 +338,25 @@ final class Interactivity
         return $editor->html();
     }
 
-    private function bind(TagEditor $editor, string $attribute, string $path): void
+    private function bind(TagEditor $editor, string $attribute, string $path, string $tag): void
     {
+        // An event handler would run the bound value as code: the binding is told off and left unapplied.
+        if (str_starts_with($attribute, 'on')) {
+            self::toldOff('Binding event handler attributes is not supported. Please use "data-wp-on--' . substr($attribute, 2) . '" instead.', '6.9.2');
+            return;
+        }
+        // An object's data and type load a document kses judged by value; a binding could swap it, so the directive goes.
+        if ($tag === 'object' && ($attribute === 'data' || $attribute === 'type')) {
+            $editor->remove('data-wp-bind--' . $attribute);
+            self::toldOff('The "' . $attribute . '" attribute cannot be bound on an "object" element, so the binding was ignored.', '7.1.4');
+            return;
+        }
         $result = $this->evaluate($path, $attribute);
         if ($result === self::UNRESOLVED) {
             return;
         }
         if (is_array($result) || is_object($result)) {
-            Runtime::hooks()->action('doing_it_wrong_run', ['WP_Interactivity_API::data_wp_bind_processor', 'Attempted to bind a non-scalar value to the "' . $attribute . '" attribute. Ensure the state/context property or the derived state closure resolves to a string, number, or boolean.', '7.1.0']);
+            self::toldOff('Attempted to bind a non-scalar value to the "' . $attribute . '" attribute. Ensure the state/context property or the derived state closure resolves to a string, number, or boolean.', '7.1.0');
             return;
         }
         $special = str_starts_with($attribute, 'aria-') || str_starts_with($attribute, 'data-');
@@ -359,7 +372,21 @@ final class Interactivity
             }
             return;
         }
-        $editor->set($attribute, (string) $result);
+        $value = (string) $result;
+        if ($value !== '' && in_array($attribute, Kses::URI_ATTRIBUTES, true)) {
+            // A URL is escaped as for display; one nothing of which survives (a refused scheme) leaves the attribute as it was.
+            $value = Escape::url($value);
+            if ($value === '') {
+                return;
+            }
+        }
+        $editor->set($attribute, $value);
+    }
+
+    /** The bind processor's _doing_it_wrong, as the reference reports it. */
+    private static function toldOff(string $message, string $version): void
+    {
+        Runtime::hooks()->action('doing_it_wrong_run', ['WP_Interactivity_API::data_wp_bind_processor', $message, $version]);
     }
 
     private function interactiveNamespace(string $value): ?string

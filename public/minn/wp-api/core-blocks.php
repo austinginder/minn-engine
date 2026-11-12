@@ -277,7 +277,7 @@ function render_block_core_comments_pagination_previous($attributes, $content, $
 function _minn_comments_pagination_link(string $which, array $attributes, array $context, string $wrapper): string
 {
     $previous = $which === 'previous';
-    $label = (string) ($attributes['label'] ?? '') ?: ($previous ? __('Older Comments') : __('Newer Comments'));
+    $label = esc_html((string) ($attributes['label'] ?? '') ?: ($previous ? __('Older Comments') : __('Newer Comments')));
     $arrows = ['arrow' => ['←', '→'], 'chevron' => ['«', '»']];
     $kind = (string) ($context['comments/paginationArrow'] ?? 'none');
     if (isset($arrows[$kind])) {
@@ -1614,7 +1614,7 @@ function _minn_block_categories(MinnBlock $block, MinnRenderer $renderer): strin
     if (!$block->attr('displayAsDropdown', false)) {
         return Wrapper::open('ul', 'wp-block-categories', $block, extraClasses: ['wp-block-categories-list', ...$classes]) . wp_list_categories($args) . '</ul>';
     }
-    $label = (string) $block->attr('label', '') ?: $taxonomy->labels->name;
+    $label = ($given = (string) $block->attr('label', '')) === '' ? $taxonomy->labels->name : wp_kses_post($given);
     $select = wp_dropdown_categories($args + ['id' => $id, 'name' => $taxonomy->query_var, 'value_field' => 'slug', 'show_option_none' => sprintf(__('Select %s'), $taxonomy->labels->singular_name)]);
     return Wrapper::open('div', 'wp-block-categories', $block, extraClasses: ['wp-block-categories-dropdown', ...$classes])
         . '<label class="wp-block-categories__label' . ($block->attr('showLabel', true) ? '' : ' screen-reader-text') . '" for="' . esc_attr($id) . '">' . $label . '</label>'

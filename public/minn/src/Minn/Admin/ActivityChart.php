@@ -8,7 +8,7 @@ use Minn\Content\Site;
 use Minn\Db;
 
 /**
- * The overview's activity chart: published posts and pages plus every
+ * The overview's activity chart: published writing (OverviewTypes) plus every
  * comment, counted per bar. A window over 45 days is drawn in weeks,
  * anything shorter in days; each bar carries the (from, to] GMT bounds
  * the drill-down asks for.
@@ -29,11 +29,12 @@ final readonly class ActivityChart
     public function bars(int $days, int $now): array
     {
         $since = gmdate('Y-m-d H:i:s', $now - $days * 86400);
+        [$in, $types] = OverviewTypes::in(OverviewTypes::all());
         $dates = array_merge(
             array_column($this->db->rows(
                 "SELECT post_date_gmt FROM {$this->db->table('posts')}
-                 WHERE post_status = 'publish' AND post_type IN ('post','page') AND post_date_gmt >= ?",
-                [$since],
+                 WHERE post_status = 'publish' AND post_type IN ({$in}) AND post_date_gmt >= ?",
+                [...$types, $since],
             ), 'post_date_gmt'),
             array_column($this->db->rows(
                 "SELECT comment_date_gmt FROM {$this->db->table('comments')} WHERE comment_date_gmt >= ?",

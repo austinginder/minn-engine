@@ -3,8 +3,8 @@
         "an image",
         {
             "result": {
-                "file": "{uploads}/2026/10/zz-probe-image.png",
-                "url": "{uploads-url}/2026/10/zz-probe-image.png",
+                "file": "{uploads}/{ym}/zz-probe-image.png",
+                "url": "{uploads-url}/{ym}/zz-probe-image.png",
                 "type": "image/png"
             },
             "filters": [
@@ -17,8 +17,8 @@
                 "sanitize_file_name('zz-probe-image.png' | 'zz probe image.png')",
                 "upload_mimes(array(96) | NULL)",
                 "upload_dir(array[basedir,baseurl,error,path,subdir,url])",
-                "wp_unique_filename('zz-probe-image.png' | '.png' | '{uploads}/2026/10' | NULL | array[] | '')",
-                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/2026/10/zz-probe-image.png' | 'image/png')",
+                "wp_unique_filename('zz-probe-image.png' | '.png' | '{uploads}/{ym}' | NULL | array[] | '')",
+                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/{ym}/zz-probe-image.png' | 'image/png')",
                 "wp_handle_upload(array[file,type,url] | 'sideload')"
             ]
         }
@@ -53,8 +53,8 @@
         "a type a plugin allows",
         {
             "result": {
-                "file": "{uploads}/2026/10/zz-probe.svg",
-                "url": "{uploads-url}/2026/10/zz-probe.svg",
+                "file": "{uploads}/{ym}/zz-probe.svg",
+                "url": "{uploads-url}/{ym}/zz-probe.svg",
                 "type": "image/svg+xml"
             },
             "filters": [
@@ -67,8 +67,8 @@
                 "sanitize_file_name('zz-probe.svg' | 'zz-probe.svg')",
                 "upload_mimes(array(96) | NULL)",
                 "upload_dir(array[basedir,baseurl,error,path,subdir,url])",
-                "wp_unique_filename('zz-probe.svg' | '.svg' | '{uploads}/2026/10' | NULL | array[] | '')",
-                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/2026/10/zz-probe.svg' | 'image/svg+xml')",
+                "wp_unique_filename('zz-probe.svg' | '.svg' | '{uploads}/{ym}' | NULL | array[] | '')",
+                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/{ym}/zz-probe.svg' | 'image/svg+xml')",
                 "wp_handle_upload(array[file,type,url] | 'sideload')"
             ]
         }
@@ -77,8 +77,8 @@
         "a name to clean",
         {
             "result": {
-                "file": "{uploads}/2026/10/zz-Probe-y-Name-1.png",
-                "url": "{uploads-url}/2026/10/zz-Probe-y-Name-1.png",
+                "file": "{uploads}/{ym}/zz-Probe-y-Name-1.png",
+                "url": "{uploads-url}/{ym}/zz-Probe-y-Name-1.png",
                 "type": "image/png"
             },
             "filters": [
@@ -91,8 +91,8 @@
                 "sanitize_file_name('zz-Probe-y-Name-1.PNG' | 'zz Probe ÿ Name (1).PNG')",
                 "upload_mimes(array(96) | NULL)",
                 "upload_dir(array[basedir,baseurl,error,path,subdir,url])",
-                "wp_unique_filename('zz-Probe-y-Name-1.png' | '.PNG' | '{uploads}/2026/10' | NULL | array[] | '')",
-                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/2026/10/zz-Probe-y-Name-1.png' | 'image/png')",
+                "wp_unique_filename('zz-Probe-y-Name-1.png' | '.PNG' | '{uploads}/{ym}' | NULL | array[] | '')",
+                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/{ym}/zz-Probe-y-Name-1.png' | 'image/png')",
                 "wp_handle_upload(array[file,type,url] | 'sideload')"
             ]
         }
@@ -101,8 +101,8 @@
         "the same name again",
         {
             "result": {
-                "file": "{uploads}/2026/10/zz-probe-image-1.png",
-                "url": "{uploads-url}/2026/10/zz-probe-image-1.png",
+                "file": "{uploads}/{ym}/zz-probe-image-1.png",
+                "url": "{uploads-url}/{ym}/zz-probe-image-1.png",
                 "type": "image/png"
             },
             "filters": [
@@ -115,8 +115,8 @@
                 "sanitize_file_name('zz-probe-image.png' | 'zz probe image.png')",
                 "upload_mimes(array(96) | NULL)",
                 "upload_dir(array[basedir,baseurl,error,path,subdir,url])",
-                "wp_unique_filename('zz-probe-image-1.png' | '.png' | '{uploads}/2026/10' | NULL | array[] | 1)",
-                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/2026/10/zz-probe-image-1.png' | 'image/png')",
+                "wp_unique_filename('zz-probe-image-1.png' | '.png' | '{uploads}/{ym}' | NULL | array[] | 1)",
+                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/{ym}/zz-probe-image-1.png' | 'image/png')",
                 "wp_handle_upload(array[file,type,url] | 'sideload')"
             ]
         }
@@ -125,8 +125,8 @@
         "and once more",
         {
             "result": {
-                "file": "{uploads}/2026/10/zz-probe-image-2.png",
-                "url": "{uploads-url}/2026/10/zz-probe-image-2.png",
+                "file": "{uploads}/{ym}/zz-probe-image-2.png",
+                "url": "{uploads-url}/{ym}/zz-probe-image-2.png",
                 "type": "image/png"
             },
             "filters": [
@@ -139,8 +139,8 @@
                 "sanitize_file_name('zz-probe-image.png' | 'zz probe image.png')",
                 "upload_mimes(array(96) | NULL)",
                 "upload_dir(array[basedir,baseurl,error,path,subdir,url])",
-                "wp_unique_filename('zz-probe-image-2.png' | '.png' | '{uploads}/2026/10' | NULL | array[] | 2)",
-                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/2026/10/zz-probe-image-2.png' | 'image/png')",
+                "wp_unique_filename('zz-probe-image-2.png' | '.png' | '{uploads}/{ym}' | NULL | array[] | 2)",
+                "pre_move_uploaded_file(NULL | array[error,name,size,tmp_name,type] | '{uploads}/{ym}/zz-probe-image-2.png' | 'image/png')",
                 "wp_handle_upload(array[file,type,url] | 'sideload')"
             ]
         }

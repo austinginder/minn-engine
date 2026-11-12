@@ -4,7 +4,7 @@ request, response, routing, and the outgoing client
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Access`](#access) | enum | 17 | Who a route is for. The six answers every route gives, so the |
+| [`Access`](#access) | enum | 19 | Who a route is for. The six answers every route gives, so the |
 | [`Args`](#args) | final class | 201 | The parameters a route accepts, as the reference describes them in the |
 | [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
 | [`CookieText`](#cookietext) | final class | 133 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
@@ -26,7 +26,7 @@ request, response, routing, and the outgoing client
 | [`Method`](#method) | enum | 33 |  |
 | [`NoCache`](#nocache) | final class | 16 | The headers that keep a response out of every cache. |
 | [`Outbound`](#outbound) | final readonly class | 46 | One outgoing HTTP request, normalised: the transport needs nothing else. |
-| [`Policy`](#policy) | final readonly class | 117 | What a route requires of its caller, as data on the route: the router |
+| [`Policy`](#policy) | final readonly class | 118 | What a route requires of its caller, as data on the route: the router |
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 105 | An HTTP response as text, the way the Requests library hands it from |
 | [`Refusal`](#refusal) | interface | 5 | A refusal a route judges after its arguments and before its policy: the |
@@ -52,7 +52,7 @@ request, response, routing, and the outgoing client
 Who a route is for. The six answers every route gives, so the
 authorization surface of the engine reads as a list of these.
 
-Cases: `Public`, `SignedIn`, `Cap`, `Floor`, `Own`, `Type`, `Taxonomy`
+Cases: `Public`, `SignedIn`, `Cap`, `Floor`, `Own`, `CommentEditor`, `Type`, `Taxonomy`
 
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\EntryScriptsController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Policy`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredRevisionsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontWritesController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteHealthController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\AjaxController`
 

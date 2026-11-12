@@ -94,4 +94,6 @@ $say('wp_check_filetype_and_ext text named png', (static function () {
 foreach ($made as $path) {
     @unlink($path);
 }
-echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";
+// This month's upload folder reads as {ym}, so the fixture holds whichever month it is captured or run in.
+$ym = date('Y/m');
+echo str_replace([$ym, str_replace('/', '\\/', $ym), str_replace('/', '\\\\/', $ym)], '{ym}', json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)), "\n";

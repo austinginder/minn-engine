@@ -102,6 +102,16 @@ final readonly class KsesPolicy
         return null;
     }
 
+    /** Whether an attribute (its name lowercased, as kses reads it) is a binding the tag may not take (KsesDirectives). */
+    public function bindsRestricted(string $tag, string $name): bool
+    {
+        $attributes = $this->tags[$tag] ?? [];
+        if (in_array('data-', $this->prefixes[$tag] ?? [], true)) {
+            $attributes['data-*'] = true;
+        }
+        return KsesDirectives::bindsRestricted($name, $attributes);
+    }
+
     /**
      * The attributes a tag must keep: lose one and the tag keeps none.
      *

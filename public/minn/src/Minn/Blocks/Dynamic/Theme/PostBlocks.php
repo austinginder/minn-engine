@@ -252,13 +252,17 @@ final readonly class PostBlocks
             . KsesRules::post(($suffix === '' ? '' : '<span class="wp-block-post-terms__suffix">' . $suffix . '</span>') . '</div>');
     }
 
-    /** Off a single post or page there is no neighbour to link: nothing at all. */
+    /**
+     * Off a single post or page there is no neighbour to link: nothing at all.
+     * The page the request resolved to decides, else the main query's single
+     * post (a plugin rendering the block after its own query).
+     */
     private function navigationLink(Block $block, Renderer $renderer): string
     {
-        if (!in_array($renderer->context()->resolution->kind, [Kind::Single, Kind::Page], true)) {
+        $post = $this->navigationPost($renderer);
+        if ($post === false) {
             return '';
         }
-        $post = $renderer->context()->post();
         $next = $block->attr('type', 'next') !== 'previous';
         $direction = $next ? 'next' : 'previous';
         $target = match (true) {
@@ -274,14 +278,48 @@ final readonly class PostBlocks
             if (!in_array($arrow, ['none', 'arrow', 'chevron'], true)) {
                 $arrow = 'none';
             }
-            $glyph = $arrow === 'chevron' ? ($next ? '›' : '‹') : ($next ? '→' : '←');
-            $label = (bool) $block->attr('showTitle', false) ? Texturize::text($target->title) : ucfirst($direction);
+            $glyph = $arrow === 'chevron' ? ($next ? '»' : '«') : ($next ? '→' : '←');
             $href = $target->type === 'attachment' ? $this->permalinks->forAttachment($target) : $this->permalinks->forPost($target);
-            $link = '<a href="' . Html::attr($href) . '" rel="' . ($next ? 'next' : 'prev') . '">' . $label . '</a>';
+            $link = $this->navigationText($block, $target, $direction, '<a href="' . Html::attr($href) . '" rel="' . ($next ? 'next' : 'prev') . '">');
             $span = $arrow === 'none' ? '' : '<span class="wp-block-post-navigation-link__arrow-' . $direction . ' is-arrow-' . $arrow . '" aria-hidden="true">' . $glyph . '</span>';
             $inner = $next ? $link . $span : $span . $link;
         }
         return '<div class="post-navigation-link-' . $direction . ' wp-block-post-navigation-link">' . $inner . '</div>';
+    }
+
+    /** The post a navigation link moves from: null on a single page with no post, false off one. */
+    private function navigationPost(Renderer $renderer): PostRecord|false|null
+    {
+        if (in_array($renderer->context()->resolution->kind, [Kind::Single, Kind::Page], true)) {
+            return $renderer->context()->post();
+        }
+        $query = MainQuery::current();
+        if (!$query->is_single() && !$query->is_page()) {
+            return false;
+        }
+        return $renderer->context()->post() ?? $this->posts->find((int) $query->get_queried_object_id());
+    }
+
+    /**
+     * The link, opened by $open, with its words: the label (filtered as post
+     * content; Next or Previous without one), or the neighbour's title, the
+     * label then beside the link or, with linkLabel, inside it.
+     */
+    private function navigationText(Block $block, PostRecord $target, string $direction, string $open): string
+    {
+        $given = (string) $block->attr('label', '');
+        $label = $given === '' ? '' : KsesRules::post($given);
+        if (!(bool) $block->attr('showTitle', false)) {
+            return $open . ($label === '' ? ucfirst($direction) : $label) . '</a>';
+        }
+        $title = Texturize::text($target->title);
+        if ($label === '') {
+            return $open . $title . '</a>';
+        }
+        $labelSpan = '<span class="post-navigation-link__label">' . $label . '</span> ';
+        return (bool) $block->attr('linkLabel', false)
+            ? $open . $labelSpan . '<span class="post-navigation-link__title">' . $title . '</span></a>'
+            : $labelSpan . $open . $title . '</a>';
     }
 
     private function termRow(string $taxonomy, int $termId): ?TermRecord

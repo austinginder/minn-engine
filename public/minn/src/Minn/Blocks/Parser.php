@@ -15,7 +15,9 @@ use Minn\Runtime\Runtime;
  */
 final class Parser
 {
-    private const TOKEN = '/<!--\s+(?P<closer>\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\/)?(?P<name>[a-z][a-z0-9_-]*)\s+(?P<attrs>\{(?:(?!\}\s+\/?-->).)*+\}\s+)?(?P<void>\/)?-->/s';
+    // Whitespace in a delimiter is these five characters only: space, tab, LF, CR and form feed, as every
+    // parser of the reference agrees on (a vertical tab, NUL or Unicode space leaves an inert comment).
+    private const TOKEN = '/<!--[ \t\n\r\f]+(?P<closer>\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\/)?(?P<name>[a-z][a-z0-9_-]*)[ \t\n\r\f]+(?P<attrs>\{(?:(?!\}[ \t\n\r\f]+\/?-->).)*+\}[ \t\n\r\f]+)?(?P<void>\/)?-->/s';
 
     /**
      * The parser class block_parser_class names when a plugin swaps its own

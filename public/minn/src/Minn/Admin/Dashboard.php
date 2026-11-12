@@ -8,6 +8,7 @@ use Minn\Auth\Capabilities;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
 /**
@@ -45,6 +46,10 @@ final readonly class Dashboard
                 : $this->commentsCard($comments, $userId),
             $this->mediaCard($media, $userId),
         ];
+        // minn_admin_overview_stats: a plugin's own cards (a site writing mostly one custom
+        // type puts its count there). A card needs a key and a label.
+        $offered = Runtime::hooks()->filter('minn_admin_overview_stats', [$stats]);
+        $stats = array_values(array_filter((array) $offered, static fn (mixed $row): bool => is_array($row) && !empty($row['key']) && !empty($row['label'])));
         $catalog = $this->metricCatalog($userId, $stats, $posts, $pages, $comments, $media);
         $layout = $this->metricLayout($userId, $catalog, $stats);
         $hour = (int) gmdate('G', $now + $offset);

@@ -38,6 +38,7 @@ final readonly class GlobalStylesObject
         if ($context->isEdit()) {
             $object['minn_modified'] = false;
             $object['minn_lock'] = null;
+            $object['minn_can_delete'] = $this->caller->can('delete_post', $post->id);
         }
         $object['_links'] = $this->links($post);
         return $object;

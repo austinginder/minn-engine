@@ -205,7 +205,7 @@ final readonly class ImageTags
         }
         [$candidates, $width, $height, $meta, $src] = $found;
         $srcset = self::srcsetAttributes($candidates, $width, false, $id, $meta, $src, $height);
-        return $srcset === '' ? $tag : (string) preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);
+        return $srcset === '' ? $tag : self::closeWith($tag, $srcset);
     }
 
     /**
@@ -233,6 +233,12 @@ final readonly class ImageTags
     }
 
     /** The attachment an image names in its wp-image-{id} class, or 0. */
+    /** The tag with its attributes added before the close; a callback, so a $0 in an address stays text. */
+    private static function closeWith(string $tag, string $attributes): string
+    {
+        return (string) preg_replace_callback('/\s*\/?>$/', static fn (): string => $attributes . ' />', $tag, 1);
+    }
+
     private static function attachmentOf(string $tag): int
     {
         return preg_match('/wp-image-(\d+)/i', $tag, $id) === 1 ? (int) $id[1] : 0;
@@ -348,7 +354,7 @@ final readonly class ImageTags
         $prefix = ltrim($loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : ''));
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
         $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
-        return $srcset === '' ? $tag : preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);
+        return $srcset === '' ? $tag : self::closeWith($tag, $srcset);
     }
 
     /**

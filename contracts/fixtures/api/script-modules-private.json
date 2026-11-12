@@ -187,7 +187,7 @@
         "src: version string, false, null, a full URL",
         [
             "/wp-content/plugins/minn-probe/base.js?ver=1.0",
-            "/wp-content/plugins/minn-probe/lazy.js?ver=7.1.3",
+            "/wp-content/plugins/minn-probe/lazy.js?ver=7.1.4",
             "{home}/shared.js",
             "/wp-content/plugins/minn-probe/main.js?ver=2.0"
         ]
@@ -223,7 +223,7 @@
             },
             {
                 "id": "minn-probe/deep",
-                "src": "/wp-content/plugins/minn-probe/deep.js?ver=7.1.3",
+                "src": "/wp-content/plugins/minn-probe/deep.js?ver=7.1.4",
                 "version": false,
                 "dependencies": [
                     "minn-probe/base"
@@ -231,7 +231,7 @@
             },
             {
                 "id": "minn-probe/lazy",
-                "src": "/wp-content/plugins/minn-probe/lazy.js?ver=7.1.3",
+                "src": "/wp-content/plugins/minn-probe/lazy.js?ver=7.1.4",
                 "version": false,
                 "dependencies": []
             },
@@ -251,6 +251,6 @@
     ],
     [
         "import map for those modules",
-        "<script id=\"wp-importmap\" type=\"importmap\">\n{\"imports\":{\"minn-probe/deep\":\"/wp-content/plugins/minn-probe/deep.js?ver=7.1.3\",\"minn-probe/lazy\":\"/wp-content/plugins/minn-probe/lazy.js?ver=7.1.3\",\"minn-probe/shared\":\"{home}/shared.js\",\"minn-probe/base\":\"/wp-content/plugins/minn-probe/base.js?ver=1.0\"}}\n</script>\n"
+        "<script id=\"wp-importmap\" type=\"importmap\">\n{\"imports\":{\"minn-probe/deep\":\"/wp-content/plugins/minn-probe/deep.js?ver=7.1.4\",\"minn-probe/lazy\":\"/wp-content/plugins/minn-probe/lazy.js?ver=7.1.4\",\"minn-probe/shared\":\"{home}/shared.js\",\"minn-probe/base\":\"/wp-content/plugins/minn-probe/base.js?ver=1.0\"}}\n</script>\n"
     ]
 ]

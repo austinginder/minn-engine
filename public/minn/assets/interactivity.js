@@ -175,15 +175,30 @@ function wrapFunction(fn) {
 
 // ---- Stores.
 
+// Keys that would reach an object's prototype when assigned; parsed data never carries them on.
+const RESERVED_KEYS = new Set(['__proto__']);
+
+function withoutReservedKeys(value) {
+	if (Array.isArray(value)) return value.map(withoutReservedKeys);
+	if (value === null || typeof value !== 'object') return value;
+	const out = {};
+	for (const key of Object.keys(value)) {
+		if (!RESERVED_KEYS.has(key)) out[key] = withoutReservedKeys(value[key]);
+	}
+	return out;
+}
+
 const stores = new Map();
 const serverState = {};
 const serverConfig = {};
 
 (function readServerData() {
+	// Only the script element the server printed: post content can carry an element with the same id.
 	const el = document.getElementById('wp-script-module-data-@wordpress/interactivity');
-	if (!el) return;
+	if (!el || el.tagName !== 'SCRIPT') return;
 	try {
-		const data = JSON.parse(el.textContent);
+		// Reserved keys are dropped at every depth, so copying the parsed data is safe.
+		const data = withoutReservedKeys(JSON.parse(el.textContent));
 		Object.assign(serverState, data.state || {});
 		Object.assign(serverConfig, data.config || {});
 	} catch (e) {
@@ -197,6 +212,7 @@ function deepClone(value) {
 
 function merge(target, source) {
 	for (const key of Reflect.ownKeys(source)) {
+		if (RESERVED_KEYS.has(key)) continue;
 		const descriptor = Object.getOwnPropertyDescriptor(source, key);
 		if (descriptor.get || descriptor.set) {
 			Object.defineProperty(target, key, { ...descriptor, configurable: true, enumerable: true });
@@ -359,7 +375,7 @@ function declareContext(element, namespace, json) {
 	const ns = parsed.namespace || namespace;
 	let data;
 	try {
-		data = JSON.parse(parsed.value);
+		data = withoutReservedKeys(JSON.parse(parsed.value));
 	} catch (e) {
 		return;
 	}
@@ -409,6 +425,8 @@ function evaluate(reference, s) {
 const VOID_VALUE = (v) => v === null || v === undefined || v === false;
 
 function applyBind(el, attribute, value) {
+	// An event handler attribute would run its value as code; the server refuses these bindings too.
+	if (!attribute || attribute.toLowerCase().startsWith('on')) return;
 	const special = attribute.startsWith('aria-') || attribute.startsWith('data-');
 	if (value === null || value === undefined || (value === false && !special)) {
 		el.removeAttribute(attribute);

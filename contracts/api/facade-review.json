@@ -12347,8 +12347,8 @@
             "_minn_block_categories": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Categories",
-                "why": "numbers each block with a static counter and renders the categories as wp_list_categories or a labelled dropdown with its script; a block renderer with request state",
-                "body": "fc6d0c90b2bd"
+                "why": "numbers each block with a static counter and renders the categories as wp_list_categories or a labelled dropdown with its script, a given label filtered as post content; a block renderer with request state",
+                "body": "083da2da6c79"
             },
             "_minn_block_comment_edit_link": {
                 "verdict": "move",
@@ -12500,8 +12500,8 @@
             "_minn_comments_pagination_link": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
-                "why": "picks the older or newer label and arrow, builds the comment query vars and asks for the link with the wrapper filtered in; the comments pagination renderer beside Comments::query",
-                "body": "846e036ea0d9"
+                "why": "picks the older or newer label (escaped as text) and arrow, builds the comment query vars and asks for the link with the wrapper filtered in; the comments pagination renderer beside Comments::query",
+                "body": "e13f2d167bb7"
             },
             "_minn_comments_pagination_numbers": {
                 "verdict": "move",

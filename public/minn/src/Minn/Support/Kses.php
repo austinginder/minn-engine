@@ -534,6 +534,9 @@ final class Kses
             if ($rules === null || !KsesValues::satisfies($value ?? '', $value === null ? 'y' : 'n', $rules)) {
                 continue;
             }
+            if ($policy->bindsRestricted($tag, $name)) {
+                continue;
+            }
             $rendered = self::rendered($name, $value, $policy);
             if ($rendered !== null) {
                 $kept[$name] = true;
@@ -563,27 +566,6 @@ final class Kses
             }
         }
         return ' ' . $name . '="' . $value . '"';
-    }
-
-    /**
-     * Whether a URL may be an object's data in post content: an http or https
-     * URL on the uploads host and port, no credentials, query or fragment,
-     * whose path ends in ".pdf".
-     */
-    public static function pdfObject(string $url, string $uploadsUrl): bool
-    {
-        $target = parse_url($uploadsUrl);
-        $parts = parse_url($url);
-        if (!is_array($parts) || !is_array($target) || !isset($target['host']) || !in_array($parts['scheme'] ?? '', ['http', 'https'], true)) {
-            return false;
-        }
-        foreach (['user', 'pass', 'query', 'fragment'] as $part) {
-            if (isset($parts[$part])) {
-                return false;
-            }
-        }
-        $sameHost = ($parts['host'] ?? null) === $target['host'] && ($parts['port'] ?? null) === ($target['port'] ?? null);
-        return $sameHost && str_ends_with($parts['path'] ?? '', '.pdf');
     }
 
     /** Every candidate must be an absolute URL with a safe scheme, or the attribute goes. */

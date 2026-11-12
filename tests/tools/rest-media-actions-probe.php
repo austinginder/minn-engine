@@ -115,4 +115,6 @@ wp_set_current_user(0);
 $say('signed out', array_map(static fn ($action) => $do("/wp/v2/media/$id/$action", ['action' => 'create-image-subsizes', 'src' => $source, 'image_size' => 'thumbnail']), ['post-process' => 'post-process', 'edit' => 'edit', 'sideload' => 'sideload', 'finalize' => 'finalize']));
 
 // Masked once every id made here has its name.
-echo json_encode($mask($log), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";
+// This month's upload folder reads as {ym}, so the fixture holds whichever month it is captured or run in.
+$ym = date('Y/m');
+echo str_replace([$ym, str_replace('/', '\\/', $ym), str_replace('/', '\\\\/', $ym)], '{ym}', json_encode($mask($log), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)), "\n";

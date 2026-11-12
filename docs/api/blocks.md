@@ -13,13 +13,13 @@ the block parser and renderer
 | [`CoreBlocks`](#coreblocks) | final class | 26 | The core block types' metadata as the reference registers them |
 | [`Duotone`](#duotone) | final class | 79 | Duotone filters (probe block-supports): a CSS color read into its red, |
 | [`Elements`](#elements) | final class | 121 | Per-block element styles (style.elements in a block's attributes, the |
-| [`ImageTags`](#imagetags) | final readonly class | 446 | The attributes the reference adds to an <img> that carries a |
+| [`ImageTags`](#imagetags) | final readonly class | 452 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 167 | The layout support's classes and rules (wp_render_layout_support_flag, |
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
-| [`Parser`](#parser) | final class | 147 | Parses block markup into a tree. The grammar is the delimiter comment: |
+| [`Parser`](#parser) | final class | 149 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 475 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 553 | Renders a block tree the way the reference renders post_content: |
+| [`Renderer`](#renderer) | final class | 554 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 69 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
@@ -488,7 +488,7 @@ A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
 
-Internals: `contentImage()` (private, line 127), `frame()` (private, line 148), `dimensioned()` (private, line 161), `lazySizes()` (private, line 168), `attributeOf()` (private, line 180), `sizeOf()` (private, line 186), `sized()` (private, line 196), `fit()` (private, line 228), `attachmentOf()` (private, line 236), `plainImage()` (private, line 242), `autoSized()` (private, line 255), `autoSizedWhenLazy()` (private, line 267), `rewrite()` (private, line 272), `loadingPrefix()` (private, line 288), `givenLoading()` (private, line 307), `lazyAllowed()` (private, line 316), `minimumPriorityPixels()` (private, line 322), `enrichTag()` (private, line 328), `candidates()` (private, line 362), `srcsetAttributes()` (private, line 408)
+Internals: `contentImage()` (private, line 127), `frame()` (private, line 148), `dimensioned()` (private, line 161), `lazySizes()` (private, line 168), `attributeOf()` (private, line 180), `sizeOf()` (private, line 186), `sized()` (private, line 196), `fit()` (private, line 228), `closeWith()` (private, line 237), `attachmentOf()` (private, line 242), `plainImage()` (private, line 248), `autoSized()` (private, line 261), `autoSizedWhenLazy()` (private, line 273), `rewrite()` (private, line 278), `loadingPrefix()` (private, line 294), `givenLoading()` (private, line 313), `lazyAllowed()` (private, line 322), `minimumPriorityPixels()` (private, line 328), `enrichTag()` (private, line 334), `candidates()` (private, line 368), `srcsetAttributes()` (private, line 414)
 
 
 ## Layout
@@ -636,7 +636,7 @@ an opener with optional JSON attributes, a closer, or a self-closing
 void block; a name without a namespace is core/. Anything outside a
 block is a freeform block that renders as-is.
 
-- const `TOKEN` = `'/<!--\\s+(?P<closer>\\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\\/)?(?P<name>[a-z][a-z0-9_-]*)\\s+(?P<attrs>\\{(?:(?!\\}\\s+\\/?-->).)*+\\}\\s+)?(?P<void>\\/)?-->/s'`
+- const `TOKEN` = `'/<!--[ \\t\\n\\r\\f]+(?P<closer>\\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\\/)?(?P<name>[a-z][a-z0-9_-]*)[ \\t\\n\\r\\f]+(?P<attrs>\\{(?:(?!\\}[ \\t\\n\\r\\f]+\\/?-->).)*+\\}[ \\t\\n\\r\\f]+)?(?P<void>\\/)?-->/s'`
 
 Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Support\Kses`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplatePatterns`
 
@@ -1120,7 +1120,7 @@ plugin's callback took over. It applies the block supports it knows
 itself (layout, element styles); the facade's render_block filters do
 the rest, and all of them for any other block.
 
-Internals: `renderWith()` (private, line 229), `freeform()` (private, line 460), `parent()` (private, line 467), `generatedClass()` (private, line 514), `supportClasses()` (private, line 529), `renderNamed()` (private, line 538), `decorate()` (private, line 568), `gallery()` (private, line 591)
+Internals: `renderWith()` (private, line 229), `freeform()` (private, line 460), `parent()` (private, line 467), `generatedClass()` (private, line 514), `supportClasses()` (private, line 530), `renderNamed()` (private, line 539), `decorate()` (private, line 569), `gallery()` (private, line 592)
 
 
 ## Selector

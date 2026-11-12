@@ -342,4 +342,6 @@ $cases('texturize', [
     },
 ]);
 
-echo json_encode($log, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), "\n";
+// This month's upload folder reads as {ym}, so the fixture holds whichever month it is captured or run in.
+$ym = date('Y/m');
+echo str_replace([$ym, str_replace('/', '\\/', $ym), str_replace('/', '\\\\/', $ym)], '{ym}', json_encode($log, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)), "\n";

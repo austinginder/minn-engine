@@ -656,4 +656,6 @@ $say('wp_heartbeat_settings on an admin screen', $adminHeartbeat);
         @rmdir($dir);
     }
 }
-echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE), "\n";
+// This month's upload folder reads as {ym}, so the fixture holds whichever month it is captured or run in.
+$ym = date('Y/m');
+echo str_replace([$ym, str_replace('/', '\\/', $ym), str_replace('/', '\\\\/', $ym)], '{ym}', json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE)), "\n";

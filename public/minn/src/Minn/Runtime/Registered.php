@@ -33,6 +33,18 @@ final class Registered
         return self::listed(Runtime::registry()->postTypeObjects(), $args, $operator, $output);
     }
 
+    /**
+     * The objects of the post types whose flags all match, none before
+     * plugins load: a caller with a fallback of its own uses it then.
+     *
+     * @param array<string, mixed> $args
+     * @return array<string, object>
+     */
+    public static function loadedPostTypes(array $args): array
+    {
+        return Runtime::booted() ? self::postTypes($args, 'objects') : [];
+    }
+
     /** Whether a post type is registered (post_type_exists). */
     public static function postTypeExists(mixed $type): bool
     {

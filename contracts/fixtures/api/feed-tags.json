@@ -129,12 +129,12 @@
     [
         "get_bloginfo_rss(version)",
         {
-            "returned": "7.1.3",
+            "returned": "7.1.4",
             "heard": [
                 [
                     "get_bloginfo_rss",
                     [
-                        "7.1.3",
+                        "7.1.4",
                         "version"
                     ]
                 ]

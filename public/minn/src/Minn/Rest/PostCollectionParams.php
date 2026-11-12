@@ -76,14 +76,13 @@ final class PostCollectionParams implements RouteParams
             return [];
         }
         $key = 'rest_collection_params:' . $type['name'];
-        $cached = Runtime::booted() ? Runtime::current()->get($key) : null;
+        $runtime = Runtime::booted() ? Runtime::current() : null;
+        $cached = $runtime?->get($key);
         if (is_array($cached)) {
             return $cached;
         }
         $params = self::filtered($type);
-        if (Runtime::booted()) {
-            Runtime::current()->set($key, $params);
-        }
+        $runtime?->set($key, $params);
         return $params;
     }
 

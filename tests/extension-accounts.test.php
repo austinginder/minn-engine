@@ -64,6 +64,11 @@ $sweep = static function () use ($wp, $copy, $logins): void {
         }
     }
     $wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
+    // The extension's first request makes its declared table and records it: neither may outlive the run.
+    $wp('db query "DROP TABLE IF EXISTS wp_minn_test_records_notes"');
+    $tables = (array) json_decode($wp('option get minn_extension_tables') ?: '{}', true);
+    unset($tables['minn-test-records']);
+    $tables === [] ? $wp('option delete minn_extension_tables') : $wp('option update minn_extension_tables ' . escapeshellarg(json_encode($tables)));
     exec('rm -rf ' . escapeshellarg($copy));
 };
 $sweep();

@@ -1,15 +1,15 @@
 {
-    "generated": "2026-10-25",
+    "generated": "2026-11-12",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 707,
         "composes": 2058,
         "leaf": 953,
-        "noop": 3272,
+        "noop": 3274,
         "placeholder": 0,
         "deadend": 1766,
-        "functions": 8678,
-        "minnMethods": 1565,
+        "functions": 8680,
+        "minnMethods": 1567,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -36051,6 +36051,7 @@
                 "esc_attr",
                 "get_taxonomy",
                 "wp_dropdown_categories",
+                "wp_kses_post",
                 "wp_list_categories"
             ]
         },
@@ -36723,6 +36724,7 @@
                 "__",
                 "add_filter",
                 "build_comment_query_vars_from_block",
+                "esc_html",
                 "get_next_comments_link",
                 "get_previous_comments_link",
                 "remove_filter"
@@ -40669,7 +40671,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Kses::pdfObject"
+                "Minn\\Support\\KsesValues::pdfObject"
             ],
             "composes": [
                 "wp_upload_dir"
@@ -40687,6 +40689,24 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "_wp_kses_directive_binds_value_restricted_attribute": {
+            "file": "kses.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\KsesDirectives::bindsRestricted"
+            ],
+            "composes": []
+        },
+        "_wp_kses_restricts_attribute_values": {
+            "file": "kses.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\KsesDirectives::restrictsValues"
+            ],
             "composes": []
         },
         "_wp_kses_sanitize_note_mention_classes": {

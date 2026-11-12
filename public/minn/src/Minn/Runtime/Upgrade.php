@@ -203,17 +203,22 @@ final class Upgrade
     /**
      * WP_Upgrader::unpack_package, without the package's deletion (the
      * caller's): the upgrade folder emptied of what earlier passes left,
-     * the package unzipped into a folder named for it, and an archive that
+     * the package unzipped into a folder named for it with a random tail, and an archive that
      * will not open refused in the upgrader's words with the reader's reason.
      */
     public static function unpack(Upgrader $upgrader, string $package): string|Errors
     {
         $upgrader->skin->feedback('unpack_package');
         $folder = WP_CONTENT_DIR . '/upgrade';
-        foreach (self::listing($folder) as $left) {
+        foreach (array_diff(self::listing($folder), ['index.php']) as $left) {
             Files::deleteTree("{$folder}/{$left}");
         }
-        $working = $folder . '/' . basename(basename($package, '.tmp'), '.zip');
+        // The folder never lists itself, and an unzipped package is not where anyone could guess while it is
+        // there: the package's name and sixteen random letters and digits (probe patch-714).
+        if (is_dir($folder) && !is_file("{$folder}/index.php")) {
+            @file_put_contents("{$folder}/index.php", "<?php\n// Silence is golden.\n");
+        }
+        $working = $folder . '/' . basename(basename($package, '.tmp'), '.zip') . '-' . self::randomName(16);
         $unzipped = self::unzip($package, $working);
         if ($unzipped instanceof Errors) {
             Files::deleteTree($working);
@@ -396,6 +401,17 @@ final class Upgrade
         return $end === 'from'
             ? rtrim((string) $backup['src'], '/') . '/' . $slug
             : WP_CONTENT_DIR . '/upgrade-temp-backup/' . basename((string) $backup['dir']) . '/' . $slug;
+    }
+
+    /** Letters and digits drawn at random, $length of them. */
+    private static function randomName(int $length): string
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $name = '';
+        for ($i = 0; $i < $length; $i++) {
+            $name .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+        }
+        return $name;
     }
 
     /**

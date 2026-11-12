@@ -3196,9 +3196,8 @@
             "handler": "Minn\\Rest\\CommentsController::update",
             "summary": "Status flips and content or author edits, for moderators.",
             "policy": {
-                "access": "Cap",
-                "describe": "cap moderate_comments; comment {id} must exist",
-                "cap": "moderate_comments",
+                "access": "CommentEditor",
+                "describe": "moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist",
                 "param": "id",
                 "subject": "Comment",
                 "missing": {
@@ -3307,9 +3306,8 @@
             "handler": "Minn\\Rest\\CommentsController::update",
             "summary": "Status flips and content or author edits, for moderators.",
             "policy": {
-                "access": "Cap",
-                "describe": "cap moderate_comments; comment {id} must exist",
-                "cap": "moderate_comments",
+                "access": "CommentEditor",
+                "describe": "moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist",
                 "param": "id",
                 "subject": "Comment",
                 "missing": {
@@ -3418,9 +3416,8 @@
             "handler": "Minn\\Rest\\CommentsController::update",
             "summary": "Status flips and content or author edits, for moderators.",
             "policy": {
-                "access": "Cap",
-                "describe": "cap moderate_comments; comment {id} must exist",
-                "cap": "moderate_comments",
+                "access": "CommentEditor",
+                "describe": "moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist",
                 "param": "id",
                 "subject": "Comment",
                 "missing": {
@@ -3529,9 +3526,8 @@
             "handler": "Minn\\Rest\\CommentsController::delete",
             "summary": "Trash remembers where the comment came from; force removes it outright.",
             "policy": {
-                "access": "Cap",
-                "describe": "cap moderate_comments; comment {id} must exist",
-                "cap": "moderate_comments",
+                "access": "CommentEditor",
+                "describe": "moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist",
                 "param": "id",
                 "subject": "Comment",
                 "missing": {

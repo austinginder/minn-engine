@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Minn\Admin;
 
 use Minn\Auth\Authenticated;
+use Minn\Auth\Can;
 use Minn\Auth\Capabilities;
 use Minn\Auth\Nonce;
 use Minn\Content\SiteIcon;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
+use Minn\Html;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\LegacyPack;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use stdClass;
 
@@ -95,7 +99,7 @@ final readonly class BootPayload
             // The pack itself: installed, active, and the editors on the site that need it, which the
             // app offers to install it for.
             'legacyPack' => LegacyPack::status(),
-        ] + ($plugin === null ? $this->adapterSlices() : array_diff_key($plugin, array_flip(self::PLUGIN_KEYS_WITHHELD)));
+        ] + ($plugin === null ? $this->adapterSlices() + self::newMenuSlices($userId) : array_diff_key($plugin, array_flip(self::PLUGIN_KEYS_WITHHELD)));
         return $payload;
     }
 
@@ -250,6 +254,35 @@ final readonly class BootPayload
             $GLOBALS['post'] = $query->post;
             Runtime::current()->set('post', $query->post);
         }
+    }
+
+    /**
+     * What the New menu and the editor's block chips read: the REST bases of
+     * types this user can't add to (create_posts refused, whatever else the
+     * type allows), the bases a plugin puts first (minn_admin_new_first),
+     * and plugin and theme blocks by title. Before plugins load there are
+     * none of the last two, and nothing to say of the first.
+     */
+    private static function newMenuSlices(int $userId): array
+    {
+        $noCreate = [];
+        $titles = [];
+        foreach (Registered::loadedPostTypes(['show_in_rest' => true]) as $type) {
+            $cap = (string) ($type->cap->create_posts ?? '');
+            if ($cap !== '' && !Can::user($userId, $cap)) {
+                $noCreate[(string) ($type->rest_base ?: $type->name)] = true;
+            }
+        }
+        $offered = array_filter((array) Runtime::hooks()->filter('minn_admin_new_first', [[]]), 'is_scalar');
+        $first = array_values(array_filter(array_map('strval', $offered)));
+        if (Runtime::booted()) {
+            foreach (Handoff::blockTypes()->get_all_registered() as $name => $block) {
+                if (!str_starts_with((string) $name, 'core/') && !empty($block->title)) {
+                    $titles[$name] = html_entity_decode(Html::stripAllTags((string) $block->title), ENT_QUOTES, 'UTF-8');
+                }
+            }
+        }
+        return ['noCreate' => (object) $noCreate, 'newFirst' => $first, 'blockTitles' => (object) $titles];
     }
 
     /**

@@ -1,0 +1,981 @@
+[
+    [
+        "block delimiters: whitespace",
+        {
+            "space": [
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>a</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        {
+                            "className": "x"
+                        },
+                        "\n<p>b</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/separator",
+                        [],
+                        "",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n",
+                        []
+                    ]
+                ]
+            ],
+            "tab": [
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>a</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        {
+                            "className": "x"
+                        },
+                        "\n<p>b</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/separator",
+                        [],
+                        "",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n",
+                        []
+                    ]
+                ]
+            ],
+            "lf": [
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>a</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        {
+                            "className": "x"
+                        },
+                        "\n<p>b</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/separator",
+                        [],
+                        "",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n",
+                        []
+                    ]
+                ]
+            ],
+            "cr": [
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>a</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        {
+                            "className": "x"
+                        },
+                        "\n<p>b</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/separator",
+                        [],
+                        "",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n",
+                        []
+                    ]
+                ]
+            ],
+            "ff": [
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>a</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        null,
+                        "\n<p>b</p>\n",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/separator",
+                        [],
+                        "",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n",
+                        []
+                    ]
+                ]
+            ],
+            "vt": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!--\u000bwp:paragraph\u000b-->\n<p>a</p>\n<!--\u000b/wp:paragraph\u000b-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph\u000b{\"className\":\"x\"}\u000b-->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator\u000b/-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph\u000b-->",
+                        []
+                    ]
+                ]
+            ],
+            "nul": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!--\u0000wp:paragraph\u0000-->\n<p>a</p>\n<!--\u0000/wp:paragraph\u0000-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph\u0000{\"className\":\"x\"}\u0000-->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator\u0000/-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph\u0000-->",
+                        []
+                    ]
+                ]
+            ],
+            "nbsp": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph -->\n<p>a</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph {\"className\":\"x\"} -->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator /-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ]
+            ],
+            "em space": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph -->\n<p>a</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph {\"className\":\"x\"} -->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator /-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ]
+            ],
+            "ideographic": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!--　wp:paragraph　-->\n<p>a</p>\n<!--　/wp:paragraph　-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph　{\"className\":\"x\"}　-->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator　/-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph　-->",
+                        []
+                    ]
+                ]
+            ],
+            "bom": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!--﻿wp:paragraph﻿-->\n<p>a</p>\n<!--﻿/wp:paragraph﻿-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph﻿{\"className\":\"x\"}﻿-->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator﻿/-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph﻿-->",
+                        []
+                    ]
+                ]
+            ],
+            "nbsp byte": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!--�wp:paragraph�-->\n<p>a</p>\n<!--�/wp:paragraph�-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph�{\"className\":\"x\"}�-->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator�/-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph�-->",
+                        []
+                    ]
+                ]
+            ],
+            "nel": [
+                [
+                    [
+                        null,
+                        [],
+                        "<!--wp:paragraph-->\n<p>a</p>\n<!--/wp:paragraph-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:paragraph{\"className\":\"x\"}-->\n<p>b</p>\n<!-- /wp:paragraph -->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        null,
+                        [],
+                        "<!-- wp:separator/-->",
+                        []
+                    ]
+                ],
+                [
+                    [
+                        "core/paragraph",
+                        [],
+                        "\n<p>c</p>\n<!-- /wp:paragraph-->",
+                        []
+                    ]
+                ]
+            ]
+        }
+    ],
+    [
+        "block delimiters: rendered",
+        {
+            "space": "<b>x</b>",
+            "tab": "<b>x</b>",
+            "lf": "<b>x</b>",
+            "cr": "<b>x</b>",
+            "ff": "<b>x</b>",
+            "vt": "<!--\u000bwp:html\u000b--><b>x</b><!--\u000b/wp:html\u000b-->",
+            "nul": "<!--\u0000wp:html\u0000--><b>x</b><!--\u0000/wp:html\u0000-->",
+            "nbsp": "<!-- wp:html --><b>x</b><!-- /wp:html -->",
+            "em space": "<!-- wp:html --><b>x</b><!-- /wp:html -->",
+            "ideographic": "<!--　wp:html　--><b>x</b><!--　/wp:html　-->",
+            "bom": "<!--﻿wp:html﻿--><b>x</b><!--﻿/wp:html﻿-->",
+            "nbsp byte": "<!--�wp:html�--><b>x</b><!--�/wp:html�-->",
+            "nel": "<!--wp:html--><b>x</b><!--/wp:html-->"
+        }
+    ],
+    [
+        "kses: directives in post content",
+        [
+            "<a href=\"https://example.invalid/\" data-wp-bind--href=\"state.url\">a</a>",
+            "<a data-wp-bind--href=\"state.url\">a</a>",
+            "<a data-wp-bind--href=\"state.url\">a</a>",
+            "<a data-wp-bind--title=\"state.title\">a</a>",
+            "<img src=\"https://example.invalid/a.png\" data-wp-bind--src=\"state.src\" alt=\"\">",
+            "<img data-wp-bind--srcset=\"state.src\" alt=\"\">",
+            "<div data-wp-bind--onclick=\"state.code\">d</div>",
+            "<div data-wp-bind--style=\"state.css\">d</div>",
+            "<div data-wp-style--background-image=\"state.css\">d</div>",
+            "<div data-wp-on--click=\"actions.go\">d</div>",
+            "<div data-wp-context=\"{&quot;__proto__&quot;:{&quot;polluted&quot;:1}}\">d</div>",
+            "<object></object>",
+            "<object></object>",
+            "<area href=\"https://example.invalid/\" data-wp-bind--href=\"state.url\">",
+            "<blockquote cite=\"https://example.invalid/\" data-wp-bind--cite=\"state.url\">q</blockquote>",
+            "<del datetime=\"2026-01-01\" data-wp-bind--datetime=\"state.when\">d</del>",
+            "",
+            "<span data-wp-bind--class=\"state.c\" data-wp-class--x=\"state.on\">s</span>",
+            "<a href=\"https://example.invalid/\" data-wp-bind--href--x=\"state.url\">a</a>",
+            "<a href=\"https://example.invalid/\" data-wp-bind=\"state.url\">a</a>"
+        ]
+    ],
+    [
+        "kses: directives for a comment",
+        [
+            "<a href=\"https://example.invalid/\">a</a>",
+            "<a>a</a>",
+            "<a>a</a>",
+            "<a>a</a>",
+            "",
+            "",
+            "d",
+            "d",
+            "d",
+            "d",
+            "d",
+            "",
+            "",
+            "",
+            "<blockquote cite=\"https://example.invalid/\">q</blockquote>",
+            "<del datetime=\"2026-01-01\">d</del>",
+            "",
+            "s",
+            "<a href=\"https://example.invalid/\">a</a>",
+            "<a href=\"https://example.invalid/\">a</a>"
+        ]
+    ],
+    [
+        "kses: the restricted-values helper",
+        [
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true,
+            true,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "kses: the binding helper",
+        {
+            "a data-wp-bind--href": false,
+            "a data-wp-bind--src": false,
+            "a data-wp-bind--title": false,
+            "a data-wp-bind--data": false,
+            "a data-wp-bind--type": false,
+            "a data-wp-bind--cite": false,
+            "a data-wp-bind--onclick": false,
+            "a data-wp-bind--style": false,
+            "a data-wp-bind--HREF": false,
+            "a data-wp-bind--href--x": false,
+            "a data-wp-bind": false,
+            "a data-wp-on--click": false,
+            "a data-wp-class--href": false,
+            "img data-wp-bind--href": false,
+            "img data-wp-bind--src": false,
+            "img data-wp-bind--title": false,
+            "img data-wp-bind--data": false,
+            "img data-wp-bind--type": false,
+            "img data-wp-bind--cite": false,
+            "img data-wp-bind--onclick": false,
+            "img data-wp-bind--style": false,
+            "img data-wp-bind--HREF": false,
+            "img data-wp-bind--href--x": false,
+            "img data-wp-bind": false,
+            "img data-wp-on--click": false,
+            "img data-wp-class--href": false,
+            "div data-wp-bind--href": false,
+            "div data-wp-bind--src": false,
+            "div data-wp-bind--title": false,
+            "div data-wp-bind--data": false,
+            "div data-wp-bind--type": false,
+            "div data-wp-bind--cite": false,
+            "div data-wp-bind--onclick": false,
+            "div data-wp-bind--style": false,
+            "div data-wp-bind--HREF": false,
+            "div data-wp-bind--href--x": false,
+            "div data-wp-bind": false,
+            "div data-wp-on--click": false,
+            "div data-wp-class--href": false,
+            "object data-wp-bind--href": true,
+            "object data-wp-bind--src": true,
+            "object data-wp-bind--title": false,
+            "object data-wp-bind--data": true,
+            "object data-wp-bind--type": true,
+            "object data-wp-bind--cite": true,
+            "object data-wp-bind--onclick": true,
+            "object data-wp-bind--style": false,
+            "object data-wp-bind--HREF": true,
+            "object data-wp-bind--href--x": true,
+            "object data-wp-bind": false,
+            "object data-wp-on--click": false,
+            "object data-wp-class--href": false,
+            "area data-wp-bind--href": false,
+            "area data-wp-bind--src": false,
+            "area data-wp-bind--title": false,
+            "area data-wp-bind--data": false,
+            "area data-wp-bind--type": false,
+            "area data-wp-bind--cite": false,
+            "area data-wp-bind--onclick": false,
+            "area data-wp-bind--style": false,
+            "area data-wp-bind--HREF": false,
+            "area data-wp-bind--href--x": false,
+            "area data-wp-bind": false,
+            "area data-wp-on--click": false,
+            "area data-wp-class--href": false,
+            "blockquote data-wp-bind--href": false,
+            "blockquote data-wp-bind--src": false,
+            "blockquote data-wp-bind--title": false,
+            "blockquote data-wp-bind--data": false,
+            "blockquote data-wp-bind--type": false,
+            "blockquote data-wp-bind--cite": false,
+            "blockquote data-wp-bind--onclick": false,
+            "blockquote data-wp-bind--style": false,
+            "blockquote data-wp-bind--HREF": false,
+            "blockquote data-wp-bind--href--x": false,
+            "blockquote data-wp-bind": false,
+            "blockquote data-wp-on--click": false,
+            "blockquote data-wp-class--href": false,
+            "span data-wp-bind--href": false,
+            "span data-wp-bind--src": false,
+            "span data-wp-bind--title": false,
+            "span data-wp-bind--data": false,
+            "span data-wp-bind--type": false,
+            "span data-wp-bind--cite": false,
+            "span data-wp-bind--onclick": false,
+            "span data-wp-bind--style": false,
+            "span data-wp-bind--HREF": false,
+            "span data-wp-bind--href--x": false,
+            "span data-wp-bind": false,
+            "span data-wp-on--click": false,
+            "span data-wp-class--href": false,
+            "rules data-wp-bind--href": true,
+            "rules data-wp-bind--title": false,
+            "rules data-wp-bind--TITLE": true,
+            "rules data-wp-bind--title--x": true,
+            "rules data-wp-bind--x": true,
+            "rules data-wp-bind--data-foo": false,
+            "rules data-wp-bind--aria-label": false,
+            "rules data-wp-bind--": true,
+            "rules data-wp-bind---title": true,
+            "rules DATA-WP-BIND--x": false,
+            "rules data-wp-bind-x": false,
+            "rules data-wp-bind--hidden": true,
+            "rules  data-wp-bind--x": false,
+            "rules data-wp-bindings--x": false,
+            "given data-wp-bind--x {\"x\":{\"values\":[\"y\"]},\"y\":true}": true,
+            "given data-wp-bind--y {\"x\":{\"values\":[\"y\"]},\"y\":true}": false,
+            "given data-wp-bind--z []": false,
+            "given data-wp-bind--z  true": false,
+            "given data-wp-bind--r {\"x\":{\"values\":[\"y\"]},\"r\":{\"required\":true}}": true,
+            "given data-wp-bind--v {\"x\":{\"values\":[\"y\"]},\"v\":{\"valueless\":\"y\"}}": true,
+            "given data-wp-bind--f {\"x\":{\"values\":[\"y\"]},\"f\":false}": true,
+            "given data-wp-bind--e {\"x\":{\"values\":[\"y\"]},\"e\":[]}": true,
+            "given data-wp-bind--data-q {\"x\":{\"values\":[\"y\"]}}": true,
+            "given data-wp-bind--aria-q {\"x\":{\"values\":[\"y\"]},\"aria-*\":true}": true,
+            "given data-wp-bind--data-q  {\"x\":{\"values\":[\"y\"]},\"data-*\":false}": true
+        }
+    ],
+    [
+        "kses: bindings on an object kses keeps",
+        [
+            "<object data=\"{uploads-url}/a.pdf\" type=\"application/pdf\"></object>",
+            "<object data=\"{uploads-url}/a.pdf\" type=\"application/pdf\"></object>",
+            "<object data=\"{uploads-url}/a.pdf\" type=\"application/pdf\"></object>",
+            "<object data=\"{uploads-url}/a.pdf\" type=\"application/pdf\" data-wp-bind--title=\"state.t\" data-wp-bind--class=\"state.c\" data-wp-on--click=\"actions.go\" data-x=\"1\"></object>",
+            "<object data=\"{uploads-url}/a.pdf\" type=\"application/pdf\" data-wp-bind--title=\"state.t\"></object>"
+        ]
+    ],
+    [
+        "interactivity: server bindings",
+        [
+            "<div data-wp-interactive=\"zzpatch\"><a href=\"https://example.invalid/a\" data-wp-bind--href=\"state.url\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a href=\"https://example.invalid/b\" data-wp-bind--href=\"state.safe\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a data-wp-bind--href=\"state.url\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a href=\"https://example.invalid/?a=b&#038;c=d\" data-wp-bind--href=\"state.odd\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a href=\"\" data-wp-bind--href=\"state.empty\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a href=\"/x?y=1\" data-wp-bind--href=\"state.relative\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><img src=\"https://example.invalid/a.png\" data-wp-bind--src=\"state.url\"></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a title=\"javascript:alert(1)\" data-wp-bind--title=\"state.url\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><object ></object></div>",
+            "<div data-wp-interactive=\"zzpatch\"><OBJECT ></OBJECT></div>",
+            "<div data-wp-interactive=\"zzpatch\"><object data=\"https://example.invalid/c\"  title=\"t\"></object></div>",
+            "<div data-wp-interactive=\"zzpatch\"><a title=\"T\" data-wp-bind--title=\"state.title\">a</a></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div data-wp-bind--onclick=\"state.code\">d</div></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div data-wp-bind--ONCLICK=\"state.code\">d</div></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div data-wp-bind--onMouseOver=\"state.code\">d</div></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div data-wp-bind--on=\"state.code\">d</div></div>",
+            "<div data-wp-interactive=\"zzpatch\"><object ></object></div>",
+            "<div data-wp-interactive=\"zzpatch\"><object ></object></div>",
+            "<div data-wp-interactive=\"zzpatch\"><object title=\"T\" data-wp-bind--title=\"state.title\"></object></div>",
+            "<div data-wp-interactive=\"zzpatch\"><embed src=\"https://example.invalid/b\" data-wp-bind--src=\"state.safe\"></div>",
+            "<div data-wp-interactive=\"zzpatch\"><iframe src=\"https://example.invalid/b\" data-wp-bind--src=\"state.safe\"></iframe></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div style=\"color:color:red;\" data-wp-style--color=\"state.css\">d</div></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div title=\"1\" data-wp-context='{\"__proto__\":{\"polluted\":1},\"x\":1}' data-wp-bind--title=\"context.x\">d</div></div>",
+            "<div data-wp-interactive=\"zzpatch\"><div data-wp-context='{\"constructor\":{\"prototype\":{\"polluted\":1}}}' data-wp-text=\"context.constructor\"></div></div>"
+        ]
+    ],
+    [
+        "interactivity: what the server pass was told",
+        [
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "The \"data\" attribute cannot be bound on an \"object\" element, so the binding was ignored.",
+                "7.1.4"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "The \"type\" attribute cannot be bound on an \"object\" element, so the binding was ignored.",
+                "7.1.4"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "The \"data\" attribute cannot be bound on an \"object\" element, so the binding was ignored.",
+                "7.1.4"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "Binding event handler attributes is not supported. Please use \"data-wp-on--click\" instead.",
+                "6.9.2"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "Binding event handler attributes is not supported. Please use \"data-wp-on--click\" instead.",
+                "6.9.2"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "Binding event handler attributes is not supported. Please use \"data-wp-on--mouseover\" instead.",
+                "6.9.2"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "Binding event handler attributes is not supported. Please use \"data-wp-on--\" instead.",
+                "6.9.2"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "The \"data\" attribute cannot be bound on an \"object\" element, so the binding was ignored.",
+                "7.1.4"
+            ],
+            [
+                "WP_Interactivity_API::data_wp_bind_processor",
+                "The \"type\" attribute cannot be bound on an \"object\" element, so the binding was ignored.",
+                "7.1.4"
+            ]
+        ]
+    ],
+    [
+        "categories: the dropdown label",
+        [
+            "<div class=\"wp-block-categories-dropdown wp-block-categories-taxonomy-category wp-block-categories\"><label class=\"wp-block-categories__label\" for=\"wp-block-categories-1\">Pick one</label><select  name='category_name' id='wp-block-categories-1' class='postform'>\n\t<option value='-1'>Select Category</option>\n\t<option class=\"level-0\" value=\"uncategorized\">Uncategorized</option>\n</select><script>\n( ( [ dropdownId, homeUrl ] ) => {\n\t\tconst dropdown = document.getElementById( dropdownId );\n\t\tfunction onSelectChange() {\n\t\t\tsetTimeout( () => {\n\t\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\t// Only navigate if a valid term is selected (not the default \"Select [taxonomy]\" option)\n\t\t\t\tif ( dropdown.value && dropdown.value !== '-1' && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\t\tconst url = new URL( homeUrl );\n\t\t\t\t\turl.searchParams.set( dropdown.name, dropdown.value );\n\t\t\t\t\tlocation.href = url.href;\n\t\t\t\t}\n\t\t\t}, 250 );\n\t\t}\n\t\tfunction onKeyUp( event ) {\n\t\t\tif ( 'Escape' === event.key ) {\n\t\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t\t} else {\n\t\t\t\tdelete dropdown.dataset.lastkey;\n\t\t\t}\n\t\t}\n\t\tfunction onClick() {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t\tdropdown.addEventListener( 'keyup', onKeyUp );\n\t\tdropdown.addEventListener( 'click', onClick );\n\t\tdropdown.addEventListener( 'change', onSelectChange );\n\t} )( [\"wp-block-categories-1\",\"https://minn.localhost\"] );\n//# sourceURL=build_dropdown_script_block_core_categories\n</script>\n\n</div>",
+            "<div class=\"wp-block-categories-dropdown wp-block-categories-taxonomy-category wp-block-categories\"><label class=\"wp-block-categories__label\" for=\"wp-block-categories-2\">Pick %s or %1$s or %d %%</label><select  name='category_name' id='wp-block-categories-2' class='postform'>\n\t<option value='-1'>Select Category</option>\n\t<option class=\"level-0\" value=\"uncategorized\">Uncategorized</option>\n</select><script>\n( ( [ dropdownId, homeUrl ] ) => {\n\t\tconst dropdown = document.getElementById( dropdownId );\n\t\tfunction onSelectChange() {\n\t\t\tsetTimeout( () => {\n\t\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\t// Only navigate if a valid term is selected (not the default \"Select [taxonomy]\" option)\n\t\t\t\tif ( dropdown.value && dropdown.value !== '-1' && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\t\tconst url = new URL( homeUrl );\n\t\t\t\t\turl.searchParams.set( dropdown.name, dropdown.value );\n\t\t\t\t\tlocation.href = url.href;\n\t\t\t\t}\n\t\t\t}, 250 );\n\t\t}\n\t\tfunction onKeyUp( event ) {\n\t\t\tif ( 'Escape' === event.key ) {\n\t\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t\t} else {\n\t\t\t\tdelete dropdown.dataset.lastkey;\n\t\t\t}\n\t\t}\n\t\tfunction onClick() {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t\tdropdown.addEventListener( 'keyup', onKeyUp );\n\t\tdropdown.addEventListener( 'click', onClick );\n\t\tdropdown.addEventListener( 'change', onSelectChange );\n\t} )( [\"wp-block-categories-2\",\"https://minn.localhost\"] );\n//# sourceURL=build_dropdown_script_block_core_categories\n</script>\n\n</div>",
+            "<div class=\"wp-block-categories-dropdown wp-block-categories-taxonomy-category wp-block-categories\"><label class=\"wp-block-categories__label\" for=\"wp-block-categories-3\"><b>Bold</b> %sx</label><select  name='category_name' id='wp-block-categories-3' class='postform'>\n\t<option value='-1'>Select Category</option>\n\t<option class=\"level-0\" value=\"uncategorized\">Uncategorized</option>\n</select><script>\n( ( [ dropdownId, homeUrl ] ) => {\n\t\tconst dropdown = document.getElementById( dropdownId );\n\t\tfunction onSelectChange() {\n\t\t\tsetTimeout( () => {\n\t\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\t\t\t\t// Only navigate if a valid term is selected (not the default \"Select [taxonomy]\" option)\n\t\t\t\tif ( dropdown.value && dropdown.value !== '-1' && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\t\tconst url = new URL( homeUrl );\n\t\t\t\t\turl.searchParams.set( dropdown.name, dropdown.value );\n\t\t\t\t\tlocation.href = url.href;\n\t\t\t\t}\n\t\t\t}, 250 );\n\t\t}\n\t\tfunction onKeyUp( event ) {\n\t\t\tif ( 'Escape' === event.key ) {\n\t\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t\t} else {\n\t\t\t\tdelete dropdown.dataset.lastkey;\n\t\t\t}\n\t\t}\n\t\tfunction onClick() {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t\tdropdown.addEventListener( 'keyup', onKeyUp );\n\t\tdropdown.addEventListener( 'click', onClick );\n\t\tdropdown.addEventListener( 'change', onSelectChange );\n\t} )( [\"wp-block-categories-3\",\"https://minn.localhost\"] );\n//# sourceURL=build_dropdown_script_block_core_categories\n</script>\n\n</div>"
+        ]
+    ],
+    [
+        "post navigation link: labels",
+        [
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">Next <b>post</b></a></div>",
+            "<div class=\"post-navigation-link-previous wp-block-post-navigation-link\"><a href=\"{p0}\" rel=\"prev\">Next <b>post</b></a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\"><img src=\"x\"></a></div>",
+            "<div class=\"post-navigation-link-previous wp-block-post-navigation-link\"><a href=\"{p0}\" rel=\"prev\"><img src=\"x\"></a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">A %s label</a></div>",
+            "<div class=\"post-navigation-link-previous wp-block-post-navigation-link\"><a href=\"{p0}\" rel=\"prev\">A %s label</a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">\"quoted\" &amp; <i>em</i></a></div>",
+            "<div class=\"post-navigation-link-previous wp-block-post-navigation-link\"><a href=\"{p0}\" rel=\"prev\">\"quoted\" &amp; <i>em</i></a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><span class=\"post-navigation-link__label\">Lab<b>el</b></span> <a href=\"{p2}\" rel=\"next\">Zz patch 714</a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\"><span class=\"post-navigation-link__label\">Lab<b>el</b></span> <span class=\"post-navigation-link__title\">Zz patch 714</span></a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">Lab<b>el</b></a><span class=\"wp-block-post-navigation-link__arrow-next is-arrow-arrow\" aria-hidden=\"true\">→</span></div>",
+            "<div class=\"post-navigation-link-previous wp-block-post-navigation-link\"><span class=\"wp-block-post-navigation-link__arrow-previous is-arrow-chevron\" aria-hidden=\"true\">«</span><a href=\"{p0}\" rel=\"prev\">Lab<b>el</b></a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">Lab<b>el</b></a><span class=\"wp-block-post-navigation-link__arrow-next is-arrow-chevron\" aria-hidden=\"true\">»</span></div>",
+            "<div class=\"post-navigation-link-previous wp-block-post-navigation-link\"><span class=\"wp-block-post-navigation-link__arrow-previous is-arrow-arrow\" aria-hidden=\"true\">←</span><a href=\"{p0}\" rel=\"prev\">Lab<b>el</b></a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">Zz patch 714</a></div>",
+            "<div class=\"post-navigation-link-next wp-block-post-navigation-link\"><a href=\"{p2}\" rel=\"next\">Next</a></div>"
+        ]
+    ],
+    [
+        "comments pagination: labels",
+        [
+            "<a href=\"{p0}comment-page-2/#comments\" class=\"wp-block-comments-pagination-previous\">Next &lt;b&gt;post&lt;/b&gt;</a>",
+            "<a href=\"{p0}comment-page-2/#comments\" class=\"wp-block-comments-pagination-previous\">&lt;img src=x onerror=alert(1)&gt;</a>",
+            "<a href=\"{p0}comment-page-2/#comments\" class=\"wp-block-comments-pagination-previous\">A %s label</a>",
+            "<a href=\"{p0}comment-page-2/#comments\" class=\"wp-block-comments-pagination-previous\">&quot;quoted&quot; &amp; &lt;i&gt;em&lt;/i&gt;</a>"
+        ]
+    ],
+    [
+        "image: replacement tokens in content",
+        [
+            "<figure class=\"wp-block-image size-large\"><img src=\"https://example.invalid/a.jpg\" alt=\"x $0 \\0 \\1 ${1} $1 y\" class=\"wp-image-999999\"/><figcaption class=\"wp-element-caption\">x $0 \\0 \\1 ${1} $1 y</figcaption></figure>",
+            "<figure data-wp-context=\"{&quot;imageId&quot;:&quot;{uniqid}&quot;}\" data-wp-interactive=\"core/image\" data-wp-key=\"{uniqid}\" class=\"wp-block-image wp-lightbox-container\"><img data-wp-class--hide=\"state.isContentHidden\" data-wp-class--show=\"state.isContentVisible\" data-wp-init=\"callbacks.setButtonStyles\" data-wp-on--click=\"actions.showLightbox\" data-wp-on--load=\"callbacks.setButtonStyles\" data-wp-on--pointerdown=\"actions.preloadImage\" data-wp-on--pointerenter=\"actions.preloadImageWithDelay\" data-wp-on--pointerleave=\"actions.cancelPreload\" data-wp-on-window--resize=\"callbacks.setButtonStyles\" src=\"https://example.invalid/b.jpg\" alt=\"x $0 \\0 \\1 ${1} $1 y\" class=\"wp-image-999999\" title=\"x $0 \\0 \\1 ${1} $1 y\"/><button\n\t\t\tclass=\"lightbox-trigger\"\n\t\t\ttype=\"button\"\n\t\t\taria-haspopup=\"dialog\"\n\t\t\tdata-wp-bind--aria-label=\"state.thisImage.triggerButtonAriaLabel\"\n\t\t\tdata-wp-init=\"callbacks.initTriggerButton\"\n\t\t\tdata-wp-on--click=\"actions.showLightbox\"\n\t\t\tdata-wp-style--right=\"state.thisImage.buttonRight\"\n\t\t\tdata-wp-style--top=\"state.thisImage.buttonTop\"\n\t\t>\n\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" fill=\"none\" viewBox=\"0 0 12 12\">\n\t\t\t\t<path fill=\"#fff\" d=\"M2 0a2 2 0 0 0-2 2v2h1.5V2a.5.5 0 0 1 .5-.5h2V0H2Zm2 10.5H2a.5.5 0 0 1-.5-.5V8H0v2a2 2 0 0 0 2 2h2v-1.5ZM8 12v-1.5h2a.5.5 0 0 0 .5-.5V8H12v2a2 2 0 0 1-2 2H8Zm2-12a2 2 0 0 1 2 2v2h-1.5V2a.5.5 0 0 0-.5-.5H8V0h2Z\" />\n\t\t\t</svg>\n\t\t</button></figure>",
+            "<figure class=\"wp-block-image z$0\"><img src=\"https://example.invalid/c.jpg\" alt=\"\"/></figure>"
+        ]
+    ],
+    [
+        "playlist: replacement tokens in content",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "notes: the post's author",
+        {
+            "read note": [
+                200,
+                "ok"
+            ],
+            "read note to edit": [
+                200,
+                "ok"
+            ],
+            "list notes": [
+                200,
+                1
+            ],
+            "list notes to edit": [
+                200,
+                1
+            ],
+            "list every note to edit": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "list comments to edit": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "read comment to edit": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "edit note": [
+                200,
+                "ok"
+            ],
+            "note after": "Zz changed by the post's author",
+            "edit comment": [
+                200,
+                "ok"
+            ]
+        }
+    ],
+    [
+        "notes: an administrator",
+        {
+            "read note": [
+                200,
+                "ok"
+            ],
+            "read note to edit": [
+                200,
+                "ok"
+            ],
+            "list notes": [
+                200,
+                1
+            ],
+            "list notes to edit": [
+                200,
+                1
+            ],
+            "list every note to edit": [
+                200,
+                1
+            ],
+            "list comments to edit": [
+                200,
+                1
+            ],
+            "read comment to edit": [
+                200,
+                "ok"
+            ],
+            "edit note": [
+                200,
+                "ok"
+            ],
+            "note after": "Zz changed by an administrator",
+            "edit comment": [
+                200,
+                "ok"
+            ]
+        }
+    ],
+    [
+        "notes: a comment moderator reading",
+        {
+            "read note": [
+                403,
+                "rest_cannot_read"
+            ],
+            "read note to edit": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "list notes": [
+                403,
+                "rest_forbidden_param"
+            ],
+            "list notes to edit": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "list every note to edit": [
+                403,
+                "rest_forbidden_param"
+            ],
+            "list comments to edit": [
+                200,
+                1
+            ],
+            "read comment to edit": [
+                200,
+                "ok"
+            ]
+        }
+    ],
+    [
+        "notes: a comment moderator who cannot edit the post",
+        {
+            "read note": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "list notes": [
+                403,
+                "rest_forbidden_context"
+            ],
+            "edit note": [
+                403,
+                "rest_cannot_edit"
+            ],
+            "read comment": [
+                200,
+                "ok"
+            ],
+            "edit comment": [
+                200,
+                "ok"
+            ],
+            "delete note": [
+                403,
+                "rest_cannot_delete"
+            ],
+            "note after": "Zz changed by an administrator"
+        }
+    ],
+    [
+        "upgrader: the working folder",
+        {
+            "parent": "{content}/upgrade",
+            "name": "zz-patch-714-package-{16}",
+            "name length": 37,
+            "holds": [
+                "zz-patch-714"
+            ],
+            "index.php in upgrade": true
+        }
+    ]
+]

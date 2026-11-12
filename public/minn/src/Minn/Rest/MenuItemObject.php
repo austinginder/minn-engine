@@ -78,6 +78,7 @@ final readonly class MenuItemObject
         if ($edit) {
             $object['minn_modified'] = false;
             $object['minn_lock'] = null;
+            $object['minn_can_delete'] = $this->caller->can('delete_post', $item->id);
         }
         $object['_links'] = $links;
         // The filter is handed the item as wp_setup_nav_menu_item dresses it (probe hook-inputs-2).

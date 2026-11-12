@@ -20,6 +20,8 @@ enum Access
     case Floor;
     /** A signed-in caller holding a capability on the object a pattern capture names. */
     case Own;
+    /** A signed-in caller who may change the comment a capture names: a moderator, or one who may edit its post; a note only the latter. */
+    case CommentEditor;
     /** Any caller, on a route whose {base} capture must name a declared post type; the route declines otherwise and the handler judges the rest. */
     case Type;
     /** Any caller, on a route whose {base} capture must name a taxonomy plugin code registered to show in REST; the route declines otherwise and the handler judges the rest. */

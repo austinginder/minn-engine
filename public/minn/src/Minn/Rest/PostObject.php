@@ -434,6 +434,8 @@ final readonly class PostObject
         unset($ordered['_links']);
         $ordered['minn_modified'] = $this->modifiedUnsaved($p, $userId);
         $ordered['minn_lock'] = $this->lockHolder($id, $userId);
+        // Whether the caller may delete it: core's links name publish and assign, never delete.
+        $ordered['minn_can_delete'] = $id > 0 && $this->caller->can('delete_post', $id);
         if ($p->type === self::BLOCK) {
             // Core registers the sync status after the app's fields, so it prints after them here.
             $sync = $ordered['wp_pattern_sync_status'];

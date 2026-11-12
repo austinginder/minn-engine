@@ -39,17 +39,17 @@
         [
             [
                 "",
-                "<meta name=\"generator\" content=\"WordPress 7.1.3\">",
-                "<meta name=\"generator\" content=\"WordPress 7.1.3\" />",
-                "<generator uri=\"https://wordpress.org/\" version=\"7.1.3\">WordPress</generator>",
-                "<generator>https://wordpress.org/?v=7.1.3</generator>",
-                "<admin:generatorAgent rdf:resource=\"https://wordpress.org/?v=7.1.3\" />",
-                "<!-- generator=\"WordPress/7.1.3\" -->",
-                "<!-- generator=\"WordPress/7.1.3\" created=\"{now}\" -->"
+                "<meta name=\"generator\" content=\"WordPress 7.1.4\">",
+                "<meta name=\"generator\" content=\"WordPress 7.1.4\" />",
+                "<generator uri=\"https://wordpress.org/\" version=\"7.1.4\">WordPress</generator>",
+                "<generator>https://wordpress.org/?v=7.1.4</generator>",
+                "<admin:generatorAgent rdf:resource=\"https://wordpress.org/?v=7.1.4\" />",
+                "<!-- generator=\"WordPress/7.1.4\" -->",
+                "<!-- generator=\"WordPress/7.1.4\" created=\"{now}\" -->"
             ],
-            "<meta name=\"generator\" content=\"WordPress 7.1.3\">\n",
-            "<!-- generator=\"WordPress/7.1.3\" -->\n",
-            "<meta name=\"generator\" content=\"WordPress 7.1.3\" />\n"
+            "<meta name=\"generator\" content=\"WordPress 7.1.4\">\n",
+            "<!-- generator=\"WordPress/7.1.4\" -->\n",
+            "<meta name=\"generator\" content=\"WordPress 7.1.4\" />\n"
         ]
     ],
     [

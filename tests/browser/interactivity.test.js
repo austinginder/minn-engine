@@ -123,6 +123,43 @@ function check( cond, label, detail = '' ) {
 		}
 	}
 
+	// The runtime's own guards, on pages of our making served at the site's address with its import map: server
+	// data is read only from the script element the server printed, a reserved key in parsed data never reaches
+	// Object.prototype, and an event handler attribute is never bound.
+	const runtime = modules.imports[ '@wordpress/interactivity' ];
+	const shell = ( body ) => `<!doctype html><html><head><script type="importmap">${ JSON.stringify( { imports: { '@wordpress/interactivity': runtime } } ) }</script></head><body>${ body }<script type="module">import { store } from '@wordpress/interactivity'; store( 'zzguard', {} ); window.zzReady = true;</script></body></html>`;
+	const guarded = await browser.newContext( { ignoreHTTPSErrors: true } );
+	const guard = await guarded.newPage();
+	guard.on( 'pageerror', ( e ) => errors.push( 'guard pageerror: ' + e.message ) );
+	const pages = {
+		'/zz-guard-shadow/': '<div id="wp-script-module-data-@wordpress/interactivity">{"state":{"zzguard":{"word":"shadowed"}}}</div>'
+			+ '<script type="application/json" id="wp-script-module-data-@wordpress/interactivity">{"state":{"zzguard":{"word":"served"}}}</script>'
+			+ '<div data-wp-interactive="zzguard"><span id="zz-word" data-wp-text="state.word"></span></div>',
+		'/zz-guard-proto/': '<script type="application/json" id="wp-script-module-data-@wordpress/interactivity">{"state":{"zzguard":{"__proto__":{"zzPolluted":"state"},"code":"alert(1)","word":"served"}}}</script>'
+			+ '<div data-wp-interactive="zzguard" data-wp-context=\'{"__proto__":{"zzPollutedContext":"context"},"x":1}\'>'
+			+ '<button id="zz-bind" data-wp-bind--onclick="state.code" data-wp-bind--ONMOUSEOVER="state.code" data-wp-bind--title="state.word">b</button>'
+			+ '<span id="zz-ctx" data-wp-text="context.x"></span></div>',
+	};
+	await guarded.route( ( url ) => Object.keys( pages ).includes( new URL( url ).pathname ), ( route ) => route.fulfill( { status: 200, contentType: 'text/html', body: shell( pages[ new URL( route.request().url() ).pathname ] ) } ) );
+	await guard.goto( BASE + '/zz-guard-shadow/', { waitUntil: 'networkidle' } );
+	await guard.waitForFunction( () => window.zzReady === true, null, { timeout: 10000 } ).catch( () => {} );
+	const word = await guard.evaluate( () => document.getElementById( 'zz-word' ).textContent );
+	check( word !== 'shadowed', 'server state is never read from a non-script element carrying its id', JSON.stringify( word ) );
+	await guard.goto( BASE + '/zz-guard-proto/', { waitUntil: 'networkidle' } );
+	await guard.waitForFunction( () => window.zzReady === true, null, { timeout: 10000 } ).catch( () => {} );
+	const proto = await guard.evaluate( () => ( {
+		state: ( {} ).zzPolluted,
+		context: ( {} ).zzPollutedContext,
+		hydrated: document.getElementById( 'zz-bind' ).getAttribute( 'title' ),
+		text: document.getElementById( 'zz-ctx' ).textContent,
+		onclick: document.getElementById( 'zz-bind' ).getAttribute( 'onclick' ),
+		onmouseover: document.getElementById( 'zz-bind' ).getAttribute( 'onmouseover' ),
+	} ) );
+	check( proto.hydrated === 'served' && proto.text === '1', 'the guard page hydrates (title and context bound)', JSON.stringify( proto ) );
+	check( proto.state === undefined && proto.context === undefined, 'a __proto__ key in server state or context never reaches Object.prototype', JSON.stringify( proto ) );
+	check( proto.onclick === null && proto.onmouseover === null, 'an event handler attribute is never bound', JSON.stringify( proto ) );
+	await guarded.close();
+
 	check( errors.length === 0, 'no page or console errors', errors.join( '\n      ' ) );
 	check( failedRequests.length === 0, 'every module request succeeded', failedRequests.join( '\n      ' ) );
 	await browser.close();

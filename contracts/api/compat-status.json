@@ -2,13 +2,13 @@
     "method": "tests/tools/compat-status.php: every reference function, class and public or protected method, by what the facade has for it; verified = real and named in a probe (for a method, its class)",
     "summary": {
         "functions": {
-            "total": 3914,
-            "real": 2962,
+            "total": 3916,
+            "real": 2964,
             "deadend": 952,
             "placeholder": 0,
             "missing": 0,
-            "verified": 2962,
-            "resolved": 3914
+            "verified": 2963,
+            "resolved": 3916
         },
         "classes": {
             "total": 380,

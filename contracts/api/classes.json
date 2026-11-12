@@ -23036,6 +23036,17 @@
                 ],
                 "returns": "void"
             },
+            "is_bindable_object_attribute": {
+                "visibility": "private",
+                "static": true,
+                "params": [
+                    {
+                        "name": "attribute_name",
+                        "type": "string"
+                    }
+                ],
+                "returns": "bool"
+            },
             "data_wp_class_processor": {
                 "visibility": "private",
                 "params": [
@@ -42624,6 +42635,14 @@
                         "name": "hook_extra",
                         "optional": true,
                         "default": []
+                    }
+                ]
+            },
+            "get_working_dir_name": {
+                "visibility": "private",
+                "params": [
+                    {
+                        "name": "package"
                     }
                 ]
             },

@@ -7,7 +7,7 @@ the template blocks a block theme composes with
 | [`Comments`](#comments) | final readonly class | 305 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
 | [`Navigation`](#navigation) | final readonly class | 554 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`NavigationParts`](#navigationparts) | final class | 197 | The navigation family's small answers for the block_core_navigation_* |
-| [`PostBlocks`](#postblocks) | final readonly class | 294 | The post-* blocks: they render the context's current post. |
+| [`PostBlocks`](#postblocks) | final readonly class | 332 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 383 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
@@ -179,7 +179,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Content\S
 
 Registers this family's blocks with the renderer.
 
-Internals: `title()` (private, line 57), `content()` (private, line 73), `contentOf()` (private, line 79), `date()` (private, line 131), `authorName()` (private, line 151), `excerpt()` (private, line 172), `featuredImage()` (private, line 184), `terms()` (private, line 224), `navigationLink()` (private, line 256), `termRow()` (private, line 287), `previewSource()` (private, line 299), `target()` (private, line 308), `open()` (private, line 313)
+Internals: `title()` (private, line 57), `content()` (private, line 73), `contentOf()` (private, line 79), `date()` (private, line 131), `authorName()` (private, line 151), `excerpt()` (private, line 172), `featuredImage()` (private, line 184), `terms()` (private, line 224), `navigationLink()` (private, line 260), `navigationPost()` (private, line 291), `navigationText()` (private, line 308), `termRow()` (private, line 325), `previewSource()` (private, line 337), `target()` (private, line 346), `open()` (private, line 351)
 
 
 ## QueryBlocks

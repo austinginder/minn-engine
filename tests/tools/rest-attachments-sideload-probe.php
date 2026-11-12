@@ -258,4 +258,6 @@ $done['names after'] = [$call($controller, 'get_sideloaded_file_names', $plain),
 $done['missing sizes'] = [array_keys(wp_get_missing_image_subsizes($plain)), array_keys(wp_get_missing_image_subsizes($sized))];
 $say('finalized', $masked($done));
 
-echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";
+// This month's upload folder reads as {ym}, so the fixture holds whichever month it is captured or run in.
+$ym = date('Y/m');
+echo str_replace([$ym, str_replace('/', '\\/', $ym), str_replace('/', '\\\\/', $ym)], '{ym}', json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)), "\n";

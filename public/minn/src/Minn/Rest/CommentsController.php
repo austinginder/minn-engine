@@ -93,7 +93,10 @@ final readonly class CommentsController
     #[Route(Method::Get, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Comment, param: 'id'), args: [ItemArgs::COMMENT])]
     public function single(Request $request, string $id): Response
     {
-        $comment = $this->plainComment((int) $id);
+        $comment = $this->commentOrNote((int) $id);
+        if ($comment->type === 'note') {
+            return $this->note($request, $comment);
+        }
         $moderator = $this->caller->can('moderate_comments');
         if ($comment->approved !== '1' && !$moderator) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
@@ -169,14 +172,14 @@ final readonly class CommentsController
     }
 
     /** Status flips and content or author edits, for moderators. */
-    #[Route(Method::Post, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE], args: [PathArgs::COMMENT_ID])]
-    #[Route(Method::Put, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE], args: [PathArgs::COMMENT_ID])]
-    #[Route(Method::Patch, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE], args: [PathArgs::COMMENT_ID])]
+    #[Route(Method::Post, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::CommentEditor, param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE], args: [PathArgs::COMMENT_ID])]
+    #[Route(Method::Put, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::CommentEditor, param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE], args: [PathArgs::COMMENT_ID])]
+    #[Route(Method::Patch, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::CommentEditor, param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE], args: [PathArgs::COMMENT_ID])]
     public function update(Request $request, string $id): Response
     {
         $commentId = (int) $id;
-        $comment = $this->plainComment($commentId);
-        if (!$this->caller->can('moderate_comments')) {
+        $comment = $this->commentOrNote($commentId);
+        if (!$this->caller->mayChangeComment($commentId, $comment->type)) {
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this comment.');
         }
         $body = $request->json();
@@ -193,12 +196,12 @@ final readonly class CommentsController
     }
 
     /** Trash remembers where the comment came from; force removes it outright. */
-    #[Route(Method::Delete, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this comment.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this comment.'), args: [PathArgs::COMMENT_ID])]
+    #[Route(Method::Delete, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::CommentEditor, param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this comment.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this comment.'), args: [PathArgs::COMMENT_ID])]
     public function delete(Request $request, string $id): Response
     {
         $commentId = (int) $id;
-        $comment = $this->plainComment($commentId);
-        if (!$this->caller->can('moderate_comments')) {
+        $comment = $this->commentOrNote($commentId);
+        if (!$this->caller->mayChangeComment($commentId, $comment->type)) {
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this comment.');
         }
         $fields = Fields::fromQuery($request->query);
@@ -234,7 +237,7 @@ final readonly class CommentsController
      */
     private function allowed(RestRequest $wp, Context $context, string $email): void
     {
-        if ($context->isEdit() && !$this->caller->can('moderate_comments')) {
+        if ($context->isEdit() && !$this->editsListed($wp)) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');
         }
         if ($wp['status'] !== 'approve' && !$this->caller->can('edit_posts')) {
@@ -298,14 +301,48 @@ final readonly class CommentsController
         return $comment->comment_approved === '1' && $post !== null && $this->readablePost($post, $password);
     }
 
-    /** A comment row of the plain kind, or the reference's invalid-id error. */
-    private function plainComment(int $id): CommentRecord
+    /** A comment or a note by id, the 404 for anything else. */
+    private function commentOrNote(int $id): CommentRecord
     {
         $comment = $this->comments->find($id);
-        if ($comment === null || !$comment->isComment()) {
+        if ($comment === null || (!$comment->isComment() && $comment->type !== 'note')) {
             throw new RestError('rest_comment_invalid_id', 'Invalid comment ID.', 404);
         }
         return $comment;
+    }
+
+    /**
+     * A note read by id: its post's editors' alone, in any context; anyone
+     * else is refused the edit context, or the note (probe patch-714).
+     */
+    private function note(Request $request, CommentRecord $note): Response
+    {
+        $context = Context::of($request);
+        if (!$this->caller->can('edit_post', $note->postId)) {
+            throw $context->isEdit()
+                ? $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.')
+                : $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
+        }
+        return Reply::item($this->object->build($note, $context), Fields::fromQuery($request->query));
+    }
+
+    /**
+     * Whether the caller may list in the edit context: notes of the posts
+     * named are their editors' (a moderator's say does not reach them), any
+     * other list a moderator's (probe patch-714).
+     */
+    private function editsListed(RestRequest $wp): bool
+    {
+        $posts = array_filter(array_map('intval', (array) $wp['post']));
+        if ($wp['type'] === 'note' && $posts !== []) {
+            foreach ($posts as $postId) {
+                if (!$this->caller->can('edit_post', $postId)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return $this->caller->can('moderate_comments');
     }
 
     /**

@@ -73,10 +73,11 @@ final readonly class TemplateObject
             $out['plugin'] = $record->plugin;
         }
         if ($edit) {
-            // Minn Admin's two edit-context fields. A template takes no lock
-            // and has no autosave slot, so both are constant here.
+            // Minn Admin's edit-context fields. A template takes no lock, has
+            // no autosave slot, and its id is no post id, so all are constant.
             $out['minn_modified'] = false;
             $out['minn_lock'] = null;
+            $out['minn_can_delete'] = false;
         }
         $out['_links'] = $this->links($record, $as);
         return $out;

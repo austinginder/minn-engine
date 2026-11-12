@@ -370,7 +370,7 @@
         [
             true,
             true,
-            "[[\"attachment_url_to_postid\",[null,\"https:\\/\\/zzmed.example\\/nope.png\"]],[\"attachment_url_to_postid\",[\"{id}\",\"https:\\/\\/minn.localhost\\/wp-content\\/uploads\\/2026\\/10\\/zzmed-small.png\"]]]"
+            "[[\"attachment_url_to_postid\",[null,\"https:\\/\\/zzmed.example\\/nope.png\"]],[\"attachment_url_to_postid\",[\"{id}\",\"https:\\/\\/minn.localhost\\/wp-content\\/uploads\\/{ym}\\/zzmed-small.png\"]]]"
         ]
     ],
     [

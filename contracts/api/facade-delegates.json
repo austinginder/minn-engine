@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1665
+        "delegates": 1667
     },
     "functions": {
         "__": {
@@ -718,7 +718,7 @@
         },
         "_wp_kses_allow_pdf_objects": {
             "file": "kses.php",
-            "statement": "return Kses::pdfObject((string) $url, (string) (wp_upload_dir(null, false)['url'] ?? ''));"
+            "statement": "return KsesValues::pdfObject((string) $url, (string) (wp_upload_dir(null, false)['url'] ?? ''));"
         },
         "_wp_kses_decode_entities_chr": {
             "file": "kses.php",
@@ -727,6 +727,14 @@
         "_wp_kses_decode_entities_chr_hexdec": {
             "file": "kses.php",
             "statement": "return chr((int) hexdec($matches[1]));"
+        },
+        "_wp_kses_directive_binds_value_restricted_attribute": {
+            "file": "kses.php",
+            "statement": "return Minn\\Support\\KsesDirectives::bindsRestricted($directive_name, $allowed_attributes);"
+        },
+        "_wp_kses_restricts_attribute_values": {
+            "file": "kses.php",
+            "statement": "return Minn\\Support\\KsesDirectives::restrictsValues($allowed_attributes);"
         },
         "_wp_kses_sanitize_note_mention_classes": {
             "file": "formatting.php",

@@ -9336,6 +9336,74 @@ engine's `core update`, `core verify-checksums` (against the signed release:
 `/v1/minn/releases/<version>`), a guard on `core download`, and
 `wp minn update`. `contracts/cli.md` has the wording.
 
+
+## WordPress 7.1.4 (2026-11-11)
+
+The references (all eight Cove copies) moved from 7.1.3 to 7.1.4, and the
+engine reports 7.1.4. 7.1.4 adds two kses helpers
+(`_wp_kses_restricts_attribute_values`,
+`_wp_kses_directive_binds_value_restricted_attribute`) and two private
+methods (`WP_Interactivity_API::is_bindable_object_attribute`,
+`WP_Upgrader::get_working_dir_name`). Every probe was rerun on 7.1.4: 88
+rows in 32 fixtures moved, none of them new behaviour. The version (and the
+ETags and module `ver` strings made from it), this machine's PHP (8.3.36)
+and ImageMagick, Minn Admin's newer `minn_can_delete` field, a stale
+`update_core` transient on the shared database, and the month: six probes
+pinned this month's upload folder and now read it as `{ym}`
+(upload-filters, image-pipeline, rest-media-actions, filter-inputs-3,
+media-template-doubts, rest-attachments-sideload).
+
+### The security release, checked against Minn
+
+7.1.4 fixes 22 vulnerabilities in 17 advisories. The Customizer ones
+(changeset previews, selective refresh), the personal data erasure screen
+and the multisite Users screen land in Minn's dead ends. The Interactivity
+Router's uploaded-file XSS cannot happen in Minn's router, which navigates
+with full page loads, and Minn's runtime sets styles property by property
+with no CSS parser to hang. The bundled root certificates are not Minn's:
+the engine's HTTP client uses the host's store unless a site carries
+`wp-includes/certificates/ca-bundle.crt`. The rest were probed against the
+7.1.4 reference (`patch-714`, 19 rows) and were Minn's too, now fixed:
+
+- **Block delimiters.** A delimiter's whitespace is five characters: space,
+  tab, LF, CR and form feed. Minn's parser took PHP's `\s`, so a vertical
+  tab made a live block where the reference leaves an inert comment.
+- **Bindings under kses.** On a tag whose allowlist checks a value (an
+  attribute rule holding any key but `required` and `valueless`), a
+  `data-wp-bind--` directive is dropped unless the attribute it binds is
+  allowed plainly (a rule of exactly `true`, or a `data-` name under
+  `data-*`). kses judges the lowercased name; the helper compares the name
+  as written and does not split a `--` suffix. `Support\KsesDirectives`.
+- **The server directive pass.** An event handler binding (`on*`, any case)
+  is told off and never applied: Minn printed `onclick` from state. An
+  object's `data` or `type` binding is told off and the directive removed.
+  A bound URL is escaped as for display, and one that escapes to nothing
+  (a refused scheme) leaves the attribute as it was; an empty string still
+  empties it.
+- **Minn's client runtime** (`assets/interactivity.js`, MIT, so no reference
+  to diff): server data is read only from the script element the server
+  printed, a `__proto__` key in server data or context never reaches
+  `Object.prototype` (it did, through the store merge), and an event
+  handler attribute is never bound. Browser suite `interactivity`.
+- **Block labels.** The Categories dropdown label is filtered as post
+  content (Minn printed it raw), the Comments Pagination label is escaped
+  as text (raw), and the Post Navigation Link takes its `label` (Minn
+  ignored it): filtered as post content, beside the title with `showTitle`
+  (inside the link with `linkLabel`). Its chevrons are `«` and `»`, and off
+  a resolved single page it follows the main query's single post.
+- **Notes.** A note belongs to whoever may edit its post; `moderate_comments`
+  is not enough. Minn answered every note by id with a 404, for everyone;
+  it now reads, edits and deletes notes for their post's editors and refuses
+  others with the reference's codes. The same rule (`Rest\Caller::
+  mayChangeComment`, `Access::CommentEditor`) lets the author of a post edit
+  an ordinary comment on it, as the reference does.
+- **Replacement tokens.** A class from a filter and the srcset Minn adds to
+  an image went into `preg_replace` as replacement text, so a `$1` or `\1`
+  in them was expanded. Both are inserted literally now.
+- **The upgrader's working folder** is named for the package plus sixteen
+  random letters and digits, and `upgrade/index.php` is kept (and written
+  when missing), so an unzipped package is neither listed nor guessable.
+
 ## rest-api.php's helpers (2026-10-09)
 
 Probe `rest-api-helpers`. It registers one route of its own

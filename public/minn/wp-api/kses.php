@@ -146,7 +146,17 @@ function wp_kses_check_attr_val($value, $vless, $checkname, $checkvalue)
 /** The value rule behind the post allowlist's object element: a PDF on the uploads host. */
 function _wp_kses_allow_pdf_objects($url)
 {
-    return Kses::pdfObject((string) $url, (string) (wp_upload_dir(null, false)['url'] ?? ''));
+    return KsesValues::pdfObject((string) $url, (string) (wp_upload_dir(null, false)['url'] ?? ''));
+}
+
+function _wp_kses_restricts_attribute_values($allowed_attributes)
+{
+    return Minn\Support\KsesDirectives::restrictsValues($allowed_attributes);
+}
+
+function _wp_kses_directive_binds_value_restricted_attribute(string $directive_name, $allowed_attributes)
+{
+    return Minn\Support\KsesDirectives::bindsRestricted($directive_name, $allowed_attributes);
 }
 
 // Plugins' say over style attributes, wherever kses reads one: the property list and each declaration.

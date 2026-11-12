@@ -286,7 +286,7 @@
     ],
     [
         "wp_version",
-        "7.1.3"
+        "7.1.4"
     ],
     [
         "constants",
@@ -1433,7 +1433,7 @@
     ],
     [
         "get_bloginfo version",
-        "7.1.3"
+        "7.1.4"
     ],
     [
         "get_bloginfo charset",

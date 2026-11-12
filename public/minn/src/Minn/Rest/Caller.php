@@ -81,6 +81,16 @@ final class Caller
     }
 
     /**
+     * Whether the caller may edit or delete a comment: a moderator any
+     * ordinary one, and whoever may edit its post (edit_comment) any one; a
+     * note belongs to its post's editors alone (probe patch-714).
+     */
+    public function mayChangeComment(int $commentId, string $type): bool
+    {
+        return ($type !== 'note' && $this->can('moderate_comments')) || $this->can('edit_comment', $commentId);
+    }
+
+    /**
      * Whether the caller holds a capability, on a post when given. With
      * plugins loaded the answer is WordPress's: the same mapping, then
      * map_meta_cap and user_has_cap, where role editors and lock plugins
@@ -101,9 +111,8 @@ final class Caller
      */
     public function editsAnyRestType(): bool
     {
-        $caps = Runtime::booted()
-            ? array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, Registered::postTypes(['show_in_rest' => true], 'objects')))
-            : ['edit_posts', 'edit_pages', 'edit_theme_options'];
+        $types = Registered::loadedPostTypes(['show_in_rest' => true]);
+        $caps = $types !== [] ? array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, $types)) : ['edit_posts', 'edit_pages', 'edit_theme_options'];
         foreach ($caps as $cap) {
             if ($this->can($cap)) {
                 return true;

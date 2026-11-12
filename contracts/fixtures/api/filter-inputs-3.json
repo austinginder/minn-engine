@@ -146,7 +146,7 @@
                 "pre_wp_unique_filename_file_list",
                 [
                     null,
-                    "{uploads}/2026/10",
+                    "{uploads}/{ym}",
                     "zz-fi3-unique.txt"
                 ]
             ],
@@ -336,7 +336,7 @@
                 "pre_wp_unique_filename_file_list",
                 [
                     null,
-                    "{uploads}/2026/10",
+                    "{uploads}/{ym}",
                     "zz-fi3-bits.txt"
                 ]
             ]

@@ -14,12 +14,12 @@ the wp/v2 surface: shapes and controllers
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 93 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
 | [`BlocksController`](#blockscontroller) | final readonly class | 59 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
-| [`Caller`](#caller) | final class | 149 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`Caller`](#caller) | final class | 158 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 318 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 355 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredRevisionsController`](#declaredrevisionscontroller) | final readonly class | 58 | wp/v2 revisions and autosaves under a post type plugin code or an |
@@ -38,7 +38,7 @@ the wp/v2 surface: shapes and controllers
 | [`FontWritesController`](#fontwritescontroller) | final readonly class | 151 | wp/v2/font-families written (probe font-writes): a family created and |
 | [`FontsController`](#fontscontroller) | final readonly class | 162 | wp/v2/font-families and their font-faces, read and deleted (probe: the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 161 | wp/v2/global-styles: the site editor's saved styles (one post per |
-| [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
+| [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 88 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`GlobalStylesParams`](#globalstylesparams) | final class | 22 | A global styles update's parameters as the reference declares them: its |
 | [`IndexController`](#indexcontroller) | final readonly class | 106 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 142 | wp/v2/themes as the reference answers it (probe rest-themes): the |
@@ -49,7 +49,7 @@ the wp/v2 surface: shapes and controllers
 | [`MediaObject`](#mediaobject) | final readonly class | 171 | The wp/v2 media object, view and edit context. |
 | [`MenuCollectionParams`](#menucollectionparams) | final class | 8 | The menus list's parameters as the reference declares them: a flat |
 | [`MenuItemCollectionParams`](#menuitemcollectionparams) | final class | 39 | The menu items list's parameters as the reference declares them: the |
-| [`MenuItemObject`](#menuitemobject) | final readonly class | 75 | The wp/v2/menu-items resource. |
+| [`MenuItemObject`](#menuitemobject) | final readonly class | 76 | The wp/v2/menu-items resource. |
 | [`MenuItemStatus`](#menuitemstatus) | final class | 13 | Menu items listed with a status beyond publish by a caller who may not |
 | [`MenuLists`](#menulists) | final readonly class | 84 | The menus and menu items lists, served as the reference serves them: the |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -59,10 +59,10 @@ the wp/v2 surface: shapes and controllers
 | [`PathArgs`](#pathargs) | final class | 79 | The arguments a route's path names, as the reference lists them among the |
 | [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 125 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 292 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
-| [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
+| [`PolicyGate`](#policygate) | final readonly class | 187 | Judges a route's policy against the caller, with the reference's |
+| [`PostCollectionParams`](#postcollectionparams) | final class | 241 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 574 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 576 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 264 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 555 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 135 | The fields plugin code adds to an object type with register_rest_field, |
@@ -97,9 +97,9 @@ the wp/v2 surface: shapes and controllers
 | [`SiteHealthController`](#sitehealthcontroller) | final readonly class | 17 | wp-site-health/v1 (probe: the site health routes on the reference): the |
 | [`SiteSchema`](#siteschema) | final class | 38 | The site's JSON-schema handler: one Schema whose email test, number |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
-| [`Subjects`](#subjects) | final readonly class | 55 | Whether the record a route capture names exists, for the policy gate to |
+| [`Subjects`](#subjects) | final readonly class | 62 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
-| [`TemplateObject`](#templateobject) | final readonly class | 105 | The wp/v2/templates and wp/v2/template-parts resource. |
+| [`TemplateObject`](#templateobject) | final readonly class | 106 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 197 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 332 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
@@ -696,6 +696,12 @@ The session, or null for an anonymous or refused caller.
 
 The caller's user id, 0 when anonymous.
 
+### `mayChangeComment(int $commentId, string $type): bool`
+
+Whether the caller may edit or delete a comment: a moderator any
+ordinary one, and whoever may edit its post (edit_comment) any one; a
+note belongs to its post's editors alone (probe patch-714).
+
 ### `can(string $capability, ?int $postId = NULL): bool`
 
 Whether the caller holds a capability, on a post when given. With
@@ -732,7 +738,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 165)
+Internals: `resolve()` (private, line 174)
 
 
 ## Catalogue
@@ -887,21 +893,21 @@ A signed-in reply; the author fields come from the user.
 
 ### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} must exist)`
+Route: `POST /wp/v2/comments/{id:[\d]+} (moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist)`
 
-Route: `PUT /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} must exist)`
+Route: `PUT /wp/v2/comments/{id:[\d]+} (moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist)`
 
-Route: `PATCH /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} must exist)`
+Route: `PATCH /wp/v2/comments/{id:[\d]+} (moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist)`
 
 Status flips and content or author edits, for moderators.
 
 ### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} must exist)`
+Route: `DELETE /wp/v2/comments/{id:[\d]+} (moderate_comments (not on a note) or edit_comment on {id}; comment {id} must exist)`
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 81), `events()` (private, line 166), `allowed()` (private, line 235), `readablePost()` (private, line 276), `readable()` (private, line 289), `plainComment()` (private, line 302), `prepared()` (private, line 325)
+Internals: `totals()` (private, line 81), `events()` (private, line 169), `allowed()` (private, line 238), `readablePost()` (private, line 279), `readable()` (private, line 292), `commentOrNote()` (private, line 305), `note()` (private, line 318), `editsListed()` (private, line 334), `prepared()` (private, line 362)
 
 
 ## Context
@@ -1697,7 +1703,7 @@ The active theme's own styles as the themes/{stylesheet} route answers them.
 One revision row: both nodes when the body holds anything at all,
 neither when it is blank, then the row's own facts; no links.
 
-Internals: `links()` (private, line 79), `node()` (private, line 97)
+Internals: `links()` (private, line 80), `node()` (private, line 98)
 
 
 ## GlobalStylesParams
@@ -2482,7 +2488,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 76), `type()` (private, line 96), `taxonomy()` (private, line 127), `opened()` (private, line 159), `capabilities()` (private, line 165), `registered()` (private, line 179), `own()` (private, line 189)
+Internals: `subject()` (private, line 77), `type()` (private, line 97), `taxonomy()` (private, line 128), `opened()` (private, line 160), `capabilities()` (private, line 166), `registered()` (private, line 180), `commentEditor()` (private, line 190), `own()` (private, line 200)
 
 
 ## PostCollectionParams
@@ -2539,7 +2545,7 @@ the order the site allows them, each once.
 
 - `@return array<string, list<string>>`
 
-Internals: `named()` (private, line 63), `forType()` (private, line 73), `filtered()` (private, line 91), `type()` (private, line 110), `described()` (private, line 141), `build()` (private, line 153), `statuses()` (private, line 228), `taxonomies()` (private, line 239), `termFilter()` (private, line 255)
+Internals: `named()` (private, line 63), `forType()` (private, line 73), `filtered()` (private, line 90), `type()` (private, line 109), `described()` (private, line 140), `build()` (private, line 152), `statuses()` (private, line 227), `taxonomies()` (private, line 238), `termFilter()` (private, line 254)
 
 
 ## PostListArgs
@@ -2651,7 +2657,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 114), `navigationView()` (private, line 125), `blockView()` (private, line 155), `viewFields()` (private, line 187), `viewTerms()` (private, line 242), `template()` (private, line 252), `typeFields()` (private, line 265), `classList()` (private, line 294), `format()` (private, line 316), `termLinks()` (private, line 360), `editFields()` (private, line 379), `allow()` (private, line 562), `gmt()` (private, line 581)
+Internals: `meta()` (private, line 114), `navigationView()` (private, line 125), `blockView()` (private, line 155), `viewFields()` (private, line 187), `viewTerms()` (private, line 242), `template()` (private, line 252), `typeFields()` (private, line 265), `classList()` (private, line 294), `format()` (private, line 316), `termLinks()` (private, line 360), `editFields()` (private, line 379), `allow()` (private, line 564), `gmt()` (private, line 583)
 
 
 ## PostsController
@@ -4471,6 +4477,10 @@ Whether the record exists.
 
 - `@param array<string, string> $captures the route's captures, for the {base} a kind reads`
 
+### `commentType(int $id): ?string`
+
+A comment's stored type ("" for an ordinary one), or null when there is no such comment.
+
 ### `postOfType(int $id, string $type): bool`
 
 Whether a post of the type exists.
@@ -4479,7 +4489,7 @@ Whether a post of the type exists.
 
 Whether a term of the taxonomy exists.
 
-Internals: `post()` (private, line 62), `term()` (private, line 67)
+Internals: `post()` (private, line 69), `term()` (private, line 74)
 
 
 ## Taxonomies
@@ -4539,7 +4549,7 @@ The rest_base of a template type.
 
 The wp/v2 template shape.
 
-Internals: `links()` (private, line 90)
+Internals: `links()` (private, line 91)
 
 
 ## TemplateRevisionsController
