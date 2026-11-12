@@ -215,6 +215,10 @@ $findings = [
     'The System view\'s park row passed when it could not look' => ['tests/install.test.php', 'a park without its refusal warns in the System view'],
     'The upgrade folder\'s index and a refused install\'s cleanup bypassed the site\'s filesystem' => ['tests/upgrades.test.php', 'go through the site'],
     'Latest Posts showing whole posts outside a post skipped the extensions\' shortcodes' => ['tests/extensions.test.php', 'Latest Posts showing whole posts runs the extensions'],
+    'The served test refused HestiaCP and DevKinsta layouts' => ['tests/install.test.php', 'but not HestiaCP'],
+    'A sign-out with a lapsed nonce seemed to succeed' => ['tests/extension-accounts.test.php', 'a sign-out carrying the cookie without its nonce is refused (403)'],
+    'Upgrade cleanup had no fallback when the site\'s filesystem failed' => ['tests/upgrades.test.php', 'fails to delete it'],
+    'A park outside open_basedir warned forever, with a warning raised' => ['tests/install.test.php', 'a park outside open_basedir passes'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

@@ -105,3 +105,16 @@ Accepted:
 - **On a route answered without the runtime** (`MINN_WP_API` auto or off), a plugin's `nonce_life` filter is not loaded, so a site that changes the nonce lifetime may see an extension's sign-out end no session there. It fails safe.
 - **The server's bind leaves `srcset`, `lowsrc` and `dynsrc` unjudged** (none runs script), and passes a multi-address `ping` through URL escaping.
 - **An auto-excerpt runs the extensions' shortcode strip but not their content filters**, so a filter-based gate shows its first words in an excerpt, on the page as on REST.
+
+## Final pass over the round-2 fixes
+
+One last read of `6eb5ecd9..e1546a94` found no bypass, fatal or warning. It found three Low regressions and three notes, all fixed in 2a81d20e:
+
+- **`html`, `public` and `web` count as served only when the folder holds an index**, so HestiaCP, VestaCP and DevKinsta layouts install again while nginx's `/var/www/html` is still caught. Suite `install`.
+- **A sign-out with a missing or lapsed nonce answers `rest_cookie_invalid_nonce` (403)**, so a client fetches a fresh nonce and asks again (Groddle's client already does), rather than seeming to succeed. An empty header no longer hides a form's nonce. Suite `extension-accounts`.
+- **Upgrade cleanup falls back to the disk** when the site's filesystem fails, and the unpack step's own removals go the same way. Suite `upgrades`.
+- **Maintenance reads the plugin list only while the option is on**, so plugins' `option_active_plugins` callbacks are not run extra on every request.
+- **A park outside `open_basedir` passes the System view**, since PHP cannot run its files from the web. It no longer warns forever on Kinsta, and an `open_basedir` of `/` is read as everything. Suite `install`.
+- **`getenv` in any case is read, and `wp_home` is not `WP_HOME`.** Suite `cli`.
+
+That closes the review: two rounds and a final pass, each answered in full.
