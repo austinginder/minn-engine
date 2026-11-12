@@ -28,7 +28,7 @@ final class LoginLink
     /** @var list<string> */
     private array $lines = [];
 
-    private function __construct(private readonly Users $users, private readonly Capabilities $capabilities, private readonly Permalinks $permalinks)
+    private function __construct(private readonly Users $users, private readonly Capabilities $capabilities, private readonly Permalinks $permalinks, private readonly ?string $home = null)
     {
     }
 
@@ -52,8 +52,14 @@ final class LoginLink
         } catch (Throwable $e) {
             return ['code' => 1, 'lines' => ["Error: the database in {$root}/wp-config.php did not answer: {$e->getMessage()}"]];
         }
+        // The site's address is wp-config.php's WP_HOME when it names one, as the site itself reads it: a moved site's
+        // database can still hold the old domain, and a link sent there hands its token to whoever holds that domain.
+        $home = isset($config['WP_HOME']) && preg_match('#^https?://[^/\s]+#i', $config['WP_HOME']) === 1 ? rtrim($config['WP_HOME'], '/') : null;
+        if ($home === null && !empty($config['homeInConfig'])) {
+            return ['code' => 1, 'lines' => ["Error: {$root}/wp-config.php sets WP_HOME in a way Minn cannot read, so no link is made for an address that may be wrong. Use wp user login, which loads wp-config.php."]];
+        }
         $db = new Db($connection, $config['prefix']);
-        $self = new self(new Users($db), Capabilities::fromDb($db), Permalinks::fromDb($db));
+        $self = new self(new Users($db), Capabilities::fromDb($db), Permalinks::fromDb($db), $home);
         $code = $self->mint($who, $options);
         return ['code' => $code, 'lines' => $self->lines];
     }
@@ -71,9 +77,9 @@ final class LoginLink
             $this->lines[] = $who !== null ? "Error: User not found: {$who}" : 'Error: the site has no administrator; name a user.';
             return 1;
         }
-        $url = $this->permalinks->url('/minn-admin/login') . '?' . (new OneTimeLink($this->users))->mint($user);
+        $url = $this->address('/minn-admin/login') . '?' . (new OneTimeLink($this->users))->mint($user);
         if ($to !== '') {
-            $url .= '&redirect_to=' . rawurlencode($this->permalinks->url($to));
+            $url .= '&redirect_to=' . rawurlencode($this->address($to));
         }
         $this->lines[] = ($options['format'] ?? '') === 'json' ? Json::encode([
             'url' => $url,
@@ -83,6 +89,14 @@ final class LoginLink
             'expires' => time() + OneTimeLink::LIFETIME,
         ]) : $url;
         return 0;
+    }
+
+    /** A path's address on the site, on WP_HOME when wp-config.php names it. */
+    private function address(string $path): string
+    {
+        $url = $this->permalinks->url($path);
+        $stored = rtrim($this->permalinks->url('/'), '/');
+        return $this->home !== null && str_starts_with($url, $stored) ? $this->home . substr($url, strlen($stored)) : $url;
     }
 
     /** The first user by login holding the administrator role, as `wp user list --role=administrator` lists them. */

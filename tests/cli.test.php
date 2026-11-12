@@ -244,6 +244,22 @@ $check('a --to link lands on that page', $headers['status'] === '302' && str_end
 $check('minn login refuses a --to that leaves the site', $code === 1 && str_starts_with($out, 'Error: --to is a path on the site'), $out);
 [$out, $code] = $minn('nobody');
 $check('minn login for an unknown user errors', $code === 1 && $out === 'Error: User not found: nobody', $out);
+// Security sweep 2026-11-12 (2.7): a moved site's database can still name the old domain; the link goes to the
+// address wp-config.php's WP_HOME names, and is refused when WP_HOME is set in a way Minn cannot read.
+$moved = sys_get_temp_dir() . '/minn-login-home-' . getmypid();
+@mkdir($moved);
+$config = (string) file_get_contents("{$ENGINE_DIR}/wp-config.php");
+$movedLogin = static function (string $define) use ($moved, $config): array {
+    file_put_contents("{$moved}/wp-config.php", preg_replace('/^<\?php/', "<?php\n{$define}", $config, 1));
+    exec(PHP_BINARY . ' ' . escapeshellarg(dirname(__DIR__) . '/public/minn/bin/minn') . ' login ' . escapeshellarg($moved) . ' 2>&1', $lines, $code);
+    return [implode("\n", $lines), $code];
+};
+[$out, $code] = $movedLogin("define( 'WP_HOME', 'https://moved.example' );");
+$check('minn login builds the link on wp-config.php\'s WP_HOME, not the database\'s home', $code === 0 && preg_match('#^https://moved\.example/minn-admin/login\?user_id=1&cove_login_token=[0-9a-f]{32}$#', $out) === 1, $out);
+[$out, $code] = $movedLogin("define( 'WP_HOME', 'https://' . \$_SERVER['HTTP_HOST'] );");
+$check('minn login refuses a WP_HOME it cannot read rather than guess the address', $code === 1 && str_contains($out, 'sets WP_HOME in a way Minn cannot read'), $out);
+@unlink("{$moved}/wp-config.php");
+@rmdir($moved);
 [$out, $code] = $run($ENGINE_DIR, 'minn version');
 $check('wp minn version answers', $code === 0 && preg_match('/^\d+\.\d+\.\d+$/', $out) === 1, $out);
 

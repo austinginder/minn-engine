@@ -12,7 +12,7 @@ the wp verbs the engine answers itself
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
 | [`Installer`](#installer) | final class | 431 | The swap, both ways. Install parks WordPress's own files beside the |
-| [`LoginLink`](#loginlink) | final class | 73 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
+| [`LoginLink`](#loginlink) | final class | 87 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 200 | Options, read and written straight to the options table. Serialized |
@@ -425,7 +425,7 @@ their roles and when the link expires.
 - `@param array<string, string|true> $options`
 - `@return array{code: int, lines: list<string>}`
 
-Internals: `mint()` (private, line 62), `firstAdministrator()` (private, line 89)
+Internals: `mint()` (private, line 68), `address()` (private, line 95), `firstAdministrator()` (private, line 103)
 
 
 ## MaintenanceCommand

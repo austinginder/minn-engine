@@ -27059,7 +27059,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/LoginLink.php",
-            "lines": 73,
+            "lines": 87,
             "doc": "`minn login <webroot> [<user>]`: the one-time sign-in link, minted by the\nengine alone. wp-config.php is read as text, never run, so neither\nWP-CLI, the WordPress runtime nor the site's plugins take part, and the\nlink works whatever MINN_WP_API says. With no user named it signs in the\nfirst administrator by login. The link opens the engine's own sign-in\npage (`wp user login` keeps wp-login.php, the address hosting tools\nexpect); --to lands somewhere other than the admin.",
             "implements": [],
             "extends": null,
@@ -27077,7 +27077,7 @@
                 "Minn\\Cli\\Installer"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Front\\Permalinks $permalinks)",
+                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Front\\Permalinks $permalinks, ?string $home = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -27100,6 +27100,13 @@
                         "type": "Minn\\Front\\Permalinks",
                         "shape": "",
                         "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "home",
+                        "type": "?string",
+                        "shape": "",
+                        "default": "NULL",
                         "doc": ""
                     }
                 ],
@@ -27145,6 +27152,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "home",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -27183,7 +27199,7 @@
                         }
                     ],
                     "line": 43,
-                    "end": 59
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -27211,8 +27227,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 86
+                    "line": 68,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "address",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "address(string $path): string",
+                    "doc": "A path's address on the site, on WP_HOME when wp-config.php names it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -27223,8 +27259,8 @@
                     "doc": "The first user by login holding the administrator role, as `wp user list --role=administrator` lists them.",
                     "shapes": [],
                     "params": [],
-                    "line": 89,
-                    "end": 97
+                    "line": 103,
+                    "end": 111
                 }
             ]
         },
