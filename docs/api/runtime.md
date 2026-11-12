@@ -101,7 +101,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 140 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 289 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 290 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostCaches`](#postcaches) | final class | 27 | A post's cached rows let go as WordPress lets them go: its row, its meta |
 | [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
@@ -173,7 +173,7 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 152 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 67 | The updates waiting, as wp_get_update_data counts them for the user |
-| [`Upgrade`](#upgrade) | final class | 426 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
+| [`Upgrade`](#upgrade) | final class | 437 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserCounts`](#usercounts) | final class | 75 | The user counts WordPress's user functions give: how many users hold each |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 118 | The decisions behind wp_insert_user: what a new account needs, which email |
@@ -5483,7 +5483,8 @@ controller for, and maintenance mode's holds), but the engine owns the
 shell, the front bar and the sign-in flow: those hooks come off right
 after the include so the two never print twice or disagree. The
 plugin's own app route (maybe_render_app) stays: the engine answers
-/minn-admin/ before template_redirect runs, so it is never reached.
+/minn-admin/ itself before template_redirect runs, and the plugin
+answers ?minn_admin=1 (plain permalinks) as it does on WordPress.
 - const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   1 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   2 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   3 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   4 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   5 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
 
 Used by: `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Runtime\Constants`, `Minn\Runtime\PluginActivation`, `Minn\Theme\ClassicRenderer`
@@ -5532,7 +5533,7 @@ gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 70), `loadThemeFunctions()` (private, line 172), `rememberThemeDomain()` (private, line 195), `includeFile()` (private, line 258), `registerRealpath()` (private, line 289), `isolatedInclude()` (private, line 302)
+Internals: `boot()` (private, line 71), `loadThemeFunctions()` (private, line 173), `rememberThemeDomain()` (private, line 196), `includeFile()` (private, line 259), `registerRealpath()` (private, line 290), `isolatedInclude()` (private, line 303)
 
 
 ## PostCaches
@@ -10142,7 +10143,7 @@ when it is not to be retried.
 
 Maintenance mode off; said only when it was on.
 
-Internals: `installUnpacked()` (private, line 154), `destinationFor()` (private, line 308), `clearOrRefuse()` (private, line 317), `move()` (private, line 338), `copyInto()` (private, line 349), `report()` (private, line 363), `setAside()` (private, line 381), `putBack()` (private, line 394), `forget()` (private, line 406), `backedUp()` (private, line 415), `randomName()` (private, line 427), `listing()` (private, line 443)
+Internals: `installUnpacked()` (private, line 160), `destinationFor()` (private, line 319), `clearOrRefuse()` (private, line 328), `move()` (private, line 349), `copyInto()` (private, line 360), `report()` (private, line 374), `setAside()` (private, line 392), `putBack()` (private, line 405), `forget()` (private, line 417), `backedUp()` (private, line 426), `randomName()` (private, line 438), `listing()` (private, line 454)
 
 
 ## UserCounts

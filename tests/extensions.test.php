@@ -74,6 +74,12 @@ check(str_contains($feed, 'data-name="n"') && str_contains($feed, 'seam:content'
 // REST draws what the page draws: shortcodes, the content filter and the block gate (security sweep 2026-11-12).
 $rest = fetch("$ENGINE/wp-json/wp/v2/posts?slug=" . rawurlencode($slug));
 check(str_contains($rest, 'data-name=\\"n\\"') && str_contains($rest, 'seam:content') && !str_contains($rest, 'gated away') && !str_contains($rest, '[seam_probe name'), 'shortcodes, content filters and block gates run for REST too', substr($rest, 0, 400));
+// Latest Posts showing whole posts outside any post's content (a template part, the block renderer) passes each through
+// the extensions' shortcodes too (fix-delta review of the 2026-11-12 sweep, round 2).
+$make('zz seams latest', '<!-- wp:paragraph --><p>latest [seam_probe name="latest"]inner[/seam_probe]</p><!-- /wp:paragraph -->');
+$editorMint = (array) json_decode((string) shell_exec('wp --path=' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' eval-file ' . escapeshellarg("$ROOT/tests/tools/mint-session.php") . ' 2 2>/dev/null'), true);
+$latest = fetch("$ENGINE/wp-json/wp/v2/block-renderer/core/latest-posts?context=edit&attributes%5BdisplayPostContent%5D=true&attributes%5BdisplayPostContentRadio%5D=full_post&attributes%5BpostsToShow%5D=1", ['Cookie: ' . ($editorMint['cookie_name'] ?? '') . '=' . ($editorMint['cookie'] ?? ''), 'X-WP-Nonce: ' . ($editorMint['nonce'] ?? '')]);
+check(str_contains($latest, 'data-name=\\"latest\\"') && !str_contains($latest, '[seam_probe name'), 'Latest Posts showing whole posts runs the extensions\' shortcodes in them', substr($latest, 0, 300));
 $routed = fetch("$ENGINE/seam-probe/hello-there/");
 check(str_contains($routed, '<p class="seam-route" data-name="hello-there">reader-0</p>'), 'the route seam answers its path, with the capture and the reader', $routed);
 check(!str_contains($routed, 'minn-cornerbar'), 'a signed-out reader gets an extension page without the Minn bar');

@@ -511,8 +511,9 @@ The plugin folder passes the runtime's symbol gate with nothing missing, so the 
 loads `minn-admin/minn-admin.php` like any other plugin. The engine keeps the shell, the
 front bar and the sign-in flow: right after the include the runtime removes
 `Minn_Admin::login_redirect`, `enforce_toolbar_policy` and the four `Minn_Admin_Bar` hooks
-(`Runtime\Plugins::MINN_ADMIN_HOOKS`); `maybe_render_app` stays, never reached, since the
-engine answers `/minn-admin/` before `template_redirect`. Maintenance mode is the
+(`Runtime\Plugins::MINN_ADMIN_HOOKS`); `maybe_render_app` stays: the engine answers
+`/minn-admin/` itself before `template_redirect`, and the plugin answers `?minn_admin=1`
+(plain permalinks) as it does on WordPress. Maintenance mode is the
 plugin's own: its page, REST and entry-script holds stay, and while `minn_admin_maintenance`
 is on every request boots in full whatever `MINN_WP_API` says, and an extension's page
 routes answer only someone with `edit_posts` (security sweep 2026-11-12). The engine's own `minn-admin/v1` and `wp/v2`

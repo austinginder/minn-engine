@@ -8,7 +8,7 @@ dynamic core blocks that render from data
 | [`Calendar`](#calendar) | final class | 36 | The calendar block's colours: the reference puts them on the calendar's |
 | [`Dates`](#dates) | final class | 15 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
-| [`LatestPosts`](#latestposts) | final readonly class | 148 | core/latest-posts: the newest published posts as a list or a grid, each with |
+| [`LatestPosts`](#latestposts) | final readonly class | 158 | core/latest-posts: the newest published posts as a list or a grid, each with |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
 | [`SocialLinks`](#sociallinks) | final class | 78 | core/social-links and core/social-link. The list keeps its stored |
 | [`SyncedPattern`](#syncedpattern) | final readonly class | 38 | core/block: a synced pattern, rendered from the wp_block post it references. |
@@ -113,7 +113,7 @@ as the reference walks them: the_post for each (loop_start and loop_end
 around them, loop_no_results when there are none), and the main
 query's post set up again after, found or not.
 
-Internals: `featuredImage()` (private, line 93), `words()` (private, line 118), `args()` (private, line 156)
+Internals: `featuredImage()` (private, line 94), `words()` (private, line 119), `args()` (private, line 167)
 
 
 ## Search

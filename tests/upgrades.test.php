@@ -85,6 +85,25 @@ try {
 } catch (RestError $e) {
     $check('a taken folder is refused, naming what is there and what came', $e->errorCode === 'folder_exists' && $e->status === 409 && ($e->extra['current_version'] ?? '') === '1.0' && ($e->extra['new_version'] ?? '') === '2.0', json_encode([$e->errorCode, $e->status, $e->extra]));
 }
+// Fix-delta review, round 2: with the upgrade folder gone, the folder, its index and a refused install's cleanup all go
+// through the site's filesystem (on an FTP or SSH method, the user that unzips), recorded here by a wrapper.
+$realFilesystem = $GLOBALS['wp_filesystem'];
+$GLOBALS['wp_filesystem'] = new class ($realFilesystem) {
+    public array $calls = [];
+    public function __construct(public object $real) {}
+    public function __call(string $name, array $args): mixed { return $this->real->$name(...$args); }
+    public function __get(string $name): mixed { return $this->real->$name; }
+    public function mkdir(...$args): mixed { $this->calls[] = 'mkdir'; return $this->real->mkdir(...$args); }
+    public function put_contents(...$args): mixed { $this->calls[] = 'put_contents'; return $this->real->put_contents(...$args); }
+    public function delete(...$args): mixed { $this->calls[] = 'delete'; return $this->real->delete(...$args); }
+};
+$recorder = $GLOBALS['wp_filesystem'];
+Minn\Support\Files::deleteTree("{$contentDir}/upgrade");
+$zip('again2.zip', ['zz-upg-plugin/zz-upg-plugin.php' => $plugin('2.0')]);
+$unpacked = \Minn\Runtime\Upgrade::unpack(new Plugin_Upgrader(), "{$tmp}/again2.zip");
+\Minn\Runtime\Upgrade::install(new Plugin_Upgrader(), ['source' => is_string($unpacked) ? $unpacked : '', 'destination' => "{$contentDir}/plugins"]);
+$GLOBALS['wp_filesystem'] = $realFilesystem;
+$check('the upgrade folder, its index and a refused install\'s cleanup go through the site\'s filesystem', count(array_intersect(['mkdir', 'put_contents', 'delete'], array_unique($recorder->calls))) === 3 && is_string($unpacked) && !is_dir($unpacked), json_encode($recorder->calls));
 // Security sweep 2026-11-12 (2.6): a refused install leaves no unpacked package in the upgrade folder, which keeps its index.
 $left = array_values(array_diff(scandir("{$contentDir}/upgrade") ?: [], ['.', '..']));
 $check('a refused install leaves only the upgrade folder\'s index behind', $left === ['index.php'], json_encode($left));

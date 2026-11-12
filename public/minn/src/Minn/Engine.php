@@ -438,8 +438,9 @@ final readonly class Engine
     private static function maintenance(): bool
     {
         $options = Runtime::options();
-        return !in_array((string) $options->raw('minn_admin_maintenance'), ['', '0'], true)
-            && in_array('minn-admin/minn-admin.php', (array) $options->get('active_plugins'), true);
+        // The list the plugin loader reads, and Minn Admin in whatever folder it was unpacked to (minn-admin-main/).
+        $active = array_filter((array) $options->filtered('active_plugins'), static fn (mixed $plugin): bool => is_string($plugin) && basename($plugin) === 'minn-admin.php');
+        return !in_array((string) $options->raw('minn_admin_maintenance'), ['', '0'], true) && $active !== [];
     }
 
     /** The engine's routes a public page meets ahead of the extensions' own, in the front pipeline's order. */

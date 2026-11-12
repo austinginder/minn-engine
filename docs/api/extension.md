@@ -185,7 +185,7 @@ and a request cannot inherit the extensions of the one before it.
 Before the front or a REST request has loaded any (the command line
 never does) there are none.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\RenderedFields`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Rest\RenderedFields`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 ### static `set(Minn\Extension\Seams $seams): void`
 

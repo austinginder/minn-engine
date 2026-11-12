@@ -144,8 +144,14 @@ final class Upgrade
         // address under wp-content (security sweep 2026-11-12, finding 2.6). A source anywhere else is the caller's.
         $working = realpath(rtrim((string) ($args['source'] ?? ''), '/'));
         $upgrade = realpath(WP_CONTENT_DIR . '/upgrade');
-        if ($installed instanceof Errors && $working !== false && $upgrade !== false && str_starts_with($working, $upgrade . '/') && !is_link($working)) {
-            Files::deleteTree($working);
+        if ($installed instanceof Errors && $working !== false && $upgrade !== false && str_starts_with($working, $upgrade . '/')) {
+            // Through the site's filesystem when there is one, as it is what unzipped the package (FTP or SSH).
+            $filesystem = $GLOBALS['wp_filesystem'] ?? null;
+            if (is_object($filesystem) && method_exists($filesystem, 'delete')) {
+                $filesystem->delete($working, true);
+            } else {
+                Files::deleteTree($working);
+            }
         }
         return $installed;
     }
@@ -236,7 +242,12 @@ final class Upgrade
             $filesystem->mkdir($folder, defined('FS_CHMOD_DIR') ? FS_CHMOD_DIR : 0755);
         }
         if (is_dir($folder) && !is_file("{$folder}/index.php")) {
-            @file_put_contents("{$folder}/index.php", "<?php\n// Silence is golden.\n");
+            $silence = "<?php\n// Silence is golden.\n";
+            if (is_object($filesystem) && method_exists($filesystem, 'put_contents')) {
+                $filesystem->put_contents("{$folder}/index.php", $silence, defined('FS_CHMOD_FILE') ? FS_CHMOD_FILE : 0644);
+            } else {
+                @file_put_contents("{$folder}/index.php", $silence);
+            }
         }
         $working = $folder . '/' . basename(basename($package, '.tmp'), '.zip') . '-' . self::randomName(16);
         $unzipped = self::unzip($package, $working);

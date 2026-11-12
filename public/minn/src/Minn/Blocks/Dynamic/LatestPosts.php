@@ -20,6 +20,7 @@ use Minn\Runtime\Handoff;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Runtime;
+use Minn\Extension\Extensions;
 
 /**
  * core/latest-posts: the newest published posts as a list or a grid, each with
@@ -127,7 +128,17 @@ final readonly class LatestPosts
         }
         if ($full) {
             $raw = $post->content;
-            $content = RenderState::current()->postContent($post->id, static fn (): string => str_contains($raw, '<!-- wp:') ? Runtime::blockContentFilter($raw) : Runtime::classicContentFilter($raw));
+            // Through the extensions' shortcodes and content filters too, as the post's own page passes it, so a
+            // template part's list never shows what an extension hides (fix-delta review of the 2026-11-12 sweep).
+            $seams = Extensions::runner();
+            $seamed = $seams === null ? null : static fn (string $html): string => $seams->filterContent($html, $post);
+            $content = RenderState::current()->postContent($post->id, static function () use ($raw, $seamed): string {
+                if (str_contains($raw, '<!-- wp:')) {
+                    return Runtime::blockContentFilter($raw, $seamed);
+                }
+                $classic = Runtime::classicContentFilter($raw);
+                return $seamed === null ? $classic : $seamed($classic);
+            });
             return '<div class="wp-block-latest-posts__post-full-content">' . $content . '</div>';
         }
         $length = (int) $block->attr('excerptLength', 55);

@@ -26,7 +26,8 @@ final class Plugins
      * shell, the front bar and the sign-in flow: those hooks come off right
      * after the include so the two never print twice or disagree. The
      * plugin's own app route (maybe_render_app) stays: the engine answers
-     * /minn-admin/ before template_redirect runs, so it is never reached.
+     * /minn-admin/ itself before template_redirect runs, and the plugin
+     * answers ?minn_admin=1 (plain permalinks) as it does on WordPress.
      */
     private const MINN_ADMIN = 'minn-admin/minn-admin.php';
     private const MINN_ADMIN_HOOKS = [
