@@ -258,6 +258,14 @@ $movedLogin = static function (string $define) use ($moved, $config): array {
 $check('minn login builds the link on wp-config.php\'s WP_HOME, not the database\'s home', $code === 0 && preg_match('#^https://moved\.example/minn-admin/login\?user_id=1&cove_login_token=[0-9a-f]{32}$#', $out) === 1, $out);
 [$out, $code] = $movedLogin("define( 'WP_HOME', 'https://' . \$_SERVER['HTTP_HOST'] );");
 $check('minn login refuses a WP_HOME it cannot read rather than guess the address', $code === 1 && str_contains($out, 'sets WP_HOME in a way Minn cannot read'), $out);
+// Fix-delta review: a commented-out WP_HOME after the real one is not read, and a WP_HOME built from parts or set
+// twice is refused rather than guessed.
+[$out, $code] = $movedLogin("define( 'WP_HOME', 'https://moved.example' );\n// define( 'WP_HOME', 'https://old.example' );");
+$check('a commented-out WP_HOME is never the one minn login reads', $code === 0 && str_starts_with($out, 'https://moved.example/'), $out);
+[$out, $code] = $movedLogin("define( 'WP_HOME', 'https://' . getenv( 'ZZ_HOST' ) );");
+$check('a WP_HOME built from parts is refused', $code === 1 && str_contains($out, 'cannot read'), $out);
+[$out, $code] = $movedLogin("if ( getenv( 'ZZ' ) ) { define( 'WP_HOME', 'https://a.example' ); } else { define( 'WP_HOME', 'https://b.example' ); }");
+$check('a WP_HOME defined twice is refused', $code === 1 && str_contains($out, 'cannot read'), $out);
 @unlink("{$moved}/wp-config.php");
 @rmdir($moved);
 [$out, $code] = $run($ENGINE_DIR, 'minn version');

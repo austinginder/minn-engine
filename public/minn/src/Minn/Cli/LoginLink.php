@@ -54,7 +54,7 @@ final class LoginLink
         }
         // The site's address is wp-config.php's WP_HOME when it names one, as the site itself reads it: a moved site's
         // database can still hold the old domain, and a link sent there hands its token to whoever holds that domain.
-        $home = isset($config['WP_HOME']) && preg_match('#^https?://[^/\s]+#i', $config['WP_HOME']) === 1 ? rtrim($config['WP_HOME'], '/') : null;
+        $home = isset($config['WP_HOME']) && preg_match('#^https?://[^/\s\'"]+(/[^\s\'"]*)?$#i', $config['WP_HOME']) === 1 ? rtrim($config['WP_HOME'], '/') : null;
         if ($home === null && !empty($config['homeInConfig'])) {
             return ['code' => 1, 'lines' => ["Error: {$root}/wp-config.php sets WP_HOME in a way Minn cannot read, so no link is made for an address that may be wrong. Use wp user login, which loads wp-config.php."]];
         }

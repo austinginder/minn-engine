@@ -110,7 +110,10 @@ final class Preflight
         if (str_contains($source, 'WORDPRESS_CONFIG_EXTRA')) {
             $source .= "\n" . self::env('WORDPRESS_CONFIG_EXTRA', '');
         }
-        $config = ['prefix' => 'wp_', 'homeInConfig' => (bool) preg_match('/define\s*\(\s*[\'"]WP_HOME[\'"]/', $source)];
+        // Comments are left out, so a commented-out define is never read as the one in force.
+        $source = self::withoutComments($source);
+        $homes = (int) preg_match_all('/define\s*\(\s*[\'"]WP_HOME[\'"]/', $source);
+        $config = ['prefix' => 'wp_', 'homeInConfig' => $homes > 0];
         if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+|WP_HOME)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
             foreach ($m as $pair) {
                 $config[$pair[1]] = stripslashes($pair[2]);
@@ -131,11 +134,27 @@ final class Preflight
                 $config[$pair[1]] = self::env($pair[2], stripslashes($pair[3]));
             }
         }
+        // WP_HOME is read only when the file defines it once, as a plain string or from the environment: two
+        // defines (an if and an else) or one built from parts leave it unread, so nothing guesses which is in force.
+        $plainHome = preg_match('/define\s*\(\s*[\'"]WP_HOME[\'"]\s*,\s*(?:([\'"])[^\'"]*\1|getenv(?:_docker)?\s*\([^)]*\))\s*\)/', $source) === 1;
+        if ($homes !== 1 || !$plainHome) {
+            unset($config['WP_HOME']);
+        }
         if (preg_match('/\$table_prefix\s*=\s*[\'"]([A-Za-z0-9_]+)[\'"]/', $source, $p)) {
             $config['prefix'] = $p[1];
         }
         $config['moved'] = self::moved($source);
         return $config;
+    }
+
+    /** PHP source with its comments taken out, read as tokens (nothing in it runs). */
+    private static function withoutComments(string $source): string
+    {
+        $code = '';
+        foreach (token_get_all(str_contains($source, '<?php') ? $source : "<?php {$source}") as $token) {
+            $code .= is_array($token) ? (in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true) ? '' : $token[1]) : $token;
+        }
+        return $code;
     }
 
     /**
@@ -148,10 +167,7 @@ final class Preflight
      */
     private static function moved(string $source): array
     {
-        $code = '';
-        foreach (token_get_all(str_contains($source, '<?php') ? $source : "<?php {$source}") as $token) {
-            $code .= is_array($token) ? (in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true) ? '' : $token[1]) : $token;
-        }
+        $code = self::withoutComments($source);
         $defaults = [
             'WP_CONTENT_DIR' => ["__DIR__.'/wp-content'", "dirname(__FILE__).'/wp-content'", "ABSPATH.'wp-content'"],
             'WP_PLUGIN_DIR' => ["WP_CONTENT_DIR.'/plugins'"],
