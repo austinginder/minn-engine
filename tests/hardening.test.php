@@ -97,6 +97,23 @@ for ($guess = 0; $guess < 5; $guess++) {
 $spent = $request("$ENGINE/wp-login.php?" . (string) parse_url($live, PHP_URL_QUERY));
 $check('five wrong guesses burn the live one-time link', $live !== '' && $spent['status'] === '403', $live . ' ' . $spent['status']);
 $clearThrottle();
+// Security sweep 2026-11-12 (1.6): the hosting helper's seven-character token burns on its first miss, since guesses
+// sent at once would each read the same count; and only the token itself opens it, never a hash of it.
+$helperToken = static function (string $token): void {
+    $public = escapeshellarg(minn_test_site_root() . '/public');
+    shell_exec("cd {$public} && wp user meta update 1 cove_login_token " . escapeshellarg($token) . ' >/dev/null 2>&1 && wp user meta update 1 cove_login_token_time ' . time() . ' >/dev/null 2>&1 && wp user meta delete 1 cove_login_token_misses >/dev/null 2>&1');
+};
+$helperToken('a1b2c3d');
+$request("$ENGINE/wp-login.php?user_id=1&cove_login_token=0000000");
+$clearThrottle();
+$short = $request("$ENGINE/wp-login.php?user_id=1&cove_login_token=a1b2c3d");
+$check('one wrong guess burns a seven-character token', $short['status'] === '403', $short['status']);
+$clearThrottle();
+$helperToken(hash('sha256', 'zz-preimage'));
+$hashed = $request("$ENGINE/wp-login.php?user_id=1&cove_login_token=zz-preimage");
+$check('a stored hash is not opened by its preimage', $hashed['status'] === '403', $hashed['status']);
+shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/public') . ' && wp user meta delete 1 cove_login_token >/dev/null 2>&1; wp user meta delete 1 cove_login_token_time >/dev/null 2>&1; wp user meta delete 1 cove_login_token_misses >/dev/null 2>&1');
+$clearThrottle();
 $after = $request("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')));
 $check('after the window clears, sign-in works again', $after['status'] === '302' && str_contains($after['headers']['set-cookie'] ?? '', 'wordpress_logged_in_'), $after['status']);
 // A successful sign-in does not reset the address's counter (one owned account must not

@@ -82774,7 +82774,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/OneTimeLink.php",
-            "lines": 61,
+            "lines": 63,
             "doc": "The one-time sign-in link hosting tools mint (the captaincore helper's\ncontract, which Cove and CaptainCore share): a token in the user's meta,\ngood once, for fifteen minutes. `wp user login` and `minn login` mint it;\nthe sign-in page spends it. Five wrong guesses at one user's token burn\nit, as the helper's own validator does, because a helper-minted token is\nonly seven hex characters and reaches the engine too.",
             "implements": [],
             "extends": null,
@@ -82894,7 +82894,7 @@
                         }
                     ],
                     "line": 49,
-                    "end": 69
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -82913,8 +82913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 77
+                    "line": 74,
+                    "end": 79
                 }
             ]
         },

@@ -8,7 +8,7 @@
 | [`LoginForm`](#loginform) | final class | 263 | The sign-in page markup. |
 | [`LoginHooks`](#loginhooks) | final readonly class | 149 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
-| [`OneTimeLink`](#onetimelink) | final readonly class | 61 | The one-time sign-in link hosting tools mint (the captaincore helper's |
+| [`OneTimeLink`](#onetimelink) | final readonly class | 63 | The one-time sign-in link hosting tools mint (the captaincore helper's |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -322,7 +322,7 @@ and the single use bound.
 
 Whether the token given is the user's live one; a match is spent, a miss counted, a stale token cleared.
 
-Internals: `clear()` (private, line 72)
+Internals: `clear()` (private, line 74)
 
 
 ## ServeLogin

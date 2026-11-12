@@ -54,13 +54,15 @@ final readonly class OneTimeLink
             $this->clear($user->id);
             return false;
         }
-        // A hash is still accepted for a link minted before the token was stored raw.
-        if (hash_equals($token, $provided) || hash_equals($token, hash('sha256', $provided))) {
+        if (hash_equals($token, $provided)) {
             $this->clear($user->id);
             return true;
         }
+        // A short token (the hosting helper's seven characters) burns on its first miss: wrong guesses sent at once
+        // would each read the same count, so a count bounds nothing there. The engine's own 128-bit token keeps the
+        // allowance for a link copied wrong (security sweep 2026-11-12, finding 1.6).
         $misses = (int) ($this->users->meta($user->id, self::MISSES) ?? 0) + 1;
-        if ($misses >= self::MISS_LIMIT) {
+        if ($misses >= self::MISS_LIMIT || strlen($token) < 32) {
             $this->clear($user->id);
         } else {
             $this->users->setMeta($user->id, self::MISSES, (string) $misses);
