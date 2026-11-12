@@ -18,7 +18,7 @@ escaping, serialized readers, small helpers
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Kses`](#kses) | final class | 562 | The HTML a user without unfiltered_html may store. Tags outside the |
-| [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
+| [`KsesAttributes`](#ksesattributes) | final class | 82 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesDirectives`](#ksesdirectives) | final class | 44 | The Interactivity API's bindings under kses (probe patch-714). A tag |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -594,8 +594,9 @@ One attribute as written, judged as kses judges it on the element
 (wp_kses_one_attr): the value escaped for an attribute and kept in its
 own quotes (a bare one gains double quotes), a URL's bad scheme cut
 away, style kept to the allowed properties; nothing when the element
-may not carry it or a quoted value never closes. The whitespace
-around it stays.
+may not carry it (the whitespace around it kept, as on the
+reference), nothing at all when a quoted value never closes. The
+whitespace around a kept one stays.
 
 
 ## KsesCss

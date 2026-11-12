@@ -192739,7 +192739,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/KsesAttributes.php",
-            "lines": 76,
+            "lines": 82,
             "doc": "Kses one attribute at a time, for the shortcode pass that runs inside\nHTML tags: an opening tag cut into its attributes, and one attribute\njudged as kses judges it on its element. Probe shortcode-run.",
             "implements": [],
             "extends": null,
@@ -192809,7 +192809,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "oneAttribute(string $attr, string $element, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "One attribute as written, judged as kses judges it on the element\n(wp_kses_one_attr): the value escaped for an attribute and kept in its\nown quotes (a bare one gains double quotes), a URL's bad scheme cut\naway, style kept to the allowed properties; nothing when the element\nmay not carry it or a quoted value never closes. The whitespace\naround it stays.",
+                    "doc": "One attribute as written, judged as kses judges it on the element\n(wp_kses_one_attr): the value escaped for an attribute and kept in its\nown quotes (a bare one gains double quotes), a URL's bad scheme cut\naway, style kept to the allowed properties; nothing when the element\nmay not carry it (the whitespace around it kept, as on the\nreference), nothing at all when a quoted value never closes. The\nwhitespace around a kept one stays.",
                     "shapes": [],
                     "params": [
                         {
@@ -192834,8 +192834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 86
+                    "line": 57,
+                    "end": 92
                 }
             ]
         },

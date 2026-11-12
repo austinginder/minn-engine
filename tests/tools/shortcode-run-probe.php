@@ -130,6 +130,11 @@ foreach (['<a href="x" title="y">', '<a  href = "x"  checked >', "<img src='x' a
 foreach ([['title="plain"', 'a'], ['title="say "hi" & <b>bye</b>"', 'a'], ['href="javascript:alert(1)"', 'a'], ['href="https://x.example/?a=1&b=2"', 'a'], ['onclick="x()"', 'a'], ['style="color: red; behaviour: url(x)"', 'p'], ['data-x="1"', 'div'], ['checked', 'input'], ['title=\'single\'', 'a'], ['title=bare', 'a'], ['src="x.png"', 'nope'], ['  title="spaced"  ', 'a']] as $n => [$attr, $element]) {
     $say("wp_kses_one_attr {$n}", wp_kses_one_attr($attr, $element));
 }
+// A refused attribute keeps the whitespace around it, an unclosed quote keeps nothing, and a binding to a value kses
+// restricts is refused here as in the tag pass (security sweep 2026-11-12, finding 3.10).
+foreach ([[' data-wp-bind--data="x" ', 'object'], ['data-wp-bind--data="x"', 'object'], [' data-wp-bind--DATA="x" ', 'object'], [' data-wp-bind--type="x" ', 'object'], [' data-wp-bind--title="x" ', 'object'], [' onclick="x" ', 'object'], [' title="unclosed ', 'a'], [' hidden ', 'div'], [' zzz ', 'p'], [' href="javascript:x" ', 'a'], [' style="behavior:url(x)" ', 'p'], ["\ttitle=x\n", 'a']] as $n => [$attr, $element]) {
+    $say("wp_kses_one_attr refused {$n}", wp_kses_one_attr($attr, $element));
+}
 
 // wptexturize leaves registered shortcodes as written, and the text inside the ones no_texturize_shortcodes names.
 add_shortcode('zz_code', $shown);

@@ -50,8 +50,9 @@ final class KsesAttributes
      * (wp_kses_one_attr): the value escaped for an attribute and kept in its
      * own quotes (a bare one gains double quotes), a URL's bad scheme cut
      * away, style kept to the allowed properties; nothing when the element
-     * may not carry it or a quoted value never closes. The whitespace
-     * around it stays.
+     * may not carry it (the whitespace around it kept, as on the
+     * reference), nothing at all when a quoted value never closes. The
+     * whitespace around a kept one stays.
      */
     public static function oneAttribute(string $attr, string $element, KsesPolicy $policy): string
     {
@@ -59,9 +60,14 @@ final class KsesAttributes
         preg_match('/^(\s*)(.*?)(\s*)$/s', $attr, $parts);
         [, $lead, $core, $trail] = $parts;
         [$name, $value] = array_pad(preg_split('/\s*=\s*/', $core, 2) ?: [$core], 2, null);
+        // A binding that would set a value-restricted attribute is dropped here too, as the tag pass drops it
+        // (security sweep 2026-11-12, finding 3.10).
+        if ($policy->bindsRestricted(strtolower($element), strtolower($name))) {
+            return $lead . $trail;
+        }
         $rules = $policy->rules(strtolower($element), strtolower($name));
         if ($value === null) {
-            return $rules !== null && KsesValues::satisfies('', 'y', $rules) ? $lead . $core . $trail : '';
+            return $rules !== null && KsesValues::satisfies('', 'y', $rules) ? $lead . $core . $trail : $lead . $trail;
         }
         // A quoted value must close with the quote it opens with; an unquoted one is given double quotes.
         $quote = in_array($value[0] ?? '', ['"', "'"], true) ? $value[0] : null;
@@ -77,10 +83,10 @@ final class KsesAttributes
             $value = Kses::attributeUrl($value, $policy->schemes);
         }
         if ($rules === null || !KsesValues::satisfies($value, 'n', $rules)) {
-            return '';
+            return $lead . $trail;
         }
         if (strtolower($name) === 'style' && ($value = KsesCss::style($value)) === '') {
-            return '';
+            return $lead . $trail;
         }
         return $lead . $name . '=' . $quote . $value . $quote . $trail;
     }
