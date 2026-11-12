@@ -208,8 +208,8 @@ Minn\Cli\Installer::guardPark($WEBROOT);
 $check('a park left without its refusal gets it back', str_contains((string) @file_get_contents("$PARK/.htaccess"), 'Require all denied'));
 $check('a park outside served folders reads as safe', Minn\Cli\Installer::parkServed($WEBROOT) === null);
 $served = new ReflectionMethod(Minn\Cli\Installer::class, 'served');
-$layouts = array_map(static fn (string $folder): bool => $served->invoke(null, $folder) !== null, ['/var/www' => '/var/www', '/www/site_123' => '/www/site_123', '/home/u/public_html/sites' => '/home/u/public_html/sites', '/home/u/public_html' => '/home/u/public_html', '/srv/htdocs' => '/srv/htdocs', '/home/u' => '/home/u']);
-$check('the served test passes /var/www and Kinsta\'s /www/site, and refuses anything inside public_html or htdocs', $layouts === ['/var/www' => false, '/www/site_123' => false, '/home/u/public_html/sites' => true, '/home/u/public_html' => true, '/srv/htdocs' => true, '/home/u' => false], json_encode($layouts));
+$layouts = array_map(static fn (string $folder): bool => $served->invoke(null, $folder) !== null, ['/var/www' => '/var/www', '/www/site_123' => '/www/site_123', '/home/u/public_html/sites' => '/home/u/public_html/sites', '/home/u/public_html' => '/home/u/public_html', '/srv/htdocs' => '/srv/htdocs', '/home/u' => '/home/u', '/var/www/html' => '/var/www/html']);
+$check('the served test passes /var/www and Kinsta\'s /www/site, and refuses anything inside public_html, htdocs or nginx\'s /var/www/html', $layouts === ['/var/www' => false, '/www/site_123' => false, '/home/u/public_html/sites' => true, '/home/u/public_html' => true, '/srv/htdocs' => true, '/home/u' => false, '/var/www/html' => true], json_encode($layouts));
 
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject succeeds', $code === 0 && str_contains($out, 'Ejected.'), $out);

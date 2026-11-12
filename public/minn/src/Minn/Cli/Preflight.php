@@ -112,9 +112,10 @@ final class Preflight
         }
         // Comments are left out, so a commented-out define is never read as the one in force.
         $source = self::withoutComments($source);
-        $homes = (int) preg_match_all('/define\s*\(\s*[\'"]WP_HOME[\'"]/', $source);
+        // PHP's function names are any case, and a top-level const sets the same constant.
+        $homes = (int) preg_match_all('/define\s*\(\s*[\'"]WP_HOME[\'"]|\bconst\s+WP_HOME\b/i', $source);
         $config = ['prefix' => 'wp_', 'homeInConfig' => $homes > 0];
-        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+|WP_HOME)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
+        if (preg_match_all('/(?i:define)\s*\(\s*[\'"](DB_[A-Z_]+|WP_HOME)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
             foreach ($m as $pair) {
                 $config[$pair[1]] = stripslashes($pair[2]);
             }
@@ -136,7 +137,8 @@ final class Preflight
         }
         // WP_HOME is read only when the file defines it once, as a plain string or from the environment: two
         // defines (an if and an else) or one built from parts leave it unread, so nothing guesses which is in force.
-        $plainHome = preg_match('/define\s*\(\s*[\'"]WP_HOME[\'"]\s*,\s*(?:([\'"])[^\'"]*\1|getenv(?:_docker)?\s*\([^)]*\))\s*\)/', $source) === 1;
+        // A double-quoted value holding $ or { is built at run time; it is no plain string.
+        $plainHome = preg_match('/define\s*\(\s*[\'"]WP_HOME[\'"]\s*,\s*(?:\'[^\'"]*\'|"[^\'"$\{]*"|getenv(?:_docker)?\s*\([^)]*\))\s*\)/i', $source) === 1;
         if ($homes !== 1 || !$plainHome) {
             unset($config['WP_HOME']);
         }

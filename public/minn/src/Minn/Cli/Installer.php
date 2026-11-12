@@ -36,8 +36,12 @@ final class Installer
     private const PARK_GUARD_TEXT = "# Minn: WordPress's own files, parked by the engine. Nothing here is served.\n<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n";
     /** What marks a folder as a site's own webroot, and the names hosts give one. */
     private const SERVED_FILES = ['index.php', 'index.html', 'index.htm', 'wp-load.php', '.htaccess', 'web.config'];
-    /** Names only a served folder carries (www, html and public are also the unserved parents of /var/www/html and the like). */
-    private const SERVED_NAMES = ['public_html', 'htdocs', 'httpdocs', 'wwwroot'];
+    /**
+     * Names hosts give a served folder, read on the webroot's parent and the folders above it, where the usual
+     * layouts (/var/www/html, /www/site/public, ~/Sites/site/public) never carry one; www alone is left out, as the
+     * unserved parent of /var/www/html.
+     */
+    private const SERVED_NAMES = ['public_html', 'htdocs', 'httpdocs', 'wwwroot', 'html', 'public', 'web'];
     private const RECORD_HEAD = "<?php return; // Minn Engine's install record: what `wp minn eject` puts back. ?>\n";
     /** Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink. */
     private const LEGACY_RECORD = '.install.json';

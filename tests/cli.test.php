@@ -266,6 +266,13 @@ $check('a commented-out WP_HOME is never the one minn login reads', $code === 0 
 $check('a WP_HOME built from parts is refused', $code === 1 && str_contains($out, 'cannot read'), $out);
 [$out, $code] = $movedLogin("if ( getenv( 'ZZ' ) ) { define( 'WP_HOME', 'https://a.example' ); } else { define( 'WP_HOME', 'https://b.example' ); }");
 $check('a WP_HOME defined twice is refused', $code === 1 && str_contains($out, 'cannot read'), $out);
+// Round 2: DEFINE in capitals is read as define is; a const or a string built at run time is refused.
+[$out, $code] = $movedLogin("DEFINE( 'WP_HOME', 'https://caps.example' );");
+$check('a WP_HOME defined with DEFINE in capitals is read', $code === 0 && str_starts_with($out, 'https://caps.example/'), $out);
+[$out, $code] = $movedLogin("const WP_HOME = 'https://const.example';");
+$check('a WP_HOME set by const is refused rather than read from the database', $code === 1 && str_contains($out, 'cannot read'), $out);
+[$out, $code] = $movedLogin("define( 'WP_HOME', \"https://\$zz_host\" );");
+$check('a WP_HOME interpolated at run time is refused', $code === 1 && str_contains($out, 'cannot read'), $out);
 @unlink("{$moved}/wp-config.php");
 @rmdir($moved);
 [$out, $code] = $run($ENGINE_DIR, 'minn version');

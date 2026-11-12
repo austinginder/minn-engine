@@ -11,14 +11,14 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 473 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 477 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`LoginLink`](#loginlink) | final class | 87 | `minn login <webroot> [<user>]`: the one-time sign-in link, minted by the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 200 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
 | [`PluginCommand`](#plugincommand) | final class | 410 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
-| [`Preflight`](#preflight) | final class | 477 | What a site will and will not get from the engine, before anything |
+| [`Preflight`](#preflight) | final class | 479 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 98 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
@@ -320,7 +320,9 @@ prints nothing, and it names the webroot it belongs to.
 - const `PARK_GUARD` = `'.htaccess'` — Apache's refusal for the whole park, for a host whose park still sits under a served folder (nginx ignores it).
 - const `PARK_GUARD_TEXT` = `'# Minn: WordPress\'s own files, parked by the engine. Nothing here is served. <IfModule mod_authz_core.c> 	Require all denied </IfModule> <IfModule !mod_authz_core.c> 	Deny from all </IfModule> '`
 - const `SERVED_FILES` = `array (   0 => 'index.php',   1 => 'index.html',   2 => 'index.htm',   3 => 'wp-load.php',   4 => '.htaccess',   5 => 'web.config', )` — What marks a folder as a site's own webroot, and the names hosts give one.
-- const `SERVED_NAMES` = `array (   0 => 'public_html',   1 => 'htdocs',   2 => 'httpdocs',   3 => 'wwwroot', )` — Names only a served folder carries (www, html and public are also the unserved parents of /var/www/html and the like).
+- const `SERVED_NAMES` = `array (   0 => 'public_html',   1 => 'htdocs',   2 => 'httpdocs',   3 => 'wwwroot',   4 => 'html',   5 => 'public',   6 => 'web', )` — Names hosts give a served folder, read on the webroot's parent and the folders above it, where the usual
+layouts (/var/www/html, /www/site/public, ~/Sites/site/public) never carry one; www alone is left out, as the
+unserved parent of /var/www/html.
 - const `RECORD_HEAD` = `'<?php return; // Minn Engine\'s install record: what `wp minn eject` puts back. ?> '`
 - const `LEGACY_RECORD` = `'.install.json'` — Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.
 - const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
@@ -410,7 +412,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 139), `served()` (private, line 280), `recordedPark()` (private, line 318), `inside()` (private, line 435), `move()` (private, line 444), `copyTree()` (private, line 467), `version()` (private, line 486), `say()` (private, line 491)
+Internals: `help()` (private, line 143), `served()` (private, line 284), `recordedPark()` (private, line 322), `inside()` (private, line 439), `move()` (private, line 448), `copyTree()` (private, line 471), `version()` (private, line 490), `say()` (private, line 495)
 
 
 ## LoginLink
@@ -961,7 +963,7 @@ is a classic theme.
 
 The database constants, WP_HOME and the prefix, read from the file as text: nothing in it runs.
 
-Internals: `withoutComments()` (private, line 151), `moved()` (private, line 168), `env()` (private, line 191), `optionReader()` (private, line 202), `preflightTheme()` (private, line 214), `preflightPlugins()` (private, line 253), `preflightPlugin()` (private, line 322), `some()` (private, line 354), `surveyContent()` (private, line 368), `surveyMarkup()` (private, line 377), `surveyMenus()` (private, line 418), `surveyTables()` (private, line 445), `surveyTypes()` (private, line 464), `light()` (private, line 486), `say()` (private, line 495)
+Internals: `withoutComments()` (private, line 153), `moved()` (private, line 170), `env()` (private, line 193), `optionReader()` (private, line 204), `preflightTheme()` (private, line 216), `preflightPlugins()` (private, line 255), `preflightPlugin()` (private, line 324), `some()` (private, line 356), `surveyContent()` (private, line 370), `surveyMarkup()` (private, line 379), `surveyMenus()` (private, line 420), `surveyTables()` (private, line 447), `surveyTypes()` (private, line 466), `light()` (private, line 488), `say()` (private, line 497)
 
 
 ## RewriteCommand
