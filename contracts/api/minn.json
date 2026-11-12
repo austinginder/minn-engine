@@ -4567,7 +4567,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Notifications.php",
-            "lines": 191,
+            "lines": 192,
             "doc": "The bell feed: pending and recent comments, translation offers and a\nnewer Minn, and new registrations. Plugin and theme update rows need an\nextension inventory the engine does not have\n(a recorded gap); on the reference database those sections are empty,\nso parity holds by construction.",
             "implements": [],
             "extends": null,
@@ -4759,8 +4759,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 185
+                    "line": 175,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -4782,7 +4782,7 @@
                         }
                     ],
                     "line": 68,
-                    "end": 88
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -4810,8 +4810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 125
+                    "line": 97,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -4851,8 +4851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -4880,8 +4880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 153
+                    "line": 140,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -4916,8 +4916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 171
+                    "line": 161,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -4943,8 +4943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 200
+                    "line": 188,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -4955,8 +4955,8 @@
                     "doc": "Total translation offers across the three update transients.",
                     "shapes": [],
                     "params": [],
-                    "line": 203,
-                    "end": 213
+                    "line": 204,
+                    "end": 214
                 }
             ]
         },

@@ -327,5 +327,18 @@ v1_parity( 'metric picks clear', '/minn-admin/v1/overview/metrics', $admin, 'POS
 v1_parity( 'metric defaults clear', '/minn-admin/v1/overview/metric-defaults', $admin, 'POST', '{"keys":null}' );
 v1_parity( 'overview back at the built-in layout', '/minn-admin/v1/overview', $admin );
 
+// Security sweep 2026-11-12 (3.3): editorial notes stay out of the bell, as get_comments leaves them out for the
+// plugin's own; the newest comments on the site are a note pending and a note approved.
+$ref_wp = static fn ( string $args ): string => trim( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' ' . $args . ' 2>/dev/null' ) );
+$note_post = $ref_wp( 'post create --post_title="zz note post" --post_status=publish --porcelain' );
+$notes     = array();
+foreach ( array( '0', '1' ) as $approved ) {
+	$notes[] = $ref_wp( "comment create --comment_post_ID=$note_post --comment_type=note --comment_author=ZzNoteWriter --user_id=1 --comment_content=zz-note --comment_approved=$approved --porcelain" );
+}
+[ , $bell ] = v1_fetch( $ENGINE, '/minn-admin/v1/notifications', $admin );
+check( ! str_contains( (string) json_encode( $bell ), 'ZzNoteWriter' ), 'the bell lists no editorial note, pending or approved', substr( (string) json_encode( $bell ), 0, 300 ) );
+v1_parity( 'the bell with notes the newest comments', '/minn-admin/v1/notifications', $admin );
+$ref_wp( "post delete $note_post --force" );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

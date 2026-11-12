@@ -71,14 +71,15 @@ final readonly class Notifications
         $columns = 'comment_ID, comment_post_ID, comment_author, comment_date_gmt';
         $items = [];
         if ($this->capabilities->can($userId, 'moderate_comments')) {
-            $pending = $this->db->rows("SELECT {$columns} FROM {$comments} WHERE comment_approved = '0' ORDER BY comment_date_gmt DESC LIMIT 5");
+            // Editorial notes stay out, as get_comments leaves them out for the plugin's own bell (security sweep 2026-11-12, finding 3.3).
+            $pending = $this->db->rows("SELECT {$columns} FROM {$comments} WHERE comment_approved = '0' AND comment_type <> 'note' ORDER BY comment_date_gmt DESC LIMIT 5");
             foreach ($pending as $comment) {
                 if ($this->feed->commentVisible($userId, (int) $comment['comment_post_ID'])) {
                     $items[] = $this->commentItem($comment, 'New comment from %s awaiting moderation on “%s”');
                 }
             }
         }
-        $approved = $this->db->rows("SELECT {$columns} FROM {$comments} WHERE comment_approved = '1' ORDER BY comment_date_gmt DESC LIMIT 3");
+        $approved = $this->db->rows("SELECT {$columns} FROM {$comments} WHERE comment_approved = '1' AND comment_type <> 'note' ORDER BY comment_date_gmt DESC LIMIT 3");
         foreach ($approved as $comment) {
             if ($this->feed->commentVisible($userId, (int) $comment['comment_post_ID'])) {
                 $items[] = $this->commentItem($comment, '%s commented on “%s”');

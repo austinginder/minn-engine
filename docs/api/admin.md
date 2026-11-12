@@ -27,7 +27,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`LegacyPackController`](#legacypackcontroller) | final readonly class | 49 | The Minn Legacy Pack installed for an editor that needs it |
 | [`MetaBoxMarkup`](#metaboxmarkup) | final class | 23 | A meta box's frame as do_meta_boxes prints it on the reference (probe |
 | [`MetaBoxes`](#metaboxes) | final class | 56 | One screen's meta boxes as add_meta_box files them on the reference |
-| [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
+| [`Notifications`](#notifications) | final readonly class | 192 | The bell feed: pending and recent comments, translation offers and a |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 140 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`OverviewTypes`](#overviewtypes) | final class | 38 | What the overview counts as writing: posts, pages and the public custom |
 | [`PackagesController`](#packagescontroller) | final readonly class | 119 | Adding and removing themes and extensions from the Extensions view. |
@@ -915,7 +915,7 @@ The bell feed for a user, newest first, grouped and marked read or unread.
 
 An id marks one item read; an empty id marks everything read.
 
-Internals: `commentItems()` (private, line 68), `updateItems()` (private, line 96), `updateItem()` (private, line 127), `coreItems()` (private, line 139), `registrationItems()` (private, line 160), `commentItem()` (private, line 187), `translationCount()` (private, line 203)
+Internals: `commentItems()` (private, line 68), `updateItems()` (private, line 97), `updateItem()` (private, line 128), `coreItems()` (private, line 140), `registrationItems()` (private, line 161), `commentItem()` (private, line 188), `translationCount()` (private, line 204)
 
 
 ## OverviewController
