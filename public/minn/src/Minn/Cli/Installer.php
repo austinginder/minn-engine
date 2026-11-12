@@ -35,8 +35,9 @@ final class Installer
     private const PARK_GUARD = '.htaccess';
     private const PARK_GUARD_TEXT = "# Minn: WordPress's own files, parked by the engine. Nothing here is served.\n<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n";
     /** What marks a folder as a site's own webroot, and the names hosts give one. */
-    private const SERVED_FILES = ['index.php', 'index.html', 'index.htm', 'wp-config.php', 'wp-load.php', '.htaccess', 'web.config'];
-    private const SERVED_NAMES = ['public_html', 'www', 'htdocs', 'httpdocs', 'html', 'wwwroot', 'web', 'public'];
+    private const SERVED_FILES = ['index.php', 'index.html', 'index.htm', 'wp-load.php', '.htaccess', 'web.config'];
+    /** Names only a served folder carries (www, html and public are also the unserved parents of /var/www/html and the like). */
+    private const SERVED_NAMES = ['public_html', 'htdocs', 'httpdocs', 'wwwroot'];
     private const RECORD_HEAD = "<?php return; // Minn Engine's install record: what `wp minn eject` puts back. ?>\n";
     /** Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink. */
     private const LEGACY_RECORD = '.install.json';
@@ -271,7 +272,11 @@ final class Installer
         return 0;
     }
 
-    /** Why a folder looks like a served webroot (a file only a webroot holds, or a host's name for one), or null. */
+    /**
+     * Why a folder looks served, or null: it holds a file only a webroot
+     * holds, or it or a folder above it carries a host's webroot name
+     * (public_html/sites/ is served under public_html's address).
+     */
     private static function served(string $folder): ?string
     {
         foreach (self::SERVED_FILES as $file) {
@@ -279,7 +284,44 @@ final class Installer
                 return "it holds {$file}";
             }
         }
-        return in_array(strtolower(basename($folder)), self::SERVED_NAMES, true) ? 'its name is one hosts serve' : null;
+        for ($above = $folder; $above !== dirname($above); $above = dirname($above)) {
+            if (in_array(strtolower(basename($above)), self::SERVED_NAMES, true)) {
+                return 'it lies in ' . $above . ', a folder hosts serve';
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Guards a park an earlier engine left without it: the Apache refusal
+     * written when the install record names a park carrying this webroot's
+     * mark and holding none. Run once per engine version (AdminPlugin::settle),
+     * so a site installed by 0.1.0 is guarded by its first request after an
+     * update (fix-delta review of the 2026-11-12 sweep).
+     */
+    public static function guardPark(string $root): void
+    {
+        $park = self::recordedPark($root);
+        if ($park !== null && !file_exists("{$park}/" . self::PARK_GUARD)) {
+            @file_put_contents("{$park}/" . self::PARK_GUARD, self::PARK_GUARD_TEXT);
+        }
+    }
+
+    /** Why this webroot's park could be reached from the web (it lies in a served folder), or null. */
+    public static function parkServed(string $root): ?string
+    {
+        $park = self::recordedPark($root);
+        return $park === null ? null : self::served(dirname($park));
+    }
+
+    /** The park the install record names, when it is there and carries this webroot's mark. */
+    private static function recordedPark(string $root): ?string
+    {
+        $park = rtrim((string) (self::record($root)['park'] ?? ''), '/');
+        if ($park === '' || !is_dir($park) || is_link($park)) {
+            return null;
+        }
+        return trim((string) @file_get_contents("{$park}/" . self::PARK_MARK)) === (realpath($root) ?: $root) ? $park : null;
     }
 
     /**

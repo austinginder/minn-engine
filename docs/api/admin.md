@@ -9,7 +9,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`AdminArgs`](#adminargs) | final class | 29 | The arguments Minn Admin's own routes register, as the reference lists |
 | [`AdminMenu`](#adminmenu) | final class | 75 | The admin menu's arithmetic, as plugins' menu calls see it on the |
 | [`AdminNotice`](#adminnotice) | final class | 25 | An admin notice's markup, as wp_get_admin_notice builds it on the |
-| [`AdminPlugin`](#adminplugin) | final class | 135 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
+| [`AdminPlugin`](#adminplugin) | final class | 137 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
 | [`AppController`](#appcontroller) | final readonly class | 180 | Serves Minn Admin from the engine: the path-routed shell (every |
@@ -260,7 +260,7 @@ request never finds half a plugin.
 
 Whether the plugin copy is whole, at least the engine's own, and asks for no newer engine.
 
-Internals: `engineVersion()` (private, line 160)
+Internals: `engineVersion()` (private, line 162)
 
 
 ## AdminTypes

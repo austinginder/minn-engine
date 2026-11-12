@@ -790,12 +790,13 @@
             "namespace": "Minn\\Admin",
             "kind": "final class",
             "file": "public/minn/src/Minn/Admin/AdminPlugin.php",
-            "lines": 135,
+            "lines": 137,
             "doc": "Minn Admin's home on a site is wp-content/plugins/minn-admin: the same\nplugin WordPress runs, so an eject leaves the site its admin, and Minn\nAdmin's own updates keep it current between engine releases. The engine\ncarries the Minn Admin release of its build at minn/admin and lays it into\nthe plugins folder the first time a new engine version serves a request:\ninto an empty place, where it is also activated, or over an older copy,\nwhose active state is kept; never over a newer copy, a link, or a folder\nunder git, and never from a development checkout.\n\nThe copy served is the plugin when it is at least the engine's own and\nasks for no newer engine (a \"Requires Minn\" header); otherwise the\nengine's copy, which also stands in while the plugin folder is missing.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Admin\\App",
+                "Minn\\Cli\\Installer",
                 "Minn\\Ops\\EngineUpdate",
                 "Minn\\Runtime\\Options",
                 "Minn\\Support\\FileHeaders",
@@ -907,7 +908,7 @@
                         }
                     ],
                     "line": 58,
-                    "end": 77
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -928,8 +929,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 94
+                    "line": 87,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -955,8 +956,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 145
+                    "line": 106,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -989,8 +990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 158
+                    "line": 150,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -1009,8 +1010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 163
+                    "line": 162,
+                    "end": 165
                 }
             ]
         },
@@ -26523,7 +26524,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 431,
+            "lines": 473,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -26537,8 +26538,10 @@
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Cli\\MinnCommand",
-                "Minn\\Cli\\Preflight"
+                "Minn\\Cli\\Preflight",
+                "Minn\\Ops\\Diagnostics"
             ],
             "constructor": {
                 "signature": "__construct(string $engineDir)",
@@ -26554,8 +26557,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 64,
-                "end": 66
+                "line": 65,
+                "end": 67
             },
             "cases": [],
             "constants": [
@@ -26585,14 +26588,14 @@
                 },
                 {
                     "name": "SERVED_FILES",
-                    "value": "array (   0 => 'index.php',   1 => 'index.html',   2 => 'index.htm',   3 => 'wp-config.php',   4 => 'wp-load.php',   5 => '.htaccess',   6 => 'web.config', )",
+                    "value": "array (   0 => 'index.php',   1 => 'index.html',   2 => 'index.htm',   3 => 'wp-load.php',   4 => '.htaccess',   5 => 'web.config', )",
                     "doc": "What marks a folder as a site's own webroot, and the names hosts give one.",
                     "visibility": "private"
                 },
                 {
                     "name": "SERVED_NAMES",
-                    "value": "array (   0 => 'public_html',   1 => 'www',   2 => 'htdocs',   3 => 'httpdocs',   4 => 'html',   5 => 'wwwroot',   6 => 'web',   7 => 'public', )",
-                    "doc": "",
+                    "value": "array (   0 => 'public_html',   1 => 'htdocs',   2 => 'httpdocs',   3 => 'wwwroot', )",
+                    "doc": "Names only a served folder carries (www, html and public are also the unserved parents of /var/www/html and the like).",
                     "visibility": "private"
                 },
                 {
@@ -26685,8 +26688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 79
+                    "line": 75,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -26715,8 +26718,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 125
+                    "line": 90,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -26735,8 +26738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 136
+                    "line": 129,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -26772,8 +26775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 161
+                    "line": 154,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -26792,8 +26795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 188
+                    "line": 165,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -26812,8 +26815,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 202
+                    "line": 192,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -26841,8 +26844,48 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 272
+                    "line": 211,
+                    "end": 273
+                },
+                {
+                    "routes": [],
+                    "name": "guardPark",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "guardPark(string $root): void",
+                    "doc": "Guards a park an earlier engine left without it: the Apache refusal\nwritten when the install record names a park carrying this webroot's\nmark and holding none. Run once per engine version (AdminPlugin::settle),\nso a site installed by 0.1.0 is guarded by its first request after an\nupdate (fix-delta review of the 2026-11-12 sweep).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 302,
+                    "end": 308
+                },
+                {
+                    "routes": [],
+                    "name": "parkServed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parkServed(string $root): ?string",
+                    "doc": "Why this webroot's park could be reached from the web (it lies in a served folder), or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 311,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -26870,8 +26913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 353
+                    "line": 336,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -26890,8 +26933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 365
+                    "line": 398,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -26912,8 +26955,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 375,
-                    "end": 385
+                    "line": 417,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -26924,8 +26967,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 144
+                    "line": 139,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -26933,7 +26976,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "served(string $folder): ?string",
-                    "doc": "Why a folder looks like a served webroot (a file only a webroot holds, or a host's name for one), or null.",
+                    "doc": "Why a folder looks served, or null: it holds a file only a webroot\nholds, or it or a folder above it carries a host's webroot name\n(public_html/sites/ is served under public_html's address).",
                     "shapes": [],
                     "params": [
                         {
@@ -26944,8 +26987,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 283
+                    "line": 280,
+                    "end": 293
+                },
+                {
+                    "routes": [],
+                    "name": "recordedPark",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "recordedPark(string $root): ?string",
+                    "doc": "The park the install record names, when it is there and carries this webroot's mark.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "root",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 318,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -26964,8 +27027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 399
+                    "line": 435,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -26991,8 +27054,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 423
+                    "line": 444,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -27018,8 +27081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 425,
-                    "end": 442
+                    "line": 467,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -27030,8 +27093,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 444,
-                    "end": 447
+                    "line": 486,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -27050,8 +27113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 452
+                    "line": 491,
+                    "end": 494
                 }
             ]
         },
@@ -97204,11 +97267,12 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Diagnostics.php",
-            "lines": 431,
+            "lines": 444,
             "doc": "The System view's facts about this install: the engine, PHP, the\ndatabase, and the server, with the health checks a site owner acts on.\nEvery number is read live; nothing is cached or fetched from outside.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Cli\\Installer",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
@@ -97387,8 +97451,8 @@
                     "doc": "The wp-config debug constants as they stand; the engine never rewrites the file.",
                     "shapes": [],
                     "params": [],
-                    "line": 195,
-                    "end": 228
+                    "line": 208,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -97399,8 +97463,8 @@
                     "doc": "The scheduled events: the cron option's hooks and the engine's own scheduled posts, soonest first.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 248
+                    "line": 244,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -97411,8 +97475,8 @@
                     "doc": "The autoloaded options: the summary and the largest rows.",
                     "shapes": [],
                     "params": [],
-                    "line": 298,
-                    "end": 317
+                    "line": 311,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -97457,7 +97521,7 @@
                         }
                     ],
                     "line": 66,
-                    "end": 101
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -97485,8 +97549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 123
+                    "line": 105,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -97499,8 +97563,30 @@
                         "@return array{string, string} status, text"
                     ],
                     "params": [],
-                    "line": 133,
-                    "end": 144
+                    "line": 134,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "park",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "park(string $webroot): array",
+                    "doc": "Where WordPress's own files are parked, and whether the web could reach them: a park in a folder that looks\nserved warns, since nginx ignores the park's own refusal.",
+                    "shapes": [
+                        "@return array{string, string} status, text"
+                    ],
+                    "params": [
+                        {
+                            "name": "webroot",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -97513,8 +97599,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 147,
-                    "end": 167
+                    "line": 160,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -97535,8 +97621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 186
+                    "line": 183,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -97547,8 +97633,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 192
+                    "line": 201,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -97561,8 +97647,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 256,
-                    "end": 276
+                    "line": 269,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -97581,8 +97667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 295
+                    "line": 292,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -97593,8 +97679,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 319,
-                    "end": 331
+                    "line": 332,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -97607,8 +97693,8 @@
                         "@return array{events: int, overdue: int, next: ?int}"
                     ],
                     "params": [],
-                    "line": 334,
-                    "end": 349
+                    "line": 347,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -97621,8 +97707,8 @@
                         "@return list<array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 352,
-                    "end": 357
+                    "line": 365,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -97635,8 +97721,8 @@
                         "@return array{0: array<string, string>, 1: list<array>}"
                     ],
                     "params": [],
-                    "line": 360,
-                    "end": 396
+                    "line": 373,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -97676,8 +97762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 401
+                    "line": 411,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -97698,8 +97784,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 411
+                    "line": 417,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -97718,8 +97804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 426
+                    "line": 426,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -97738,8 +97824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 434
+                    "line": 441,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -97758,8 +97844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 449
+                    "line": 449,
+                    "end": 462
                 }
             ]
         },

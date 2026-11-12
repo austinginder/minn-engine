@@ -9,7 +9,7 @@
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
 | [`Changelog`](#changelog) | final class | 73 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
-| [`Diagnostics`](#diagnostics) | final readonly class | 431 | The System view's facts about this install: the engine, PHP, the |
+| [`Diagnostics`](#diagnostics) | final readonly class | 444 | The System view's facts about this install: the engine, PHP, the |
 | [`Directory`](#directory) | final class | 76 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
@@ -228,7 +228,7 @@ The scheduled events: the cron option's hooks and the engine's own scheduled pos
 
 The autoloaded options: the summary and the largest rows.
 
-Internals: `checks()` (private, line 66), `engineGroup()` (private, line 104), `wpApi()` (private, line 133), `phpGroup()` (private, line 147), `serverGroup()` (private, line 170), `opcacheOn()` (private, line 188), `cronOptionEvents()` (private, line 256), `humanInterval()` (private, line 279), `autoloadSummary()` (private, line 319), `cronSummary()` (private, line 334), `futurePosts()` (private, line 352), `databaseGroup()` (private, line 360), `check()` (private, line 398), `rows()` (private, line 404), `bytes()` (private, line 413), `offsetLabel()` (private, line 428), `relative()` (private, line 436)
+Internals: `checks()` (private, line 66), `engineGroup()` (private, line 105), `wpApi()` (private, line 134), `park()` (private, line 153), `phpGroup()` (private, line 160), `serverGroup()` (private, line 183), `opcacheOn()` (private, line 201), `cronOptionEvents()` (private, line 269), `humanInterval()` (private, line 292), `autoloadSummary()` (private, line 332), `cronSummary()` (private, line 347), `futurePosts()` (private, line 365), `databaseGroup()` (private, line 373), `check()` (private, line 411), `rows()` (private, line 417), `bytes()` (private, line 426), `offsetLabel()` (private, line 441), `relative()` (private, line 449)
 
 
 ## Directory

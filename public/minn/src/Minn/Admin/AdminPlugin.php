@@ -62,6 +62,8 @@ final class AdminPlugin
             return;
         }
         $options->update(self::OPTION, $version, 'on');
+        // Once per engine version too: a park an earlier engine left unguarded gets its refusal.
+        \Minn\Cli\Installer::guardPark(dirname($contentDir));
         if (EngineUpdate::isCheckout($engineDir)) {
             return;
         }
