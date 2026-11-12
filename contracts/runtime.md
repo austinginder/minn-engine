@@ -18871,6 +18871,21 @@ What they found, each observed on the reference:
   kses filters (the sitemap's robots line is added on `init`); its posts'
   gallery ids and dates are masked.
 
+## 0.2.0 RC1 and the upgrade path (2026-11-12)
+
+- **The run behind it.** Full run on 572e1685: 102 of 102 suites, 31,656 checks, no engine warnings; the scorecard has
+  every release measure at its target, fixtures current at WordPress 7.1.4. The run before it failed one check:
+  `wp-api-modes` compared two responses headers and all, and `php -S`'s `Date` ticked over between them (1afb5448
+  sets it aside).
+- **RC1** was built from 572e1685 in a throwaway worktree with only the version raised to 0.2.0 (nothing committed,
+  nothing published): signed, Minn Admin 0.49.0 bundled. The install suite passes against the unpacked zip (65 of 65).
+- **Upgrade from 0.1.0 (measure 26).** The released 0.1.0 `minn.zip` (sha256 matching the GitHub release), unpacked,
+  installed RC1 with its own `EngineUpdate::install`: 0.1.0 became 0.2.0 with Minn Admin 0.49.0 and nothing beside it.
+  RC1 with one byte flipped, its checksum made to match, was refused as unsigned; putting 0.1.0 back was refused as
+  not newer.
+- **Next:** the security sweep over `bda1b2c5..572e1685` (the brief beside the build, `dist/0.2.0-rc1/brief.md`), its
+  fixes, then the release run on the release commit.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
