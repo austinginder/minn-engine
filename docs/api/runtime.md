@@ -173,7 +173,7 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 152 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 67 | The updates waiting, as wp_get_update_data counts them for the user |
-| [`Upgrade`](#upgrade) | final class | 406 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
+| [`Upgrade`](#upgrade) | final class | 423 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserCounts`](#usercounts) | final class | 75 | The user counts WordPress's user functions give: how many users hold each |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 118 | The decisions behind wp_insert_user: what a new account needs, which email |
@@ -10140,7 +10140,7 @@ when it is not to be retried.
 
 Maintenance mode off; said only when it was on.
 
-Internals: `destinationFor()` (private, line 288), `clearOrRefuse()` (private, line 297), `move()` (private, line 318), `copyInto()` (private, line 329), `report()` (private, line 343), `setAside()` (private, line 361), `putBack()` (private, line 374), `forget()` (private, line 386), `backedUp()` (private, line 395), `randomName()` (private, line 407), `listing()` (private, line 423)
+Internals: `installUnpacked()` (private, line 153), `destinationFor()` (private, line 305), `clearOrRefuse()` (private, line 314), `move()` (private, line 335), `copyInto()` (private, line 346), `report()` (private, line 360), `setAside()` (private, line 378), `putBack()` (private, line 391), `forget()` (private, line 403), `backedUp()` (private, line 412), `randomName()` (private, line 424), `listing()` (private, line 440)
 
 
 ## UserCounts

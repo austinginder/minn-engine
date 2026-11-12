@@ -185302,7 +185302,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Upgrade.php",
-            "lines": 406,
+            "lines": 423,
             "doc": "What WP_Upgrader does with a package (probe upgrader), for the facade's\nupgraders and so for everything that installs or updates a plugin or a\ntheme. run() is the whole pass: the options through\nupgrader_package_options, the package downloaded and unpacked into\nwp-content/upgrade/, put in place by install(), the result through\nupgrader_install_package_result and told to the skin, and, for a single\nitem, upgrader_process_complete. The steps a subclass may replace\n(fs_connect, download_package, unpack_package, install_package,\nclear_destination) are called on the upgrader itself, as the reference\ncalls them, so a plugin's own upgrader class is honoured.\n\nAn update names the folder it replaces (hook_extra temp_backup); that\ncopy is moved to wp-content/upgrade-temp-backup/<dir>/<slug> before the\ndestination is cleared, moved back when the new one fails, and removed\nonce the pass is over. The reference keeps it for a weekly event to\nclear and puts it back at shutdown; Minn keeps nothing and restores at\nonce.",
             "implements": [],
             "extends": null,
@@ -185430,7 +185430,7 @@
                         }
                     ],
                     "line": 140,
-                    "end": 190
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -185456,8 +185456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 201
+                    "line": 206,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -185483,8 +185483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 230
+                    "line": 222,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -185510,8 +185510,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 239
+                    "line": 250,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -185530,8 +185530,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 246
+                    "line": 259,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -185550,8 +185550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 260
+                    "line": 270,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -185584,8 +185584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 276
+                    "line": 284,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -185604,8 +185604,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 285
+                    "line": 296,
+                    "end": 302
+                },
+                {
+                    "routes": [],
+                    "name": "installUnpacked",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "installUnpacked(Minn\\Objects\\Upgrader $upgrader, array $args): Minn\\Objects\\Errors|array",
+                    "doc": "install()'s steps, any of which may refuse.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -185631,8 +185658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 294
+                    "line": 305,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -185665,8 +185692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 315
+                    "line": 314,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -185699,8 +185726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 327
+                    "line": 335,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -185726,8 +185753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 340
+                    "line": 346,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -185760,8 +185787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 358
+                    "line": 360,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -185787,8 +185814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 372
+                    "line": 378,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -185807,8 +185834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 384
+                    "line": 391,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -185827,8 +185854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 392
+                    "line": 403,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -185854,8 +185881,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 404
+                    "line": 412,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -185874,8 +185901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 407,
-                    "end": 415
+                    "line": 424,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -185896,8 +185923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 437
+                    "line": 440,
+                    "end": 454
                 }
             ]
         },

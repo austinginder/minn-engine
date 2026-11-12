@@ -85,6 +85,9 @@ try {
 } catch (RestError $e) {
     $check('a taken folder is refused, naming what is there and what came', $e->errorCode === 'folder_exists' && $e->status === 409 && ($e->extra['current_version'] ?? '') === '1.0' && ($e->extra['new_version'] ?? '') === '2.0', json_encode([$e->errorCode, $e->status, $e->extra]));
 }
+// Security sweep 2026-11-12 (2.6): a refused install leaves no unpacked package in the upgrade folder, which keeps its index.
+$left = array_values(array_diff(scandir("{$contentDir}/upgrade") ?: [], ['.', '..']));
+$check('a refused install leaves only the upgrade folder\'s index behind', $left === ['index.php'], json_encode($left));
 $result = $packages->unpackReplacing($zip('replace.zip', ['zz-upg-plugin/zz-upg-plugin.php' => $plugin('2.0')]), 'plugin');
 $check('an upload may replace the folder', ($result['version'] ?? '') === '2.0', json_encode($result));
 try {

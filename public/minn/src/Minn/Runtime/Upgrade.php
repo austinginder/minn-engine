@@ -139,6 +139,19 @@ final class Upgrade
      */
     public static function install(Upgrader $upgrader, array $args): array|Errors
     {
+        $installed = self::installUnpacked($upgrader, $args);
+        // A package unpacked in the upgrade folder and not installed is removed, so its files are never left at an
+        // address under wp-content (security sweep 2026-11-12, finding 2.6). A source anywhere else is the caller's.
+        $working = rtrim((string) ($args['source'] ?? ''), '/');
+        if ($installed instanceof Errors && $working !== '' && str_starts_with($working, WP_CONTENT_DIR . '/upgrade/') && is_dir($working)) {
+            Files::deleteTree($working);
+        }
+        return $installed;
+    }
+
+    /** install()'s steps, any of which may refuse. */
+    private static function installUnpacked(Upgrader $upgrader, array $args): array|Errors
+    {
         $args = array_merge(['source' => '', 'destination' => '', 'clear_destination' => false, 'clear_working' => false, 'abort_if_destination_exists' => true, 'hook_extra' => []], $args);
         $working = rtrim((string) $args['source'], '/');
         $destination = (string) $args['destination'];
@@ -215,6 +228,10 @@ final class Upgrade
         }
         // The folder never lists itself, and an unzipped package is not where anyone could guess while it is
         // there: the package's name and sixteen random letters and digits (probe patch-714).
+        // Made before the unzip, which would otherwise create the folder itself and leave it unguarded (finding 2.6).
+        if (!is_dir($folder)) {
+            @mkdir($folder, defined('FS_CHMOD_DIR') ? FS_CHMOD_DIR : 0755, true);
+        }
         if (is_dir($folder) && !is_file("{$folder}/index.php")) {
             @file_put_contents("{$folder}/index.php", "<?php\n// Silence is golden.\n");
         }
