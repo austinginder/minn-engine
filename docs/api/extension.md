@@ -4,7 +4,7 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accounts`](#accounts) | final readonly class | 376 | Accounts for a sign-in surface of an extension's own (a game's players, a |
+| [`Accounts`](#accounts) | final readonly class | 382 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 71 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
@@ -52,11 +52,14 @@ Signs in as signIn does, remembered: fourteen days, the cookies kept past the br
 
 ### `signOut(Minn\Http\Response $response): Minn\Http\Response`
 
-Clears the sign-in cookies on the response, and ends the session they
-name only when the request carries that session's REST nonce, as the
-sign-in page's sign-out asks for its own: a page on another site that
-sends the cookie alone cannot end a player's session (security sweep
-2026-11-12, finding 1.4).
+Ends the session the sign-in cookie names, and clears the cookies,
+when the request carries that session's REST nonce (the X-WP-Nonce
+header or a form's _wpnonce, as the sign-in page's sign-out asks for
+its own); with no live session it only clears the cookies. A request
+naming a live session without its nonce changes nothing, so a page on
+another site, or a navigation to an extension page that signs out,
+signs nobody out, cookies included (security sweep 2026-11-12,
+finding 1.4, closed by the fix-delta review).
 
 ### `registrationOpen(): bool`
 
@@ -154,7 +157,7 @@ plugin's.
 
 - `@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name`
 
-Internals: `attempt()` (private, line 83), `storedHash()` (private, line 183), `refuseRegistration()` (private, line 216), `made()` (private, line 238), `checkCurrent()` (private, line 361), `worded()` (private, line 380), `refusal()` (private, line 399), `plain()` (private, line 416)
+Internals: `attempt()` (private, line 83), `storedHash()` (private, line 187), `refuseRegistration()` (private, line 220), `made()` (private, line 244), `checkCurrent()` (private, line 367), `worded()` (private, line 386), `refusal()` (private, line 405), `plain()` (private, line 422)
 
 
 ## Extension

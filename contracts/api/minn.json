@@ -45335,7 +45335,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 376,
+            "lines": 382,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -45518,7 +45518,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "signOut(Minn\\Http\\Response $response): Minn\\Http\\Response",
-                    "doc": "Clears the sign-in cookies on the response, and ends the session they\nname only when the request carries that session's REST nonce, as the\nsign-in page's sign-out asks for its own: a page on another site that\nsends the cookie alone cannot end a player's session (security sweep\n2026-11-12, finding 1.4).",
+                    "doc": "Ends the session the sign-in cookie names, and clears the cookies,\nwhen the request carries that session's REST nonce (the X-WP-Nonce\nheader or a form's _wpnonce, as the sign-in page's sign-out asks for\nits own); with no live session it only clears the cookies. A request\nnaming a live session without its nonce changes nothing, so a page on\nanother site, or a navigation to an extension page that signs out,\nsigns nobody out, cookies included (security sweep 2026-11-12,\nfinding 1.4, closed by the fix-delta review).",
                     "shapes": [],
                     "params": [
                         {
@@ -45529,8 +45529,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 121
+                    "line": 111,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -45541,8 +45541,8 @@
                     "doc": "Whether the site takes new accounts (users_can_register).",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 127
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -45589,8 +45589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -45637,8 +45637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 148
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -45657,8 +45657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 159,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -45705,8 +45705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 180
+                    "line": 171,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -45732,8 +45732,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 201
+                    "line": 199,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -45775,8 +45775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 213
+                    "line": 214,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -45812,8 +45812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 262
+                    "line": 264,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -45846,8 +45846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 298
+                    "line": 278,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -45896,8 +45896,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 312,
-                    "end": 328
+                    "line": 318,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -45939,8 +45939,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 339,
-                    "end": 358
+                    "line": 345,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -46002,8 +46002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 186
+                    "line": 187,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -46022,8 +46022,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 236
+                    "line": 220,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -46042,8 +46042,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 242
+                    "line": 244,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -46069,8 +46069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 373
+                    "line": 367,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -46110,8 +46110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 380,
-                    "end": 396
+                    "line": 386,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -46144,8 +46144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 413
+                    "line": 405,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -46164,8 +46164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 420
+                    "line": 422,
+                    "end": 426
                 }
             ]
         },

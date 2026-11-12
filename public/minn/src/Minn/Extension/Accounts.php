@@ -99,21 +99,25 @@ final readonly class Accounts
     }
 
     /**
-     * Clears the sign-in cookies on the response, and ends the session they
-     * name only when the request carries that session's REST nonce, as the
-     * sign-in page's sign-out asks for its own: a page on another site that
-     * sends the cookie alone cannot end a player's session (security sweep
-     * 2026-11-12, finding 1.4).
+     * Ends the session the sign-in cookie names, and clears the cookies,
+     * when the request carries that session's REST nonce (the X-WP-Nonce
+     * header or a form's _wpnonce, as the sign-in page's sign-out asks for
+     * its own); with no live session it only clears the cookies. A request
+     * naming a live session without its nonce changes nothing, so a page on
+     * another site, or a navigation to an extension page that signs out,
+     * signs nobody out, cookies included (security sweep 2026-11-12,
+     * finding 1.4, closed by the fix-delta review).
      */
     public function signOut(Response $response): Response
     {
         $session = $this->authenticator->session($this->request->cookies);
-        // The request carries the session's REST nonce itself (X-WP-Nonce or _wpnonce), wherever it arrives: an
-        // extension page's own route is reached by a plain navigation from another site too, cookie and all.
-        $nonce = (string) ($this->request->header('x-wp-nonce') ?? (is_scalar($this->request->query['_wpnonce'] ?? null) ? $this->request->query['_wpnonce'] : ''));
-        $accepted = $session instanceof Authenticated && $nonce !== '' && Nonce::verify($nonce, $session->id(), $session->token);
-        if (!$accepted) {
+        if (!$session instanceof Authenticated) {
             return $this->signIn->clear($response);
+        }
+        // Never from the query string, so the nonce never lands in an address, a history or a log.
+        $nonce = (string) ($this->request->header('x-wp-nonce') ?? (is_scalar($this->request->form['_wpnonce'] ?? null) ? $this->request->form['_wpnonce'] : ''));
+        if ($nonce === '' || !Nonce::verify($nonce, $session->id(), $session->token)) {
+            return $response;
         }
         $response = $this->signIn->end($response, $session);
         (new LoginHooks($this->users))->signedOut($session->id());
@@ -222,13 +226,15 @@ final readonly class Accounts
         if ($role !== '' && !isset($roles[$role])) {
             return new Refusal('unknown_role', "The site has no role named {$role}.", ['notices' => []]);
         }
-        // A sign-up takes none of WordPress's own capabilities beyond the default role's: a role holding one more
-        // (editor's edit_others_posts, administrator's manage_options) is refused, so an extension that passes a
-        // visitor's choice through cannot make an administrator; a capability of the extension's own (play_game)
-        // is its business (security sweep 2026-11-12, finding 1.3, narrowed by the fix-delta review).
+        // A sign-up takes no administrative capability beyond the default role's: a role holding one more
+        // (editor's edit_others_posts, administrator's manage_options, a store's manage_woocommerce) is refused, so
+        // an extension that passes a visitor's choice through cannot make an administrator; a capability no
+        // administrator holds (play_game) is the extension's business (security sweep 2026-11-12, finding 1.3, narrowed by the fix-delta review).
         $default = (string) (Runtime::options()->filtered('default_role') ?: 'subscriber');
         $granted = static fn (array $role): array => array_keys(array_filter((array) ($role['capabilities'] ?? [])));
-        $core = $granted(((array) Json::file(MINN_ENGINE_DIR . '/data/roles.json'))['administrator'] ?? []);
+        // WordPress's own, and every capability the site's administrator holds (where a plugin puts its administrative
+        // ones: manage_woocommerce, gravityforms_view_entries).
+        $core = [...$granted(((array) Json::file(MINN_ENGINE_DIR . '/data/roles.json'))['administrator'] ?? []), ...$granted($roles['administrator'] ?? [])];
         if ($role !== '' && array_intersect(array_diff($granted($roles[$role]), $granted($roles[$default] ?? [])), $core) !== []) {
             return new Refusal('role_not_allowed', "A new account cannot take the {$role} role: it holds more than the site's default role ({$default}).", ['notices' => []]);
         }
