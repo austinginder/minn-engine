@@ -7,6 +7,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn`](minn.md) | 8 | the front door, the autoloader, the one database door, the REST error |
 | [`Minn\Admin`](admin.md) | 42 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 20 | passwords, sessions, cookies, nonces, roles and capabilities |
+| [`Minn\Auth\WebAuthn`](auth-webauthn.md) | 12 |  |
 | [`Minn\Blocks`](blocks.md) | 23 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 7 | the template blocks a block theme composes with |

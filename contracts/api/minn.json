@@ -13474,6 +13474,1765 @@
             ]
         },
         {
+            "name": "Minn\\Auth\\WebAuthn\\Assertion",
+            "short": "Assertion",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/Assertion.php",
+            "lines": 6,
+            "doc": "A sign-in a stored passkey proved: the counter to keep and whether the passkey is synced now.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Ceremony"
+            ],
+            "constructor": {
+                "signature": "__construct(int $signCount, bool $backedUp)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "signCount",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "backedUp",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 10,
+                "end": 12
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "signCount",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "backedUp",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\AuthenticatorData",
+            "short": "AuthenticatorData",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/AuthenticatorData.php",
+            "lines": 78,
+            "doc": "Authenticator data, read: the hash of the relying party id it signed for,\nits flags, its signature counter and, when a passkey is being made, the new\ncredential's id and COSE key. Extension output is read past and not kept.\nBytes left over, or a length that runs past the end, are refused.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\Cbor",
+                "Minn\\Auth\\WebAuthn\\Refused"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Ceremony"
+            ],
+            "constructor": {
+                "signature": "__construct(string $rpIdHash, int $flags, int $signCount, string $credentialId = '', string $publicKey = '')",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "rpIdHash",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "flags",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "signCount",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "credentialId",
+                        "type": "string",
+                        "shape": "",
+                        "default": "''",
+                        "doc": ""
+                    },
+                    {
+                        "name": "publicKey",
+                        "type": "string",
+                        "shape": "",
+                        "default": "''",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 30
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "USER_PRESENT",
+                    "value": "1",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "USER_VERIFIED",
+                    "value": "4",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BACKUP_ELIGIBLE",
+                    "value": "8",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BACKED_UP",
+                    "value": "16",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CREDENTIAL",
+                    "value": "64",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EXTENSIONS",
+                    "value": "128",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MAX_CREDENTIAL_ID",
+                    "value": "1023",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "rpIdHash",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "flags",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "signCount",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "credentialId",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "publicKey",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $bytes): self",
+                    "doc": "The authenticator data the bytes hold.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "userPresent",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "userPresent(): bool",
+                    "doc": "Whether a person touched or otherwise answered the authenticator.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 68,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "userVerified",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "userVerified(): bool",
+                    "doc": "Whether the authenticator checked who the person is (Face ID, a PIN, a fingerprint).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 74,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "backupEligible",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "backupEligible(): bool",
+                    "doc": "Whether the passkey may be synced to other devices (iCloud Keychain, a password manager).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 80,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "backedUp",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "backedUp(): bool",
+                    "doc": "Whether the passkey is synced to other devices now.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 86,
+                    "end": 89
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\Base64Url",
+            "short": "Base64Url",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/Base64Url.php",
+            "lines": 18,
+            "doc": "Base64 in the URL alphabet with no padding, the form every WebAuthn value travels in as JSON.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\ClientData"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "encode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "encode(string $bytes): string",
+                    "doc": "The text form of some bytes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 11,
+                    "end": 14
+                },
+                {
+                    "routes": [],
+                    "name": "decode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "decode(string $text): ?string",
+                    "doc": "The bytes a text form holds, or null when it is not one (padding, the other alphabet and stray characters are refused).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 24
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\Cbor",
+            "short": "Cbor",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/Cbor.php",
+            "lines": 143,
+            "doc": "A CBOR reader (RFC 8949) for what authenticators send: integers, byte\nstrings (as CborBytes), text, arrays, maps keyed by integers or text,\ntags (read through), true, false and null. Everything else an\nauthenticator has no reason to send is refused: lengths of unknown size,\nfloats, byte-string map keys, a key given twice, nesting past sixteen\nlevels, and any length longer than the bytes left. Lengths are checked\nagainst what remains before anything is read, so a short message cannot\nask for a large allocation.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\CborBytes",
+                "Minn\\Auth\\WebAuthn\\Refused"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\AuthenticatorData",
+                "Minn\\Auth\\WebAuthn\\Ceremony",
+                "Minn\\Auth\\WebAuthn\\CoseKey"
+            ],
+            "constructor": {
+                "signature": "__construct(string $bytes, int $offset)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "bytes",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "offset",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAX_DEPTH",
+                    "value": "16",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "bytes",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "offset",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "decode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "decode(string $bytes): mixed",
+                    "doc": "The one item the bytes hold; bytes left after it are refused.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "decodeAt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "decodeAt(string $bytes, int $offset): array",
+                    "doc": "The item that starts at an offset, and the offset just past it: a key\ninside authenticator data, which more bytes may follow.",
+                    "shapes": [
+                        "@return array{0: mixed, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "offset",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "item(int $depth): mixed",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "argument",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "argument(int $info): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "info",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "simple",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "simple(int $info): ?bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "info",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "text(int $length): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "length",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "list",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "list(int $count, int $depth): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 114,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "map",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "map(int $count, int $depth): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<int|string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 125,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "room",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "room(int $items): void",
+                    "doc": "Every item takes at least a byte, so a count past the bytes left cannot be honest.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "items",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "take",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "take(int $length): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "length",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 150,
+                    "end": 158
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\CborBytes",
+            "short": "CborBytes",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/CborBytes.php",
+            "lines": 6,
+            "doc": "A CBOR byte string, kept apart from a text string so a reader can insist on the one it expects.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Cbor",
+                "Minn\\Auth\\WebAuthn\\Ceremony",
+                "Minn\\Auth\\WebAuthn\\CoseKey"
+            ],
+            "constructor": {
+                "signature": "__construct(string $value)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "value",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 10,
+                "end": 12
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "value",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\Ceremony",
+            "short": "Ceremony",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/Ceremony.php",
+            "lines": 73,
+            "doc": "The two WebAuthn ceremonies, checked the way the specification's relying\nparty steps check them, with no state of its own: the caller hands in the\nchallenge it issued and, for a sign-in, the stored key and counter.\nBoth insist on user verification (Face ID, a PIN), since a passkey is the\nwhole sign-in here, not a second factor. Attestation is never relied on:\nthe creation options ask for none, a \"none\" statement must be empty, and\nanother format's statement is read past, not trusted.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\Assertion",
+                "Minn\\Auth\\WebAuthn\\AuthenticatorData",
+                "Minn\\Auth\\WebAuthn\\Cbor",
+                "Minn\\Auth\\WebAuthn\\CborBytes",
+                "Minn\\Auth\\WebAuthn\\ClientData",
+                "Minn\\Auth\\WebAuthn\\CoseKey",
+                "Minn\\Auth\\WebAuthn\\NewPasskey",
+                "Minn\\Auth\\WebAuthn\\Refused",
+                "Minn\\Auth\\WebAuthn\\RelyingParty"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Auth\\WebAuthn\\RelyingParty $party)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "party",
+                        "type": "Minn\\Auth\\WebAuthn\\RelyingParty",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 18,
+                "end": 20
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "party",
+                    "type": "Minn\\Auth\\WebAuthn\\RelyingParty",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "register(string $challenge, string $clientDataJson, string $attestationObject): Minn\\Auth\\WebAuthn\\NewPasskey",
+                    "doc": "The passkey a registration response makes, once every check of the create ceremony passes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "challenge",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clientDataJson",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attestationObject",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "signIn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "signIn(string $challenge, string $clientDataJson, string $authenticatorData, string $signature, Minn\\Auth\\WebAuthn\\CoseKey $key, int $storedCount): Minn\\Auth\\WebAuthn\\Assertion",
+                    "doc": "The counter and backup state after a sign-in response from a stored passkey passes every check of the get ceremony.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "challenge",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clientDataJson",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authenticatorData",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "signature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "Minn\\Auth\\WebAuthn\\CoseKey",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "storedCount",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "client",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "client(string $json, string $type, string $challenge): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "challenge",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "authenticator",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "authenticator(string $bytes): Minn\\Auth\\WebAuthn\\AuthenticatorData",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 87
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\ClientData",
+            "short": "ClientData",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/ClientData.php",
+            "lines": 21,
+            "doc": "The browser's own account of a ceremony (clientDataJSON): which ceremony, the challenge it answered, the page that asked.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\Base64Url",
+                "Minn\\Auth\\WebAuthn\\Refused",
+                "Minn\\Json"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Ceremony"
+            ],
+            "constructor": {
+                "signature": "__construct(string $type, string $challenge, string $origin, bool $crossOrigin)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "type",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "challenge",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "origin",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "crossOrigin",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 12,
+                "end": 18
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "type",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "challenge",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "origin",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "crossOrigin",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $json): self",
+                    "doc": "The client data a JSON text holds; the challenge comes back as bytes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 29
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\CoseKey",
+            "short": "CoseKey",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/CoseKey.php",
+            "lines": 102,
+            "doc": "A passkey's public key, from the COSE map (RFC 9052/9053) an authenticator\nhands over when the passkey is made. Three kinds are verified, the three\nthe creation options ask for: ES256 (an EC2 key on P-256), EdDSA (an OKP\nEd25519 key) and RS256 (an RSA key of at least 2048 bits). Anything else is\nrefused when the passkey is made, never at sign-in.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\Cbor",
+                "Minn\\Auth\\WebAuthn\\CborBytes",
+                "Minn\\Auth\\WebAuthn\\Der",
+                "Minn\\Auth\\WebAuthn\\Refused"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Ceremony"
+            ],
+            "constructor": {
+                "signature": "__construct(int $algorithm, string $material)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "algorithm",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "material",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 25,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ES256",
+                    "value": "-7",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "EDDSA",
+                    "value": "-8",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "RS256",
+                    "value": "-257",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "OFFERED",
+                    "value": "array (   0 => -7,   1 => -8,   2 => -257, )",
+                    "doc": "The algorithms the creation options offer, in the order offered.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "algorithm",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "material",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fromBytes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromBytes(string $cose): self",
+                    "doc": "The key a stored COSE encoding describes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "cose",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "fromMap",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromMap(mixed $map): self",
+                    "doc": "The key a decoded COSE map describes, refused when its type, curve, algorithm or size is not one Minn verifies.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "map",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "verifies",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "verifies(string $data, string $signature): bool",
+                    "doc": "Whether the signature over the data was made by this key.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "signature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "ec2",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ec2(array $map): self",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $map"
+                    ],
+                    "params": [
+                        {
+                            "name": "map",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "okp",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "okp(array $map): self",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $map"
+                    ],
+                    "params": [
+                        {
+                            "name": "map",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "rsa",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rsa(array $map): self",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $map"
+                    ],
+                    "params": [
+                        {
+                            "name": "map",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "checked",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "checked(int $algorithm, string $pem): self",
+                    "doc": "A key OpenSSL agrees is a key (an EC point off the curve is refused here).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "algorithm",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pem",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "bytes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "bytes(array $map, int $label, ?int $length): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $map"
+                    ],
+                    "params": [
+                        {
+                            "name": "map",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "length",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 116
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\Der",
+            "short": "Der",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/Der.php",
+            "lines": 46,
+            "doc": "The few DER shapes (ITU-T X.690) a public key needs to be handed to OpenSSL as a PEM SubjectPublicKeyInfo.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\CoseKey"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sequence",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sequence(string $content): string",
+                    "doc": "A SEQUENCE of already encoded parts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 11,
+                    "end": 14
+                },
+                {
+                    "routes": [],
+                    "name": "oid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "oid(string $hex): string",
+                    "doc": "An OBJECT IDENTIFIER from its encoded body, written as hex.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hex",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "integer",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "integer(string $bytes): string",
+                    "doc": "A non-negative INTEGER from big-endian bytes, a zero byte added when the top bit would read as a sign.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 30
+                },
+                {
+                    "routes": [],
+                    "name": "bitString",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bitString(string $bytes): string",
+                    "doc": "A BIT STRING with no unused bits.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "pem",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pem(string $der): string",
+                    "doc": "A SubjectPublicKeyInfo as PEM text.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "der",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "element",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "element(int $tag, string $content): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 52
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\NewPasskey",
+            "short": "NewPasskey",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/NewPasskey.php",
+            "lines": 12,
+            "doc": "A passkey a registration ceremony proved: its id, its COSE key as sent, and what the authenticator said about it.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Ceremony"
+            ],
+            "constructor": {
+                "signature": "__construct(string $credentialId, string $publicKey, int $algorithm, int $signCount, bool $backupEligible, bool $backedUp)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "credentialId",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "publicKey",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "algorithm",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "signCount",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "backupEligible",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "backedUp",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 10,
+                "end": 18
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "credentialId",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "publicKey",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "algorithm",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "signCount",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "backupEligible",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "backedUp",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\Refused",
+            "short": "Refused",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/Refused.php",
+            "lines": 7,
+            "doc": "A passkey ceremony that did not pass. The reason is a short stable word\nnaming the check (origin, challenge, signature, counter, ...), for logs and\nsuites; the message is plain text for a person. Callers show people one\nmessage for every reason, so a refusal never coaches a forger.",
+            "implements": [
+                "Stringable",
+                "Throwable"
+            ],
+            "extends": "RuntimeException",
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\AuthenticatorData",
+                "Minn\\Auth\\WebAuthn\\Cbor",
+                "Minn\\Auth\\WebAuthn\\Ceremony",
+                "Minn\\Auth\\WebAuthn\\ClientData",
+                "Minn\\Auth\\WebAuthn\\CoseKey",
+                "Minn\\Auth\\WebAuthn\\RelyingParty"
+            ],
+            "constructor": {
+                "signature": "__construct(string $reason, string $message)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "reason",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "message",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 17,
+                "end": 20
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "reason",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Auth\\WebAuthn\\RelyingParty",
+            "short": "RelyingParty",
+            "namespace": "Minn\\Auth\\WebAuthn",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/WebAuthn/RelyingParty.php",
+            "lines": 25,
+            "doc": "Who passkeys are made for: the id they are bound to (the site's host, so\na passkey made for one site is useless on another) and the one origin\nwhose pages may use them.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\Refused"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\WebAuthn\\Ceremony"
+            ],
+            "constructor": {
+                "signature": "__construct(string $id, string $origin, string $name)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "id",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "origin",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 14,
+                "end": 16
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "id",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "origin",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forHome",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forHome(string $home, string $name): self",
+                    "doc": "The relying party a site's home address makes: its host as the id; its scheme, host and port as the origin.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "home",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "idHash",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "idHash(): string",
+                    "doc": "The SHA-256 of the id, as authenticator data carries it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 32,
+                    "end": 35
+                }
+            ]
+        },
+        {
             "name": "Minn\\Autoloader",
             "short": "Autoloader",
             "namespace": "Minn",
@@ -80456,6 +82215,7 @@
                 "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\Translations",
                 "Minn\\Auth\\Roles",
+                "Minn\\Auth\\WebAuthn\\ClientData",
                 "Minn\\Blocks\\BlockStream",
                 "Minn\\Blocks\\CoreBlocks",
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
