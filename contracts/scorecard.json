@@ -5,8 +5,8 @@
         "file": "docs/audit-2026-10-22.md"
     },
     "security": {
-        "found": 99,
-        "fixed": 99
+        "found": 141,
+        "fixed": 139
     },
     "sql": {
         "measured": "2026-10-24",
@@ -272,9 +272,9 @@
     },
     "run": {
         "measured": "2026-11-12",
-        "suites": 102,
-        "green": 102,
-        "checks": 31656,
+        "suites": 103,
+        "green": 103,
+        "checks": 31763,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -305,10 +305,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 195510
+            "of": 197071
         },
         "engine": {
-            "of": 119341,
+            "of": 120902,
             "php": {
                 "strict": {
                     "window": 40,
@@ -317,8 +317,8 @@
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 71,
-                    "lines": 306
+                    "stretches": 72,
+                    "lines": 315
                 }
             },
             "assets": {
