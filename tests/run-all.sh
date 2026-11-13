@@ -75,7 +75,7 @@ ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-$SITES/cove-minn.localhost}"
 [ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && check_twin cove-minn
 
 failed=0
-for suite in unit http style hooks api perf runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security security-sweep install cron-mail cron reader extensions extension-records extension-accounts front-method recovery front-page menus declared-types global-styles font-writes child-theme query-navigation theme-compat output-flush reusable-blocks admin-surfaces updates upgrades filesystem-method site code-size l10n front-strings dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks config-constants wp-api-modes request-vars plugin-rules rewrite-endpoints rest-envelope round-trip woo hook-parity side-effects rest-fuzz; do
+for suite in unit http style hooks api perf runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security security-sweep install cron-mail cron reader extensions extension-records extension-accounts passkeys front-method recovery front-page menus declared-types global-styles font-writes child-theme query-navigation theme-compat output-flush reusable-blocks admin-surfaces updates upgrades filesystem-method site code-size l10n front-strings dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks config-constants wp-api-modes request-vars plugin-rules rewrite-endpoints rest-envelope round-trip woo hook-parity side-effects rest-fuzz; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done
@@ -98,6 +98,8 @@ if [ -d browser/node_modules ]; then
 	node browser/embeds.test.js || failed=1
 	printf "\n=== browser: embed card (dev site) ===\n"
 	node browser/embed-card.test.js || failed=1
+	printf "\n=== browser: passkeys (Chrome's virtual authenticator) ===\n"
+	node browser/passkeys.test.js || failed=1
 fi
 
 printf '\n'

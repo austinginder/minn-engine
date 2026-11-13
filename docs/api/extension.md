@@ -4,7 +4,7 @@ the extension contract and its seams
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Accounts`](#accounts) | final readonly class | 387 | Accounts for a sign-in surface of an extension's own (a game's players, a |
+| [`Accounts`](#accounts) | final readonly class | 469 | Accounts for a sign-in surface of an extension's own (a game's players, a |
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 71 | Where the engine looks for the seams an extension registered. The |
 | [`Loader`](#loader) | final class | 179 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, and |
@@ -104,6 +104,50 @@ signs in: a new session and the three cookies on the response,
 wp_login fired. The extension's own proof is the only check, so it
 belongs after a single-use secret of the extension's own.
 
+### `passkeyOptions(Minn\Content\UserRecord $user): array`
+
+Options for navigator.credentials.create() to add a passkey to a
+signed-in user (the JSON parseCreationOptionsFromJSON reads); the
+extension adds its own client extensions, such as prf, in the browser.
+
+- `@return array<string, mixed>`
+
+### `addPasskey(Minn\Content\UserRecord $user, array $credential, string $label): Minn\Auth\PasskeyRecord|Minn\Runtime\Refusal`
+
+Keeps the passkey a browser made from passkeyOptions (its toJSON()
+answer) under a label of the user's, or the refusal: passkey_refused,
+data.reason naming the check that failed.
+
+- `@param array<string, mixed> $credential`
+
+### `passkeySignInOptions(): array`
+
+Options for navigator.credentials.get() to sign in with any of the
+site's passkeys (the JSON parseRequestOptionsFromJSON reads).
+
+- `@return array<string, mixed>`
+
+### `signInWithPasskey(Minn\Http\Response $response, array $credential): Minn\Extension\SignedIn|Minn\Runtime\Refusal`
+
+Signs in with a browser's answer to passkeySignInOptions, remembered
+as signInVerified signs in, and throttled per address as passwords
+are: the response with the session's cookies, or the refusal
+(too_many_attempts with data.retryAfter, or passkey_refused with
+data.reason). Plugins' authenticate filters are not asked: the
+passkey is the proof.
+
+- `@param array<string, mixed> $credential`
+
+### `passkeys(Minn\Content\UserRecord $user): array`
+
+A user's passkeys, newest first.
+
+- `@return list<PasskeyRecord>`
+
+### `removePasskey(Minn\Content\UserRecord $user, string $id): bool`
+
+Removes one of a user's passkeys by its id: whether the user had it.
+
 ### `mail(string $to, string $subject, string $body, array|string $headers = ''): bool`
 
 Sends an email of the extension's own through the site's mailer
@@ -159,7 +203,7 @@ plugin's.
 
 - `@param (Closure(string): array{0: string, 1: string, 2?: string|list<string>})|null $words the notice from the display name`
 
-Internals: `attempt()` (private, line 84), `storedHash()` (private, line 193), `refuseRegistration()` (private, line 226), `made()` (private, line 250), `checkCurrent()` (private, line 373), `worded()` (private, line 392), `refusal()` (private, line 411), `plain()` (private, line 428)
+Internals: `attempt()` (private, line 89), `storedHash()` (private, line 198), `refuseRegistration()` (private, line 311), `made()` (private, line 335), `checkCurrent()` (private, line 458), `worded()` (private, line 477), `refusal()` (private, line 496), `plain()` (private, line 513)
 
 
 ## Extension

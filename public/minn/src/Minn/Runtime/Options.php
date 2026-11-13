@@ -453,6 +453,31 @@ final class Options
         return $this->db->execute("INSERT IGNORE INTO {$this->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)", [$name, $value, $autoload]) > 0;
     }
 
+    /**
+     * Removes an option and hands back what it held, or null when it was not
+     * there: a single-use token. The delete itself decides, so of two
+     * requests taking the same row at once only one gets its value.
+     */
+    public function take(string $name): ?string
+    {
+        $value = $this->db->value("SELECT option_value FROM {$this->db->table('options')} WHERE option_name = ? LIMIT 1", [$name]);
+        $deleted = $value !== null && $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ? AND option_value = ?", [$name, $value]) > 0;
+        $this->forget($name);
+        return $deleted ? (string) $value : null;
+    }
+
+    /**
+     * Removes the options under a prefix whose value begins with an expiry
+     * time ("1767225600:...") that has passed: tokens nobody came back for.
+     */
+    public function deleteExpired(string $prefix, int $now): void
+    {
+        $this->db->execute(
+            "DELETE FROM {$this->db->table('options')} WHERE option_name LIKE ? AND CAST(SUBSTRING_INDEX(option_value, ':', 1) AS UNSIGNED) < ?",
+            [addcslashes($prefix, '\\%_') . '%', $now],
+        );
+    }
+
     /** Removes an option: out of the list or its own key, and known unset. */
     public function delete(string $name): bool
     {

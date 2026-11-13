@@ -104,13 +104,19 @@ every `{code, message}`. They run the sign-in hooks plugins listen on, so they b
 | `changePassword(Response, user, current, new, ?Closure words)` | a signed-in user's new password once the current one checks out (the sign-in throttle counts a wrong one): saved as a profile save saves it (`wp_update_user`, its hooks, the password-change notice to the account's address, `words(displayName)` returning `[subject, body, headers?]` in place of the reference's, early, so plugins still filter it), every session ended and a new one on the response (a cookie is bound to the password it was made under): `SignedIn` | `too_many_attempts`, `incorrect_password`, `empty_password`, a plugin's |
 | `changeEmail(user, current, email, ?Closure words)` | a signed-in user's new email once the current password checks out, the old address told (in `words` when given): the user | `too_many_attempts`, `incorrect_password`, `invalid_email`, `email_exists`, a plugin's |
 | `resetPassword(login, key, password)` | the reset form's save: the key still good (a day, or `password_reset_expiration`), `validate_password_reset` asked, the password stored (`password_reset`, `after_password_reset`), every session of the account ended; the user. Nobody is signed in | `too_many_attempts`, `invalid_key` (counts against the throttle), `expired_key`, `empty_password`, a plugin's |
+| `passkeyOptions(user)` | options for `navigator.credentials.create()` adding a passkey to a signed-in user, in the JSON form `PublicKeyCredential.parseCreationOptionsFromJSON()` reads: a fresh single-use challenge, the site as relying party, the user's random handle, ES256/EdDSA/RS256, a discoverable passkey with user verification required, no attestation, the user's passkeys excluded. The extension adds client extensions such as `prf` in the browser (`contracts/passkeys.md`) | |
+| `addPasskey(user, credential, label)` | keeps the passkey the browser made (its `toJSON()`), labelled (trimmed, at most 100 characters): a `PasskeyRecord` (`toArray()` is what a person may see: id, label, transports, created, lastUsed, synced; never the key) | `passkey_refused` with `data.reason` naming the check (`challenge`, `origin`, `party`, `verification`, `key`, `taken`, ...) |
+| `passkeySignInOptions()` | options for `navigator.credentials.get()` signing in with any of the site's passkeys (`parseRequestOptionsFromJSON()`): a fresh single-use challenge, no user named | |
+| `signInWithPasskey(Response, credential)` | a sign-in with the browser's answer: the passkey checked, its counter kept, then as `signInVerified` (fourteen days, the cookies on the response, `wp_login` fired): `SignedIn`. The authenticate filters are not asked: the passkey is the proof | `too_many_attempts` (the same per-address throttle as passwords); `passkey_refused` (`That passkey could not sign you in.`, `data.reason`); each refusal counts against the throttle |
+| `passkeys(user)`, `removePasskey(user, id)` | the user's passkeys newest first; removing one by its id, whether the user had it (another user's id is `false`) | |
 
 A signed-in browser needs the new session's `wp_rest` nonce before it calls a
 signed-in route: `wp-admin/admin-ajax.php?action=rest-nonce` hands it out once the
 cookie is set. `tests/extension-accounts.test.php` (fixture
 `minn-test-records/src/Players.php`) pins all of it, including a password with
 quotes and a backslash signing in at `wp-login.php`, also when it was held as
-a hash before the account existed.
+a hash before the account existed. `tests/passkeys.test.php` and
+`tests/browser/passkeys.test.js` (fixture `minn-test-passkeys`) pin the passkey calls.
 
 ## Tables of an extension's own
 

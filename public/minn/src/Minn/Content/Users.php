@@ -283,6 +283,35 @@ final readonly class Users
         ));
     }
 
+    /**
+     * The users holding a usermeta key, in id order: the owner of a key named
+     * for something only one user has (a passkey's credential).
+     *
+     * @return list<int>
+     */
+    public function idsWithMeta(string $key): array
+    {
+        return array_map('intval', array_column($this->db->rows(
+            "SELECT DISTINCT user_id FROM {$this->db->table('usermeta')} WHERE meta_key = ? ORDER BY user_id",
+            [$key],
+        ), 'user_id'));
+    }
+
+    /**
+     * A user's usermeta values whose keys start with a prefix, raw, by key in
+     * row order (one row per key; a later row for the same key wins).
+     *
+     * @return array<string, string>
+     */
+    public function metaWithPrefix(int $userId, string $prefix): array
+    {
+        $rows = $this->db->rows(
+            "SELECT meta_key, meta_value FROM {$this->db->table('usermeta')} WHERE user_id = ? AND meta_key LIKE ? ORDER BY umeta_id",
+            [$userId, addcslashes($prefix, '\\%_') . '%'],
+        );
+        return array_column($rows, 'meta_value', 'meta_key');
+    }
+
     /** Removes one meta key from a user: through the meta API once the runtime is up (delete_user_meta's hooks), else directly. */
     public function deleteMeta(int $userId, string $key): void
     {

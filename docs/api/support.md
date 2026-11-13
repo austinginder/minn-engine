@@ -153,7 +153,7 @@ named or numeric entity stays as it is.
 - const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
 - const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
 
-Used by: `Minn\Admin\MetaBoxMarkup`, `Minn\Admin\SubmitButton`, `Minn\Extension\Accounts`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
+Used by: `Minn\Admin\MetaBoxMarkup`, `Minn\Admin\SubmitButton`, `Minn\Auth\Passkeys`, `Minn\Extension\Accounts`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 

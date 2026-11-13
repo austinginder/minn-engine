@@ -12,9 +12,12 @@ use Minn\Auth\Cookie;
 use Minn\Auth\LoginThrottle;
 use Minn\Auth\Nonce;
 use Minn\Auth\Password;
+use Minn\Auth\PasskeyRecord;
+use Minn\Auth\Passkeys;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\Sessions;
 use Minn\Auth\SignIn;
+use Minn\Auth\WebAuthn\Refused;
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
@@ -52,11 +55,13 @@ final readonly class Accounts
     private Users $users;
     private Authenticator $authenticator;
     private SignIn $signIn;
+    private Db $db;
 
     public function __construct(
         Db $db,
         private Request $request,
     ) {
+        $this->db = $db;
         $this->users = new Users($db);
         $cookie = new Cookie($db, $this->users, new Sessions($this->users));
         $this->authenticator = new Authenticator($cookie, $this->users);
@@ -208,6 +213,86 @@ final readonly class Accounts
         $response = $this->signIn->remember($response, $fresh, $this->request);
         (new LoginHooks($this->users))->signedIn($fresh);
         return new SignedIn($fresh, $response);
+    }
+
+    /**
+     * Options for navigator.credentials.create() to add a passkey to a
+     * signed-in user (the JSON parseCreationOptionsFromJSON reads); the
+     * extension adds its own client extensions, such as prf, in the browser.
+     *
+     * @return array<string, mixed>
+     */
+    public function passkeyOptions(UserRecord $user): array
+    {
+        return Passkeys::forSite($this->db)->creationOptions($user);
+    }
+
+    /**
+     * Keeps the passkey a browser made from passkeyOptions (its toJSON()
+     * answer) under a label of the user's, or the refusal: passkey_refused,
+     * data.reason naming the check that failed.
+     *
+     * @param array<string, mixed> $credential
+     */
+    public function addPasskey(UserRecord $user, array $credential, string $label): PasskeyRecord|Refusal
+    {
+        try {
+            return Passkeys::forSite($this->db)->register($user, $credential, $label);
+        } catch (Refused $refused) {
+            return new Refusal('passkey_refused', $refused->getMessage(), ['reason' => $refused->reason, 'notices' => []]);
+        }
+    }
+
+    /**
+     * Options for navigator.credentials.get() to sign in with any of the
+     * site's passkeys (the JSON parseRequestOptionsFromJSON reads).
+     *
+     * @return array<string, mixed>
+     */
+    public function passkeySignInOptions(): array
+    {
+        return Passkeys::forSite($this->db)->requestOptions();
+    }
+
+    /**
+     * Signs in with a browser's answer to passkeySignInOptions, remembered
+     * as signInVerified signs in, and throttled per address as passwords
+     * are: the response with the session's cookies, or the refusal
+     * (too_many_attempts with data.retryAfter, or passkey_refused with
+     * data.reason). Plugins' authenticate filters are not asked: the
+     * passkey is the proof.
+     *
+     * @param array<string, mixed> $credential
+     */
+    public function signInWithPasskey(Response $response, array $credential): SignedIn|Refusal
+    {
+        $wait = $this->signIn->retryAfter($this->request->remoteAddress);
+        if ($wait !== null) {
+            return new Refusal('too_many_attempts', 'Too many failed sign-ins. Try again in a few minutes.', ['retryAfter' => $wait, 'notices' => []]);
+        }
+        try {
+            $user = Passkeys::forSite($this->db)->verify($credential);
+        } catch (Refused $refused) {
+            $this->signIn->recordFailure($this->request->remoteAddress);
+            return new Refusal('passkey_refused', 'That passkey could not sign you in.', ['reason' => $refused->reason, 'notices' => []]);
+        }
+        return $this->signInVerified($response, $user);
+    }
+
+    /**
+     * A user's passkeys, newest first.
+     *
+     * @return list<PasskeyRecord>
+     */
+    public function passkeys(UserRecord $user): array
+    {
+        return Passkeys::forSite($this->db)->of($user->id);
+    }
+
+    /** Removes one of a user's passkeys by its id: whether the user had it. */
+    public function removePasskey(UserRecord $user, string $id): bool
+    {
+        return Passkeys::forSite($this->db)->remove($user->id, $id);
     }
 
     /**

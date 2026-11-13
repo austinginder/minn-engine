@@ -23,7 +23,7 @@
 
 A sign-in a stored passkey proved: the counter to keep and whether the passkey is synced now.
 
-Used by: `Minn\Auth\WebAuthn\Ceremony`
+Used by: `Minn\Auth\PasskeyRecord`, `Minn\Auth\WebAuthn\Ceremony`
 
 ```php
 __construct(int $signCount, bool $backedUp)
@@ -291,7 +291,7 @@ naming the check (origin, challenge, signature, counter, ...), for logs and
 suites; the message is plain text for a person. Callers show people one
 message for every reason, so a refusal never coaches a forger.
 
-Used by: `Minn\Auth\WebAuthn\AuthenticatorData`, `Minn\Auth\WebAuthn\Cbor`, `Minn\Auth\WebAuthn\Ceremony`, `Minn\Auth\WebAuthn\ClientData`, `Minn\Auth\WebAuthn\CoseKey`, `Minn\Auth\WebAuthn\RelyingParty`
+Used by: `Minn\Auth\WebAuthn\AuthenticatorData`, `Minn\Auth\WebAuthn\Cbor`, `Minn\Auth\WebAuthn\Ceremony`, `Minn\Auth\WebAuthn\ClientData`, `Minn\Auth\WebAuthn\CoseKey`, `Minn\Auth\WebAuthn\RelyingParty`, `Minn\Extension\Accounts`
 
 ```php
 __construct(string $reason, string $message)

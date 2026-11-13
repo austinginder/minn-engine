@@ -15,6 +15,8 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
+| [`PasskeyRecord`](#passkeyrecord) | final readonly class | 74 | One of a user's passkeys as the site keeps it (Auth\Passkeys): the |
+| [`Passkeys`](#passkeys) | final readonly class | 229 | The site's passkeys: the options a browser's navigator.credentials.create() |
 | [`Password`](#password) | final class | 71 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 70 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`PortableHash`](#portablehash) | final class | 86 | The portable phpass hash ("$P$"), from the published algorithm: an |
@@ -560,6 +562,135 @@ Whether a nonce is valid at this tick or the one before.
 ### static `at(float $tick, int $userId, string $token, string $action): string`
 
 The nonce for a given tick.
+
+
+## PasskeyRecord
+
+`final readonly class Minn\Auth\PasskeyRecord` · `public/minn/src/Minn/Auth/PasskeyRecord.php`
+
+One of a user's passkeys as the site keeps it (Auth\Passkeys): the
+credential id and COSE key in base64url, the algorithm, the last signature
+counter, the label its owner gave it, the transports the browser named,
+when it was made and last used, and whether it is synced.
+
+Used by: `Minn\Auth\Passkeys`, `Minn\Extension\Accounts`
+
+```php
+__construct(int $userId, string $id, string $publicKey, int $algorithm, int $signCount, string $label, array $transports, int $created, int $lastUsed, bool $backupEligible, bool $backedUp)
+```
+- `@param list<string> $transports`
+
+- readonly `int $userId`
+- readonly `string $id`
+- readonly `string $publicKey`
+- readonly `int $algorithm`
+- readonly `int $signCount`
+- readonly `string $label`
+- readonly `array $transports`
+- readonly `int $created`
+- readonly `int $lastUsed`
+- readonly `bool $backupEligible`
+- readonly `bool $backedUp`
+
+### static `fromStored(int $userId, string $text): ?self`
+
+The record a stored JSON text holds, or null when it is not one.
+
+### `toStored(): string`
+
+The JSON text the record is stored as.
+
+### `usedFor(Minn\Auth\WebAuthn\Assertion $assertion, int $now): self`
+
+The record after a sign-in it proved: the counter and backup state it reported, and the time.
+
+### `toArray(): array`
+
+What a person may see of it: id, label, transports, dates, synced. Never the key.
+
+- `@return array{id: string, label: string, transports: list<string>, created: int, lastUsed: int, synced: bool}`
+
+
+## Passkeys
+
+`final readonly class Minn\Auth\Passkeys` · `public/minn/src/Minn/Auth/Passkeys.php`
+
+The site's passkeys: the options a browser's navigator.credentials.create()
+and get() take, as the JSON forms PublicKeyCredential reads
+(parseCreationOptionsFromJSON, parseRequestOptionsFromJSON), and the
+answers (PublicKeyCredential.toJSON()) checked and kept.
+
+Each passkey is a usermeta row of its owner, minn_passkey_key_ and forty
+hex of the credential id's SHA-256, holding a PasskeyRecord; the WebAuthn
+user handle (random, never the user id) is minn_passkey_handle. A
+challenge is an option row of its own (autoload off) holding its expiry,
+its ceremony and the user it was issued to; it is taken, so it answers
+once, five minutes at most, and rows nobody came back for are swept.
+Sign-in passkeys are discoverable: the browser offers the person their
+passkeys for the site, and the credential names the user.
+
+- const `KEY` = `'minn_passkey_key_'`
+- const `HANDLE` = `'minn_passkey_handle'`
+- const `CHALLENGE` = `'minn_passkey_challenge_'`
+- const `LIFETIME` = `300`
+- const `LABEL_LENGTH` = `100`
+- const `TRANSPORTS` = `array (   0 => 'ble',   1 => 'hybrid',   2 => 'internal',   3 => 'nfc',   4 => 'smart-card',   5 => 'usb', )`
+
+Used by: `Minn\Extension\Accounts`
+
+```php
+__construct(Minn\Db $db, Minn\Auth\WebAuthn\RelyingParty $party)
+```
+
+
+### static `forSite(Minn\Db $db): self`
+
+The passkeys of the site its home address names, called by its title.
+
+### `creationOptions(Minn\Content\UserRecord $user): array`
+
+Options for adding a passkey to a user: a fresh challenge, the site,
+the user's handle and name, the three key kinds, a discoverable
+passkey that checks who is using it, and the passkeys the user has
+already (so one authenticator is not added twice).
+
+- `@return array<string, mixed>`
+
+### `requestOptions(): array`
+
+Options for signing in with any of the site's passkeys: a fresh
+challenge and the site, no user named.
+
+- `@return array<string, mixed>`
+
+### `register(Minn\Content\UserRecord $user, array $credential, string $label): Minn\Auth\PasskeyRecord`
+
+Keeps the passkey a browser made from creationOptions for the same
+user, under the label given; refused (Refused) when any check fails,
+the challenge was not this user's or was used, or the passkey is
+already someone's.
+
+- `@param array<string, mixed> $credential`
+
+### `verify(array $credential): Minn\Content\UserRecord`
+
+The user a browser's answer to requestOptions proves, the passkey's
+counter and last use recorded; refused (Refused) when any check fails,
+the challenge was used, or the passkey is no one's.
+
+- `@param array<string, mixed> $credential`
+
+### `of(int $userId): array`
+
+A user's passkeys, newest first.
+
+- `@return list<PasskeyRecord>`
+
+### `remove(int $userId, string $id): bool`
+
+Removes one of a user's passkeys by its base64url id: whether the user had it.
+
+Internals: `issue()` (private, line 195), `redeem()` (private, line 206), `handle()` (private, line 216), `owner()` (private, line 227), `digest()` (private, line 232), `rawId()` (private, line 238), `field()` (private, line 248)
 
 
 ## Password

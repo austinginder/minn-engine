@@ -1,0 +1,8 @@
+{
+  "name": "Passkeys probe (test fixture)",
+  "version": "0.1.0",
+  "license": "MIT",
+  "replaces": [],
+  "autoload": {"Minn\\Ext\\TestPasskeys\\": "src/"},
+  "extension": "Minn\\Ext\\TestPasskeys\\Extension"
+}

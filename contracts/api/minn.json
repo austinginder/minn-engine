@@ -11623,6 +11623,748 @@
             ]
         },
         {
+            "name": "Minn\\Auth\\PasskeyRecord",
+            "short": "PasskeyRecord",
+            "namespace": "Minn\\Auth",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/PasskeyRecord.php",
+            "lines": 74,
+            "doc": "One of a user's passkeys as the site keeps it (Auth\\Passkeys): the\ncredential id and COSE key in base64url, the algorithm, the last signature\ncounter, the label its owner gave it, the transports the browser named,\nwhen it was made and last used, and whether it is synced.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\WebAuthn\\Assertion",
+                "Minn\\Json"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\Passkeys",
+                "Minn\\Extension\\Accounts"
+            ],
+            "constructor": {
+                "signature": "__construct(int $userId, string $id, string $publicKey, int $algorithm, int $signCount, string $label, array $transports, int $created, int $lastUsed, bool $backupEligible, bool $backedUp)",
+                "doc": "",
+                "shapes": [
+                    "@param list<string> $transports"
+                ],
+                "params": [
+                    {
+                        "name": "userId",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "id",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "publicKey",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "algorithm",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "signCount",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "label",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "transports",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "created",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "lastUsed",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "backupEligible",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "backedUp",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 32
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "userId",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "id",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "publicKey",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "algorithm",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "signCount",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "label",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "transports",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "created",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "lastUsed",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "backupEligible",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "backedUp",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fromStored",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromStored(int $userId, string $text): ?self",
+                    "doc": "The record a stored JSON text holds, or null when it is not one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "toStored",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toStored(): string",
+                    "doc": "The JSON text the record is stored as.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 58,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "usedFor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "usedFor(Minn\\Auth\\WebAuthn\\Assertion $assertion, int $now): self",
+                    "doc": "The record after a sign-in it proved: the counter and backup state it reported, and the time.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "assertion",
+                            "type": "Minn\\Auth\\WebAuthn\\Assertion",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "now",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "toArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toArray(): array",
+                    "doc": "What a person may see of it: id, label, transports, dates, synced. Never the key.",
+                    "shapes": [
+                        "@return array{id: string, label: string, transports: list<string>, created: int, lastUsed: int, synced: bool}"
+                    ],
+                    "params": [],
+                    "line": 85,
+                    "end": 88
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Auth\\Passkeys",
+            "short": "Passkeys",
+            "namespace": "Minn\\Auth",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Auth/Passkeys.php",
+            "lines": 229,
+            "doc": "The site's passkeys: the options a browser's navigator.credentials.create()\nand get() take, as the JSON forms PublicKeyCredential reads\n(parseCreationOptionsFromJSON, parseRequestOptionsFromJSON), and the\nanswers (PublicKeyCredential.toJSON()) checked and kept.\n\nEach passkey is a usermeta row of its owner, minn_passkey_key_ and forty\nhex of the credential id's SHA-256, holding a PasskeyRecord; the WebAuthn\nuser handle (random, never the user id) is minn_passkey_handle. A\nchallenge is an option row of its own (autoload off) holding its expiry,\nits ceremony and the user it was issued to; it is taken, so it answers\nonce, five minutes at most, and rows nobody came back for are swept.\nSign-in passkeys are discoverable: the browser offers the person their\npasskeys for the site, and the credential names the user.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\PasskeyRecord",
+                "Minn\\Db",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Entities"
+            ],
+            "usedBy": [
+                "Minn\\Extension\\Accounts"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Auth\\WebAuthn\\RelyingParty $party)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "party",
+                        "type": "Minn\\Auth\\WebAuthn\\RelyingParty",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 40,
+                "end": 44
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "KEY",
+                    "value": "'minn_passkey_key_'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "HANDLE",
+                    "value": "'minn_passkey_handle'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CHALLENGE",
+                    "value": "'minn_passkey_challenge_'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "LIFETIME",
+                    "value": "300",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "LABEL_LENGTH",
+                    "value": "100",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TRANSPORTS",
+                    "value": "array (   0 => 'ble',   1 => 'hybrid',   2 => 'internal',   3 => 'nfc',   4 => 'smart-card',   5 => 'usb', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "users",
+                    "type": "Minn\\Content\\Users",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "ceremony",
+                    "type": "Minn\\Auth\\WebAuthn\\Ceremony",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "party",
+                    "type": "Minn\\Auth\\WebAuthn\\RelyingParty",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(Minn\\Db $db): self",
+                    "doc": "The passkeys of the site its home address names, called by its title.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "db",
+                            "type": "Minn\\Db",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "creationOptions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "creationOptions(Minn\\Content\\UserRecord $user): array",
+                    "doc": "Options for adding a passkey to a user: a fresh challenge, the site,\nthe user's handle and name, the three key kinds, a discoverable\npasskey that checks who is using it, and the passkeys the user has\nalready (so one authenticator is not added twice).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "requestOptions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "requestOptions(): array",
+                    "doc": "Options for signing in with any of the site's passkeys: a fresh\nchallenge and the site, no user named.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 82,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "register(Minn\\Content\\UserRecord $user, array $credential, string $label): Minn\\Auth\\PasskeyRecord",
+                    "doc": "Keeps the passkey a browser made from creationOptions for the same\nuser, under the label given; refused (Refused) when any check fails,\nthe challenge was not this user's or was used, or the passkey is\nalready someone's.",
+                    "shapes": [
+                        "@param array<string, mixed> $credential"
+                    ],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "credential",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "verify",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "verify(array $credential): Minn\\Content\\UserRecord",
+                    "doc": "The user a browser's answer to requestOptions proves, the passkey's\ncounter and last use recorded; refused (Refused) when any check fails,\nthe challenge was used, or the passkey is no one's.",
+                    "shapes": [
+                        "@param array<string, mixed> $credential"
+                    ],
+                    "params": [
+                        {
+                            "name": "credential",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 163
+                },
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "of(int $userId): array",
+                    "doc": "A user's passkeys, newest first.",
+                    "shapes": [
+                        "@return list<PasskeyRecord>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 181
+                },
+                {
+                    "routes": [],
+                    "name": "remove",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "remove(int $userId, string $id): bool",
+                    "doc": "Removes one of a user's passkeys by its base64url id: whether the user had it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 184,
+                    "end": 193
+                },
+                {
+                    "routes": [],
+                    "name": "issue",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "issue(string $ceremony, int $userId): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ceremony",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 204
+                },
+                {
+                    "routes": [],
+                    "name": "redeem",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "redeem(string $challenge, string $ceremony, int $userId): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "challenge",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ceremony",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 206,
+                    "end": 214
+                },
+                {
+                    "routes": [],
+                    "name": "handle",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "handle(int $userId): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 216,
+                    "end": 225
+                },
+                {
+                    "routes": [],
+                    "name": "owner",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "owner(string $credentialId): ?int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "credentialId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 227,
+                    "end": 230
+                },
+                {
+                    "routes": [],
+                    "name": "digest",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "digest(string $bytes): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 232,
+                    "end": 235
+                },
+                {
+                    "routes": [],
+                    "name": "rawId",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rawId(array $credential): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $credential"
+                    ],
+                    "params": [
+                        {
+                            "name": "credential",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 245
+                },
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "field(array $credential, string $name): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $credential"
+                    ],
+                    "params": [
+                        {
+                            "name": "credential",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 248,
+                    "end": 255
+                }
+            ]
+        },
+        {
             "name": "Minn\\Auth\\Password",
             "short": "Password",
             "namespace": "Minn\\Auth",
@@ -13485,6 +14227,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Auth\\PasskeyRecord",
                 "Minn\\Auth\\WebAuthn\\Ceremony"
             ],
             "constructor": {
@@ -15071,7 +15814,8 @@
                 "Minn\\Auth\\WebAuthn\\Ceremony",
                 "Minn\\Auth\\WebAuthn\\ClientData",
                 "Minn\\Auth\\WebAuthn\\CoseKey",
-                "Minn\\Auth\\WebAuthn\\RelyingParty"
+                "Minn\\Auth\\WebAuthn\\RelyingParty",
+                "Minn\\Extension\\Accounts"
             ],
             "constructor": {
                 "signature": "__construct(string $reason, string $message)",
@@ -44364,7 +45108,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 342,
+            "lines": 371,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -44919,6 +45663,57 @@
                 },
                 {
                     "routes": [],
+                    "name": "idsWithMeta",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "idsWithMeta(string $key): array",
+                    "doc": "The users holding a usermeta key, in id order: the owner of a key named\nfor something only one user has (a passkey's credential).",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 292,
+                    "end": 298
+                },
+                {
+                    "routes": [],
+                    "name": "metaWithPrefix",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "metaWithPrefix(int $userId, string $prefix): array",
+                    "doc": "A user's usermeta values whose keys start with a prefix, raw, by key in\nrow order (one row per key; a later row for the same key wins).",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 306,
+                    "end": 313
+                },
+                {
+                    "routes": [],
                     "name": "deleteMeta",
                     "static": false,
                     "visibility": "public",
@@ -44941,8 +45736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 294
+                    "line": 316,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -44963,8 +45758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 309
+                    "line": 332,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -44992,8 +45787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 318
+                    "line": 341,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -45019,8 +45814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 336
+                    "line": 354,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -45053,8 +45848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 345,
-                    "end": 357
+                    "line": 374,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -45746,6 +46541,7 @@
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\LoginThrottle",
+                "Minn\\Auth\\Passkeys",
                 "Minn\\Auth\\Roles",
                 "Minn\\Blocks\\Dynamic\\Archives",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -47103,7 +47899,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Accounts.php",
-            "lines": 387,
+            "lines": 469,
             "doc": "Accounts for a sign-in surface of an extension's own (a game's players, a\nmembers' area), from its REST routes: the sign-in, sign-out, registration\nand password reset the engine's sign-in page runs, with the same\nthrottle, hooks, sessions and mail, handed back as values the extension\nwords itself. A refusal is a Refusal: its code, its message as plain\ntext, and every code and message in data.notices. A refused sign-in\nnever says which half was wrong (code incorrect_credentials) unless a\nplugin refused it in its own words. They run the sign-in hooks plugins\nlisten on, so they belong on an extension's REST routes.",
             "implements": [],
             "extends": null,
@@ -47114,10 +47910,13 @@
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\LoginThrottle",
                 "Minn\\Auth\\Nonce",
+                "Minn\\Auth\\PasskeyRecord",
+                "Minn\\Auth\\Passkeys",
                 "Minn\\Auth\\Password",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Sessions",
                 "Minn\\Auth\\SignIn",
+                "Minn\\Auth\\WebAuthn\\Refused",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
@@ -47162,8 +47961,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 56,
-                "end": 64
+                "line": 60,
+                "end": 69
             },
             "cases": [],
             "constants": [
@@ -47196,6 +47995,15 @@
                 {
                     "name": "signIn",
                     "type": "Minn\\Auth\\SignIn",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -47244,8 +48052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -47278,8 +48086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -47298,8 +48106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 131
+                    "line": 119,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -47310,8 +48118,8 @@
                     "doc": "Whether the site takes new accounts (users_can_register).",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 137
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -47358,8 +48166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 154,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -47406,8 +48214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -47426,8 +48234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 168
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -47474,8 +48282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 190
+                    "line": 182,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -47501,8 +48309,158 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 211
+                    "line": 210,
+                    "end": 216
+                },
+                {
+                    "routes": [],
+                    "name": "passkeyOptions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "passkeyOptions(Minn\\Content\\UserRecord $user): array",
+                    "doc": "Options for navigator.credentials.create() to add a passkey to a\nsigned-in user (the JSON parseCreationOptionsFromJSON reads); the\nextension adds its own client extensions, such as prf, in the browser.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 225,
+                    "end": 228
+                },
+                {
+                    "routes": [],
+                    "name": "addPasskey",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "addPasskey(Minn\\Content\\UserRecord $user, array $credential, string $label): Minn\\Auth\\PasskeyRecord|Minn\\Runtime\\Refusal",
+                    "doc": "Keeps the passkey a browser made from passkeyOptions (its toJSON()\nanswer) under a label of the user's, or the refusal: passkey_refused,\ndata.reason naming the check that failed.",
+                    "shapes": [
+                        "@param array<string, mixed> $credential"
+                    ],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "credential",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 237,
+                    "end": 244
+                },
+                {
+                    "routes": [],
+                    "name": "passkeySignInOptions",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "passkeySignInOptions(): array",
+                    "doc": "Options for navigator.credentials.get() to sign in with any of the\nsite's passkeys (the JSON parseRequestOptionsFromJSON reads).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 252,
+                    "end": 255
+                },
+                {
+                    "routes": [],
+                    "name": "signInWithPasskey",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "signInWithPasskey(Minn\\Http\\Response $response, array $credential): Minn\\Extension\\SignedIn|Minn\\Runtime\\Refusal",
+                    "doc": "Signs in with a browser's answer to passkeySignInOptions, remembered\nas signInVerified signs in, and throttled per address as passwords\nare: the response with the session's cookies, or the refusal\n(too_many_attempts with data.retryAfter, or passkey_refused with\ndata.reason). Plugins' authenticate filters are not asked: the\npasskey is the proof.",
+                    "shapes": [
+                        "@param array<string, mixed> $credential"
+                    ],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "credential",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 280
+                },
+                {
+                    "routes": [],
+                    "name": "passkeys",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "passkeys(Minn\\Content\\UserRecord $user): array",
+                    "doc": "A user's passkeys, newest first.",
+                    "shapes": [
+                        "@return list<PasskeyRecord>"
+                    ],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 287,
+                    "end": 290
+                },
+                {
+                    "routes": [],
+                    "name": "removePasskey",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "removePasskey(Minn\\Content\\UserRecord $user, string $id): bool",
+                    "doc": "Removes one of a user's passkeys by its id: whether the user had it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 293,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -47544,8 +48502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 223
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -47581,8 +48539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 274
+                    "line": 355,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -47615,8 +48573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 310
+                    "line": 369,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -47665,8 +48623,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 324,
-                    "end": 340
+                    "line": 409,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -47708,8 +48666,8 @@
                             "doc": "the notice from the display name"
                         }
                     ],
-                    "line": 351,
-                    "end": 370
+                    "line": 436,
+                    "end": 455
                 },
                 {
                     "routes": [],
@@ -47751,8 +48709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 100
+                    "line": 89,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -47771,8 +48729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 196
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -47791,8 +48749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 248
+                    "line": 311,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -47811,8 +48769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 254
+                    "line": 335,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -47838,8 +48796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 385
+                    "line": 458,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -47879,8 +48837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 408
+                    "line": 477,
+                    "end": 493
                 },
                 {
                     "routes": [],
@@ -47913,8 +48871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 425
+                    "line": 496,
+                    "end": 510
                 },
                 {
                     "routes": [],
@@ -47933,8 +48891,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 432
+                    "line": 513,
+                    "end": 517
                 }
             ]
         },
@@ -82214,6 +83172,7 @@
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\Translations",
+                "Minn\\Auth\\PasskeyRecord",
                 "Minn\\Auth\\Roles",
                 "Minn\\Auth\\WebAuthn\\ClientData",
                 "Minn\\Blocks\\BlockStream",
@@ -160235,7 +161194,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 531,
+            "lines": 556,
             "doc": "Options as plugin code sees them, kept where the reference keeps them:\nwp_cache's options group (OptionsGroup) holds the autoloaded list, the\nnames known unset, and a key per option not autoloaded, so a plugin that\nreads, writes or drops those keys is heard. get_option() and\nwp_load_alloptions() pass the list through pre_wp_load_alloptions and\nalloptions. A value written this request is held as it was written (an\nint stays an int, true stays true), arrays and objects as stored. Each\nstored text is decoded once while it stays the same, except one holding\nan object, decoded afresh on every read as the reference does: a plugin\nthat changes the object it was handed and saves it must find the stored\ncopy still different, or its change is never written.",
             "implements": [],
             "extends": null,
@@ -160739,6 +161698,53 @@
                 },
                 {
                     "routes": [],
+                    "name": "take",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "take(string $name): ?string",
+                    "doc": "Removes an option and hands back what it held, or null when it was not\nthere: a single-use token. The delete itself decides, so of two\nrequests taking the same row at once only one gets its value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 461,
+                    "end": 467
+                },
+                {
+                    "routes": [],
+                    "name": "deleteExpired",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "deleteExpired(string $prefix, int $now): void",
+                    "doc": "Removes the options under a prefix whose value begins with an expiry\ntime (\"1767225600:...\") that has passed: tokens nobody came back for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "now",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 473,
+                    "end": 479
+                },
+                {
+                    "routes": [],
                     "name": "delete",
                     "static": false,
                     "visibility": "public",
@@ -160754,8 +161760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 457,
-                    "end": 478
+                    "line": 482,
+                    "end": 503
                 },
                 {
                     "routes": [],
@@ -160783,8 +161789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 486,
-                    "end": 499
+                    "line": 511,
+                    "end": 524
                 },
                 {
                     "routes": [],
@@ -160803,8 +161809,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 506,
-                    "end": 524
+                    "line": 531,
+                    "end": 549
                 },
                 {
                     "routes": [],
@@ -160823,8 +161829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 531,
-                    "end": 540
+                    "line": 556,
+                    "end": 565
                 },
                 {
                     "routes": [],
@@ -160843,8 +161849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 543,
-                    "end": 552
+                    "line": 568,
+                    "end": 577
                 },
                 {
                     "routes": [],
@@ -174679,6 +175685,7 @@
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\LoginThrottle",
                 "Minn\\Auth\\Nonce",
+                "Minn\\Auth\\Passkeys",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\RegisteredCaps",
                 "Minn\\Auth\\Salts",
@@ -192462,6 +193469,7 @@
             "usedBy": [
                 "Minn\\Admin\\MetaBoxMarkup",
                 "Minn\\Admin\\SubmitButton",
+                "Minn\\Auth\\Passkeys",
                 "Minn\\Extension\\Accounts",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\UserWrites",

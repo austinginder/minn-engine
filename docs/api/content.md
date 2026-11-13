@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 145 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 342 |  |
+| [`Users`](#users) | final readonly class | 371 |  |
 
 ## Autop
 
@@ -2440,6 +2440,20 @@ How many users the site has.
 The newest users registered since a site-local time, up to the limit.
 
 - `@return list<array> the newest registrations after a site-local timestamp`
+
+### `idsWithMeta(string $key): array`
+
+The users holding a usermeta key, in id order: the owner of a key named
+for something only one user has (a passkey's credential).
+
+- `@return list<int>`
+
+### `metaWithPrefix(int $userId, string $prefix): array`
+
+A user's usermeta values whose keys start with a prefix, raw, by key in
+row order (one row per key; a later row for the same key wins).
+
+- `@return array<string, string>`
 
 ### `deleteMeta(int $userId, string $key): void`
 
